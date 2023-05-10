@@ -74,8 +74,8 @@ public final class data {
       super(owner, mutable, copy);
     }
 
-    ApproxNumeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    ApproxNumeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
     }
   }
 
@@ -296,12 +296,11 @@ public final class data {
     }
 
     BIGINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final Integer precision, final Long min, final Long max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
-        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -1010,11 +1009,10 @@ public final class data {
     }
 
     BOOLEAN(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
-        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
     }
 
@@ -1617,28 +1615,23 @@ public final class data {
     }
 
     private final Table table;
-
     final String name;
     final boolean primary;
     final boolean nullable;
+    final boolean hasDefault;
     final GenerateOn<? super V> generateOnInsert;
     final GenerateOn<? super V> generateOnUpdate;
     final boolean keyForUpdate;
     @SuppressWarnings("rawtypes")
     final Consumer commitUpdate;
-
     int columnIndex;
-
     type.Column<V> ref;
-
     SetBy setByOld;
-
     SetBy setByCur;
-
     boolean changed;
 
     Column(final Table owner, final boolean mutable) {
-      this(owner, mutable, null, false, false, null, true, null, null);
+      this(owner, mutable, null, false, false, null, true, null, null, null);
     }
 
     Column(final Table owner, final boolean mutable, final Column<V> copy) {
@@ -1647,6 +1640,7 @@ public final class data {
       this.name = copy.name;
       this.primary = copy.primary;
       this.nullable = copy.nullable;
+      this.hasDefault = copy.hasDefault;
       this.generateOnInsert = copy.generateOnInsert;
       this.generateOnUpdate = copy.generateOnUpdate;
       this.keyForUpdate = copy.keyForUpdate;
@@ -1658,12 +1652,13 @@ public final class data {
       this.setByOld = copy.setByOld;
     }
 
-    Column(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+    Column(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
       super(mutable);
       this.table = owner;
       this.name = name;
       this.primary = primary;
       this.nullable = nullable;
+      this.hasDefault = _default != null;
       this.generateOnInsert = generateOnInsert;
       this.generateOnUpdate = generateOnUpdate;
       this.keyForUpdate = keyForUpdate;
@@ -1704,6 +1699,7 @@ public final class data {
       column.wrap(new As<>(this, column));
       return column;
     }
+
     public final <E extends EntityEnum>ENUM<E> AS(final ENUM<E> column) {
       column.wrap(new As<>(this, column));
       return column;
@@ -2195,11 +2191,10 @@ public final class data {
     }
 
     DECIMAL(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final Integer precision, final int scale, final BigDecimal min, final BigDecimal max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
-        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       checkScale(precision, scale);
@@ -2556,12 +2551,11 @@ public final class data {
     }
 
     DOUBLE(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
-        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -3191,8 +3185,8 @@ public final class data {
       this.precision = precision;
     }
 
-    ExactNumeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    ExactNumeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
       checkPrecision(precision);
       this.precision = precision;
     }
@@ -3274,12 +3268,11 @@ public final class data {
     }
 
     FLOAT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
-        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -3629,12 +3622,11 @@ public final class data {
     }
 
     INT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final Integer precision, final Integer min, final Integer max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
-        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -4270,8 +4262,8 @@ public final class data {
       super(owner, mutable, copy);
     }
 
-    Numeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    Numeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     public abstract V max();
@@ -4331,7 +4323,7 @@ public final class data {
     }
 
     Objective(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
       this.valueOld = this.valueCur = _default;
     }
 
@@ -4450,8 +4442,8 @@ public final class data {
       super(owner, mutable, copy);
     }
 
-    Primitive(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    Primitive(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     abstract String primitiveToString();
@@ -4536,12 +4528,11 @@ public final class data {
     }
 
     SMALLINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final Integer precision, final Short min, final Short max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
-        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -5367,12 +5358,11 @@ public final class data {
     }
 
     TINYINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final Integer precision, final Byte min, final Byte max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
-        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;

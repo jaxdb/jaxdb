@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.function.Consumer;
 
 public abstract class Condition<V extends Serializable> extends data.Primitive<V> {
-  Condition(final data.Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends data.Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-    super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+  Condition(final data.Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends data.Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+    super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
   }
 
   Condition(final data.Table owner, final boolean mutable, final Condition<V> copy) {

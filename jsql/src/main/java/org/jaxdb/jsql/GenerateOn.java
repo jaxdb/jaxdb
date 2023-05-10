@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
+import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.UUIDs;
 
@@ -82,11 +83,11 @@ public interface GenerateOn<T> extends Serializable {
     @SuppressWarnings("rawtypes")
     public void generate(final data.Column column, final DbVendor vendor) {
       if (column instanceof data.DATE)
-        ((data.DATE)column).valueCur = LocalDate.now();
+        ((data.DATE)column).set(LocalDate.now(), SetBy.SYSTEM);
       else if (column instanceof data.TIME)
-        ((data.TIME)column).valueCur = LocalTime.now();
+        ((data.TIME)column).set(LocalTime.now(), SetBy.SYSTEM);
       else if (column instanceof data.DATETIME)
-        ((data.DATETIME)column).valueCur = LocalDateTime.now();
+        ((data.DATETIME)column).set(LocalDateTime.now(), SetBy.SYSTEM);
       else
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }
@@ -143,7 +144,7 @@ public interface GenerateOn<T> extends Serializable {
     public void generate(final data.Column<? super String> column, final DbVendor vendor) {
       final data.Textual<? super String> textualType = (data.Textual<? super String>)column;
       final java.util.UUID uuid = java.util.UUID.randomUUID();
-      textualType.valueCur = textualType.length() == 32 ? UUIDs.toString32(uuid) : uuid.toString();
+      textualType.set(textualType.length() == 32 ? UUIDs.toString32(uuid) : uuid.toString(), SetBy.SYSTEM);
     }
   };
 
