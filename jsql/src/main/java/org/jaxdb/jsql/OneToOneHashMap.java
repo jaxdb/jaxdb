@@ -30,7 +30,7 @@ public class OneToOneHashMap<V extends data.Table> extends CacheMap<V> implement
   @SuppressWarnings("unchecked")
   private final HTreeMap<data.Key,V> map = (HTreeMap<data.Key,V>)db.hashMap(name).counterEnable().create();
 
-  OneToOneHashMap(final data.Table table) {
+  OneToOneHashMap(final data.Table table, final String name) {
     super(table);
   }
 

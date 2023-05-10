@@ -34,6 +34,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.libj.util.Interval;
+import org.mapdb.BTreeMap;
 import org.openjax.binarytree.IntervalTreeSet;
 
 public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<data.Key,V> {
@@ -76,11 +77,18 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
     return or;
   }
 
+  final String name;
   final NavigableMap<data.Key,V> map;
   final IntervalTreeSet<type.Key> mask = new IntervalTreeSet<>();
 
-  NavigableCacheMap(final data.Table table, final NavigableMap<data.Key,V> map) {
+  @SuppressWarnings("unchecked")
+  NavigableCacheMap(final data.Table table, final String name) {
+    this(table, name, (BTreeMap<data.Key,V>)db.treeMap(name).counterEnable().create());
+  }
+
+  private NavigableCacheMap(final data.Table table, final String name, final NavigableMap<data.Key,V> map) {
     super(table);
+    this.name = name;
     this.map = map;
   }
 
@@ -217,7 +225,7 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
 
   @Override
   public NavigableCacheMap<V> descendingMap() {
-    return new NavigableCacheMap<>(table, map.descendingMap());
+    return new NavigableCacheMap<>(table, name, map.descendingMap());
   }
 
   @Override
@@ -257,7 +265,7 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
 
   @Override
   public NavigableCacheMap<V> subMap(final data.Key fromKey, final boolean fromInclusive, final data.Key toKey, final boolean toInclusive) {
-    return new NavigableCacheMap<>(table, map.subMap(fromKey, fromInclusive, toKey, toInclusive));
+    return new NavigableCacheMap<>(table, name, map.subMap(fromKey, fromInclusive, toKey, toInclusive));
   }
 
   @Override
@@ -274,7 +282,7 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
 
   @Override
   public NavigableCacheMap<V> headMap(final data.Key toKey, final boolean inclusive) {
-    return new NavigableCacheMap<>(table, map.headMap(toKey, inclusive));
+    return new NavigableCacheMap<>(table, name, map.headMap(toKey, inclusive));
   }
 
   @Override
@@ -284,7 +292,7 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
 
   @Override
   public NavigableCacheMap<V> tailMap(final data.Key fromKey, final boolean inclusive) {
-    return new NavigableCacheMap<>(table, map.tailMap(fromKey, inclusive));
+    return new NavigableCacheMap<>(table, name, map.tailMap(fromKey, inclusive));
   }
 
   @Override

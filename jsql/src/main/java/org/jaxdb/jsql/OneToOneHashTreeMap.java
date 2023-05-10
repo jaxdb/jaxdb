@@ -17,7 +17,7 @@
 package org.jaxdb.jsql;
 
 public class OneToOneHashTreeMap<V extends data.Table> extends OneToOneTreeMap<V> {
-  OneToOneHashTreeMap(final data.Table table) {
-    super(table);
+  OneToOneHashTreeMap(final data.Table table, final String name) {
+    super(table, name);
   }
 }

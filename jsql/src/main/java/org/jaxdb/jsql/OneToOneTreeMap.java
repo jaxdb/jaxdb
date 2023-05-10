@@ -16,11 +16,9 @@
 
 package org.jaxdb.jsql;
 
-import org.mapdb.BTreeMap;
-
 public class OneToOneTreeMap<V extends data.Table> extends NavigableCacheMap<V> implements OneToOneMap<V> {
-  OneToOneTreeMap(final data.Table table) {
-    super(table, (BTreeMap<data.Key,V>)db.treeMap(String.valueOf(System.identityHashCode(this))).counterEnable().create());
+  OneToOneTreeMap(final data.Table table, final String name) {
+    super(table, name);
   }
 
   final V put(final data.Key key, final V value, final boolean addKey) {

@@ -137,7 +137,7 @@ class Relation {
   }
 
   final String writeCacheInit() {
-    return cacheInstanceName + " = new " + indexType.getConcreteClass(null) + "<>(this);";
+    return cacheInstanceName + " = new " + indexType.getConcreteClass(null) + "<>(this, \"" + tableMeta.tableName + ":" + cacheInstanceName + "\");";
   }
 
   String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addKey) {

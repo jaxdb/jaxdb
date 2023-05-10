@@ -16,13 +16,9 @@
 
 package org.jaxdb.jsql;
 
-import java.util.NavigableMap;
-
-import org.mapdb.BTreeMap;
-
 public class OneToManyTreeMap<V extends data.Table> extends NavigableCacheMap<NavigableCacheMap<V>> implements OneToManyMap<NavigableCacheMap<V>> {
-  OneToManyTreeMap(final data.Table table) {
-    super(table, (BTreeMap<data.Key,NavigableCacheMap<V>>)db.treeMap(String.valueOf(System.identityHashCode(this))).counterEnable().create());
+  OneToManyTreeMap(final data.Table table, final String name) {
+    super(table, name);
   }
 
   @Override
@@ -36,14 +32,13 @@ public class OneToManyTreeMap<V extends data.Table> extends NavigableCacheMap<Na
     return subMap != null ? subMap : EMPTY;
   }
 
-  @SuppressWarnings("unchecked")
   void add(final data.Key key, final V value, final boolean addKey) {
     if (addKey)
       mask.add(key);
 
     NavigableCacheMap<V> valueMap = map.get(key);
     if (valueMap == null)
-      map.put(key, valueMap = new NavigableCacheMap<>(table, (NavigableMap<data.Key,V>)db.treeMap(name + ":" + key).counterEnable().create()));
+      map.put(key, valueMap = new NavigableCacheMap<>(table, name + ":" + key));
 
     valueMap.put(value.getKey().immutable(), value);
   }

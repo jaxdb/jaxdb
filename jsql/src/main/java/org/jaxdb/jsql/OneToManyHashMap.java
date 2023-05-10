@@ -31,7 +31,7 @@ public class OneToManyHashMap<V extends data.Table> extends CacheMap<Map<data.Ke
   @SuppressWarnings("unchecked")
   private final HTreeMap<data.Key,Map<data.Key,V>> map = (HTreeMap<data.Key,Map<data.Key,V>>)db.hashMap(name).counterEnable().create();
 
-  OneToManyHashMap(final data.Table table) {
+  OneToManyHashMap(final data.Table table, final String name) {
     super(table);
   }
 
