@@ -30,7 +30,6 @@ import org.openjax.json.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("rawtypes")
 public class DefaultCache implements Notification.DefaultListener<data.Table> {
   private static final Logger logger = LoggerFactory.getLogger(DefaultCache.class);
 

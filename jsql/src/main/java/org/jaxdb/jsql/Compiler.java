@@ -39,7 +39,6 @@ import java.util.Map;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.jsql.Command.CaseImpl;
-import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.jsql.keyword.Select;
@@ -330,7 +329,7 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   void compileOrderBy(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
-    final Column<?>[] orderBy = select.orderBy;
+    final data.Column<?>[] orderBy = select.orderBy;
     final int[] orderByIndexes = select.orderByIndexes;
     if (orderBy == null && orderByIndexes == null)
       return;
@@ -527,7 +526,14 @@ abstract class Compiler extends DbVendorCompiler {
     if (column.setByCur == data.Column.SetBy.USER || column.setByCur == data.Column.SetBy.SYSTEM && (column.primaryIndexType != null || column.isKeyForUpdate))
       return true;
 
-    if (column.generateOnInsert == null || column.generateOnInsert == GenerateOn.AUTO_GENERATED)
+    if (column.generateOnInsert == null) {
+      if (column.hasDefault)
+        column.setByCur = data.Column.SetBy.SYSTEM;
+
+      return false;
+    }
+
+    if (column.generateOnInsert == GenerateOn.AUTO_GENERATED)
       return false;
 
     if (modify)

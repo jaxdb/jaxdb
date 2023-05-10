@@ -23,8 +23,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.IndexType;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.util.DiscreteTopology;
 
@@ -41,7 +39,7 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
-    public Column clone() {
+    public data.Column clone() {
       return null;
     }
 
@@ -60,7 +58,7 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
-    boolean equals(final Column that) {
+    boolean equals(final data.Column that) {
       return false;
     }
 
@@ -113,7 +111,7 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
-    Column scaleTo(final Column column) {
+    data.Column scaleTo(final data.Column column) {
       return null;
     }
 
@@ -189,8 +187,8 @@ public abstract class Condition<V> extends data.Primitive<V> {
     super(owner, mutable, copy);
   }
 
-  Condition(final data.Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends data.Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-    super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
+  Condition(final data.Table owner, final boolean mutable, final String name, final data.IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends data.Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+    super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
   }
 
   abstract void collectColumns(ArrayList<data.Column<?>> list);
