@@ -29,6 +29,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,10 +41,8 @@ import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.jsql.Notification.DefaultListener;
-import org.jaxdb.jsql.RowIterator.Cacheability;
 import org.libj.sql.AuditConnection;
 import org.libj.util.ConcurrentNullHashMap;
-import org.libj.util.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -269,33 +268,57 @@ public class Database extends Notifiable {
     return connector.addNotificationListener0(insert, up, delete, notificationListener, queue, tables);
   }
 
-  private static final QueryConfig refreshQueryConfig = new QueryConfig.Builder().withCacheability(Cacheability.SELECT_CACHEABLE_ENTITY).build();
+  static final QueryConfig withoutCacheSelectEntity = new QueryConfig.Builder().withCacheSelectEntity(false).build();
+
+  static Notifier<?>[] getNotifiers(final Iterator<Connector> iterator, final int depth) throws IOException, SQLException {
+    if (!iterator.hasNext())
+      return depth == 0 ? null : new Notifier<?>[depth];
+
+    final Notifier<?> notifier = iterator.next().getNotifier();
+    if (notifier == null)
+      return getNotifiers(iterator, depth);
+
+    final Notifier<?>[] notifiers = getNotifiers(iterator, depth + 1);
+    notifiers[depth] = notifier;
+    return notifiers;
+  }
 
   @FunctionalInterface
   public static interface OnConnectPreLoad {
-    void accept(data.Table t, Connection u) throws IOException, SQLException;
+    void accept(data.Table t) throws IOException, SQLException;
 
-    public static final OnConnectPreLoad ALL = (final data.Table table, final Connection connection) -> {
+    public static final OnConnectPreLoad ALL = (final data.Table table) -> {
       if (!table._mutable$)
         throw new IllegalArgumentException("Table is mutable");
 
-      try (final RowIterator<?> rows =
-        SELECT(table).
-        FROM(table)
-          .execute(connection, refreshQueryConfig)) {
-        while (rows.nextRow());
+      final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.getSchema().getClass());
+      final Notifier<?>[] notifiers = getNotifiers(dataSourceIdToConnectors.values().iterator(), 0);
+      if (notifiers != null) {
+        try (final RowIterator<data.Table> rows =
+          SELECT(table).
+          FROM(table)
+            .execute(dataSourceIdToConnectors.get(null), withoutCacheSelectEntity)) {
+          while (rows.nextRow()) {
+            final data.Table row = rows.nextEntity();
+            for (final Notifier<?> notifier : notifiers) // [A]
+              notifier.onSelect(row, false);
+          }
+
+          table.getCache().addKey(data.Key.ALL);
+        }
       }
     };
 
-    public static final OnConnectPreLoad NONE = (final data.Table table, final Connection connection) -> {};
+    public static final OnConnectPreLoad NONE = (final data.Table table) -> {};
   }
 
   public static class CacheConfig {
-    private final Database database;
-    private final Connector connector;
-    private final DefaultListener<data.Table> notificationListener;
-    private final Queue<Notification<data.Table>> queue;
-    private final ArrayList<data.Table> tables = new ArrayList<>();
+    private Database database;
+    private Connector connector;
+    private DefaultListener<data.Table> notificationListener;
+    private Queue<Notification<data.Table>> queue;
+    private ArrayList<OnConnectPreLoad> onConnectPreLoads = new ArrayList<>();
+    private ArrayList<data.Table> tables = new ArrayList<>();
 
     private CacheConfig(final Database database, final Connector connector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue) {
       this.database = database;
@@ -307,7 +330,8 @@ public class Database extends Notifiable {
     public CacheConfig with(final data.Table ... tables) {
       for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
         final data.Table table = tables[i];
-        table.configureCache(OnConnectPreLoad.ALL, Cacheability.SELECT_CACHEABLE_ENTITY);
+        onConnectPreLoads.add(OnConnectPreLoad.ALL);
+        table.setCacheSelectEntity(true);
         this.tables.add(assertNotNull(table));
       }
 
@@ -317,27 +341,30 @@ public class Database extends Notifiable {
     public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final data.Table ... tables) {
       for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
         final data.Table table = tables[i];
-        table.configureCache(assertNotNull(onConnectPreLoad), Cacheability.SELECT_CACHEABLE_ENTITY);
+        onConnectPreLoads.add(onConnectPreLoad);
+        table.setCacheSelectEntity(true);
         this.tables.add(assertNotNull(table));
       }
 
       return this;
     }
 
-    public CacheConfig with(final Cacheability cacheability, final data.Table ... tables) {
+    public CacheConfig with(final boolean cacheSelectEntity, final data.Table ... tables) {
       for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
         final data.Table table = tables[i];
-        table.configureCache(OnConnectPreLoad.ALL, cacheability);
+        onConnectPreLoads.add(OnConnectPreLoad.ALL);
+        table.setCacheSelectEntity(cacheSelectEntity);
         this.tables.add(assertNotNull(table));
       }
 
       return this;
     }
 
-    public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final Cacheability cacheability, final data.Table ... tables) {
+    public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final boolean cacheSelectEntity, final data.Table ... tables) {
       for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
         final data.Table table = tables[i];
-        table.configureCache(assertNotNull(onConnectPreLoad), cacheability);
+        onConnectPreLoads.add(onConnectPreLoad);
+        table.setCacheSelectEntity(cacheSelectEntity);
         this.tables.add(assertNotNull(table));
       }
 
@@ -346,7 +373,17 @@ public class Database extends Notifiable {
 
     private void commit() throws IOException, SQLException {
       database.cacheConfigured = true;
-      database.addNotificationListener(connector, INSERT, UPGRADE, DELETE, notificationListener, queue, tables.toArray(new data.Table[tables.size()]));
+      final data.Table[] array = tables.toArray(new data.Table[tables.size()]);
+      database.addNotificationListener(connector, INSERT, UPGRADE, DELETE, notificationListener, queue, array);
+      for (int i = 0, i$ = array.length; i < i$; ++i) // [A]
+        onConnectPreLoads.get(i).accept(array[i]);
+
+      database = null;
+      connector = null;
+      notificationListener = null;
+      queue = null;
+      onConnectPreLoads = null;
+      tables = null;
     }
   }
 
@@ -362,9 +399,9 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onConnect(final Connection connection, final data.Table table, final OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
+  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
     if (schema != null)
-      schema.onConnect(connection, table, onConnectPreLoad);
+      schema.onConnect(connection, table);
   }
 
   @Override
@@ -377,12 +414,6 @@ public class Database extends Notifiable {
   void onSelect(final data.Table row, final boolean addKey) {
     if (schema != null)
       schema.onSelect(row, addKey);
-  }
-
-  @Override
-  void onSelectRange(final data.Table table, final Interval<type.Key>[] intervals) {
-    if (schema != null)
-      schema.onSelectRange(table, intervals);
   }
 
   @Override

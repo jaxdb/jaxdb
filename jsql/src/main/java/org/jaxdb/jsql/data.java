@@ -50,9 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
-import org.jaxdb.jsql.RowIterator.Cacheability;
-import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.QueryConfig.Concurrency;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
@@ -69,6 +67,7 @@ import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
 import org.libj.util.DiscreteTopologies;
 import org.libj.util.DiscreteTopology;
+import org.libj.util.Interval;
 import org.libj.util.function.Throwing;
 
 public final class data {
@@ -4078,6 +4077,9 @@ public final class data {
   }
 
   public static final class Key extends type.Key {
+    static final Key ALL = new Key(null);
+    static final Key[] ALLS = {ALL};
+
     private static final data.ARRAY<?>[] _array = {data.ARRAY()};
     private static final data.BIGINT[] _bigint = {data.BIGINT()};
     private static final data.BINARY[] _binary = {data.BINARY()};
@@ -5124,8 +5126,8 @@ public final class data {
       compilation.compiler.compile(this, compilation, isExpression);
     }
 
-    void configureCache(final OnConnectPreLoad onConnectPreLoad, final Cacheability cacheability) {
-      singleton().configureCache(onConnectPreLoad, cacheability);
+    void setCacheSelectEntity(final boolean cacheSelectEntity) {
+      singleton().setCacheSelectEntity(cacheSelectEntity);
     }
 
     @Override
@@ -5133,12 +5135,12 @@ public final class data {
       return this;
     }
 
-    OneToOneMap<? extends data.Table> getCache() {
+    CacheMap<? extends data.Table> getCache() {
       return singleton().getCache();
     }
 
-    Cacheability getCacheability() {
-      return singleton().getCacheability();
+    boolean getCacheSelectEntity() {
+      return singleton().getCacheSelectEntity();
     }
 
     @Override
@@ -5175,10 +5177,6 @@ public final class data {
 
     final data.MutableKey getKeyOld() {
       return _primaryKey$Old;
-    }
-
-    OnConnectPreLoad getOnConnectPreLoad() {
-      return singleton().getOnConnectPreLoad();
     }
 
     @Override

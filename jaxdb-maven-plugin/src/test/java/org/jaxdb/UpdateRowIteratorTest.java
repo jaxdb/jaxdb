@@ -14,8 +14,8 @@ import java.util.Random;
 
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.QueryConfig;
+import org.jaxdb.jsql.QueryConfig.Concurrency;
 import org.jaxdb.jsql.RowIterator;
-import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;

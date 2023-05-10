@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql;
 
-public class OneToOneTreeMap<V extends data.Table> extends NavigableCacheMap<V> implements OneToOneMap<V> {
+public class OneToOneTreeMap<V extends data.Table> extends TreeCacheMap<V> implements OneToOneMap<V> {
   OneToOneTreeMap(final data.Table table, final String name) {
     super(table, name);
   }

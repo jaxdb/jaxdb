@@ -22,13 +22,10 @@ import static org.libj.lang.Assertions.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Map;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.libj.lang.ObjectUtil;
-import org.libj.util.Interval;
 import org.openjax.json.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,9 +87,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   }
 
   @Override
-  public void onConnect(final Connection connection, final data.Table table, final OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
-    if (logger.isTraceEnabled()) logger.trace("onConnect(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + table.getName() + "\"," + ObjectUtil.simpleIdentityString(onConnectPreLoad) + ")");
-    onConnectPreLoad.accept(table, connection);
+  public void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
+    if (logger.isTraceEnabled()) logger.trace("onConnect(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + table.getName() + "\")");
   }
 
   @Override
@@ -103,15 +99,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
 
   @Override
   public void onSelect(final data.Table row, final boolean addKey) {
-    if (logger.isTraceEnabled()) logger.trace("onSelect(" + log(row) + ")");
+    if (logger.isTraceEnabled()) logger.trace("onSelect(" + log(row) + "," + addKey + ")");
     onSelectInsert(row.getCache(), null, -1, row, addKey);
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public void onSelectRange(final data.Table table, final Interval<type.Key>[] intervals) {
-    if (logger.isTraceEnabled()) logger.trace("onSelectRange(" + log(table) + "," + Arrays.toString(intervals) + ")");
-    ((OneToOneTreeMap)table.getCache()).addKey(intervals); // Guaranteed to be OneToOneTreeMap, because that's the only map for which Interval applies
   }
 
   @Override
@@ -120,7 +109,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     return onSelectInsert(row.getCache(), sessionId, timestamp, row, true);
   }
 
-  protected data.Table onSelectInsert(final OneToOneMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row, final boolean addKey) {
+  protected data.Table onSelectInsert(final CacheMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row, final boolean addKey) {
     Exception exception = null;
     try {
       final data.Table entity = cache.get(row.getKey());
@@ -226,7 +215,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
 
   protected void delete(final data.Table row) {
     if (logger.isTraceEnabled()) logger.trace("delete(" + log(row) + ")");
-    final OneToOneMap<? extends data.Table> cache = row.getCache();
+    final CacheMap<? extends data.Table> cache = row.getCache();
     final data.MutableKey key = row.getKey();
     if (key != null)
       cache.remove(key);

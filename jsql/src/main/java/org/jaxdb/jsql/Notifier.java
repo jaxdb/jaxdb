@@ -35,7 +35,6 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
@@ -44,7 +43,6 @@ import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Numbers;
 import org.libj.lang.ObjectUtil;
 import org.libj.util.ArrayUtil;
-import org.libj.util.Interval;
 import org.libj.util.function.Throwing;
 import org.openjax.json.JSON;
 import org.openjax.json.JSON.Type;
@@ -196,7 +194,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
       if (notificationListenerToActions.size() > 0)
         for (final Notification.Listener<T> listener : notificationListenerToActions.keySet()) // [S]
-          listener.onConnect(connection, table, table.getOnConnectPreLoad());
+          listener.onConnect(connection, table);
     }
 
     void onFailure(final String sessionId, final long timestamp, final Exception e) {
@@ -587,7 +585,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       // If `this.connection != connection` it means the onConnect(data.Table) call
       // was not made in reconnect(), so invoke it directly for each new table.
       for (final T table : tables) // [A]
-        notificationListener.onConnect(connection, table, table.getOnConnectPreLoad());
+        notificationListener.onConnect(connection, table);
 
       // Activate triggers for the tables
       listenTriggers(connection);
@@ -606,7 +604,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onConnect(final Connection connection, final data.Table table, final OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
+  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
       return;
@@ -615,7 +613,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          entry.getKey().onConnect(connection, table, onConnectPreLoad);
+          entry.getKey().onConnect(connection, table);
   }
 
   @Override
@@ -644,20 +642,6 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.SELECT.ordinal()] != null)
           Action.SELECT.onSelect(entry.getKey(), row, addKey);
-  }
-
-  @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  void onSelectRange(final data.Table table, final Interval<type.Key>[] intervals) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
-    if (tableNotifier == null)
-      return;
-
-    final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
-    if (notificationListenerToActions.size() > 0)
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.SELECT.ordinal()] != null)
-          Action.SELECT.onSelectRange(entry.getKey(), table, intervals);
   }
 
   @Override

@@ -127,8 +127,8 @@ class Relation {
     return
       "\n    " + keyClauseColumns + ";" +
       "\n    static " + indexType.getConcreteClass(declarationName) + " " + cacheInstanceName + ";\n" +
-      "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + keyArgs + ");" +
+      "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      return " + declarationName + "." + cacheInstanceName + ".select(" + keyArgs + ");" +
       "\n    }\n" +
       writeGetRangeMethod(returnType) +
       "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheInstanceName + "() {" +

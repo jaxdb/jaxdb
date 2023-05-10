@@ -16,9 +16,15 @@
 
 package org.jaxdb.jsql;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.SortedMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.xml.transform.TransformerException;
@@ -84,10 +90,119 @@ public abstract class OnSelectTest {
     }, new ConcurrentLinkedQueue<>(), c -> c.with(classicmodels.getTables()));
   }
 
+  private static void testTreeSingle(final NavigableMap<data.Key,classicmodels.Office> map, final boolean selectCalled) throws IOException, SQLException {
+    for (int i = 1; i <= 7; ++i) { // [N]
+      assertFalse(TestCommand.Select.called());
+      final classicmodels.Office o = classicmodels.Office.officeCodeToOffice(i);
+      assertEquals(selectCalled, TestCommand.Select.called());
+      assertEquals(selectCalled ? i : 7, map.size());
+      assertEquals(i, o.officeCode.getAsInt());
+    }
+  }
+
   @Test
   @Spec(order = 1)
-  public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    classicmodels.ProductLine.productLineToProductLine().select(null, null);
+  public void testTreeSingle(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final NavigableMap<data.Key,classicmodels.Office> map = classicmodels.Office.officeCodeToOffice();
+
+    assertFalse(TestCommand.Select.called());
+    assertEquals(0, map.size());
+
+    classicmodels.Office o = classicmodels.Office.officeCodeToOffice(0);
+
+    assertTrue(TestCommand.Select.called());
+    assertEquals(0, map.size());
+    assertNull(o);
+
+    testTreeSingle(map, true);
+    testTreeSingle(map, false);
+  }
+
+  private static void testTreeRange(final NavigableMap<data.Key,classicmodels.Office> map, final boolean selectCalled) throws IOException, SQLException {
+    assertFalse(TestCommand.Select.called());
+    SortedMap<data.Key,classicmodels.Office> sub = classicmodels.Office.officeCodeToOffice(-3, 2);
+    assertEquals(selectCalled, TestCommand.Select.called());
+    assertEquals(selectCalled ? 1 : 7, map.size());
+    assertEquals(1, sub.size());
+    assertEquals(1, sub.values().iterator().next().officeCode.getAsInt());
+
+    assertFalse(TestCommand.Select.called());
+    sub = classicmodels.Office.officeCodeToOffice(1, 4);
+    assertEquals(selectCalled, TestCommand.Select.called());;
+    assertEquals(selectCalled ? 3 : 7, map.size());
+    assertEquals(3, sub.size());
+    Iterator<classicmodels.Office> iterator = sub.values().iterator();
+    for (int i = 1; i <= 3; ++i) // [N]
+      assertEquals(i, iterator.next().officeCode.getAsInt());
+
+    assertFalse(TestCommand.Select.called());
+    sub = classicmodels.Office.officeCodeToOffice(5, 9);
+    assertEquals(selectCalled, TestCommand.Select.called());;
+    assertEquals(selectCalled ? 6 : 7, map.size());
+    assertEquals(3, sub.size());
+    iterator = sub.values().iterator();
+    for (int i = 5; i <= 7; ++i) // [N]
+      assertEquals(i, iterator.next().officeCode.getAsInt());
+
+    assertFalse(TestCommand.Select.called());
+    sub = classicmodels.Office.officeCodeToOffice(0, 20);
+    assertEquals(selectCalled, TestCommand.Select.called());;
+    assertEquals(7, map.size());
+    assertEquals(7, sub.size());
+    iterator = sub.values().iterator();
+    for (int i = 1; i <= 7; ++i) // [N]
+      assertEquals(i, iterator.next().officeCode.getAsInt());
+  }
+
+  @Test
+  @Spec(order = 2)
+  public void testTreeRange(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final NavigableMap<data.Key,classicmodels.Office> map = classicmodels.Office.officeCodeToOffice();
+
+    assertFalse(TestCommand.Select.called());
+    assertEquals(0, map.size());
+
+    SortedMap<data.Key,classicmodels.Office> sub = classicmodels.Office.officeCodeToOffice(-5, 1);
+
+    assertTrue(TestCommand.Select.called());
+    assertEquals(0, map.size());
+    assertEquals(0, sub.size());
+
+    testTreeRange(map, true);
+    testTreeRange(map, false);
+  }
+
+  private static final String[] productLines = {"Classic Cars", "Motorcycles", "Planes", "Ships", "Trains", "Trucks and Buses", "Vintage Cars"};
+  private static final int noProductLines = productLines.length;
+
+  private static void testHashSingle(final Map<data.Key,classicmodels.ProductLine> map, final boolean selectCalled) throws IOException, SQLException {
+    for (int i = 0; i < noProductLines;) { // [N]
+      assertFalse(TestCommand.Select.called());
+      final String productLine = productLines[i];
+      classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine(productLine);
+      assertTrue(TestCommand.Select.called());
+      ++i;
+      assertEquals(selectCalled ? i : noProductLines, map.size());
+      assertEquals(productLine, pl.productLine.get());
+    }
+  }
+
+  @Test
+  @Spec(order = 1)
+  public void testHashSingle(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final Map<data.Key,classicmodels.ProductLine> map = classicmodels.ProductLine.productLineToProductLine();
+
+    assertFalse(TestCommand.Select.called());
+    assertEquals(0, map.size());
+
+    classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine("foo");
+
+    assertTrue(TestCommand.Select.called());
+    assertEquals(0, map.size());
+    assertNull(pl);
+
+    testHashSingle(map, true);
+    testHashSingle(map, false);
   }
 
   @AfterClass

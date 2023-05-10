@@ -36,7 +36,6 @@ import org.jaxdb.jsql.Callbacks.OnCommit;
 import org.jaxdb.jsql.Callbacks.OnExecute;
 import org.jaxdb.jsql.Callbacks.OnNotify;
 import org.jaxdb.jsql.Callbacks.OnRollback;
-import org.jaxdb.jsql.RowIterator.Cacheability;
 import org.jaxdb.jsql.keyword.Case;
 import org.jaxdb.jsql.keyword.Delete.DELETE;
 import org.jaxdb.jsql.keyword.Delete._DELETE;
@@ -53,7 +52,6 @@ import org.libj.sql.AuditStatement;
 import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.ArrayUtil;
-import org.libj.util.Interval;
 import org.libj.util.function.ToBooleanFunction;
 
 abstract class Command<E> extends Keyword implements Closeable {
@@ -694,8 +692,6 @@ abstract class Command<E> extends Keyword implements Closeable {
             throw SQLExceptions.toStrongType(e);
         }
 
-        private static Interval[] all = {new Interval<>(null, null)};
-
         @SuppressWarnings("unchecked")
         private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
@@ -733,10 +729,10 @@ abstract class Command<E> extends Keyword implements Closeable {
 
               isEntityOnlySelect = true;
               final Object[][] protoSubjectIndexes = compile(entities, entities.length, 0, 0);
-              final Cacheability cacheability = QueryConfig.getCacheability(contextQueryConfig, defaultQueryConfig);
-              compile(compilation, false, cacheability);
+              final boolean cacheSelectEntity = QueryConfig.getCacheSelectEntity(contextQueryConfig, defaultQueryConfig);
+              compile(compilation, false, cacheSelectEntity);
 
-              final Interval<type.Key>[] rangeIntervals = isEntityOnlySelect && !isConditionalSelect ? all : null;
+              final data.Key[] rangeIntervals = isEntityOnlySelect && !isConditionalSelect ? data.Key.ALLS : null;
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
@@ -755,6 +751,17 @@ abstract class Command<E> extends Keyword implements Closeable {
                 private data.Table currentTable;
                 private boolean mustFetchRow = false;
 
+                private boolean flushCacheBuffer() {
+                  if (cacheBuffer == null)
+                    return false;
+
+                  for (int j = 0, j$ = cacheBuffer.size(); j < j$; ++j) // [RA]
+                    notifier.onSelect(cacheBuffer.get(j), false);
+
+                  cacheBuffer = null;
+                  return true;
+                }
+
                 @Override
                 public boolean nextRow() throws SQLException {
                   if (endReached)
@@ -762,14 +769,11 @@ abstract class Command<E> extends Keyword implements Closeable {
 
                   try {
                     if (endReached = !resultSet.next()) {
-                      if (cacheBuffer != null)
-                        for (int j = 0, j$ = cacheBuffer.size(); j < j$; ++j) // [RA]
-                          notifier.onSelect(cacheBuffer.get(j), false);
-                      else if (notifier == null)
+                      if (notifier == null || !flushCacheBuffer())
                         return false;
 
                       if (rangeIntervals != null)
-                        notifier.onSelectRange(currentTable, rangeIntervals);
+                        table.getCache().addKey(rangeIntervals);
 
                       return false;
                     }
@@ -795,8 +799,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                   if (notifier == null)
                     return;
 
-                  final Cacheability cacheability = row.getCacheability();
-                  if (cacheability == null)
+                  if (!row.getCacheSelectEntity())
                     return;
 
                   if (rangeIntervals == null) {
@@ -890,6 +893,8 @@ abstract class Command<E> extends Keyword implements Closeable {
 
                 @Override
                 public void close() throws SQLException {
+                  flushCacheBuffer();
+
                   SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
                   e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
                   if (closeConnection)
@@ -898,7 +903,6 @@ abstract class Command<E> extends Keyword implements Closeable {
                   prototypes = null;
                   cachedTables = null;
                   currentTable = null;
-                  cacheBuffer = null;
 
                   assertRowIteratorClosed(endReached, isEntityOnlySelect, e, isCacheableRowIteratorFullConsume);
                 }
@@ -1092,10 +1096,10 @@ abstract class Command<E> extends Keyword implements Closeable {
             compiler.compileFor(this, compilation);
         }
 
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           compile(compilation, isExpression);
-          if (cacheability != null && !isEntityOnlySelect)
-            throw new IllegalStateException(cacheability + " can only be fulfilled for queries that exclusively select entities instead of individual columns");
+          if (cacheSelectEntity && !isEntityOnlySelect)
+            throw new IllegalStateException(cacheSelectEntity + " can only be fulfilled for queries that exclusively select entities instead of individual columns");
         }
       }
     }

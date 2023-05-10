@@ -22,62 +22,12 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.jaxdb.jsql.QueryConfig.Concurrency;
+import org.jaxdb.jsql.QueryConfig.Holdability;
+import org.jaxdb.jsql.QueryConfig.Type;
 import org.libj.sql.exception.SQLExceptions;
 
 public abstract class RowIterator<D extends type.Entity> implements AutoCloseable, Iterable<D> {
-  public enum Type {
-    FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
-    SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
-    SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
-
-    private static final Type[] values = values();
-    final int index;
-
-    private Type(final int index) {
-      this.index = index;
-    }
-
-    public static Type fromInt(final int concurrency) {
-      return values[concurrency - ResultSet.TYPE_FORWARD_ONLY];
-    }
-  }
-
-  public enum Concurrency {
-    READ_ONLY(ResultSet.CONCUR_READ_ONLY),
-    UPDATABLE(ResultSet.CONCUR_UPDATABLE);
-
-    private static final Concurrency[] values = values();
-    final int index;
-
-    private Concurrency(final int index) {
-      this.index = index;
-    }
-
-    public static Concurrency fromInt(final int concurrency) {
-      return values[concurrency - ResultSet.CONCUR_READ_ONLY];
-    }
-  }
-
-  public enum Holdability {
-    HOLD_CURSORS_OVER_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT),
-    CLOSE_CURSORS_AT_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT);
-
-    private static final Holdability[] values = values();
-    final int index;
-
-    private Holdability(final int index) {
-      this.index = index;
-    }
-
-    public static Holdability fromInt(final int holdability) {
-      return values[holdability - ResultSet.HOLD_CURSORS_OVER_COMMIT];
-    }
-  }
-
-  public enum Cacheability {
-    SELECT_CACHEABLE_ENTITY;
-  }
-
   final ResultSet resultSet;
   private final Type type;
   private final Concurrency concurrency;
@@ -96,8 +46,8 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
 
   public RowIterator(final ResultSet resultSet) {
     this.resultSet = resultSet;
-    this.type = Type.FORWARD_ONLY;
-    this.concurrency = Concurrency.READ_ONLY;
+    this.type = QueryConfig.defaultType;
+    this.concurrency = QueryConfig.defaultConcurrency;
   }
 
   protected D[] getRow() {

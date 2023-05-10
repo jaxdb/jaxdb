@@ -22,9 +22,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
-import org.libj.util.Interval;
-
 public final class Notification<T extends data.Table> {
   public abstract static class Action implements Comparable<Action>, Serializable {
     abstract <T extends data.Table>void action(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
@@ -34,31 +31,6 @@ public final class Notification<T extends data.Table> {
         throw new UnsupportedOperationException("Unsupported action: " + name);
 
       action(sessionId, timestamp, listener, keyForUpdate, row);
-    }
-
-    public static final class SELECT extends Action {
-      private SELECT() {
-        super("SELECT", "SELECT", (byte)0, Notification.SelectListener.class);
-      }
-
-      @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        throw new UnsupportedOperationException();
-      }
-
-      <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row, final boolean addKey) {
-        if (!super.listenerClass.isInstance(listener))
-          throw new UnsupportedOperationException("Unsupported action: " + super.name);
-
-        ((SelectListener<T>)listener).onSelect(row, addKey);
-      }
-
-      <T extends data.Table>void onSelectRange(final Notification.Listener<T> listener, final T table, final Interval<type.Key>[] intervals) {
-        if (!super.listenerClass.isInstance(listener))
-          throw new UnsupportedOperationException("Unsupported action: " + super.name);
-
-        ((SelectListener<T>)listener).onSelectRange(table, intervals);
-      }
     }
 
     public static final class INSERT extends Action {
@@ -118,28 +90,47 @@ public final class Notification<T extends data.Table> {
       }
     }
 
-    public static final SELECT SELECT;
-    public static final INSERT INSERT;
     static final UP UP = new UP() {
       @Override
       <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         throw new UnsupportedOperationException();
       }
     };
+
+    public static final class SELECT extends Action {
+      private SELECT() {
+        super("SELECT", "SELECT", (byte)3, Notification.SelectListener.class);
+      }
+
+      @Override
+      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        throw new UnsupportedOperationException();
+      }
+
+      <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row, final boolean addKey) {
+        if (!super.listenerClass.isInstance(listener))
+          throw new UnsupportedOperationException("Unsupported action: " + super.name);
+
+        ((SelectListener<T>)listener).onSelect(row, addKey);
+      }
+    }
+
+    public static final INSERT INSERT;
     public static final UPDATE UPDATE;
     public static final UPGRADE UPGRADE;
     public static final DELETE DELETE;
+    public static final SELECT SELECT;
 
     private static final Action[] values = {
-      SELECT = new SELECT(),
       INSERT = new INSERT(),
       UPDATE = new UPDATE(),
       UPGRADE = new UPGRADE(),
-      DELETE = new DELETE()
+      DELETE = new DELETE(),
+      SELECT = new SELECT()
     };
 
     public static Action valueOf(final String name) {
-      return "SELECT".equals(name) ? SELECT : "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "UPGRADE".equals(name) ? UPGRADE : "DELETE".equals(name) ? DELETE : null;
+      return "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "UPGRADE".equals(name) ? UPGRADE : "DELETE".equals(name) ? DELETE : "SELECT".equals(name) ? SELECT : null;
     }
 
     public static Action[] values() {
@@ -184,7 +175,6 @@ public final class Notification<T extends data.Table> {
 
   public interface SelectListener<T extends data.Table> extends Listener<T> {
     void onSelect(T row, boolean addKey);
-    void onSelectRange(T row, Interval<type.Key>[] intervals);
   }
 
   @FunctionalInterface
@@ -208,11 +198,10 @@ public final class Notification<T extends data.Table> {
      *
      * @param connection The {@link Connection}.
      * @param table The {@link data.Table}.
-     * @param onConnectPreLoad The {@link OnConnectPreLoad}.
      * @throws IOException If an I/O error has occurred.
      * @throws SQLException If a SQL error has occurred.
      */
-    default void onConnect(Connection connection, T table, OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
+    default void onConnect(Connection connection, T table) throws IOException, SQLException {
     }
 
     /**

@@ -207,7 +207,7 @@
     <column name="image" xsi:type="blob" length="65536"/>
 
     <constraints>
-      <primaryKey>
+      <primaryKey using="HASH">
         <column name="product_line"/>
       </primaryKey>
     </constraints>
@@ -236,7 +236,7 @@
     <column name="msrp" xsi:type="decimal" template="price"/>
 
     <constraints>
-      <primaryKey>
+      <primaryKey using="HASH">
         <column name="code"/>
       </primaryKey>
     </constraints>

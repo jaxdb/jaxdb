@@ -16,19 +16,21 @@
 
 package org.jaxdb.jsql;
 
-public class OneToManyTreeMap<V extends data.Table> extends NavigableCacheMap<NavigableCacheMap<V>> implements OneToManyMap<NavigableCacheMap<V>> {
+import java.util.NavigableMap;
+
+public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
   OneToManyTreeMap(final data.Table table, final String name) {
     super(table, name);
   }
 
   @Override
-  public NavigableCacheMap<V> superGet(final data.Key key) {
+  public NavigableMap<data.Key,V> superGet(final data.Key key) {
     return map.get(key);
   }
 
   @Override
-  public NavigableCacheMap<V> get(final Object key) {
-    final NavigableCacheMap<V> subMap = map.get(key);
+  public NavigableMap<data.Key,V> get(final Object key) {
+    final NavigableMap<data.Key,V> subMap = map.get(key);
     return subMap != null ? subMap : EMPTY;
   }
 
@@ -36,21 +38,21 @@ public class OneToManyTreeMap<V extends data.Table> extends NavigableCacheMap<Na
     if (addKey)
       mask.add(key);
 
-    NavigableCacheMap<V> valueMap = map.get(key);
+    NavigableMap<data.Key,V> valueMap = map.get(key);
     if (valueMap == null)
-      map.put(key, valueMap = new NavigableCacheMap<>(table, name + ":" + key));
+      map.put(key, valueMap = new TreeCacheMap<>(table, name + ":" + key));
 
     valueMap.put(value.getKey().immutable(), value);
   }
 
   void remove(final type.Key key, final V value) {
-    final NavigableCacheMap<V> subMap = map.get(key);
+    final NavigableMap<data.Key,V> subMap = map.get(key);
     if (subMap != null)
       subMap.remove(value.getKey());
   }
 
   void removeOld(final type.Key key, final V value) {
-    final NavigableCacheMap<V> subMap = map.get(key);
+    final NavigableMap<data.Key,V> subMap = map.get(key);
     if (subMap != null)
       subMap.remove(value.getKeyOld());
   }

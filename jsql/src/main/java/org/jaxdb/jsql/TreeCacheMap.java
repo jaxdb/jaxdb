@@ -22,13 +22,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -37,42 +35,14 @@ import org.libj.util.Interval;
 import org.mapdb.BTreeMap;
 import org.openjax.binarytree.IntervalTreeSet;
 
-public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<data.Key,V> {
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  static final NavigableCacheMap EMPTY = new NavigableCacheMap(null, null);
+public class TreeCacheMap<V> extends CacheMap<V> implements NavigableMap<data.Key,V> {
+  @SuppressWarnings("rawtypes")
+  static final TreeCacheMap EMPTY = new TreeCacheMap(null, null);
 
-  static Notifier<?>[] getNotifiers(final Iterator<Connector> iterator, final int depth) throws IOException, SQLException {
-    if (!iterator.hasNext())
-      return depth == 0 ? null : new Notifier<?>[depth];
-
-    final Notifier<?> notifier = iterator.next().getNotifier();
-    if (notifier == null)
-      return getNotifiers(iterator, depth);
-
-    final Notifier<?>[] notifiers = getNotifiers(iterator, depth + 1);
-    notifiers[depth] = notifier;
-    return notifiers;
-  }
-
-  private static data.BOOLEAN and(final type.Column<?> c, final Object min, final Object max) {
-    return AND(new ComparisonPredicate.Gte<>(c, min), new ComparisonPredicate.Lt<>(c, max));
-  }
-
-  private static data.BOOLEAN and(final Interval<type.Key> i) {
-    data.BOOLEAN and = null;
-    final type.Key min = i.getMin();
-    final type.Key max = i.getMax();
-    and = and(min.column(0), min.value(0), max.value(0));
-    for (int j = 1, i$ = min.length(); j < i$; ++j)
-      and = AND(and, and(min.column(j), min.value(j), max.value(j)));
-
-    return and;
-  }
-
-  private static data.BOOLEAN where(final Interval<type.Key>[] missings) {
-    data.BOOLEAN or = and(missings[0]);
-    for (int i = 1, i$ = missings.length; i < i$; ++i)
-      or = OR(or, and(missings[i]));
+  private static data.BOOLEAN where(final Interval<type.Key>[] intervals) {
+    data.BOOLEAN or = and(intervals[0]);
+    for (int i = 1, i$ = intervals.length; i < i$; ++i)
+      or = OR(or, and(intervals[i]));
 
     return or;
   }
@@ -82,14 +52,25 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
   final IntervalTreeSet<type.Key> mask = new IntervalTreeSet<>();
 
   @SuppressWarnings("unchecked")
-  NavigableCacheMap(final data.Table table, final String name) {
+  TreeCacheMap(final data.Table table, final String name) {
     this(table, name, (BTreeMap<data.Key,V>)db.treeMap(name).counterEnable().create());
   }
 
-  private NavigableCacheMap(final data.Table table, final String name, final NavigableMap<data.Key,V> map) {
+  private TreeCacheMap(final data.Table table, final String name, final NavigableMap<data.Key,V> map) {
     super(table);
     this.name = name;
     this.map = map;
+  }
+
+  @Override
+  final void addKey(final type.Key key) {
+    mask.add(key);
+  }
+
+  @Override
+  final void addKey(final type.Key[] keys) {
+    for (final type.Key key : keys)
+      mask.add(key);
   }
 
   @Override
@@ -97,37 +78,15 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
     return mask.contains(key);
   }
 
-  final void addKey(final Interval<type.Key>[] intervals) {
-    mask.addAll(intervals);
-  }
-
   public Interval<type.Key>[] diffKeys(final data.Key fromKey, final data.Key toKey) {
     return mask.difference(new Interval<>(fromKey, toKey));
   }
 
-  public final SortedMap<data.Key,V> select(final data.Key fromKey, final data.Key toKey) throws IOException, SQLException {
+  final SortedMap<data.Key,V> select(final data.Key fromKey, final data.Key toKey) throws IOException, SQLException {
     final Interval<type.Key>[] diff = diffKeys(fromKey, toKey);
     if (diff.length > 0) {
-      final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.getSchema().getClass());
-      final Notifier<?>[] notifiers = getNotifiers(dataSourceIdToConnectors.values().iterator(), 0);
-      if (notifiers == null)
-        return null;
-
-      try (final RowIterator<? extends data.Table> rows =
-        SELECT(table).
-        FROM(table).
-        WHERE(where(diff))
-          .execute(dataSourceIdToConnectors.get(null))) {
-
-        while (rows.nextRow()) {
-          final data.Table row = rows.nextEntity();
-          for (final Notifier<?> notifier : notifiers) // [A]
-            notifier.onSelect(row, false);
-        }
-
-        for (final Notifier<?> notifier : notifiers) // [A]
-          notifier.onSelectRange(table, diff);
-      }
+      select(where(diff));
+      mask.addAll(diff);
     }
 
     return subMap(fromKey, toKey);
@@ -224,8 +183,8 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
   }
 
   @Override
-  public NavigableCacheMap<V> descendingMap() {
-    return new NavigableCacheMap<>(table, name, map.descendingMap());
+  public NavigableMap<data.Key,V> descendingMap() {
+    return new TreeCacheMap<>(table, name, map.descendingMap());
   }
 
   @Override
@@ -264,8 +223,8 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
   }
 
   @Override
-  public NavigableCacheMap<V> subMap(final data.Key fromKey, final boolean fromInclusive, final data.Key toKey, final boolean toInclusive) {
-    return new NavigableCacheMap<>(table, name, map.subMap(fromKey, fromInclusive, toKey, toInclusive));
+  public NavigableMap<data.Key,V> subMap(final data.Key fromKey, final boolean fromInclusive, final data.Key toKey, final boolean toInclusive) {
+    return new TreeCacheMap<>(table, name, map.subMap(fromKey, fromInclusive, toKey, toInclusive));
   }
 
   @Override
@@ -281,8 +240,8 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
   }
 
   @Override
-  public NavigableCacheMap<V> headMap(final data.Key toKey, final boolean inclusive) {
-    return new NavigableCacheMap<>(table, name, map.headMap(toKey, inclusive));
+  public NavigableMap<data.Key,V> headMap(final data.Key toKey, final boolean inclusive) {
+    return new TreeCacheMap<>(table, name, map.headMap(toKey, inclusive));
   }
 
   @Override
@@ -291,8 +250,8 @@ public class NavigableCacheMap<V> extends CacheMap<V> implements NavigableMap<da
   }
 
   @Override
-  public NavigableCacheMap<V> tailMap(final data.Key fromKey, final boolean inclusive) {
-    return new NavigableCacheMap<>(table, name, map.tailMap(fromKey, inclusive));
+  public NavigableMap<data.Key,V> tailMap(final data.Key fromKey, final boolean inclusive) {
+    return new TreeCacheMap<>(table, name, map.tailMap(fromKey, inclusive));
   }
 
   @Override

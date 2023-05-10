@@ -33,10 +33,8 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 import org.jaxdb.ddlx.GeneratorExecutionException;
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.OneToOneMap;
-import org.jaxdb.jsql.RowIterator.Cacheability;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
@@ -772,20 +770,14 @@ class TableMeta {
     final Collection<Relations<Relation>> allRelations = columnsToRelations.values();
     if (!isAbstract) {
       out.append("\n  private static final ").append(className).append(" $").append(instanceName).append(" = new ").append(className).append("(false, false) {");
-      out.append("\n    private ").append(OnConnectPreLoad.class.getCanonicalName()).append(" onConnectPreLoad;");
-      out.append("\n    private ").append(Cacheability.class.getCanonicalName()).append(" cacheability;\n");
+      out.append("\n    private boolean cacheSelectEntity;");
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final void configureCache(final ").append(OnConnectPreLoad.class.getCanonicalName()).append(" onConnectPreLoad, final ").append(Cacheability.class.getCanonicalName()).append(" cacheability) {");
-      out.append("\n      this.onConnectPreLoad = onConnectPreLoad;");
-      out.append("\n      this.cacheability = cacheability;");
+      out.append("\n    final void setCacheSelectEntity(final boolean cacheSelectEntity) {");
+      out.append("\n      this.cacheSelectEntity = cacheSelectEntity;");
       out.append("\n    }\n");
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final ").append(OnConnectPreLoad.class.getCanonicalName()).append(" getOnConnectPreLoad() {");
-      out.append("\n      return onConnectPreLoad;");
-      out.append("\n    }\n");
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final ").append(Cacheability.class.getCanonicalName()).append(" getCacheability() {");
-      out.append("\n      return cacheability;");
+      out.append("\n    final boolean getCacheSelectEntity() {");
+      out.append("\n      return cacheSelectEntity;");
       out.append("\n    }\n");
       out.append("\n    @").append(Override.class.getName());
       out.append("\n    final ").append(getConcreteClass(className)).append(" getCache() {");

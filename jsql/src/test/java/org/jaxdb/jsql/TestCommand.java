@@ -26,8 +26,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 
-import org.jaxdb.jsql.RowIterator.Cacheability;
-
 public abstract class TestCommand<E> extends Command<E> {
   public static class Select {
     @Target(ElementType.METHOD)
@@ -43,8 +41,17 @@ public abstract class TestCommand<E> extends Command<E> {
       boolean ignore();
     }
 
+    private static boolean called;
     private static ThreadLocal<AssertCommand> assertCommand = new ThreadLocal<>();
     private static ThreadLocal<AssertSelect> assertSelect = new ThreadLocal<>();
+
+    public static boolean called() {
+      if (!called)
+        return false;
+
+      called = false;
+      return true;
+    }
 
     public static void beforeInvokeExplosively(final Method method) {
       Select.assertCommand.set(method.getAnnotation(AssertCommand.class));
@@ -58,7 +65,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
       if (assertSelect.entityOnlySelect())
         return new QueryConfig.Builder()
-          .withCacheability(Cacheability.SELECT_CACHEABLE_ENTITY)
+          .withCacheSelectEntity(true)
           .withCacheableRowIteratorFullConsume(assertSelect.rowIteratorFullConsume())
           .build();
 
@@ -84,12 +91,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.ARRAY.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -106,12 +114,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.BIGINT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -128,12 +137,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.BINARY.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -150,12 +160,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.BLOB.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -172,12 +183,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.BOOLEAN.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -194,12 +206,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.CHAR.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -216,12 +229,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.CLOB.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -238,12 +252,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Column.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -260,12 +275,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.DATE.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -282,12 +298,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.DATETIME.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -304,12 +321,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.DECIMAL.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -326,12 +344,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.DOUBLE.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -348,12 +367,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Entity.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -370,12 +390,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.ENUM.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -392,12 +413,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.FLOAT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -414,12 +436,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.INT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -436,12 +459,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.LargeObject.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -458,12 +482,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Numeric.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -480,12 +505,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.SMALLINT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -502,12 +528,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Temporal.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -524,12 +551,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Textual.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -546,12 +574,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.TIME.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -568,12 +597,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.TINYINT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }
@@ -590,12 +620,13 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.untyped.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+          called = true;
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           final boolean doAssert = compilation.toString().isEmpty();
-          super.compile(compilation, isExpression, cacheability);
+          super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
         }

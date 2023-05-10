@@ -28,9 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.libj.lang.ObjectUtil;
-import org.libj.util.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,14 +161,14 @@ public abstract class Schema extends Notifiable {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onConnect(final Connection connection, final data.Table table, final OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
+  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
     if (listeners == null)
       return;
 
     final Class<?> tableClass = table.getClass();
     for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet()) // [S]
       if (entry.getValue().contains(tableClass))
-        entry.getKey().onConnect(connection, table, onConnectPreLoad);
+        entry.getKey().onConnect(connection, table);
   }
 
   @Override
@@ -195,18 +193,6 @@ public abstract class Schema extends Notifiable {
     for (final Map.Entry<? extends Notification.SelectListener,LinkedHashSet<Class<? extends data.Table>>> entry : selectListeners.entrySet()) // [S]
       if (entry.getValue().contains(rowClass))
         entry.getKey().onSelect(row, addKey);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onSelectRange(final data.Table table, final Interval<type.Key>[] intervals) {
-    if (selectListeners == null)
-      return;
-
-    final Class<?> rowClass = table.getClass();
-    for (final Map.Entry<? extends Notification.SelectListener,LinkedHashSet<Class<? extends data.Table>>> entry : selectListeners.entrySet()) // [S]
-      if (entry.getValue().contains(rowClass))
-        entry.getKey().onSelectRange(table, intervals);
   }
 
   @Override

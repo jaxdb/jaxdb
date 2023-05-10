@@ -28,12 +28,60 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import org.jaxdb.jsql.RowIterator.Cacheability;
-import org.jaxdb.jsql.RowIterator.Concurrency;
-import org.jaxdb.jsql.RowIterator.Holdability;
-import org.jaxdb.jsql.RowIterator.Type;
-
 public class QueryConfig implements Serializable {
+  public enum Type {
+    FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
+    SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
+    SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
+
+    private static final Type[] values = values();
+    final int index;
+
+    private Type(final int index) {
+      this.index = index;
+    }
+
+    public static Type fromInt(final int concurrency) {
+      return values[concurrency - ResultSet.TYPE_FORWARD_ONLY];
+    }
+  }
+
+  static final Type defaultType = Type.FORWARD_ONLY;
+
+  public enum Concurrency {
+    READ_ONLY(ResultSet.CONCUR_READ_ONLY),
+    UPDATABLE(ResultSet.CONCUR_UPDATABLE);
+
+    private static final Concurrency[] values = values();
+    final int index;
+
+    private Concurrency(final int index) {
+      this.index = index;
+    }
+
+    public static Concurrency fromInt(final int concurrency) {
+      return values[concurrency - ResultSet.CONCUR_READ_ONLY];
+    }
+  }
+
+  static final Concurrency defaultConcurrency = Concurrency.READ_ONLY;
+
+  public enum Holdability {
+    HOLD_CURSORS_OVER_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT),
+    CLOSE_CURSORS_AT_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT);
+
+    private static final Holdability[] values = values();
+    final int index;
+
+    private Holdability(final int index) {
+      this.index = index;
+    }
+
+    public static Holdability fromInt(final int holdability) {
+      return values[holdability - ResultSet.HOLD_CURSORS_OVER_COMMIT];
+    }
+  }
+
   public static class Builder implements Cloneable, Serializable {
     private String cursorName;
     private Boolean escapeProcessing;
@@ -45,10 +93,11 @@ public class QueryConfig implements Serializable {
     private int queryTimeout = -1;
     private int fetchSize = -1;
 
-    private Type type = Type.FORWARD_ONLY;
-    private Concurrency concurrency = Concurrency.READ_ONLY;
+    private Type type = defaultType;
+    private Concurrency concurrency = defaultConcurrency;
     private Holdability holdability;
-    private Cacheability cacheability;
+
+    private boolean cacheSelectEntity = true;
     private boolean cacheableRowIteratorFullConsume = false;
 
     Builder(final QueryConfig config) {
@@ -64,7 +113,7 @@ public class QueryConfig implements Serializable {
       this.type = config.type;
       this.concurrency = config.concurrency;
       this.holdability = config.holdability;
-      this.cacheability = config.cacheability;
+      this.cacheSelectEntity = config.cacheSelectEntity;
       this.cacheableRowIteratorFullConsume = config.cacheableRowIteratorFullConsume;
     }
 
@@ -146,8 +195,8 @@ public class QueryConfig implements Serializable {
       return this;
     }
 
-    public Builder withCacheability(final Cacheability cacheability) {
-      this.cacheability = cacheability;
+    public Builder withCacheSelectEntity(final boolean cacheSelectEntity) {
+      this.cacheSelectEntity = cacheSelectEntity;
       return this;
     }
 
@@ -157,7 +206,7 @@ public class QueryConfig implements Serializable {
     }
 
     public QueryConfig build() {
-      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, cacheability, cacheableRowIteratorFullConsume);
+      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, cacheSelectEntity, cacheableRowIteratorFullConsume);
     }
 
     @Override
@@ -175,7 +224,7 @@ public class QueryConfig implements Serializable {
       hashCode = hashCode * 31 + Objects.hashCode(type);
       hashCode = hashCode * 31 + Objects.hashCode(concurrency);
       hashCode = hashCode * 31 + Objects.hashCode(holdability);
-      hashCode = hashCode * 31 + Objects.hashCode(cacheability);
+      hashCode = hashCode * 31 + Objects.hashCode(cacheSelectEntity);
       hashCode = hashCode * 31 + Boolean.hashCode(cacheableRowIteratorFullConsume);
       return hashCode;
     }
@@ -226,7 +275,7 @@ public class QueryConfig implements Serializable {
       if (!Objects.equals(holdability, that.holdability))
         return false;
 
-      if (!Objects.equals(cacheability, that.cacheability))
+      if (cacheSelectEntity != that.cacheSelectEntity)
         return false;
 
       if (cacheableRowIteratorFullConsume != that.cacheableRowIteratorFullConsume)
@@ -271,11 +320,11 @@ public class QueryConfig implements Serializable {
   private final Type type;
   private final Concurrency concurrency;
   private final Holdability holdability;
-  private final Cacheability cacheability;
 
+  private final boolean cacheSelectEntity;
   private final boolean cacheableRowIteratorFullConsume;
 
-  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final Type type, final Concurrency concurrency, final Holdability holdability, final Cacheability cacheability, final boolean cacheableRowIteratorFullConsume) {
+  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final Type type, final Concurrency concurrency, final Holdability holdability, final boolean cacheSelectEntity, final boolean cacheableRowIteratorFullConsume) {
     this.cursorName = cursorName;
     this.escapeProcessing = escapeProcessing;
     this.fetchDirection = fetchDirection;
@@ -288,7 +337,7 @@ public class QueryConfig implements Serializable {
     this.type = type;
     this.concurrency = concurrency;
     this.holdability = holdability;
-    this.cacheability = cacheability;
+    this.cacheSelectEntity = cacheSelectEntity;
     this.cacheableRowIteratorFullConsume = cacheableRowIteratorFullConsume;
   }
 
@@ -340,8 +389,8 @@ public class QueryConfig implements Serializable {
     return holdability;
   }
 
-  public Cacheability getCacheability() {
-    return cacheability;
+  public boolean getCacheSelectEntity() {
+    return cacheSelectEntity;
   }
 
   public boolean getCacheableRowIteratorFullConsume() {
@@ -367,7 +416,7 @@ public class QueryConfig implements Serializable {
     hashCode = hashCode * 31 + Objects.hashCode(type);
     hashCode = hashCode * 31 + Objects.hashCode(concurrency);
     hashCode = hashCode * 31 + Objects.hashCode(holdability);
-    hashCode = hashCode * 31 + Objects.hashCode(cacheability);
+    hashCode = hashCode * 31 + Boolean.hashCode(cacheSelectEntity);
     hashCode = hashCode * 31 + Boolean.hashCode(cacheableRowIteratorFullConsume);
     return hashCode;
   }
@@ -418,7 +467,7 @@ public class QueryConfig implements Serializable {
     if (!Objects.equals(holdability, that.holdability))
       return false;
 
-    if (!Objects.equals(cacheability, that.cacheability))
+    if (cacheSelectEntity != that.cacheSelectEntity)
       return false;
 
     if (cacheableRowIteratorFullConsume != that.cacheableRowIteratorFullConsume)
@@ -428,15 +477,15 @@ public class QueryConfig implements Serializable {
   }
 
   static Type getType(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.type != Type.FORWARD_ONLY ? contextQueryConfig.type : defaultQueryConfig != null ? defaultQueryConfig.type : Type.FORWARD_ONLY;
+    return contextQueryConfig != null && contextQueryConfig.type != defaultType ? contextQueryConfig.type : defaultQueryConfig != null ? defaultQueryConfig.type : defaultType;
   }
 
   static Concurrency getConcurrency(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.concurrency != Concurrency.READ_ONLY ? contextQueryConfig.concurrency : defaultQueryConfig != null ? defaultQueryConfig.concurrency : Concurrency.READ_ONLY;
+    return contextQueryConfig != null && contextQueryConfig.concurrency != defaultConcurrency ? contextQueryConfig.concurrency : defaultQueryConfig != null ? defaultQueryConfig.concurrency : defaultConcurrency;
   }
 
-  static Cacheability getCacheability(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.cacheability != null ? contextQueryConfig.cacheability : defaultQueryConfig != null ? defaultQueryConfig.cacheability : null;
+  static boolean getCacheSelectEntity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return (contextQueryConfig == null || contextQueryConfig.cacheSelectEntity) && (defaultQueryConfig == null || defaultQueryConfig.cacheSelectEntity);
   }
 
   static boolean isCacheableRowIteratorFullConsume(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
@@ -505,8 +554,8 @@ public class QueryConfig implements Serializable {
     if (defaultQueryConfig == null)
       return executeQuery(contextQueryConfig, compilation, connection);
 
-    final Type type = contextQueryConfig.type != Type.FORWARD_ONLY ? contextQueryConfig.type : defaultQueryConfig.type;
-    final Concurrency concurrency = contextQueryConfig.concurrency != Concurrency.READ_ONLY ? contextQueryConfig.concurrency : defaultQueryConfig.concurrency;
+    final Type type = contextQueryConfig.type != defaultType ? contextQueryConfig.type : defaultQueryConfig.type;
+    final Concurrency concurrency = contextQueryConfig.concurrency != defaultConcurrency ? contextQueryConfig.concurrency : defaultQueryConfig.concurrency;
     final Holdability holdability = contextQueryConfig.holdability != null ? contextQueryConfig.holdability : defaultQueryConfig.holdability;
     final Statement statement;
     final boolean isPrepared = compilation.isPrepared();
