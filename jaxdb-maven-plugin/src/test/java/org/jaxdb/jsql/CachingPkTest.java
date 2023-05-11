@@ -161,12 +161,12 @@ public abstract class CachingPkTest extends CachingTest {
     }
   }
 
-  private static void checkSync(final int i, final caching.One o, final int id1, final int id2, final caching.OneOneId oo, final Map<data.Key,caching.OneManyId> oms, final Map<data.Key,caching.ManyManyId> mmAs, final Map<data.Key,caching.ManyManyId> mmBs) {
+  private static void checkSync(final int i, final caching.One o, final int id1, final int id2, final caching.OneOneId oo, final Map<data.Key,caching.OneManyId> oms, final Map<data.Key,caching.ManyManyId> mmAs, final Map<data.Key,caching.ManyManyId> mmBs) throws IOException, SQLException {
     assertNull(i, false, caching.One.idToOne(id2));
     assertEquals(i, false, o, caching.One.idToOne(id1));
   }
 
-  private static void checkAsync(final int i, final boolean afterSleep, final caching.One o, final int id1, final int id2, final caching.OneOneId oo, final Map<data.Key,caching.OneManyId> oms, final Map<data.Key,caching.ManyManyId> mmAs, final Map<data.Key,caching.ManyManyId> mmBs) {
+  private static void checkAsync(final int i, final boolean afterSleep, final caching.One o, final int id1, final int id2, final caching.OneOneId oo, final Map<data.Key,caching.OneManyId> oms, final Map<data.Key,caching.ManyManyId> mmAs, final Map<data.Key,caching.ManyManyId> mmBs) throws IOException, SQLException {
     assertEquals(i, afterSleep, afterSleep ? oo : null, o.id$OneOneId_oneId()); // NOTE: CASCADE rule in DML ensures this is always true
     if (afterSleep)
       assertEquals(i, afterSleep, o.getKeyOld(), oo.oneId$One_id().getKey()); // NOTE: CASCADE rule in DML ensures this is always true

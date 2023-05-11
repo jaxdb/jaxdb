@@ -97,7 +97,7 @@ public class QueryConfig implements Serializable {
     private Concurrency concurrency = defaultConcurrency;
     private Holdability holdability;
 
-    private boolean cacheSelectEntity = true;
+    private boolean cacheSelectEntity = false;
     private boolean cacheableRowIteratorFullConsume = false;
 
     Builder(final QueryConfig config) {
@@ -485,10 +485,10 @@ public class QueryConfig implements Serializable {
   }
 
   static boolean getCacheSelectEntity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return (contextQueryConfig == null || contextQueryConfig.cacheSelectEntity) && (defaultQueryConfig == null || defaultQueryConfig.cacheSelectEntity);
+    return contextQueryConfig != null && contextQueryConfig.cacheSelectEntity || defaultQueryConfig != null && defaultQueryConfig.cacheSelectEntity;
   }
 
-  static boolean isCacheableRowIteratorFullConsume(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+  static boolean getCacheableRowIteratorFullConsume(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
     return contextQueryConfig != null && contextQueryConfig.cacheableRowIteratorFullConsume || defaultQueryConfig != null && defaultQueryConfig.cacheableRowIteratorFullConsume;
   }
 

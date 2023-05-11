@@ -43,7 +43,6 @@ import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.runner.Vendor;
 import org.junit.Assert;
 import org.junit.Test;
-import org.libj.util.function.IntBooleanConsumer;
 import org.xml.sax.SAXException;
 
 public abstract class CachingTest {
@@ -83,7 +82,7 @@ public abstract class CachingTest {
     }
   }
 
-  static void INSERT(final Transaction transaction, final data.Table row, final int i, final IntConsumer sync, final IntConsumer async) throws InterruptedException, IOException, SQLException {
+  static void INSERT(final Transaction transaction, final data.Table row, final int i, final ThrowingIntConsumer<Exception> sync, final IntConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -112,7 +111,7 @@ public abstract class CachingTest {
     sync.accept(i);
   }
 
-  static void UPDATE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
+  static void UPDATE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final ThrowingIntConsumer<Exception> sync, final ThrowingIntBooleanConsumer<Exception> async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -153,7 +152,7 @@ public abstract class CachingTest {
     return i % 2 == 0 ? statement.execute(transaction) : new Batch(statement).execute(transaction);
   }
 
-  static void DELETE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
+  static void DELETE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final ThrowingIntConsumer<Exception> sync, final ThrowingIntBooleanConsumer<Exception> async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();

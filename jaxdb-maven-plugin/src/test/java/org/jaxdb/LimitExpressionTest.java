@@ -52,7 +52,7 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testLimitPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -70,7 +70,7 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testLimit(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =
@@ -95,7 +95,7 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testLimitOffset(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =

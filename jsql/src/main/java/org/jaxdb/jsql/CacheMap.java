@@ -27,7 +27,7 @@ import org.libj.util.Interval;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
-abstract class CacheMap<V> implements Map<data.Key,V> {
+public abstract class CacheMap<V> implements Map<data.Key,V> {
   static final DB db = DBMaker.heapDB().make();
 
   data.Table table;

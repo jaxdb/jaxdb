@@ -161,7 +161,7 @@ public abstract class CachingIdx2Test extends CachingTest {
     }
   }
 
-  private static void checkSync(final int i, final caching.One o, final int id1, final int id2, final caching.OneOneIdx1 oo, final Map<data.Key,caching.OneManyIdx1> oms, final Map<data.Key,caching.ManyManyIdx1> mmAs, final Map<data.Key,caching.ManyManyIdx1> mmBs) {
+  private static void checkSync(final int i, final caching.One o, final int id1, final int id2, final caching.OneOneIdx1 oo, final Map<data.Key,caching.OneManyIdx1> oms, final Map<data.Key,caching.ManyManyIdx1> mmAs, final Map<data.Key,caching.ManyManyIdx1> mmBs) throws IOException, SQLException {
     assertNull(i, false, caching.One.idx2ToOne(id2));
     assertEquals(i, false, o, caching.One.idx2ToOne(id1));
   }

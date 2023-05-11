@@ -31,7 +31,7 @@ public abstract class TestCommand<E> extends Command<E> {
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface AssertSelect {
-      boolean entityOnlySelect();
+      boolean cacheSelectEntity();
       boolean rowIteratorFullConsume();
     }
 
@@ -63,9 +63,9 @@ public abstract class TestCommand<E> extends Command<E> {
       if (assertSelect == null || transaction == null)
         return null;
 
-      if (assertSelect.entityOnlySelect())
+      if (assertSelect.cacheSelectEntity())
         return new QueryConfig.Builder()
-          .withCacheSelectEntity(true)
+          .withCacheSelectEntity(assertSelect.cacheSelectEntity())
           .withCacheableRowIteratorFullConsume(assertSelect.rowIteratorFullConsume())
           .build();
 
@@ -76,7 +76,7 @@ public abstract class TestCommand<E> extends Command<E> {
       final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
       final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
       if (assertSelect != null)
-        assertEquals("AssertSelect.entityOnlySelect()", assertSelect.entityOnlySelect(), isEntityOnlySelect);
+        assertEquals("AssertSelect.cacheSelectEntity()", assertSelect.cacheSelectEntity(), isEntityOnlySelect);
       else if (assertCommand == null || !assertCommand.ignore())
         fail("@AssertSelect is not specified");
     }

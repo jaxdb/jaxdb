@@ -53,7 +53,7 @@ public abstract class SetFunctionTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testSetFunctions(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends data.Column<?>> rows =

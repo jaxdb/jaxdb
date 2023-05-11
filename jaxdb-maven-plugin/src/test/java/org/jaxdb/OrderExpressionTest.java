@@ -52,7 +52,7 @@ public abstract class OrderExpressionTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testOrderExpressionError(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -69,7 +69,7 @@ public abstract class OrderExpressionTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testOrderExpression(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =

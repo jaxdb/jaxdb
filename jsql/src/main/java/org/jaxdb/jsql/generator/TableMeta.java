@@ -33,8 +33,8 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.jsql.CacheMap;
 import org.jaxdb.jsql.GenerateOn;
-import org.jaxdb.jsql.OneToOneMap;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
@@ -755,7 +755,7 @@ class TableMeta {
 
   private String getConcreteClass(final String declarationName) {
     if (primaryKey.size() == 0)
-      return OneToOneMap.class.getName() + "<" + declarationName + ">";
+      return CacheMap.class.getName() + "<" + declarationName + ">";
 
     return columnsToIndexType.get(primaryKey).getConcreteClass(declarationName);
   }

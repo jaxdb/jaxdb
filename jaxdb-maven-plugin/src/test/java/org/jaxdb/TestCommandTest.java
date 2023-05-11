@@ -53,7 +53,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testFailEntityOnlySelectTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
@@ -73,7 +73,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testFailEntityOnlySelectFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
@@ -95,7 +95,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testRowIteratorFullConsumeRequiredTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
@@ -117,7 +117,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testRowIteratorFullConsumeRequiredFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 

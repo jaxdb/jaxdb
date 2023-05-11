@@ -52,7 +52,7 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testAll(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
@@ -75,7 +75,7 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testAny(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
@@ -98,7 +98,7 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testSome(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();

@@ -57,7 +57,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
 
   @Test
   @Override
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1).
@@ -80,7 +80,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
 
   @Test
   @Override
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
@@ -125,7 +125,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Test
   @Override
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testInsertSelectIntoTable1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 
@@ -167,7 +167,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Test
   @Override
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testInsertSelectIntoTable2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 

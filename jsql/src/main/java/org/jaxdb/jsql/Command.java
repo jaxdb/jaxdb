@@ -693,7 +693,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @SuppressWarnings("unchecked")
-        private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
 
           final boolean closeConnection = transaction == null && connection == null;
@@ -744,7 +744,7 @@ abstract class Command<E> extends Keyword implements Closeable {
               final Statement finalStatement = statement = resultSet.getStatement();
               final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
               return new RowIterator<D>(resultSet, contextQueryConfig, defaultQueryConfig) {
-                private final boolean isCacheableRowIteratorFullConsume = QueryConfig.isCacheableRowIteratorFullConsume(contextQueryConfig, defaultQueryConfig);
+                private final boolean isCacheableRowIteratorFullConsume = QueryConfig.getCacheableRowIteratorFullConsume(contextQueryConfig, defaultQueryConfig);
                 private HashMap<Class<?>,data.Table> prototypes = new HashMap<>();
                 private HashMap<data.Table,data.Table> cachedTables = new HashMap<>();
                 private ArrayList<data.Table> cacheBuffer;
@@ -799,7 +799,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                   if (notifier == null)
                     return;
 
-                  if (!row.getCacheSelectEntity())
+                  if (!cacheSelectEntity && !row.getCacheSelectEntity())
                     return;
 
                   if (rangeIntervals == null) {
@@ -1099,7 +1099,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
           compile(compilation, isExpression);
           if (cacheSelectEntity && !isEntityOnlySelect)
-            throw new IllegalStateException(cacheSelectEntity + " can only be fulfilled for queries that exclusively select entities instead of individual columns");
+            throw new IllegalStateException("QueryConfig.cacheSelectEntity=true can only be fulfilled for queries that exclusively select entities instead of individual columns");
         }
       }
     }

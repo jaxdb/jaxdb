@@ -52,7 +52,7 @@ public abstract class GroupClauseTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BIGINT> rows =
@@ -68,7 +68,7 @@ public abstract class GroupClauseTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BIGINT> rows =
