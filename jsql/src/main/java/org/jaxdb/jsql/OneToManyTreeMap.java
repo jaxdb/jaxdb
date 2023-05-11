@@ -18,42 +18,46 @@ package org.jaxdb.jsql;
 
 import java.util.NavigableMap;
 
-public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
+public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<OneToOneTreeMap<V>> implements OneToManyMap<OneToOneTreeMap<V>> {
   OneToManyTreeMap(final data.Table table, final String name) {
     super(table, name);
   }
 
-  @Override
-  public NavigableMap<data.Key,V> superGet(final data.Key key) {
-    return map.get(key);
+  private OneToManyTreeMap(final data.Table table, final String name, final NavigableMap<data.Key,OneToOneTreeMap<V>> map) {
+    super(table, name, map);
   }
 
   @Override
-  public NavigableMap<data.Key,V> get(final Object key) {
-    final NavigableMap<data.Key,V> subMap = map.get(key);
-    return subMap != null ? subMap : EMPTY;
+  TreeCacheMap<OneToOneTreeMap<V>> newInstance(final data.Table table, final String name, final NavigableMap<data.Key,OneToOneTreeMap<V>> map) {
+    return new OneToManyTreeMap<>(table, name, map);
   }
 
-  void add(final data.Key key, final V value, final boolean addKey) {
+  @Override
+  public final OneToOneTreeMap<V> get(final Object key) {
+    final OneToOneTreeMap<V> v = map.get(key);
+    return v != null ? v : OneToOneTreeMap.EMPTY;
+  }
+
+  final void add(final data.Key key, final V value, final boolean addKey) {
     if (addKey)
       mask.add(key);
 
-    NavigableMap<data.Key,V> valueMap = map.get(key);
-    if (valueMap == null)
-      map.put(key, valueMap = new TreeCacheMap<>(table, name + ":" + key));
+    OneToOneTreeMap<V> v = map.get(key);
+    if (v == null)
+      map.put(key, v = new OneToOneTreeMap<>(table, name + ":" + key));
 
-    valueMap.put(value.getKey().immutable(), value);
+    v.put(value.getKey().immutable(), value, addKey);
   }
 
-  void remove(final type.Key key, final V value) {
-    final NavigableMap<data.Key,V> subMap = map.get(key);
-    if (subMap != null)
-      subMap.remove(value.getKey());
+  final void remove(final type.Key key, final V value) {
+    final OneToOneTreeMap<V> v = map.get(key);
+    if (v != null)
+      v.remove(value.getKey());
   }
 
-  void removeOld(final type.Key key, final V value) {
-    final NavigableMap<data.Key,V> subMap = map.get(key);
-    if (subMap != null)
-      subMap.remove(value.getKeyOld());
+  final void removeOld(final type.Key key, final V value) {
+    final OneToOneTreeMap<V> v = map.get(key);
+    if (v != null)
+      v.remove(value.getKeyOld());
   }
 }

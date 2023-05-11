@@ -33,6 +33,7 @@ public interface type {
   public abstract static class Key extends Interval<Key> implements Serializable {
     Key() {
       min = this;
+      c = (o1, o2) -> o1.compareTo(o2);
     }
 
     @Override

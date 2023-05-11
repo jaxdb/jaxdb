@@ -57,8 +57,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   }
 
   @SuppressWarnings("unchecked")
-  protected static <T extends data.Table>OneToOneMap<T> getCache(final T table) {
-    return (OneToOneMap<T>)table.getCache();
+  protected static <T extends data.Table>CacheMap<T> getCache(final T table) {
+    return (CacheMap<T>)table.getCache();
   }
 
   protected void onNotifyCallbacks(final String sessionId, final Exception e) {
@@ -133,7 +133,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   @SuppressWarnings("unchecked")
   public data.Table onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
     try {
-      return onUpdate((OneToOneMap<data.Table>)row.getCache(), sessionId, timestamp, row, keyForUpdate);
+      return onUpdate((CacheMap<data.Table>)row.getCache(), sessionId, timestamp, row, keyForUpdate);
     }
     catch (final IOException | SQLException e) {
       if (logger.isErrorEnabled()) logger.error(log(sessionId, timestamp) + "," + log(row) + "," + JSON.toString(keyForUpdate), e);
@@ -141,7 +141,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     }
   }
 
-  protected <T extends data.Table>data.Table onUpdate(final OneToOneMap<T> cache, final String sessionId, final long timestamp, final T row, final Map<String,String> keyForUpdate) throws IOException, SQLException {
+  protected <T extends data.Table>data.Table onUpdate(final CacheMap<T> cache, final String sessionId, final long timestamp, final T row, final Map<String,String> keyForUpdate) throws IOException, SQLException {
     if (logger.isTraceEnabled()) logger.trace("onUpdate(" + ObjectUtil.simpleIdentityString(cache) + "," + log(sessionId, timestamp) + "," + log(row) + "," + JSON.toString(keyForUpdate) + ")");
     Exception exception = null;
     try {
@@ -156,7 +156,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
       else {
         entity = cache.remove(keyOld);
         if (entity != null) {
-          cache.put(key.immutable(), entity);
+          cache.superPut(key.immutable(), entity);
         }
         else {
           entity = cache.get(key);
@@ -235,14 +235,14 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  protected <T extends data.Table>data.Table refreshRow(final OneToOneMap<T> cache, final T row) throws IOException, SQLException {
+  protected <T extends data.Table>data.Table refreshRow(final CacheMap<T> cache, final T row) throws IOException, SQLException {
     row.reset(data.Except.PRIMARY_KEY);
     selectRow(row);
 
     final data.MutableKey key = row.getKey();
     T entity = cache.get(key);
     if (entity == null) {
-      cache.put(key.immutable(), entity = (T)row.clone(false));
+      cache.superPut(key.immutable(), entity = (T)row.clone(false));
       entity._commitInsert$(true);
     }
     else {

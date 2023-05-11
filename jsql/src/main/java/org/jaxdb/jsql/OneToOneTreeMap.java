@@ -16,20 +16,35 @@
 
 package org.jaxdb.jsql;
 
+import java.util.NavigableMap;
+import java.util.TreeMap;
+
 public class OneToOneTreeMap<V extends data.Table> extends TreeCacheMap<V> implements OneToOneMap<V> {
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  static final OneToOneTreeMap EMPTY = new OneToOneTreeMap(null, null, new TreeMap<>());
+
   OneToOneTreeMap(final data.Table table, final String name) {
     super(table, name);
+  }
+
+  private OneToOneTreeMap(final data.Table table, final String name, final NavigableMap<data.Key,V> map) {
+    super(table, name, map);
+  }
+
+  @Override
+  TreeCacheMap<V> newInstance(final data.Table table, final String name, final NavigableMap<data.Key,V> map) {
+    return new OneToOneTreeMap<>(table, name, map);
+  }
+
+  @Override
+  public V get(final Object key) {
+    return map.get(key);
   }
 
   final V put(final data.Key key, final V value, final boolean addKey) {
     if (addKey)
       mask.add(key);
 
-    return put(key, value);
-  }
-
-  @Override
-  public boolean containsKey(final Object key) {
-    return containsKey((data.Key)key);
+    return map.put(key, value);
   }
 }

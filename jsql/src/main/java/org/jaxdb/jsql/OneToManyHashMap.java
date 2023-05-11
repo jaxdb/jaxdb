@@ -18,29 +18,46 @@ package org.jaxdb.jsql;
 
 import java.util.Map;
 
-public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
+public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<OneToOneHashMap<V>> implements OneToManyMap<OneToOneHashMap<V>> {
   OneToManyHashMap(final data.Table table, final String name) {
     super(table, name);
   }
 
-  @SuppressWarnings("unchecked")
-  void add(final data.Key key, final V value, final boolean addKey) {
-    Map<data.Key,V> valueMap = map.get(key);
-    if (valueMap == null)
-      map.put(key, valueMap = (Map<data.Key,V>)db.hashMap(name + ":" + key).counterEnable().create());
-
-    valueMap.put(value.getKey().immutable(), value);
+  private OneToManyHashMap(final data.Table table, final String name, final Map<data.Key,OneToOneHashMap<V>> map) {
+    super(table, name, map);
   }
 
-  void remove(final type.Key key, final V value) {
-    final Map<data.Key,V> set = map.get(key);
-    if (set != null)
-      set.remove(value.getKey());
+  @Override
+  HashCacheMap<OneToOneHashMap<V>> newInstance(final data.Table table, final String name, final Map<data.Key,OneToOneHashMap<V>> map) {
+    return new OneToManyHashMap<>(table, name, map);
   }
 
-  void removeOld(final type.Key key, final V value) {
-    final Map<data.Key,V> set = map.get(key);
-    if (set != null)
-      set.remove(value.getKeyOld());
+  @Override
+  public final OneToOneHashMap<V> get(final Object key) {
+    final OneToOneHashMap<V> v = map.get(key);
+    return v != null ? v : OneToOneHashMap.EMPTY;
+  }
+
+  final void add(final data.Key key, final V value, final boolean addKey) {
+    if (addKey)
+      mask.add(key);
+
+    OneToOneHashMap<V> v = map.get(key);
+    if (v == null)
+      map.put(key, v = new OneToOneHashMap<>(table, name + ":" + key));
+
+    v.put(value.getKey().immutable(), value, addKey);
+  }
+
+  final void remove(final type.Key key, final V value) {
+    final OneToOneHashMap<V> v = map.get(key);
+    if (v != null)
+      v.remove(value.getKey());
+  }
+
+  final void removeOld(final type.Key key, final V value) {
+    final OneToOneHashMap<V> v = map.get(key);
+    if (v != null)
+      v.remove(value.getKeyOld());
   }
 }

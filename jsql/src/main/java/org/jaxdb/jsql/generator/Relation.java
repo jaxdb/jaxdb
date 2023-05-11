@@ -117,7 +117,7 @@ class Relation {
       return "";
 
     return
-      "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + ",? extends " + returnType + "> " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ".select(" + rangeArgs + ");" +
       "\n    }\n";
   }
@@ -131,7 +131,7 @@ class Relation {
       "\n      return " + declarationName + "." + cacheInstanceName + ".select(" + keyArgs + ");" +
       "\n    }\n" +
       writeGetRangeMethod(returnType) +
-      "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheInstanceName + "() {" +
+      "\n    public static " + indexType.getInterfaceClass("? extends " + returnType) + " " + cacheInstanceName + "() {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ";" +
       "\n    }";
   }

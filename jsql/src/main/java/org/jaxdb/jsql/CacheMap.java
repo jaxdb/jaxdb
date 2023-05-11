@@ -19,9 +19,11 @@ package org.jaxdb.jsql;
 import static org.jaxdb.jsql.DML.*;
 
 import java.io.IOException;
+import java.nio.channels.UnsupportedAddressTypeException;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 import org.libj.util.Interval;
 import org.mapdb.DB;
@@ -39,6 +41,10 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
   abstract void addKey(type.Key key);
   abstract void addKey(type.Key[] keys);
   public abstract boolean containsKey(final data.Key key);
+  abstract V remove(type.Key key);
+  abstract V removeOld(type.Key key);
+  abstract V superGet(data.Key key);
+  abstract V superPut(data.Key key, V value);
 
   private static data.BOOLEAN and(final type.Column<?> c, final Object min, final Object max) {
     return AND(new ComparisonPredicate.Gte<>(c, min), new ComparisonPredicate.Lt<>(c, max));
@@ -55,7 +61,67 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     return and;
   }
 
-  void select(final data.BOOLEAN condition) throws IOException, SQLException {
+  @Override
+  public final void clear() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final Object clone() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final boolean containsKey(final Object key) {
+    return containsKey((data.Key)key);
+  }
+
+  @Override
+  public final V merge(final data.Key key, final V value, final BiFunction<? super V,? super V,? extends V> remappingFunction) {
+    throw new UnsupportedAddressTypeException();
+  }
+
+  @Override
+  public final V put(final data.Key key, final V value) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final void putAll(final Map<? extends data.Key,? extends V> m) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final V putIfAbsent(final data.Key key, final V value) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final boolean remove(final Object key, final Object value) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final V remove(final Object key) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final V replace(final data.Key key, final V value) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final boolean replace(final data.Key key, final V oldValue, final V newValue) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final void replaceAll(final BiFunction<? super data.Key,? super V,? extends V> function) {
+    throw new UnsupportedOperationException();
+  }
+
+  final void select(final data.BOOLEAN condition) throws IOException, SQLException {
     final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.getSchema().getClass());
     final Notifier<?>[] notifiers;
     if (dataSourceIdToConnectors.size() == 0 || (notifiers  = Database.getNotifiers(dataSourceIdToConnectors.values().iterator(), 0)) == null)
@@ -82,28 +148,5 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     }
 
     return get(key);
-  }
-
-  V superGet(final data.Key key) {
-    return get(key);
-  }
-
-  final V removeOld(final type.Key key) {
-    return remove(key);
-  }
-
-  @Override
-  public final boolean remove(final Object key, final Object value) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public final V remove(final Object key) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public final Object clone() {
-    throw new UnsupportedOperationException();
   }
 }

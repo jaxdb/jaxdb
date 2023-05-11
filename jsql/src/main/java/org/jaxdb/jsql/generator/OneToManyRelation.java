@@ -32,7 +32,7 @@ class OneToManyRelation extends ForeignRelation {
 
     final StringBuilder out = new StringBuilder();
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("() {");
-    out.append("\n      final ").append(Map.class.getName()).append('<').append(data.Key.class.getCanonicalName()).append(',').append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheInstanceNameForeign).append(';');
+    out.append("\n      final ").append(Map.class.getName()).append('<').append(data.Key.class.getCanonicalName()).append(",? extends ").append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheInstanceNameForeign).append(';');
     out.append("\n      return cache == null ? null : cache.get(").append(keyClause.replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
     out.append("\n    }");
     return out.toString();
