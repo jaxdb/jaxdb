@@ -81,16 +81,6 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
   }
 
   @Override
-  final V remove(final type.Key key) {
-    return map.remove(key);
-  }
-
-  @Override
-  final V removeOld(final type.Key key) {
-    return map.remove(key);
-  }
-
-  @Override
   final V superGet(final data.Key key) {
     return map.get(key);
   }
@@ -98,6 +88,16 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
   @Override
   final V superPut(final data.Key key, final V value) {
     return map.put(key, value);
+  }
+
+  @Override
+  final V superRemove(final type.Key key) {
+    return map.remove(key);
+  }
+
+  @Override
+  final V superRemoveOld(final type.Key key) {
+    return map.remove(key);
   }
 
   @Override

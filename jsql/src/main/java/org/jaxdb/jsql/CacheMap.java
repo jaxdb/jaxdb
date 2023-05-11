@@ -41,8 +41,8 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
   abstract void addKey(type.Key key);
   abstract void addKey(type.Key[] keys);
   public abstract boolean containsKey(final data.Key key);
-  abstract V remove(type.Key key);
-  abstract V removeOld(type.Key key);
+  abstract V superRemove(type.Key key);
+  abstract V superRemoveOld(type.Key key);
   abstract V superGet(data.Key key);
   abstract V superPut(data.Key key, V value);
 

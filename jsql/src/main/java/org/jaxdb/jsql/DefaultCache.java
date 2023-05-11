@@ -154,7 +154,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
           return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false), true);
       }
       else {
-        entity = cache.remove(keyOld);
+        entity = cache.superRemove(keyOld);
         if (entity != null) {
           cache.superPut(key.immutable(), entity);
         }
@@ -195,7 +195,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     if (logger.isTraceEnabled()) logger.trace("onDelete(" + log(sessionId, timestamp) + "," + log(row) + ")");
     Exception exception = null;
     try {
-      final data.Table entity = row.getCache().remove(row.getKey());
+      final data.Table entity = row.getCache().superRemove(row.getKey());
       if (entity == null)
         return null;
 
@@ -216,10 +216,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     if (logger.isTraceEnabled()) logger.trace("delete(" + log(row) + ")");
     final CacheMap<? extends data.Table> cache = row.getCache();
     final data.MutableKey key = row.getKey();
-    if (key != null)
-      cache.remove(key);
-    else
-      cache.clear();
+    cache.superRemove(key);
   }
 
   /**

@@ -49,15 +49,15 @@ public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<OneToOn
     v.put(value.getKey().immutable(), value, addKey);
   }
 
-  final void remove(final type.Key key, final V value) {
+  final void superRemove(final type.Key key, final V value) {
     final OneToOneHashMap<V> v = map.get(key);
     if (v != null)
-      v.remove(value.getKey());
+      v.superRemove(value.getKey());
   }
 
-  final void removeOld(final type.Key key, final V value) {
+  final void superRemoveOld(final type.Key key, final V value) {
     final OneToOneHashMap<V> v = map.get(key);
     if (v != null)
-      v.remove(value.getKeyOld());
+      v.superRemove(value.getKeyOld());
   }
 }

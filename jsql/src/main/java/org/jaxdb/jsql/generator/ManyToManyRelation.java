@@ -30,7 +30,7 @@ class ManyToManyRelation extends ForeignRelation {
   @Override
   String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {
     final String member = indexType.isUnique ? "" : ", " + classSimpleName + ".this";
-    return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + member + ");";
+    return declarationName + "." + cacheInstanceName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + member + ");";
   }
 
   @Override

@@ -49,15 +49,15 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<OneToOn
     v.put(value.getKey().immutable(), value, addKey);
   }
 
-  final void remove(final type.Key key, final V value) {
+  final void superRemove(final type.Key key, final V value) {
     final OneToOneTreeMap<V> v = map.get(key);
     if (v != null)
-      v.remove(value.getKey());
+      v.superRemove(value.getKey());
   }
 
-  final void removeOld(final type.Key key, final V value) {
+  final void superRemoveOld(final type.Key key, final V value) {
     final OneToOneTreeMap<V> v = map.get(key);
     if (v != null)
-      v.remove(value.getKeyOld());
+      v.superRemove(value.getKeyOld());
   }
 }
