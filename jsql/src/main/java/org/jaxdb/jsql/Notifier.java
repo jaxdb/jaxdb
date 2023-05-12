@@ -640,8 +640,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.SELECT.ordinal()] != null)
-          Action.SELECT.onSelect(entry.getKey(), row, addKey);
+        Action.SELECT.onSelect(entry.getKey(), row, addKey);
   }
 
   @Override

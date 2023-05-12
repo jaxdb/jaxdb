@@ -43,6 +43,7 @@ import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.runner.Vendor;
+import org.jaxdb.sqlx.SQLxTest;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,6 +74,7 @@ public abstract class OnSelectTest {
     };
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
     DDLxTest.recreateSchema(transaction.getConnection(), "classicmodels");
+    SQLxTest.loadData(transaction.getConnection(), "classicmodels");
     transaction.commit();
 
     final Connector connector = transaction.getConnector();
@@ -90,29 +92,31 @@ public abstract class OnSelectTest {
     }, new ConcurrentLinkedQueue<>(), c -> c.with(classicmodels.getTables()));
   }
 
-  private static void testTreeSingle(final NavigableMap<data.Key,classicmodels.Office> map, final boolean selectCalled) throws IOException, SQLException {
-    for (int i = 1; i <= 7; ++i) { // [N]
+  private static void testTreeSingle(final NavigableMap<data.Key,classicmodels.Purchase> map, final boolean selectCalled) throws IOException, SQLException {
+    final int start = 10100;
+    final int total = 10426 - start;
+    for (int i = start; i <= 10425; ++i) { // [N]
       assertFalse(TestDatabase.called());
-      final classicmodels.Office o = classicmodels.Office.officeCodeToOffice(i);
+      final classicmodels.Purchase p = classicmodels.Purchase.purchaseNumberToPurchase(i);
       assertEquals(selectCalled, TestDatabase.called());
-      assertEquals(selectCalled ? i : 7, map.size());
-      assertEquals(i, o.officeCode.getAsInt());
+      assertEquals(selectCalled ? 1 + i - start : total, map.size());
+      assertEquals(i, p.purchaseNumber.getAsInt());
     }
   }
 
   @Test
   @Spec(order = 1)
   public void testTreeSingle(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final NavigableMap<data.Key,classicmodels.Office> map = classicmodels.Office.officeCodeToOffice();
+    final NavigableMap<data.Key,classicmodels.Purchase> map = classicmodels.Purchase.purchaseNumberToPurchase();
 
     assertFalse(TestDatabase.called());
     assertEquals(0, map.size());
 
-    classicmodels.Office o = classicmodels.Office.officeCodeToOffice(0);
+    final classicmodels.Purchase p = classicmodels.Purchase.purchaseNumberToPurchase(0);
 
     assertTrue(TestDatabase.called());
     assertEquals(0, map.size());
-    assertNull(o);
+    assertNull(p);
 
     testTreeSingle(map, true);
     testTreeSingle(map, false);
@@ -162,7 +166,7 @@ public abstract class OnSelectTest {
     assertFalse(TestDatabase.called());
     assertEquals(0, map.size());
 
-    SortedMap<data.Key,classicmodels.Office> sub = classicmodels.Office.officeCodeToOffice(-5, 1);
+    final SortedMap<data.Key,classicmodels.Office> sub = classicmodels.Office.officeCodeToOffice(-5, 1);
 
     assertTrue(TestDatabase.called());
     assertEquals(0, map.size());
@@ -179,8 +183,8 @@ public abstract class OnSelectTest {
     for (int i = 0; i < noProductLines;) { // [N]
       assertFalse(TestDatabase.called());
       final String productLine = productLines[i];
-      classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine(productLine);
-      assertTrue(TestDatabase.called());
+      final classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine(productLine);
+      assertEquals(selectCalled, TestDatabase.called());
       ++i;
       assertEquals(selectCalled ? i : noProductLines, map.size());
       assertEquals(productLine, pl.productLine.get());
@@ -195,7 +199,7 @@ public abstract class OnSelectTest {
     assertFalse(TestDatabase.called());
     assertEquals(0, map.size());
 
-    classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine("foo");
+    final classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine("foo");
 
     assertTrue(TestDatabase.called());
     assertEquals(0, map.size());

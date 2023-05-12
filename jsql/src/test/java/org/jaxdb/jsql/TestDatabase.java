@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class TestDatabase extends Database {
   public static Database global(final Class<? extends Schema> schemaClass) {
     final Object[] localGlobal = schemaClassToLocalGlobal.get(schemaClass);
@@ -27,17 +29,17 @@ public class TestDatabase extends Database {
   }
 
   public static boolean called() {
-    if (!called.get())
+    if (!called.get().get())
       return false;
 
-    called.set(Boolean.FALSE);
+    called.get().set(false);
     return true;
   }
 
-  private static ThreadLocal<Boolean> called = new ThreadLocal<Boolean>() {
+  private static ThreadLocal<AtomicBoolean> called = new ThreadLocal<AtomicBoolean>() {
     @Override
-    protected Boolean initialValue() {
-      return Boolean.FALSE;
+    protected AtomicBoolean initialValue() {
+      return new AtomicBoolean();
     }
   };
 
@@ -47,7 +49,7 @@ public class TestDatabase extends Database {
 
   @Override
   Notifier<?> getCacheNotifier() {
-    called.set(Boolean.TRUE);
+    called.get().set(true);
     return super.getCacheNotifier();
   }
 }
