@@ -18,23 +18,23 @@ package org.jaxdb.jsql;
 
 import java.util.NavigableMap;
 
-public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<OneToOneTreeMap<V>> implements OneToManyMap<OneToOneTreeMap<V>> {
+public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
   OneToManyTreeMap(final data.Table table, final String name) {
     super(table, name);
   }
 
-  private OneToManyTreeMap(final data.Table table, final String name, final NavigableMap<data.Key,OneToOneTreeMap<V>> map) {
+  private OneToManyTreeMap(final data.Table table, final String name, final NavigableMap<data.Key,NavigableMap<data.Key,V>> map) {
     super(table, name, map);
   }
 
   @Override
-  TreeCacheMap<OneToOneTreeMap<V>> newInstance(final data.Table table, final String name, final NavigableMap<data.Key,OneToOneTreeMap<V>> map) {
+  TreeCacheMap<NavigableMap<data.Key,V>> newInstance(final data.Table table, final String name, final NavigableMap<data.Key,NavigableMap<data.Key,V>> map) {
     return new OneToManyTreeMap<>(table, name, map);
   }
 
   @Override
-  public final OneToOneTreeMap<V> get(final Object key) {
-    final OneToOneTreeMap<V> v = map.get(key);
+  public final NavigableMap<data.Key,V> get(final Object key) {
+    final NavigableMap<data.Key,V> v = map.get(key);
     return v != null ? v : OneToOneTreeMap.EMPTY;
   }
 
@@ -42,7 +42,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<OneToOn
     if (addKey)
       mask.add(key);
 
-    OneToOneTreeMap<V> v = map.get(key);
+    OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)map.get(key);
     if (v == null)
       map.put(key, v = new OneToOneTreeMap<>(table, name + ":" + key));
 
@@ -50,13 +50,13 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<OneToOn
   }
 
   final void superRemove(final type.Key key, final V value) {
-    final OneToOneTreeMap<V> v = map.get(key);
+    final OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)map.get(key);
     if (v != null)
       v.superRemove(value.getKey());
   }
 
   final void superRemoveOld(final type.Key key, final V value) {
-    final OneToOneTreeMap<V> v = map.get(key);
+    final OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)map.get(key);
     if (v != null)
       v.superRemove(value.getKeyOld());
   }

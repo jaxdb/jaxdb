@@ -18,23 +18,23 @@ package org.jaxdb.jsql;
 
 import java.util.Map;
 
-public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<OneToOneHashMap<V>> implements OneToManyMap<OneToOneHashMap<V>> {
+public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
   OneToManyHashMap(final data.Table table, final String name) {
     super(table, name);
   }
 
-  private OneToManyHashMap(final data.Table table, final String name, final Map<data.Key,OneToOneHashMap<V>> map) {
+  private OneToManyHashMap(final data.Table table, final String name, final Map<data.Key,Map<data.Key,V>> map) {
     super(table, name, map);
   }
 
   @Override
-  HashCacheMap<OneToOneHashMap<V>> newInstance(final data.Table table, final String name, final Map<data.Key,OneToOneHashMap<V>> map) {
+  HashCacheMap<Map<data.Key,V>> newInstance(final data.Table table, final String name, final Map<data.Key,Map<data.Key,V>> map) {
     return new OneToManyHashMap<>(table, name, map);
   }
 
   @Override
   public final OneToOneHashMap<V> get(final Object key) {
-    final OneToOneHashMap<V> v = map.get(key);
+    final OneToOneHashMap<V> v = (OneToOneHashMap<V>)map.get(key);
     return v != null ? v : OneToOneHashMap.EMPTY;
   }
 
@@ -42,7 +42,7 @@ public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<OneToOn
     if (addKey)
       mask.add(key);
 
-    OneToOneHashMap<V> v = map.get(key);
+    OneToOneHashMap<V> v = (OneToOneHashMap<V>)map.get(key);
     if (v == null)
       map.put(key, v = new OneToOneHashMap<>(table, name + ":" + key));
 
@@ -50,13 +50,13 @@ public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<OneToOn
   }
 
   final void superRemove(final type.Key key, final V value) {
-    final OneToOneHashMap<V> v = map.get(key);
+    final OneToOneHashMap<V> v = (OneToOneHashMap<V>)map.get(key);
     if (v != null)
       v.superRemove(value.getKey());
   }
 
   final void superRemoveOld(final type.Key key, final V value) {
-    final OneToOneHashMap<V> v = map.get(key);
+    final OneToOneHashMap<V> v = (OneToOneHashMap<V>)map.get(key);
     if (v != null)
       v.superRemove(value.getKeyOld());
   }

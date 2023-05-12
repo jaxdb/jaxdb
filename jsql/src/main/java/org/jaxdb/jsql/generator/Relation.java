@@ -18,6 +18,7 @@ package org.jaxdb.jsql.generator;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.LinkedHashSet;
 import java.util.SortedMap;
 
 import org.jaxdb.jsql.data;
@@ -48,7 +49,8 @@ class Relation {
   final TableMeta tableMeta;
   final IndexType indexType;
   final String columnName;
-  final String keyClauseColumns;
+  final String keyClauseColumnDeclaration;
+  final String keyClauseColumnAssignment;
   final String keyClause;
   final String keyCondition;
   final String rangeParams;
@@ -68,7 +70,7 @@ class Relation {
 
     this.columnName = columns.getInstanceNameForKey();
 
-    final StringBuilder keyClauseColumns = new StringBuilder();
+    final StringBuilder keyClauseColumnAssignment = new StringBuilder();
     final StringBuilder keyClauseValues = new StringBuilder();
     final StringBuilder keyCondition = new StringBuilder();
     final StringBuilder keyParams = new StringBuilder();
@@ -78,7 +80,7 @@ class Relation {
     final StringBuilder toArgs = new StringBuilder();
     if (columns.size() > 0) {
       for (final ColumnMeta column : columns) { // [S]
-        keyClauseColumns.append(column.getCanonicalName(null)).append("(), ");
+        keyClauseColumnAssignment.append("_column$[").append(column.index).append("], ");
         keyClauseValues.append("{1}.this.").append(column.camelCase).append(".get{2}(), ");
         keyCondition.append("{1}.this.").append(column.camelCase).append(".get{2}() != null && ");
         keyParams.append("final ").append(column.rawType).append(' ').append(column.instanceCase).append(", ");
@@ -89,8 +91,9 @@ class Relation {
       }
     }
 
-    keyClauseColumns.setLength(keyClauseColumns.length() - 2);
-    this.keyClauseColumns = "private static final " + data.Column.class.getCanonicalName() + "<?>[] " + cacheColumnsName + " = {" + keyClauseColumns + "}";
+    keyClauseColumnAssignment.setLength(keyClauseColumnAssignment.length() - 2);
+    this.keyClauseColumnDeclaration = "private static " + data.Column.class.getCanonicalName() + "<?>[] " + cacheColumnsName;
+    this.keyClauseColumnAssignment = cacheColumnsName + " = new " + data.Column.class.getCanonicalName() + "<?>[] {" + keyClauseColumnAssignment + "}";
 
     keyClauseValues.setLength(keyClauseValues.length() - 2);
     this.keyClause = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + keyClauseValues + ")";
@@ -117,21 +120,22 @@ class Relation {
       return "";
 
     return
-      "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + ",? extends " + returnType + "> " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ".select(" + rangeArgs + ");" +
       "\n    }\n";
   }
 
-  final String writeCacheDeclare() {
+  final String writeCacheDeclare(final LinkedHashSet<String> keyClauseColumnAssignments) {
+    keyClauseColumnAssignments.add(keyClauseColumnAssignment);
     final String returnType = indexType.isUnique ? declarationName : indexType.getInterfaceClass(declarationName);
     return
-      "\n    " + keyClauseColumns + ";" +
+      "\n    " + keyClauseColumnDeclaration + ";" +
       "\n    static " + indexType.getConcreteClass(declarationName) + " " + cacheInstanceName + ";\n" +
       "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ".select(" + keyArgs + ");" +
       "\n    }\n" +
       writeGetRangeMethod(returnType) +
-      "\n    public static " + indexType.getInterfaceClass("? extends " + returnType) + " " + cacheInstanceName + "() {" +
+      "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheInstanceName + "() {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ";" +
       "\n    }";
   }

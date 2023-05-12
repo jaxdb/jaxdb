@@ -24,6 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public abstract class TestCommand<E> extends Command<E> {
@@ -91,7 +92,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.ARRAY.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -114,7 +120,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.BIGINT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -137,7 +148,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.BINARY.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -160,7 +176,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.BLOB.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -183,7 +204,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.BOOLEAN.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -206,7 +232,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.CHAR.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -229,7 +260,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.CLOB.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -252,7 +288,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Column.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -275,7 +316,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.DATE.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -298,7 +344,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.DATETIME.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -321,7 +372,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.DECIMAL.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -344,7 +400,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.DOUBLE.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -367,7 +428,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Entity.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -390,7 +456,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.ENUM.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -413,7 +484,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.FLOAT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -436,7 +512,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.INT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -459,7 +540,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.LargeObject.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -482,7 +568,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Numeric.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -505,7 +596,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.SMALLINT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -528,7 +624,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Temporal.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -551,7 +652,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.Textual.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -574,7 +680,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.TIME.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -597,7 +708,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.TINYINT.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override
@@ -620,7 +736,12 @@ public abstract class TestCommand<E> extends Command<E> {
       static class SELECT<D extends type.Entity> extends Command.Select.untyped.SELECT<D> {
         SELECT(final boolean distinct, final type.Entity[] entities) {
           super(distinct, entities);
+        }
+
+        @Override
+        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
+          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
         }
 
         @Override

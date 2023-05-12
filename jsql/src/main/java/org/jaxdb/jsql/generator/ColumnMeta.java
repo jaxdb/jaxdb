@@ -29,6 +29,7 @@ import org.libj.lang.Identifiers;
 
 final class ColumnMeta {
   final TableMeta tableMeta;
+  final int index;
   final $Column column;
   final String name;
   final boolean isPrimary;
@@ -45,8 +46,9 @@ final class ColumnMeta {
   final String camelCase;
 
   @SuppressWarnings("rawtypes")
-  ColumnMeta(final TableMeta tableMeta, final $Column column, final boolean isPrimary, final boolean isKeyForUpdate, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
+  ColumnMeta(final TableMeta tableMeta, final int index, final $Column column, final boolean isPrimary, final boolean isKeyForUpdate, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
     this.tableMeta = tableMeta;
+    this.index = index;
     this.column = column;
     this.isPrimary = isPrimary;
     this.isKeyForUpdate = isKeyForUpdate;

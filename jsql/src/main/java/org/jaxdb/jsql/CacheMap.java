@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.channels.UnsupportedAddressTypeException;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 import org.libj.util.Interval;
@@ -46,17 +45,29 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
   abstract V superGet(data.Key key);
   abstract V superPut(data.Key key, V value);
 
-  private static data.BOOLEAN and(final type.Column<?> c, final Object min, final Object max) {
+  private static data.BOOLEAN andRange(final type.Column<?> c, final Object min, final Object max) {
     return AND(new ComparisonPredicate.Gte<>(c, min), new ComparisonPredicate.Lt<>(c, max));
   }
 
-  static data.BOOLEAN and(final Interval<type.Key> i) {
-    data.BOOLEAN and = null;
+  static data.BOOLEAN andRange(final Interval<type.Key> i) {
     final type.Key min = i.getMin();
     final type.Key max = i.getMax();
-    and = and(min.column(0), min.value(0), max.value(0));
+    data.BOOLEAN and = andRange(min.column(0), min.value(0), max.value(0));
     for (int j = 1, i$ = min.length(); j < i$; ++j)
-      and = AND(and, and(min.column(j), min.value(j), max.value(j)));
+      and = AND(and, andRange(min.column(j), min.value(j), max.value(j)));
+
+    return and;
+  }
+
+  private static data.BOOLEAN eq(final type.Column<?> c, final Object v) {
+    return new ComparisonPredicate.Eq<>(c, v);
+  }
+
+  static data.BOOLEAN andEq(final Interval<type.Key> i) {
+    final type.Key min = i.getMin();
+    data.BOOLEAN and = eq(min.column(0), min.value(0));
+    for (int j = 1, i$ = min.length(); j < i$; ++j)
+      and = AND(and, eq(min.column(j), min.value(j)));
 
     return and;
   }
@@ -122,28 +133,27 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
   }
 
   final void select(final data.BOOLEAN condition) throws IOException, SQLException {
-    final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.getSchema().getClass());
-    final Notifier<?>[] notifiers;
-    if (dataSourceIdToConnectors.size() == 0 || (notifiers  = Database.getNotifiers(dataSourceIdToConnectors.values().iterator(), 0)) == null)
+    final Class<? extends Schema> schemaClass = table.getSchema().getClass();
+    final Database database = Database.global(schemaClass);
+    final Notifier<?> notifier = database.getCacheNotifier();
+    if (notifier == null)
       return;
 
+    final Connector defaultConnector = database.getConnectors(schemaClass).get(null);
     try (final RowIterator<? extends data.Table> rows =
       SELECT(table).
       FROM(table).
       WHERE(condition)
-        .execute(dataSourceIdToConnectors.get(null))) {
+        .execute(defaultConnector)) {
 
-      while (rows.nextRow()) {
-        final data.Table row = rows.nextEntity();
-        for (final Notifier<?> notifier : notifiers) // [A]
-          notifier.onSelect(row, false);
-      }
+      while (rows.nextRow())
+        notifier.onSelect(rows.nextEntity(), false);
     }
   }
 
   final V select(final data.Key key) throws IOException, SQLException {
     if (!containsKey(key)) {
-      select(and(key));
+      select(andEq(key));
       addKey(key);
     }
 

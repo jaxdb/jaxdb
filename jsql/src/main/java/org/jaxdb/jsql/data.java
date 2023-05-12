@@ -52,6 +52,7 @@ import java.util.function.Function;
 
 import org.jaxdb.jsql.QueryConfig.Concurrency;
 import org.jaxdb.jsql.data.Column.SetBy;
+import org.jaxdb.jsql.type.Key;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.DelegateInputStream;
@@ -67,6 +68,7 @@ import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
 import org.libj.util.DiscreteTopologies;
 import org.libj.util.DiscreteTopology;
+import org.libj.util.Interval;
 import org.libj.util.function.Throwing;
 
 public final class data {
@@ -4072,8 +4074,17 @@ public final class data {
     }
   }
 
-  public static final class Key extends type.Key {
-    static final Key ALL = new Key(null);
+  public static class Key extends type.Key {
+    static final Key ALL = new Key(null) {
+      @Override
+      public int compareTo(final Interval<type.Key> o) {
+        return -1;
+      }
+    };
+    static {
+      ALL.min = null;
+    }
+
     static final Key[] ALLS = {ALL};
 
     private static final data.ARRAY<?>[] _array = {data.ARRAY()};
@@ -4281,7 +4292,7 @@ public final class data {
               throw new IllegalArgumentException("Unable to get DiscreteTopology.nextValue(...) at index " + i + " of value " + k + " from " + Arrays.toString(key));
           }
 
-          return key;
+          return next;
         }
 
         @Override
@@ -4295,7 +4306,7 @@ public final class data {
               throw new IllegalArgumentException("Unable to get DiscreteTopology.prevValue(...) at index " + i + " of value " + k + " from " + Arrays.toString(key));
           }
 
-          return key;
+          return prev;
         }
       } : topology;
     }

@@ -46,7 +46,10 @@ public interface type {
 
     @Override
     @SuppressWarnings("unchecked")
-    public final int compareTo(final Interval<Key> o) {
+    public int compareTo(final Interval<Key> o) {
+      if (o == data.Key.ALL)
+        return 1;
+
       final Key key = (Key)o;
       final int i$ = length();
       if (i$ != key.length())

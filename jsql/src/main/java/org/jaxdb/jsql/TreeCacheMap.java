@@ -36,9 +36,9 @@ import org.openjax.binarytree.IntervalTreeSet;
 
 public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMap<data.Key,V> {
   private static data.BOOLEAN where(final Interval<type.Key>[] intervals) {
-    data.BOOLEAN or = and(intervals[0]);
+    data.BOOLEAN or = andRange(intervals[0]);
     for (int i = 1, i$ = intervals.length; i < i$; ++i)
-      or = OR(or, and(intervals[i]));
+      or = OR(or, andRange(intervals[i]));
 
     return or;
   }

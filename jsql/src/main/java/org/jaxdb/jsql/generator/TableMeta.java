@@ -115,6 +115,7 @@ class TableMeta {
   private final String classSimpleName;
   private final String className;
   private final String instanceName;
+  final String singletonInstanceName;
 
   TableMeta(final Table table, final SchemaManifest schemaManifest) throws GeneratorExecutionException {
     this.isAbstract = table.getAbstract$() != null && table.getAbstract$().text();
@@ -145,6 +146,7 @@ class TableMeta {
     this.classSimpleName = Identifiers.toClassCase(tableName, '$');
     this.className = schemaManifest.schemaClassName + "." + classSimpleName;
     this.instanceName = Identifiers.toInstanceCase(tableName);
+    this.singletonInstanceName = "$" + instanceName;
 
     final $Constraints constraints = table.getConstraints();
     final PrimaryKey primaryKey;
@@ -343,22 +345,20 @@ class TableMeta {
       for (int c = 1; c <= size; ++c) { // [RA]
         final int i = size - c;
         final $Column column = columns.get(i);
-        final ColumnMeta columnMeta = getColumnMeta(tableMeta, column, primaryKeyColumnNames);
-
+        final int index = columnMetas.length - depth - c;
+        columnMetas[index] = getColumnMeta(index, tableMeta, column, primaryKeyColumnNames);
         if (org.jaxdb.ddlx.Generator.isAuto(column)) {
           ++totalAutoCount;
           if (isSuperTable)
             ++totalAutoOffset;
         }
-
-        columnMetas[columnMetas.length - depth - c] = columnMeta;
       }
     }
 
     return columnMetas;
   }
 
-  private static ColumnMeta getColumnMeta(final TableMeta tableMeta, final $Column column, final Set<String> primaryKeyColumnNames) throws GeneratorExecutionException {
+  private static ColumnMeta getColumnMeta(final int index, final TableMeta tableMeta, final $Column column, final Set<String> primaryKeyColumnNames) throws GeneratorExecutionException {
     final String columnName = column.getName$().text();
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
@@ -381,22 +381,22 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.CHAR.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.CHAR.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
     }
 
     if (column instanceof $Clob) {
       final $Clob col = ($Clob)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
     }
 
     if (column instanceof $Binary) {
       final $Binary col = ($Binary)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.BINARY.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.BINARY.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
     }
 
     if (column instanceof $Blob) {
       final $Blob col = ($Blob)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
     }
 
     if (column instanceof $Integer) {
@@ -424,7 +424,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Smallint) {
@@ -441,7 +441,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Int) {
@@ -491,7 +491,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Bigint) {
@@ -553,7 +553,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
     }
 
@@ -561,19 +561,19 @@ class TableMeta {
       final $Float col = ($Float)column;
       final Number min = col.getMin$() != null ? col.getMin$().text() : null;
       final Number max = col.getMax$() != null ? col.getMax$().text() : null;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.FLOAT.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.FLOAT.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
     }
 
     if (column instanceof $Double) {
       final $Double col = ($Double)column;
       final Number min = col.getMin$() != null ? col.getMin$().text() : null;
       final Number max = col.getMax$() != null ? col.getMax$().text() : null;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.DOUBLE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.DOUBLE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
     }
 
     if (column instanceof $Decimal) {
       final $Decimal col = ($Decimal)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.DECIMAL.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue(), col.getScale$() == null ? 0 : col.getScale$().text().intValue(), col.getMin$() == null ? null : col.getMin$().text(), col.getMax$() == null ? null : col.getMax$().text());
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.DECIMAL.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue(), col.getScale$() == null ? 0 : col.getScale$().text().intValue(), col.getMin$() == null ? null : col.getMin$().text(), col.getMax$() == null ? null : col.getMax$().text());
     }
 
     if (column instanceof $Date) {
@@ -597,7 +597,7 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.DATE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.DATE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
     }
 
     if (column instanceof $Time) {
@@ -621,7 +621,7 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.TIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.TIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
     }
 
     if (column instanceof $Datetime) {
@@ -645,17 +645,17 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.DATETIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.DATETIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
     }
 
     if (column instanceof $Boolean) {
       final $Boolean col = ($Boolean)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.BOOLEAN.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.BOOLEAN.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
     }
 
     if (column instanceof $Enum) {
       final $Enum col = ($Enum)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.ENUM.class, commonParams, col.getDefault$() == null ? null : tableMeta.getClassNameOfEnum(col).append('.').append(Generator.enumStringToEnum(col.getDefault$().text())), generateOnInsert, generateOnUpdate);
+      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.ENUM.class, commonParams, col.getDefault$() == null ? null : tableMeta.getClassNameOfEnum(col).append('.').append(Generator.enumStringToEnum(col.getDefault$().text())), generateOnInsert, generateOnUpdate);
     }
 
     throw new IllegalArgumentException("Unknown class: " + cls);
@@ -768,26 +768,6 @@ class TableMeta {
 
     final StringBuilder out = new StringBuilder();
     final Collection<Relations<Relation>> allRelations = columnsToRelations.values();
-    if (!isAbstract) {
-      out.append("\n  private static final ").append(className).append(" $").append(instanceName).append(" = new ").append(className).append("(false, false) {");
-      out.append("\n    private boolean cacheSelectEntity;");
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final void setCacheSelectEntity(final boolean cacheSelectEntity) {");
-      out.append("\n      this.cacheSelectEntity = cacheSelectEntity;");
-      out.append("\n    }\n");
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final boolean getCacheSelectEntity() {");
-      out.append("\n      return cacheSelectEntity;");
-      out.append("\n    }\n");
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final ").append(getConcreteClass(className)).append(" getCache() {");
-      out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : getInstanceNameForCache(primaryKey)).append(';');
-      out.append("\n    }");
-      out.append("\n  };\n");
-      out.append("\n  public static ").append(className).append(' ').append(classSimpleName).append("() {");
-      out.append("\n    return $").append(instanceName).append(';');
-      out.append("\n  }\n");
-    }
 
     final String ext = superTable == null ? data.Table.class.getCanonicalName() : Identifiers.toClassCase(table.getExtends$().text(), '$');
 
@@ -872,7 +852,7 @@ class TableMeta {
 
       out.append("\n    @").append(Override.class.getName());
       out.append("\n    ").append(className).append(" singleton() {");
-      out.append("\n      return $").append(instanceName).append(';');
+      out.append("\n      return ").append(singletonInstanceName).append(';');
       out.append("\n    }\n");
     }
 
@@ -883,6 +863,7 @@ class TableMeta {
       out.append("\n    }\n");
     }
 
+    final LinkedHashSet<String> keyClauseColumnAssignments = new LinkedHashSet<>();
     if (!isAbstract) {
       {
         out.append("\n    // WRITE DECLARE");
@@ -912,7 +893,7 @@ class TableMeta {
         if (allRelations.size() > 0)
           for (final LinkedHashSet<Relation> relations : allRelations) // [C]
             for (final Relation relation : relations) // [S]
-              write("\n", relation.writeCacheDeclare(), out, declared);
+              write("\n", relation.writeCacheDeclare(keyClauseColumnAssignments), out, declared);
       }
 
       {
@@ -1346,6 +1327,37 @@ class TableMeta {
     out.append("    }\n");
 
     out.append("  }");
+
+    if (!isAbstract) {
+      out.append("\n\n  private static final ").append(className).append(" $").append(instanceName).append(" = new ").append(className).append("(false, false) {");
+      out.append("\n    private boolean cacheSelectEntity;\n");
+
+      if (keyClauseColumnAssignments.size() > 0) {
+        out.append("\n    {");
+        for (final String keyClauseColumnAssignment : keyClauseColumnAssignments) // [S]
+          out.append("\n      ").append(className).append('.').append(keyClauseColumnAssignment).append(';');
+
+        out.append("\n    }\n");
+      }
+
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final void setCacheSelectEntity(final boolean cacheSelectEntity) {");
+      out.append("\n      this.cacheSelectEntity = cacheSelectEntity;");
+      out.append("\n    }\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final boolean getCacheSelectEntity() {");
+      out.append("\n      return cacheSelectEntity;");
+      out.append("\n    }\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final ").append(getConcreteClass(className)).append(" getCache() {");
+      out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : getInstanceNameForCache(primaryKey)).append(';');
+      out.append("\n    }");
+      out.append("\n  };\n");
+      out.append("\n  public static ").append(className).append(' ').append(classSimpleName).append("() {");
+      out.append("\n    return $").append(instanceName).append(';');
+      out.append("\n  }");
+    }
+
     return out.toString();
   }
 
