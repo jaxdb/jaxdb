@@ -139,8 +139,10 @@ public final class Callbacks implements Closeable {
     public void accept(final Schema schema, final Exception e) {
       final int index = this.indexIn.incrementAndGet();
       final int count = this.count.get();
-      if (index > count)
+      if (index > count) {
+        // FIXME: This has happened!!!
         throw new IllegalStateException("index (" + index + ") > count (" + count + ")");
+      }
 
       try {
         OnNotifyCallback prev = null;
