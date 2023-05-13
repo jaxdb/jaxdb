@@ -281,7 +281,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   void checkCreateTriggers(final Statement statement, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
     if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+    final int noTables = tables.length;
+    for (int i = 0; i < noTables; ++i) { // [A]
       final Action[] actionSet = actionSets[i];
       if (actionSet == null)
         continue;
@@ -299,7 +300,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     StringBuilder selectTriggers = null;
     HashSet<String> functionNames = null;
     HashSet<String> triggerNames = null;
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+    for (int i = 0; i < noTables; ++i) { // [A]
       final Action[] actionSet = actionSets[i];
       if (actionSet == null)
         continue;
@@ -309,10 +310,10 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
         final Action action = actionSet[j];
         if (action != null) {
           if (functionNameByActions == null) {
-            functionNameByActions = new String[tables.length][];
+            functionNameByActions = new String[noTables][];
             selectFunctions = new StringBuilder("SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name IN ");
             selectTriggers = new StringBuilder("SELECT trigger_name FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name IN ");
-            functionNames = new HashSet<>(tables.length * 3);
+            functionNames = new HashSet<>(noTables * 3);
             triggerNames = new HashSet<>(functionNames.size());
           }
 
@@ -367,7 +368,6 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   @Override
   void listenTriggers(final Statement statement) throws SQLException {
     if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.listenTriggers", "%?", this, statement.getConnection());
-
     statement.addBatch("LISTEN \"" + channelName + "\"");
   }
 

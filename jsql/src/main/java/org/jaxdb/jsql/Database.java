@@ -29,6 +29,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -277,8 +278,9 @@ public class Database extends Notifiable {
       if (table._mutable$)
         throw new IllegalArgumentException("Table is mutable");
 
-      final Connector defaultConnector = Database.getConnectors(table.getSchema().getClass()).get(null);
-      final Notifier<?> notifier = Database.global(table.getSchema().getClass()).getCacheNotifier();
+      final Class<? extends Schema> schemaClass = table.getSchema().getClass();
+      final Connector defaultConnector = Database.getConnectors(schemaClass).get(null);
+      final Notifier<?> notifier = Database.global(schemaClass).getCacheNotifier();
       try (final RowIterator<data.Table> rows =
         SELECT(table).
         FROM(table)
@@ -301,7 +303,7 @@ public class Database extends Notifiable {
     private DefaultListener<data.Table> notificationListener;
     private Queue<Notification<data.Table>> queue;
     private ArrayList<OnConnectPreLoad> onConnectPreLoads = new ArrayList<>();
-    private ArrayList<data.Table> tables = new ArrayList<>();
+    private LinkedHashSet<data.Table> tables = new LinkedHashSet<>();
 
     private CacheConfig(final Database database, final Connector connector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue) {
       this.database = database;
@@ -315,7 +317,8 @@ public class Database extends Notifiable {
         final data.Table table = tables[i];
         onConnectPreLoads.add(null);
         table.setCacheSelectEntity(true);
-        this.tables.add(assertNotNull(table));
+        if (!this.tables.add(table))
+          throw new IllegalArgumentException("Table \"" + table.getName() + "\" is specified twice");
       }
 
       return this;
@@ -326,7 +329,8 @@ public class Database extends Notifiable {
         final data.Table table = tables[i];
         onConnectPreLoads.add(onConnectPreLoad);
         table.setCacheSelectEntity(true);
-        this.tables.add(assertNotNull(table));
+        if (!this.tables.add(table))
+          throw new IllegalArgumentException("Table \"" + table.getName() + "\" is specified twice");
       }
 
       return this;
@@ -337,7 +341,8 @@ public class Database extends Notifiable {
         final data.Table table = tables[i];
         onConnectPreLoads.add(OnConnectPreLoad.ALL);
         table.setCacheSelectEntity(cacheSelectEntity);
-        this.tables.add(assertNotNull(table));
+        if (!this.tables.add(table))
+          throw new IllegalArgumentException("Table \"" + table.getName() + "\" is specified twice");
       }
 
       return this;
@@ -348,22 +353,24 @@ public class Database extends Notifiable {
         final data.Table table = tables[i];
         onConnectPreLoads.add(onConnectPreLoad);
         table.setCacheSelectEntity(cacheSelectEntity);
-        this.tables.add(assertNotNull(table));
+        if (!this.tables.add(table))
+          throw new IllegalArgumentException("Table \"" + table.getName() + "\" is specified twice");
       }
 
       return this;
     }
 
     private void commit() throws IOException, SQLException {
-      final data.Table[] array = tables.toArray(new data.Table[tables.size()]);
+      final int len = tables.size();
+      final data.Table[] array = tables.toArray(new data.Table[len]);
       database.addNotificationListener(connector, INSERT, UPGRADE, DELETE, notificationListener, queue, array);
-      for (int i = 0, i$ = array.length; i < i$; ++i) {
+      database.cacheNotifier = connector.getNotifier();
+
+      for (int i = 0; i < len; ++i) {
         final OnConnectPreLoad onConnectPreLoad = onConnectPreLoads.get(i);
         if (onConnectPreLoad != null)
           onConnectPreLoad.accept(array[i]);
       }
-
-      database.cacheNotifier = connector.getNotifier();
 
       database = null;
       connector = null;

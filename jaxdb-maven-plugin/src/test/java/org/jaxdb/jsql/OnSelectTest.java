@@ -16,6 +16,7 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.DML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.DBTestRunner.Spec;
@@ -89,7 +91,11 @@ public abstract class OnSelectTest {
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
-    }, new ConcurrentLinkedQueue<>(), c -> c.with(classicmodels.getTables()));
+    }, new ConcurrentLinkedQueue<>(), c -> c
+      .with(OnConnectPreLoad.ALL, classicmodels.Product(), classicmodels.Employee())
+      .with(classicmodels.Office(), classicmodels.ProductLine(), classicmodels.Purchase(), classicmodels.PurchaseDetail()));
+
+    assertTrue(TestDatabase.called());
   }
 
   private static void testTreeSingle(final NavigableMap<data.Key,classicmodels.Purchase> map, final boolean selectCalled) throws IOException, SQLException {
@@ -192,7 +198,7 @@ public abstract class OnSelectTest {
   }
 
   @Test
-  @Spec(order = 1)
+  @Spec(order = 3)
   public void testHashSingle(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final Map<data.Key,classicmodels.ProductLine> map = classicmodels.ProductLine.productLineToProductLine();
 
@@ -207,6 +213,61 @@ public abstract class OnSelectTest {
 
     testHashSingle(map, true);
     testHashSingle(map, false);
+  }
+
+  @Test
+  @Spec(order = 4)
+  public void testOnConnectPreLoadAllHash(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.Product();
+    try (final RowIterator<data.BIGINT> rows =
+      SELECT(COUNT(p)).
+      FROM(p)
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertEquals(rows.nextEntity().getAsLong(), classicmodels.Product.codeToProduct().size());
+
+      for (final classicmodels.Product pr : classicmodels.Product.codeToProduct().values())
+        assertNotNull(pr.productLine$ProductLine_productLine());
+    }
+  }
+
+  @Test
+  @Spec(order = 5)
+  public void testOnConnectPreLoadAllTree(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Employee e = classicmodels.Employee();
+    try (final RowIterator<data.BIGINT> rows =
+      SELECT(COUNT(e)).
+      FROM(e)
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertEquals(rows.nextEntity().getAsLong(), classicmodels.Employee.employeeNumberToEmployee().size());
+
+      for (final classicmodels.Employee em : classicmodels.Employee.employeeNumberToEmployee().values())
+        assertNotNull(em.officeCode$Office_officeCode());
+    }
+  }
+
+  @Test
+  @Spec(order = 6)
+  public void testTreeTwoDimensions(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    try {
+      classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10100, 10114, "S10_1678", "S10_1950");
+      fail("Expected UnsupportedOperationException");
+    }
+    catch (final UnsupportedOperationException e) {
+    }
+
+    assertFalse(TestDatabase.called());
+    classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10110, "S24_3969");
+    assertTrue(TestDatabase.called());
+    final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10110, "S24_3969");
+    assertFalse(TestDatabase.called());
+    assertNotNull(p.productCode$Product_code());
+    assertFalse(TestDatabase.called());
+    assertNotNull(p.purchaseNumber$Purchase_purchaseNumber());
+    assertFalse(TestDatabase.called());
   }
 
   @AfterClass

@@ -246,6 +246,9 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
   }
 
   final SortedMap<data.Key,V> select(final data.Key fromKey, final data.Key toKey) throws IOException, SQLException {
+    if (fromKey.length() > 1)
+      throw new UnsupportedOperationException("Composite keys are not yet supported");
+
     final Interval<type.Key>[] diff = diffKeys(fromKey, toKey);
     if (diff.length > 0) {
       select(where(diff));

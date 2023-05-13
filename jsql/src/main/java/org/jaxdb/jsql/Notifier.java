@@ -404,11 +404,11 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   };
 
-  private void recreateTrigger(final Connection connection, final data.Table[] table, final Action[][] actionSets) throws SQLException {
-    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(table).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
+  private void recreateTrigger(final Connection connection, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
+    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
     try (final Statement statement = connection.createStatement()) {
-      checkCreateTriggers(statement, table, actionSets);
+      checkCreateTriggers(statement, tables, actionSets);
       listenTriggers(statement);
       statement.executeBatch();
     }
