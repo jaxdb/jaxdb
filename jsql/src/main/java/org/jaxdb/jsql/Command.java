@@ -679,7 +679,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           throw new IllegalStateException("Unknown entity type: " + entity.getClass().getName());
         }
 
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
           if (!endReached && isCacheable && isCacheableRowIteratorFullConsume) {
             final IllegalStateException ie = new IllegalStateException("RowIterator end not reached for cacheableRowIteratorFullConsume=true");
             if (e != null)
@@ -754,20 +754,8 @@ abstract class Command<E> extends Keyword implements Closeable {
                 private final boolean isCacheableRowIteratorFullConsume = QueryConfig.getCacheableRowIteratorFullConsume(contextQueryConfig, defaultQueryConfig);
                 private HashMap<Class<?>,data.Table> prototypes = new HashMap<>();
                 private HashMap<data.Table,data.Table> cachedTables = new HashMap<>();
-                private ArrayList<data.Table> cacheBuffer;
                 private data.Table currentTable;
                 private boolean mustFetchRow = false;
-
-                private boolean flushCacheBuffer() {
-                  if (cacheBuffer == null)
-                    return false;
-
-                  for (int j = 0, j$ = cacheBuffer.size(); j < j$; ++j) // [RA]
-                    notifier.onSelect(cacheBuffer.get(j), false);
-
-                  cacheBuffer = null;
-                  return true;
-                }
 
                 @Override
                 public boolean nextRow() throws SQLException {
@@ -776,10 +764,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
                   try {
                     if (endReached = !resultSet.next()) {
-                      if (notifier == null || !flushCacheBuffer())
-                        return false;
-
-                      if (rangeIntervals != null)
+                      if (notifier != null && rangeIntervals != null)
                         table.getCache().addKey(rangeIntervals);
 
                       return false;
@@ -803,21 +788,8 @@ abstract class Command<E> extends Keyword implements Closeable {
                 }
 
                 private void onSelect(final data.Table row) {
-                  if (notifier == null || !row.getCacheSelectEntity())
-                    return;
-
-                  if (rangeIntervals == null) {
-                    notifier.onSelect(row, true);
-                  }
-                  else if (isCacheableRowIteratorFullConsume) {
-                    notifier.onSelect(row, false);
-                  }
-                  else {
-                    if (cacheBuffer == null)
-                      cacheBuffer = new ArrayList<>();
-
-                    cacheBuffer.add(row);
-                  }
+                  if (notifier != null && row.getCacheSelectEntity())
+                    notifier.onSelect(row);
                 }
 
                 @SuppressWarnings("null")
@@ -897,8 +869,6 @@ abstract class Command<E> extends Keyword implements Closeable {
 
                 @Override
                 public void close() throws SQLException {
-                  flushCacheBuffer();
-
                   SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
                   e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
                   if (closeConnection)
@@ -908,7 +878,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                   cachedTables = null;
                   currentTable = null;
 
-                  assertRowIteratorClosed(endReached, isEntityOnlySelect, e, isCacheableRowIteratorFullConsume);
+                  assertRowIteratorConsumed(endReached, isEntityOnlySelect, e, isCacheableRowIteratorFullConsume);
                 }
               };
             }

@@ -109,8 +109,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -137,8 +137,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -165,8 +165,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -193,8 +193,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -221,8 +221,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -249,8 +249,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -277,8 +277,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -305,8 +305,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -333,8 +333,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -361,8 +361,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -389,8 +389,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -417,8 +417,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -445,8 +445,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -473,8 +473,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -501,8 +501,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -529,8 +529,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -557,8 +557,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -585,8 +585,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -613,8 +613,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -641,8 +641,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -669,8 +669,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -697,8 +697,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -725,8 +725,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -753,8 +753,8 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
+        void assertRowIteratorConsumed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorConsumed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }

@@ -287,7 +287,7 @@ public class Database extends Notifiable {
           .execute(defaultConnector, withoutCacheSelectEntity)) {
         while (rows.nextRow()) {
           final data.Table row = rows.nextEntity();
-          notifier.onSelect(row, false);
+          notifier.onSelect(row);
         }
 
         table.getCache().addKey(data.Key.ALL);
@@ -407,9 +407,9 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onSelect(final data.Table row, final boolean addKey) {
+  void onSelect(final data.Table row) {
     if (schema != null)
-      schema.onSelect(row, addKey);
+      schema.onSelect(row);
   }
 
   @Override

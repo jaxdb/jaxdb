@@ -40,11 +40,4 @@ public class OneToOneHashMap<V extends data.Table> extends HashCacheMap<V> imple
   public V get(final Object key) {
     return map.get(key);
   }
-
-  final V put(final data.Key key, final V value, final boolean addKey) {
-    if (addKey)
-      mask.add(key);
-
-    return map.put(key, value);
-  }
 }

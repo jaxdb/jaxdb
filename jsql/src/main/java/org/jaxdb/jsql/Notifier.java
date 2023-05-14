@@ -632,7 +632,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void onSelect(final data.Table row, final boolean addKey) {
+  void onSelect(final data.Table row) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
     if (tableNotifier == null)
       return;
@@ -640,7 +640,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        Action.SELECT.onSelect(entry.getKey(), row, addKey);
+        Action.SELECT.onSelect(entry.getKey(), row);
   }
 
   @Override

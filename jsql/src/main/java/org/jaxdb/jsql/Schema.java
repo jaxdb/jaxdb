@@ -185,14 +185,14 @@ public abstract class Schema extends Notifiable {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onSelect(final data.Table row, final boolean addKey) {
+  void onSelect(final data.Table row) {
     if (selectListeners == null)
       return;
 
     final Class<?> rowClass = row.getClass();
     for (final Map.Entry<? extends Notification.SelectListener,LinkedHashSet<Class<? extends data.Table>>> entry : selectListeners.entrySet()) // [S]
       if (entry.getValue().contains(rowClass))
-        entry.getKey().onSelect(row, addKey);
+        entry.getKey().onSelect(row);
   }
 
   @Override

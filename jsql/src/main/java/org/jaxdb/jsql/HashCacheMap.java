@@ -67,6 +67,7 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
 
   @Override
   final V superPut(final data.Key key, final V value) {
+    mask.add(key);
     return map.put(key, value);
   }
 

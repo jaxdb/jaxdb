@@ -70,9 +70,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     }
   }
 
-  private static data.Table insert(final data.Table entity, final boolean addKey) {
+  private static data.Table insert(final data.Table entity) {
     if (logger.isTraceEnabled()) logger.trace("insert(" + log(entity) + ")");
-    entity._commitInsert$(addKey);
+    entity._commitInsert$();
     entity._commitEntity$();
     return entity;
   }
@@ -97,23 +97,23 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   }
 
   @Override
-  public void onSelect(final data.Table row, final boolean addKey) {
-    if (logger.isTraceEnabled()) logger.trace("onSelect(" + log(row) + "," + addKey + ")");
-    onSelectInsert(row.getCache(), null, -1, row, addKey);
+  public void onSelect(final data.Table row) {
+    if (logger.isTraceEnabled()) logger.trace("onSelect(" + log(row) + ")");
+    onSelectInsert(row.getCache(), null, -1, row);
   }
 
   @Override
   public data.Table onInsert(final String sessionId, final long timestamp, final data.Table row) {
     if (logger.isTraceEnabled()) logger.trace("onInsert(" + log(sessionId, timestamp) + "," + log(row) + ")");
-    return onSelectInsert(row.getCache(), sessionId, timestamp, row, true);
+    return onSelectInsert(row.getCache(), sessionId, timestamp, row);
   }
 
-  protected data.Table onSelectInsert(final CacheMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row, final boolean addKey) {
+  protected data.Table onSelectInsert(final CacheMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row) {
     Exception exception = null;
     try {
       final data.Table entity = cache.get(row.getKey());
       if (entity == null)
-        return insert(row.clone(false), addKey);
+        return insert(row.clone(false));
 
       if (entity.equals(row))
         return entity;
@@ -151,7 +151,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
       if (keyOld.equals(key)) {
         entity = cache.get(key);
         if (entity == null)
-          return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false), true);
+          return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false));
       }
       else {
         entity = cache.superRemove(keyOld);
@@ -161,7 +161,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
         else {
           entity = cache.get(key);
           if (entity == null)
-            return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false), true);
+            return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false));
         }
       }
 
@@ -240,7 +240,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     T entity = cache.get(key);
     if (entity == null) {
       cache.superPut(key.immutable(), entity = (T)row.clone(false));
-      entity._commitInsert$(true);
+      entity._commitInsert$();
     }
     else {
       entity.merge(row);

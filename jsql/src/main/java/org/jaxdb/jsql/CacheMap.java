@@ -147,7 +147,7 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
         .execute(defaultConnector)) {
 
       while (rows.nextRow())
-        notifier.onSelect(rows.nextEntity(), false);
+        notifier.onSelect(rows.nextEntity());
     }
   }
 

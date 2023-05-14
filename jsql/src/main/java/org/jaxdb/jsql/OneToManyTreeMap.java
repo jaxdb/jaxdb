@@ -38,15 +38,14 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<Navigab
     return v != null ? v : OneToOneTreeMap.EMPTY;
   }
 
-  final void add(final data.Key key, final V value, final boolean addKey) {
-    if (addKey)
-      mask.add(key);
+  final void superAdd(final data.Key key, final V value) {
+    mask.add(key);
 
     OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)map.get(key);
     if (v == null)
       map.put(key, v = new OneToOneTreeMap<>(table, name + ":" + key));
 
-    v.put(value.getKey().immutable(), value, addKey);
+    v.superPut(value.getKey().immutable(), value);
   }
 
   final void superRemove(final type.Key key, final V value) {

@@ -843,14 +843,14 @@ class TableMeta {
         declared.clear();
 
         out.append("\n\n    @").append(Override.class.getName());
-        out.append("\n    void _commitInsert$(final boolean addKey) {");
+        out.append("\n    void _commitInsert$() {");
         out.append("\n      if (!").append(className).append("._cacheEnabled$)");
         out.append("\n        return;\n");
         // out.append("\n super._commitInsert$();\n");
         if (allRelations.size() > 0) {
           for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
-              write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur, null), out, declared);
+              write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur), out, declared);
             }
           }
         }
@@ -1033,7 +1033,7 @@ class TableMeta {
 
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
           final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur, true), ocb, declared2);
+          write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
         }
 
         if (primaryKeyColumnNames.contains(columnMeta.name) && columnsToRelations.size() > 0) {
@@ -1045,7 +1045,7 @@ class TableMeta {
 
                 if (entry.getKey().contains(columnMeta) || relation instanceof ManyToManyRelation) {
                   write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClause(), CurOld.Old), ocb, declared2);
-                  write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur, true), ocb, declared2);
+                  write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
                 }
 
   //                    for (final Foreign reverse : relation.reverses) { // [?]
