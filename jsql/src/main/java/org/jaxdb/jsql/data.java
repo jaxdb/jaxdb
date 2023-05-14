@@ -4080,7 +4080,13 @@ public final class data {
       public int compareTo(final Interval<type.Key> o) {
         return -1;
       }
+
+      @Override
+      public type.Key getMax() {
+        return null;
+      }
     };
+
     static {
       ALL.min = null;
     }

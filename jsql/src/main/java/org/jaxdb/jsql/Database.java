@@ -293,8 +293,6 @@ public class Database extends Notifiable {
         table.getCache().addKey(data.Key.ALL);
       }
     };
-
-    public static final OnConnectPreLoad NONE = (final data.Table table) -> {};
   }
 
   public static class CacheConfig {

@@ -16,9 +16,10 @@
 
 package org.jaxdb.jsql.generator;
 
-import java.util.Map;
+import java.io.IOException;
+import java.sql.SQLException;
 
-import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.CacheMap;
 
 class OneToManyRelation extends ForeignRelation {
   OneToManyRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
@@ -31,9 +32,9 @@ class OneToManyRelation extends ForeignRelation {
     final String declaredName = indexTypeForeign.isUnique ? declarationNameForeign : getDeclaredName();
 
     final StringBuilder out = new StringBuilder();
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("() {");
-    out.append("\n      final ").append(Map.class.getName()).append('<').append(data.Key.class.getCanonicalName()).append(',').append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheInstanceNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.get(").append(keyClause.replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
+    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" {");
+    out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheMapFieldNameForeign).append(';');
+    out.append("\n      return cache == null ? null : cache.select(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
     out.append("\n    }");
     return out.toString();
   }

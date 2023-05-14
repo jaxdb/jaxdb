@@ -24,13 +24,13 @@ class ManyToManyRelation extends ForeignRelation {
   @Override
   String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addKey) {
     final String method = indexType.isUnique ? "put" : "add";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addKey == null ? "addKey" : addKey) + ");";
+    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheMapFieldName + "." + method + "(" + keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addKey == null ? "addKey" : addKey) + ");";
   }
 
   @Override
   String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {
     final String member = indexType.isUnique ? "" : ", " + classSimpleName + ".this";
-    return declarationName + "." + cacheInstanceName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + member + ");";
+    return declarationName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + member + ");";
   }
 
   @Override
@@ -45,9 +45,9 @@ class ManyToManyRelation extends ForeignRelation {
       return null;
 
     return "{\n" +
-      "            " + declarationName + "." + cacheInstanceName + ".superGet(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ");\n" +
+      "            " + declarationName + "." + cacheMapFieldName + ".superGet(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ");\n" +
       "            if (set != null) for (final " + declarationName + " member : set) member." + fieldName + " = null;\n" + // [?]
-      "            " + declarationName + "." + cacheInstanceName + ".superGet(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld2.toString()) + ");\n" +
+      "            " + declarationName + "." + cacheMapFieldName + ".superGet(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld2.toString()) + ");\n" +
       "            if (set != null) for (final " + declarationName + " member : set) member." + fieldName + " = " + classSimpleName + "." + "this;\n" + // [?]
       "          }";
   }

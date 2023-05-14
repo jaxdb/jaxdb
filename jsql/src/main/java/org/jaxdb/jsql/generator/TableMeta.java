@@ -84,7 +84,7 @@ class TableMeta {
 
   private final LinkedHashSet<Columns> uniques;
   private final LinkedHashSet<Columns> indexes;
-  private final Columns primaryKey;
+  final Columns primaryKey;
   private final ForeignKeys foreignKeys;
 
   private final LinkedHashMap<Columns,IndexType> columnsToIndexType = new LinkedHashMap<Columns,IndexType>() {
@@ -113,7 +113,7 @@ class TableMeta {
   private int totalAutoOffset = 0;
 
   private final String classSimpleName;
-  private final String className;
+  final String className;
   private final String instanceName;
   final String singletonInstanceName;
 
@@ -771,6 +771,27 @@ class TableMeta {
 
     final String ext = superTable == null ? data.Table.class.getCanonicalName() : Identifiers.toClassCase(table.getExtends$().text(), '$');
 
+    if (!isAbstract) {
+      out.append("\n  private static final ").append(className).append(" ").append(singletonInstanceName).append(" = new ").append(className).append("(false, false) {");
+      out.append("\n    private boolean cacheSelectEntity;\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final void setCacheSelectEntity(final boolean cacheSelectEntity) {");
+      out.append("\n      this.cacheSelectEntity = cacheSelectEntity;");
+      out.append("\n    }\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final boolean getCacheSelectEntity() {");
+      out.append("\n      return cacheSelectEntity;");
+      out.append("\n    }\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final ").append(getConcreteClass(className)).append(" getCache() {");
+      out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : "_" + primaryKey.getInstanceNameForCache(classCase) + "Map$").append(';');
+      out.append("\n    }");
+      out.append("\n  };\n");
+      out.append("\n  public static ").append(className).append(' ').append(classSimpleName).append("() {");
+      out.append("\n    return $").append(instanceName).append(';');
+      out.append("\n  }\n");
+    }
+
     out.append(getDoc(table, 1, '\0', '\n', "Table", tableName)); // FIXME: Add "\d foo" -like printout of column info into the table's javadoc
     out.append("\n  public");
     if (isAbstract)
@@ -784,84 +805,6 @@ class TableMeta {
 
     final HashSet<String> declared = new HashSet<>();
     final StringBuilder dcl = new StringBuilder();
-
-    if (!isAbstract) {
-      out.append("\n    private static boolean _cacheEnabled$;\n");
-
-      out.append("\n    void _initCache$() {");
-      out.append("\n      if (").append(className).append("._cacheEnabled$)");
-      out.append("\n        return;\n");
-      out.append("\n      super._initCache$();");
-
-      if (allRelations.size() > 0)
-        for (final LinkedHashSet<Relation> relations : allRelations) // [C]
-          for (final Relation relation : relations) // [S]
-            write("\n      ", relation.writeCacheInit(), out, declared);
-
-      out.append("\n      ").append(className).append("._cacheEnabled$ = true;");
-      out.append("\n    }\n");
-
-      declared.clear();
-
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    public ").append(String.class.getName()).append(" getName() {");
-      out.append("\n      return \"").append(tableName).append("\";");
-      out.append("\n    }\n");
-
-      out.append("\n    private static final ").append(String.class.getName()).append("[] _columnName$ = {");
-      for (int i = 0; i < noColumnsTotal; ++i) // [A]
-        columns[i].column.text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
-
-      final ArrayList<$Column> sortedColumns = new ArrayList<>();
-      for (final ColumnMeta columnMeta : columns) // [A]
-        sortedColumns.add(columnMeta.column);
-      sortedColumns.sort(Generator.namedComparator);
-
-      for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) { // [RA]
-        if (i > 0)
-          out.append(", ");
-
-        out.append('"').append(sortedColumns.get(i).getName$().text()).append('"');
-      }
-      out.append("};\n");
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(String.class.getName()).append("[] _columnName$() {");
-      out.append("\n      return _columnName$;");
-      out.append("\n    }\n");
-
-      out.append("\n    private static final byte[] _columnIndex$ = {");
-      final int noColumns = sortedColumns.size();
-      if (noColumns > 0) {
-        for (int i = 0; i < noColumns; ++i) { // [RA]
-          if (i > 0)
-            out.append(", ");
-
-          out.append(sortedColumns.get(i).text());
-        }
-      }
-      out.append("};\n");
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    byte[] _columnIndex$() {");
-      out.append("\n      return _columnIndex$;");
-      out.append("\n    }\n");
-
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(className).append(" newInstance() {");
-      out.append("\n      return new ").append(className).append("(true, true);");
-      out.append("\n    }\n");
-
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(className).append(" singleton() {");
-      out.append("\n      return ").append(singletonInstanceName).append(';');
-      out.append("\n    }\n");
-    }
-
-    if (superTable == null) {
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() {");
-      out.append("\n      return ").append(schemaManifest.schemaClassName).append(".getSchema();");
-      out.append("\n    }\n");
-    }
 
     final LinkedHashSet<String> keyClauseColumnAssignments = new LinkedHashSet<>();
     if (!isAbstract) {
@@ -945,7 +888,7 @@ class TableMeta {
           declared.clear();
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
-            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, CurOld.Cur), out, declared);
+            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause(), CurOld.Cur), out, declared);
           }
         }
         out.append("\n    }\n");
@@ -1074,7 +1017,7 @@ class TableMeta {
             boolean added = false;
             final LinkedHashSet<ForeignRelation> reverses = relation.reverses;
             for (final ForeignRelation reverse : reverses) // [S]
-              added |= write("\n            ", reverse.writeOnChangeClearCacheForeign(classSimpleName, onChangeRelation.keyClause, CurOld.Old, CurOld.Cur), ocb, declared2);
+              added |= write("\n            ", reverse.writeOnChangeClearCacheForeign(classSimpleName, onChangeRelation.keyClause(), CurOld.Old, CurOld.Cur), ocb, declared2);
 
             if (added)
               ocb.append('\n');
@@ -1085,7 +1028,7 @@ class TableMeta {
 
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
           final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, CurOld.Old), ocb, declared2);
+          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause(), CurOld.Old), ocb, declared2);
         }
 
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
@@ -1101,7 +1044,7 @@ class TableMeta {
                 final ForeignRelation foreign = (ForeignRelation)relation;
 
                 if (entry.getKey().contains(columnMeta) || relation instanceof ManyToManyRelation) {
-                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClause, CurOld.Old), ocb, declared2);
+                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClause(), CurOld.Old), ocb, declared2);
                   write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur, true), ocb, declared2);
                 }
 
@@ -1326,37 +1269,91 @@ class TableMeta {
 
     out.append("    }\n");
 
-    out.append("  }");
-
     if (!isAbstract) {
-      out.append("\n\n  private static final ").append(className).append(" $").append(instanceName).append(" = new ").append(className).append("(false, false) {");
-      out.append("\n    private boolean cacheSelectEntity;\n");
+      out.append("\n    private static boolean _cacheEnabled$;\n");
+
+      out.append("\n    void _initCache$() {");
+      out.append("\n      if (").append(className).append("._cacheEnabled$)");
+      out.append("\n        return;\n");
+      out.append("\n      super._initCache$();");
+      out.append("\n      ").append(className).append("._cacheEnabled$ = true;\n");
+
+      if (allRelations.size() > 0)
+        for (final LinkedHashSet<Relation> relations : allRelations) // [C]
+          for (final Relation relation : relations) // [S]
+            write("\n      ", relation.writeCacheInit(), out, declared);
 
       if (keyClauseColumnAssignments.size() > 0) {
-        out.append("\n    {");
+        out.append('\n');
         for (final String keyClauseColumnAssignment : keyClauseColumnAssignments) // [S]
-          out.append("\n      ").append(className).append('.').append(keyClauseColumnAssignment).append(';');
-
-        out.append("\n    }\n");
+          out.append("\n      ").append(keyClauseColumnAssignment).append(';');
       }
 
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final void setCacheSelectEntity(final boolean cacheSelectEntity) {");
-      out.append("\n      this.cacheSelectEntity = cacheSelectEntity;");
       out.append("\n    }\n");
+
+      declared.clear();
+
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final boolean getCacheSelectEntity() {");
-      out.append("\n      return cacheSelectEntity;");
+      out.append("\n    public ").append(String.class.getName()).append(" getName() {");
+      out.append("\n      return \"").append(tableName).append("\";");
       out.append("\n    }\n");
+
+      out.append("\n    private static final ").append(String.class.getName()).append("[] _columnName$ = {");
+      for (int i = 0; i < noColumnsTotal; ++i) // [A]
+        columns[i].column.text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
+
+      final ArrayList<$Column> sortedColumns = new ArrayList<>();
+      for (final ColumnMeta columnMeta : columns) // [A]
+        sortedColumns.add(columnMeta.column);
+      sortedColumns.sort(Generator.namedComparator);
+
+      for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) { // [RA]
+        if (i > 0)
+          out.append(", ");
+
+        out.append('"').append(sortedColumns.get(i).getName$().text()).append('"');
+      }
+      out.append("};\n");
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final ").append(getConcreteClass(className)).append(" getCache() {");
-      out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : getInstanceNameForCache(primaryKey)).append(';');
-      out.append("\n    }");
-      out.append("\n  };\n");
-      out.append("\n  public static ").append(className).append(' ').append(classSimpleName).append("() {");
-      out.append("\n    return $").append(instanceName).append(';');
-      out.append("\n  }");
+      out.append("\n    ").append(String.class.getName()).append("[] _columnName$() {");
+      out.append("\n      return _columnName$;");
+      out.append("\n    }\n");
+
+      out.append("\n    private static final byte[] _columnIndex$ = {");
+      final int noColumns = sortedColumns.size();
+      if (noColumns > 0) {
+        for (int i = 0; i < noColumns; ++i) { // [RA]
+          if (i > 0)
+            out.append(", ");
+
+          out.append(sortedColumns.get(i).text());
+        }
+      }
+      out.append("};\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    byte[] _columnIndex$() {");
+      out.append("\n      return _columnIndex$;");
+      out.append("\n    }\n");
+
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    ").append(className).append(" newInstance() {");
+      out.append("\n      return new ").append(className).append("(true, true);");
+      out.append("\n    }\n");
+
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    ").append(className).append(" singleton() {");
+      out.append("\n      return ").append(singletonInstanceName).append(';');
+      out.append("\n    }\n");
     }
+
+    if (superTable == null) {
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() {");
+      out.append("\n      return ").append(schemaManifest.schemaClassName).append(".getSchema();");
+      out.append("\n    }\n");
+    }
+
+    out.append("  }");
 
     return out.toString();
   }
@@ -1385,10 +1382,6 @@ class TableMeta {
       return new ManyToManyRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     throw new UnsupportedOperationException("Is this even possible?");
-  }
-
-  String getInstanceNameForCache(final Columns columns) {
-    return columns.getInstanceNameForKey() + "To" + classCase;
   }
 
   private static boolean isNull(final $Column column) {

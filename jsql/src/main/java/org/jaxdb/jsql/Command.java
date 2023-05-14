@@ -721,7 +721,6 @@ abstract class Command<E> extends Keyword implements Closeable {
             }
 
             final Connection finalConnection = connection;
-            final Notifier<?> notifier = connector.getNotifier();
 
             final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
@@ -731,8 +730,16 @@ abstract class Command<E> extends Keyword implements Closeable {
               final Object[][] protoSubjectIndexes = compile(entities, entities.length, 0, 0);
               final boolean cacheSelectEntity = QueryConfig.getCacheSelectEntity(contextQueryConfig, defaultQueryConfig);
               compile(compilation, false, cacheSelectEntity);
-
-              final data.Key[] rangeIntervals = isEntityOnlySelect && !isConditionalSelect ? data.Key.ALLS : null;
+              final Notifier<?> notifier;
+              final data.Key[] rangeIntervals;
+              if (cacheSelectEntity) {
+                notifier = cacheSelectEntity ? connector.getNotifier() : null;
+                rangeIntervals = isEntityOnlySelect && !isConditionalSelect ? data.Key.ALLS : null;
+              }
+              else {
+                notifier = null;
+                rangeIntervals = null;
+              }
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
@@ -796,10 +803,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                 }
 
                 private void onSelect(final data.Table row) {
-                  if (notifier == null)
-                    return;
-
-                  if (!cacheSelectEntity && !row.getCacheSelectEntity())
+                  if (notifier == null || !row.getCacheSelectEntity())
                     return;
 
                   if (rangeIntervals == null) {

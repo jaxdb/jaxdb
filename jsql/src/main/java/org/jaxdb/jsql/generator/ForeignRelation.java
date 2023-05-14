@@ -16,6 +16,11 @@
 
 package org.jaxdb.jsql.generator;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
+import org.jaxdb.jsql.CacheMap;
+
 abstract class ForeignRelation extends Relation {
   final IndexType indexTypeForeign;
   private final Columns referenceColumns;
@@ -24,7 +29,8 @@ abstract class ForeignRelation extends Relation {
   final TableMeta referenceTable;
   final String fieldName;
 
-  final String cacheInstanceNameForeign;
+  final String cacheIndexFieldNameForeign;
+  final String cacheMapFieldNameForeign;
   final String declarationNameForeign;
 
   ForeignRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
@@ -33,15 +39,12 @@ abstract class ForeignRelation extends Relation {
     this.referenceTable = referenceTable;
     this.referenceColumns = referenceColumns;
 
-    final StringBuilder foreignName = new StringBuilder();
-    if (referenceColumns.size() > 0)
-      for (final ColumnMeta columnMeta : referenceColumns) // [S]
-        foreignName.append(columnMeta.camelCase).append('$');
-
-    foreignName.setLength(foreignName.length() - 1);
+    final String foreignName = referenceColumns.getInstanceNameForKey();
     this.fieldName = columnName + "$" + referenceTable.classCase + "_" + foreignName;
 
-    this.cacheInstanceNameForeign = foreignName + "To" + referenceTable.classCase;
+    final String cacheMethodNameForeign = Columns.getInstanceNameForCache(foreignName, referenceTable.classCase);
+    this.cacheMapFieldNameForeign = "_" + cacheMethodNameForeign + "Map$";
+    this.cacheIndexFieldNameForeign = referenceTable.className + "._" + cacheMethodNameForeign + "Index$";
     this.declarationNameForeign = schemaClassName + "." + referenceTable.classCase;
   }
 
@@ -55,9 +58,9 @@ abstract class ForeignRelation extends Relation {
     final String declaredName = getDeclaredName();
 
     final StringBuilder out = new StringBuilder();
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("() {");
-    out.append("\n      final org.jaxdb.jsql.CacheMap<").append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheInstanceNameForeign).append(';');
-    out.append("\n      return cache != null ? cache.superGet(").append(keyClause.replace("{1}", classSimpleName).replace("{2}", "Old")).append(") : null;");
+    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" {");
+    out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheMapFieldNameForeign).append(';');
+    out.append("\n      return cache == null ? null : cache.superSelect(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
     out.append("\n    }");
     return out.toString();
   }

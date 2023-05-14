@@ -40,8 +40,9 @@ class Relation {
     }
   }
 
-  final String cacheColumnsName;
-  final String cacheInstanceName;
+  final String cacheIndexFieldName;
+  final String cacheMethodName;
+  final String cacheMapFieldName;
   final String declarationName;
 
   final Columns columns;
@@ -49,9 +50,7 @@ class Relation {
   final TableMeta tableMeta;
   final IndexType indexType;
   final String columnName;
-  final String keyClauseColumnDeclaration;
-  final String keyClauseColumnAssignment;
-  final String keyClause;
+  final String keyClauseValues;
   final String keyCondition;
   final String rangeParams;
   final String keyParams;
@@ -59,8 +58,9 @@ class Relation {
   final String rangeArgs;
 
   Relation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final IndexType indexType) {
-    this.cacheInstanceName = tableMeta.getInstanceNameForCache(columns);
-    this.cacheColumnsName = "$" + cacheInstanceName;
+    this.cacheMethodName = columns.getInstanceNameForCache(tableMeta.classCase);
+    this.cacheMapFieldName = "_" + cacheMethodName + "Map$";
+    this.cacheIndexFieldName = "_" + cacheMethodName + "Index$";
     this.declarationName = schemaClassName + "." + tableMeta.classCase;
 
     this.sourceTable = sourceTable;
@@ -70,7 +70,6 @@ class Relation {
 
     this.columnName = columns.getInstanceNameForKey();
 
-    final StringBuilder keyClauseColumnAssignment = new StringBuilder();
     final StringBuilder keyClauseValues = new StringBuilder();
     final StringBuilder keyCondition = new StringBuilder();
     final StringBuilder keyParams = new StringBuilder();
@@ -78,9 +77,9 @@ class Relation {
     final StringBuilder keyArgs = new StringBuilder();
     final StringBuilder fromArgs = new StringBuilder();
     final StringBuilder toArgs = new StringBuilder();
+
     if (columns.size() > 0) {
       for (final ColumnMeta column : columns) { // [S]
-        keyClauseColumnAssignment.append("_column$[").append(column.index).append("], ");
         keyClauseValues.append("{1}.this.").append(column.camelCase).append(".get{2}(), ");
         keyCondition.append("{1}.this.").append(column.camelCase).append(".get{2}() != null && ");
         keyParams.append("final ").append(column.rawType).append(' ').append(column.instanceCase).append(", ");
@@ -91,12 +90,8 @@ class Relation {
       }
     }
 
-    keyClauseColumnAssignment.setLength(keyClauseColumnAssignment.length() - 2);
-    this.keyClauseColumnDeclaration = "private static " + data.Column.class.getCanonicalName() + "<?>[] " + cacheColumnsName;
-    this.keyClauseColumnAssignment = cacheColumnsName + " = new " + data.Column.class.getCanonicalName() + "<?>[] {" + keyClauseColumnAssignment + "}";
-
     keyClauseValues.setLength(keyClauseValues.length() - 2);
-    this.keyClause = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + keyClauseValues + ")";
+    this.keyClauseValues = keyClauseValues.toString();
 
     keyCondition.setLength(keyCondition.length() - 4);
     this.keyCondition = keyCondition.toString();
@@ -108,11 +103,11 @@ class Relation {
     this.rangeParams = rangeParams.toString();
 
     keyArgs.setLength(keyArgs.length() - 2);
-    this.keyArgs = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + keyArgs + ")";
+    this.keyArgs = data.Key.class.getCanonicalName() + ".with(" + cacheIndexFieldName + ", " + keyArgs + ")";
 
     fromArgs.setLength(fromArgs.length() - 2);
     toArgs.setLength(toArgs.length() - 2);
-    this.rangeArgs = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + fromArgs + "), " + data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + toArgs + ")";
+    this.rangeArgs = data.Key.class.getCanonicalName() + ".with(" + cacheIndexFieldName + ", " + fromArgs + "), " + data.Key.class.getCanonicalName() + ".with(" + cacheIndexFieldName + ", " + toArgs + ")";
   }
 
   private final String writeGetRangeMethod(final String returnType) {
@@ -120,37 +115,64 @@ class Relation {
       return "";
 
     return
-      "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ".select(" + rangeArgs + ");" +
+      "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      return " + declarationName + "." + cacheMapFieldName + ".select(" + rangeArgs + ");" +
       "\n    }\n";
   }
 
+  String keyClause() {
+    return keyClause(cacheIndexFieldName);
+  }
+
+  String keyClause(final String cacheColumnsName) {
+    return data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + keyClauseValues + ")";
+  }
+
+  void keyClauseColumnAssignments(final LinkedHashSet<String> keyClauseColumnAssignments) {
+    if (columns.size() == 0)
+      return;
+
+    final StringBuilder keyClauseColumnAssignment = new StringBuilder();
+    final boolean isPrimary = columns.equals(tableMeta.primaryKey);
+    if (isPrimary) {
+      keyClauseColumnAssignment.append(tableMeta.singletonInstanceName).append("._primary$");
+      keyClauseColumnAssignments.add(cacheIndexFieldName + " = " + keyClauseColumnAssignment);
+    }
+    else {
+      for (final ColumnMeta column : columns) // [S]
+        keyClauseColumnAssignment.append(tableMeta.singletonInstanceName).append("._column$[").append(column.index).append("], ");
+
+      keyClauseColumnAssignment.setLength(keyClauseColumnAssignment.length() - 2);
+      keyClauseColumnAssignments.add(cacheIndexFieldName + " = new " + data.Column.class.getCanonicalName() + "<?>[] {" + keyClauseColumnAssignment + "}");
+    }
+  }
+
   final String writeCacheDeclare(final LinkedHashSet<String> keyClauseColumnAssignments) {
-    keyClauseColumnAssignments.add(keyClauseColumnAssignment);
+    keyClauseColumnAssignments(keyClauseColumnAssignments);
     final String returnType = indexType.isUnique ? declarationName : indexType.getInterfaceClass(declarationName);
     return
-      "\n    " + keyClauseColumnDeclaration + ";" +
-      "\n    static " + indexType.getConcreteClass(declarationName) + " " + cacheInstanceName + ";\n" +
-      "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ".select(" + keyArgs + ");" +
+      "\n    private static " + data.Column.class.getCanonicalName() + "<?>[] " + cacheIndexFieldName + ";" +
+      "\n    static " + indexType.getConcreteClass(declarationName) + " " + cacheMapFieldName + ";\n" +
+      "\n    public static " + returnType + " " + cacheMethodName + "(" + keyParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      return " + declarationName + "." + cacheMapFieldName + ".select(" + keyArgs + ");" +
       "\n    }\n" +
       writeGetRangeMethod(returnType) +
-      "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheInstanceName + "() {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ";" +
+      "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "() {" +
+      "\n      return " + declarationName + "." + cacheMapFieldName + ";" +
       "\n    }";
   }
 
   final String writeCacheInit() {
-    return cacheInstanceName + " = new " + indexType.getConcreteClass(null) + "<>(this, \"" + tableMeta.tableName + ":" + cacheInstanceName + "\");";
+    return cacheMapFieldName + " = new " + indexType.getConcreteClass(null) + "<>(this, \"" + tableMeta.tableName + ":" + cacheMethodName + "\");";
   }
 
   String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addKey) {
     final String method = indexType.isUnique ? "put" : "add";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addKey == null ? "addKey" : addKey) + ");";
+    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheMapFieldName + "." + method + "(" + keyClause().replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addKey == null ? "addKey" : addKey) + ");";
   }
 
   String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {
-    return declarationName + "." + cacheInstanceName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
+    return declarationName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
   }
 
   String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final CurOld curOld, final CurOld curOld2) {

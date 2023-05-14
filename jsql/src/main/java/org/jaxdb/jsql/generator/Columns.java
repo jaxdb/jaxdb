@@ -50,4 +50,12 @@ class Columns extends LinkedHashSet<ColumnMeta> {
 
     return columnName.toString();
   }
+
+  String getInstanceNameForCache(final String classCase) {
+    return getInstanceNameForCache(getInstanceNameForKey(), classCase);
+  }
+
+  static String getInstanceNameForCache(final String instanceNameForKey, final String classCase) {
+    return instanceNameForKey + "To" + classCase;
+  }
 }
