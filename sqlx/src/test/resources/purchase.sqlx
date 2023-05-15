@@ -19,2352 +19,330 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="urn:jaxdb:sqlx:classicmodels ../../../target/generated-test-resources/jaxdb/classicmodels.xsd">
   <xi:include href="customer.sqlx"/>
-  <purchase
-    purchase_number="10100"
-    purchase_date="2003-01-06"
-    required_date="2003-01-13"
-    shipped_date="2003-01-10"
-    status="SHIPPED"
-    customer_number="363"/>
-  <purchase
-    purchase_number="10101"
-    purchase_date="2003-01-09"
-    required_date="2003-01-18"
-    shipped_date="2003-01-11"
-    status="SHIPPED"
-    comments="Check on availability."
-    customer_number="128"/>
-  <purchase
-    purchase_number="10102"
-    purchase_date="2003-01-10"
-    required_date="2003-01-18"
-    shipped_date="2003-01-14"
-    status="SHIPPED"
-    customer_number="181"/>
-  <purchase
-    purchase_number="10103"
-    purchase_date="2003-01-29"
-    required_date="2003-02-07"
-    shipped_date="2003-02-02"
-    status="SHIPPED"
-    customer_number="121"/>
-  <purchase
-    purchase_number="10104"
-    purchase_date="2003-01-31"
-    required_date="2003-02-09"
-    shipped_date="2003-02-01"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10105"
-    purchase_date="2003-02-11"
-    required_date="2003-02-21"
-    shipped_date="2003-02-12"
-    status="SHIPPED"
-    customer_number="145"/>
-  <purchase
-    purchase_number="10106"
-    purchase_date="2003-02-17"
-    required_date="2003-02-24"
-    shipped_date="2003-02-21"
-    status="SHIPPED"
-    customer_number="278"/>
-  <purchase
-    purchase_number="10107"
-    purchase_date="2003-02-24"
-    required_date="2003-03-03"
-    shipped_date="2003-02-26"
-    status="SHIPPED"
-    comments="Difficult to negotiate with customer. We need more marketing materials"
-    customer_number="131"/>
-  <purchase
-    purchase_number="10108"
-    purchase_date="2003-03-03"
-    required_date="2003-03-12"
-    shipped_date="2003-03-08"
-    status="SHIPPED"
-    customer_number="385"/>
-  <purchase
-    purchase_number="10109"
-    purchase_date="2003-03-10"
-    required_date="2003-03-19"
-    shipped_date="2003-03-11"
-    status="SHIPPED"
-    comments="Customer requested that FedEx Ground is used for this shipping"
-    customer_number="486"/>
-  <purchase
-    purchase_number="10110"
-    purchase_date="2003-03-18"
-    required_date="2003-03-24"
-    shipped_date="2003-03-20"
-    status="SHIPPED"
-    customer_number="187"/>
-  <purchase
-    purchase_number="10111"
-    purchase_date="2003-03-25"
-    required_date="2003-03-31"
-    shipped_date="2003-03-30"
-    status="SHIPPED"
-    customer_number="129"/>
-  <purchase
-    purchase_number="10112"
-    purchase_date="2003-03-24"
-    required_date="2003-04-03"
-    shipped_date="2003-03-29"
-    status="SHIPPED"
-    comments="Customer requested that ad materials (such as posters, pamphlets) be included in the shippment"
-    customer_number="144"/>
-  <purchase
-    purchase_number="10113"
-    purchase_date="2003-03-26"
-    required_date="2003-04-02"
-    shipped_date="2003-03-27"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10114"
-    purchase_date="2003-04-01"
-    required_date="2003-04-07"
-    shipped_date="2003-04-02"
-    status="SHIPPED"
-    customer_number="172"/>
-  <purchase
-    purchase_number="10115"
-    purchase_date="2003-04-04"
-    required_date="2003-04-12"
-    shipped_date="2003-04-07"
-    status="SHIPPED"
-    customer_number="424"/>
-  <purchase
-    purchase_number="10116"
-    purchase_date="2003-04-11"
-    required_date="2003-04-19"
-    shipped_date="2003-04-13"
-    status="SHIPPED"
-    customer_number="381"/>
-  <purchase
-    purchase_number="10117"
-    purchase_date="2003-04-16"
-    required_date="2003-04-24"
-    shipped_date="2003-04-17"
-    status="SHIPPED"
-    customer_number="148"/>
-  <purchase
-    purchase_number="10118"
-    purchase_date="2003-04-21"
-    required_date="2003-04-29"
-    shipped_date="2003-04-26"
-    status="SHIPPED"
-    comments="Customer has worked with some of our vendors in the past and is aware of their MSRP"
-    customer_number="216"/>
-  <purchase
-    purchase_number="10119"
-    purchase_date="2003-04-28"
-    required_date="2003-05-05"
-    shipped_date="2003-05-02"
-    status="SHIPPED"
-    customer_number="382"/>
-  <purchase
-    purchase_number="10120"
-    purchase_date="2003-04-29"
-    required_date="2003-05-08"
-    shipped_date="2003-05-01"
-    status="SHIPPED"
-    customer_number="114"/>
-  <purchase
-    purchase_number="10121"
-    purchase_date="2003-05-07"
-    required_date="2003-05-13"
-    shipped_date="2003-05-13"
-    status="SHIPPED"
-    customer_number="353"/>
-  <purchase
-    purchase_number="10122"
-    purchase_date="2003-05-08"
-    required_date="2003-05-16"
-    shipped_date="2003-05-13"
-    status="SHIPPED"
-    customer_number="350"/>
-  <purchase
-    purchase_number="10123"
-    purchase_date="2003-05-20"
-    required_date="2003-05-29"
-    shipped_date="2003-05-22"
-    status="SHIPPED"
-    customer_number="103"/>
-  <purchase
-    purchase_number="10124"
-    purchase_date="2003-05-21"
-    required_date="2003-05-29"
-    shipped_date="2003-05-25"
-    status="SHIPPED"
-    comments="Customer very concerned about the exact color of the models. There is high risk that he may dispute the purchase because there is a slight color mismatch"
-    customer_number="112"/>
-  <purchase
-    purchase_number="10125"
-    purchase_date="2003-05-21"
-    required_date="2003-05-27"
-    shipped_date="2003-05-24"
-    status="SHIPPED"
-    customer_number="114"/>
-  <purchase
-    purchase_number="10126"
-    purchase_date="2003-05-28"
-    required_date="2003-06-07"
-    shipped_date="2003-06-02"
-    status="SHIPPED"
-    customer_number="458"/>
-  <purchase
-    purchase_number="10127"
-    purchase_date="2003-06-03"
-    required_date="2003-06-09"
-    shipped_date="2003-06-06"
-    status="SHIPPED"
-    comments="Customer requested special shippment. The instructions were passed along to the warehouse"
-    customer_number="151"/>
-  <purchase
-    purchase_number="10128"
-    purchase_date="2003-06-06"
-    required_date="2003-06-12"
-    shipped_date="2003-06-11"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10129"
-    purchase_date="2003-06-12"
-    required_date="2003-06-18"
-    shipped_date="2003-06-14"
-    status="SHIPPED"
-    customer_number="324"/>
-  <purchase
-    purchase_number="10130"
-    purchase_date="2003-06-16"
-    required_date="2003-06-24"
-    shipped_date="2003-06-21"
-    status="SHIPPED"
-    customer_number="198"/>
-  <purchase
-    purchase_number="10131"
-    purchase_date="2003-06-16"
-    required_date="2003-06-25"
-    shipped_date="2003-06-21"
-    status="SHIPPED"
-    customer_number="447"/>
-  <purchase
-    purchase_number="10132"
-    purchase_date="2003-06-25"
-    required_date="2003-07-01"
-    shipped_date="2003-06-28"
-    status="SHIPPED"
-    customer_number="323"/>
-  <purchase
-    purchase_number="10133"
-    purchase_date="2003-06-27"
-    required_date="2003-07-04"
-    shipped_date="2003-07-03"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10134"
-    purchase_date="2003-07-01"
-    required_date="2003-07-10"
-    shipped_date="2003-07-05"
-    status="SHIPPED"
-    customer_number="250"/>
-  <purchase
-    purchase_number="10135"
-    purchase_date="2003-07-02"
-    required_date="2003-07-12"
-    shipped_date="2003-07-03"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10136"
-    purchase_date="2003-07-04"
-    required_date="2003-07-14"
-    shipped_date="2003-07-06"
-    status="SHIPPED"
-    comments="Customer is interested in buying more Ferrari models"
-    customer_number="242"/>
-  <purchase
-    purchase_number="10137"
-    purchase_date="2003-07-10"
-    required_date="2003-07-20"
-    shipped_date="2003-07-14"
-    status="SHIPPED"
-    customer_number="353"/>
-  <purchase
-    purchase_number="10138"
-    purchase_date="2003-07-07"
-    required_date="2003-07-16"
-    shipped_date="2003-07-13"
-    status="SHIPPED"
-    customer_number="496"/>
-  <purchase
-    purchase_number="10139"
-    purchase_date="2003-07-16"
-    required_date="2003-07-23"
-    shipped_date="2003-07-21"
-    status="SHIPPED"
-    customer_number="282"/>
-  <purchase
-    purchase_number="10140"
-    purchase_date="2003-07-24"
-    required_date="2003-08-02"
-    shipped_date="2003-07-30"
-    status="SHIPPED"
-    customer_number="161"/>
-  <purchase
-    purchase_number="10141"
-    purchase_date="2003-08-01"
-    required_date="2003-08-09"
-    shipped_date="2003-08-04"
-    status="SHIPPED"
-    customer_number="334"/>
-  <purchase
-    purchase_number="10142"
-    purchase_date="2003-08-08"
-    required_date="2003-08-16"
-    shipped_date="2003-08-13"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10143"
-    purchase_date="2003-08-10"
-    required_date="2003-08-18"
-    shipped_date="2003-08-12"
-    status="SHIPPED"
-    comments="Can we deliver the new Ford Mustang models by end-of-quarter?"
-    customer_number="320"/>
-  <purchase
-    purchase_number="10144"
-    purchase_date="2003-08-13"
-    required_date="2003-08-21"
-    shipped_date="2003-08-14"
-    status="SHIPPED"
-    customer_number="381"/>
-  <purchase
-    purchase_number="10145"
-    purchase_date="2003-08-25"
-    required_date="2003-09-02"
-    shipped_date="2003-08-31"
-    status="SHIPPED"
-    customer_number="205"/>
-  <purchase
-    purchase_number="10146"
-    purchase_date="2003-09-03"
-    required_date="2003-09-13"
-    shipped_date="2003-09-06"
-    status="SHIPPED"
-    customer_number="447"/>
-  <purchase
-    purchase_number="10147"
-    purchase_date="2003-09-05"
-    required_date="2003-09-12"
-    shipped_date="2003-09-09"
-    status="SHIPPED"
-    customer_number="379"/>
-  <purchase
-    purchase_number="10148"
-    purchase_date="2003-09-11"
-    required_date="2003-09-21"
-    shipped_date="2003-09-15"
-    status="SHIPPED"
-    comments="They want to reevaluate their terms agreement with Finance."
-    customer_number="276"/>
-  <purchase
-    purchase_number="10149"
-    purchase_date="2003-09-12"
-    required_date="2003-09-18"
-    shipped_date="2003-09-17"
-    status="SHIPPED"
-    customer_number="487"/>
-  <purchase
-    purchase_number="10150"
-    purchase_date="2003-09-19"
-    required_date="2003-09-27"
-    shipped_date="2003-09-21"
-    status="SHIPPED"
-    comments="They want to reevaluate their terms agreement with Finance."
-    customer_number="148"/>
-  <purchase
-    purchase_number="10151"
-    purchase_date="2003-09-21"
-    required_date="2003-09-30"
-    shipped_date="2003-09-24"
-    status="SHIPPED"
-    customer_number="311"/>
-  <purchase
-    purchase_number="10152"
-    purchase_date="2003-09-25"
-    required_date="2003-10-03"
-    shipped_date="2003-10-01"
-    status="SHIPPED"
-    customer_number="333"/>
-  <purchase
-    purchase_number="10153"
-    purchase_date="2003-09-28"
-    required_date="2003-10-05"
-    shipped_date="2003-10-03"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10154"
-    purchase_date="2003-10-02"
-    required_date="2003-10-12"
-    shipped_date="2003-10-08"
-    status="SHIPPED"
-    customer_number="219"/>
-  <purchase
-    purchase_number="10155"
-    purchase_date="2003-10-06"
-    required_date="2003-10-13"
-    shipped_date="2003-10-07"
-    status="SHIPPED"
-    customer_number="186"/>
-  <purchase
-    purchase_number="10156"
-    purchase_date="2003-10-08"
-    required_date="2003-10-17"
-    shipped_date="2003-10-11"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10157"
-    purchase_date="2003-10-09"
-    required_date="2003-10-15"
-    shipped_date="2003-10-14"
-    status="SHIPPED"
-    customer_number="473"/>
-  <purchase
-    purchase_number="10158"
-    purchase_date="2003-10-10"
-    required_date="2003-10-18"
-    shipped_date="2003-10-15"
-    status="SHIPPED"
-    customer_number="121"/>
-  <purchase
-    purchase_number="10159"
-    purchase_date="2003-10-10"
-    required_date="2003-10-19"
-    shipped_date="2003-10-16"
-    status="SHIPPED"
-    customer_number="321"/>
-  <purchase
-    purchase_number="10160"
-    purchase_date="2003-10-11"
-    required_date="2003-10-17"
-    shipped_date="2003-10-17"
-    status="SHIPPED"
-    customer_number="347"/>
-  <purchase
-    purchase_number="10161"
-    purchase_date="2003-10-17"
-    required_date="2003-10-25"
-    shipped_date="2003-10-20"
-    status="SHIPPED"
-    customer_number="227"/>
-  <purchase
-    purchase_number="10162"
-    purchase_date="2003-10-18"
-    required_date="2003-10-26"
-    shipped_date="2003-10-19"
-    status="SHIPPED"
-    customer_number="321"/>
-  <purchase
-    purchase_number="10163"
-    purchase_date="2003-10-20"
-    required_date="2003-10-27"
-    shipped_date="2003-10-24"
-    status="SHIPPED"
-    customer_number="424"/>
-  <purchase
-    purchase_number="10164"
-    purchase_date="2003-10-21"
-    required_date="2003-10-30"
-    shipped_date="2003-10-23"
-    status="RESOLVED"
-    comments="This purchase was disputed, but resolved on 11/1/2003; Customer doesn't like the colors and precision of the models."
-    customer_number="452"/>
-  <purchase
-    purchase_number="10165"
-    purchase_date="2003-10-22"
-    required_date="2003-10-31"
-    shipped_date="2003-12-26"
-    status="SHIPPED"
-    comments="This purchase was on hold because customers's credit limit had been exceeded. Purchase will ship when payment is received"
-    customer_number="148"/>
-  <purchase
-    purchase_number="10166"
-    purchase_date="2003-10-21"
-    required_date="2003-10-30"
-    shipped_date="2003-10-27"
-    status="SHIPPED"
-    customer_number="462"/>
-  <purchase
-    purchase_number="10167"
-    purchase_date="2003-10-23"
-    required_date="2003-10-30"
-    status="CANCELED"
-    comments="Customer called to cancel. The warehouse was notified in time and the purchase didn't ship. They have a new VP of Sales and are shifting their sales model. Our VP of Sales should contact them."
-    customer_number="448"/>
-  <purchase
-    purchase_number="10168"
-    purchase_date="2003-10-28"
-    required_date="2003-11-03"
-    shipped_date="2003-11-01"
-    status="SHIPPED"
-    customer_number="161"/>
-  <purchase
-    purchase_number="10169"
-    purchase_date="2003-11-04"
-    required_date="2003-11-14"
-    shipped_date="2003-11-09"
-    status="SHIPPED"
-    customer_number="276"/>
-  <purchase
-    purchase_number="10170"
-    purchase_date="2003-11-04"
-    required_date="2003-11-12"
-    shipped_date="2003-11-07"
-    status="SHIPPED"
-    customer_number="452"/>
-  <purchase
-    purchase_number="10171"
-    purchase_date="2003-11-05"
-    required_date="2003-11-13"
-    shipped_date="2003-11-07"
-    status="SHIPPED"
-    customer_number="233"/>
-  <purchase
-    purchase_number="10172"
-    purchase_date="2003-11-05"
-    required_date="2003-11-14"
-    shipped_date="2003-11-11"
-    status="SHIPPED"
-    customer_number="175"/>
-  <purchase
-    purchase_number="10173"
-    purchase_date="2003-11-05"
-    required_date="2003-11-15"
-    shipped_date="2003-11-09"
-    status="SHIPPED"
-    comments="Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches"
-    customer_number="278"/>
-  <purchase
-    purchase_number="10174"
-    purchase_date="2003-11-06"
-    required_date="2003-11-15"
-    shipped_date="2003-11-10"
-    status="SHIPPED"
-    customer_number="333"/>
-  <purchase
-    purchase_number="10175"
-    purchase_date="2003-11-06"
-    required_date="2003-11-14"
-    shipped_date="2003-11-09"
-    status="SHIPPED"
-    customer_number="324"/>
-  <purchase
-    purchase_number="10176"
-    purchase_date="2003-11-06"
-    required_date="2003-11-15"
-    shipped_date="2003-11-12"
-    status="SHIPPED"
-    customer_number="386"/>
-  <purchase
-    purchase_number="10177"
-    purchase_date="2003-11-07"
-    required_date="2003-11-17"
-    shipped_date="2003-11-12"
-    status="SHIPPED"
-    customer_number="344"/>
-  <purchase
-    purchase_number="10178"
-    purchase_date="2003-11-08"
-    required_date="2003-11-16"
-    shipped_date="2003-11-10"
-    status="SHIPPED"
-    comments="Custom shipping instructions sent to warehouse"
-    customer_number="242"/>
-  <purchase
-    purchase_number="10179"
-    purchase_date="2003-11-11"
-    required_date="2003-11-17"
-    shipped_date="2003-11-13"
-    status="CANCELED"
-    comments="Customer canceled due to urgent budgeting issues. Must be cautious when dealing with them in the future. Since purchase shipped already we must discuss who would cover the shipping charges."
-    customer_number="496"/>
-  <purchase
-    purchase_number="10180"
-    purchase_date="2003-11-11"
-    required_date="2003-11-19"
-    shipped_date="2003-11-14"
-    status="SHIPPED"
-    customer_number="171"/>
-  <purchase
-    purchase_number="10181"
-    purchase_date="2003-11-12"
-    required_date="2003-11-19"
-    shipped_date="2003-11-15"
-    status="SHIPPED"
-    customer_number="167"/>
-  <purchase
-    purchase_number="10182"
-    purchase_date="2003-11-12"
-    required_date="2003-11-21"
-    shipped_date="2003-11-18"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10183"
-    purchase_date="2003-11-13"
-    required_date="2003-11-22"
-    shipped_date="2003-11-15"
-    status="SHIPPED"
-    comments="We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases."
-    customer_number="339"/>
-  <purchase
-    purchase_number="10184"
-    purchase_date="2003-11-14"
-    required_date="2003-11-22"
-    shipped_date="2003-11-20"
-    status="SHIPPED"
-    customer_number="484"/>
-  <purchase
-    purchase_number="10185"
-    purchase_date="2003-11-14"
-    required_date="2003-11-21"
-    shipped_date="2003-11-20"
-    status="SHIPPED"
-    customer_number="320"/>
-  <purchase
-    purchase_number="10186"
-    purchase_date="2003-11-14"
-    required_date="2003-11-20"
-    shipped_date="2003-11-18"
-    status="SHIPPED"
-    comments="They want to reevaluate their terms agreement with the VP of Sales"
-    customer_number="489"/>
-  <purchase
-    purchase_number="10187"
-    purchase_date="2003-11-15"
-    required_date="2003-11-24"
-    shipped_date="2003-11-16"
-    status="SHIPPED"
-    customer_number="211"/>
-  <purchase
-    purchase_number="10188"
-    purchase_date="2003-11-18"
-    required_date="2003-11-26"
-    shipped_date="2003-11-24"
-    status="SHIPPED"
-    customer_number="167"/>
-  <purchase
-    purchase_number="10189"
-    purchase_date="2003-11-18"
-    required_date="2003-11-25"
-    shipped_date="2003-11-24"
-    status="SHIPPED"
-    comments="They want to reevaluate their terms agreement with Finance."
-    customer_number="205"/>
-  <purchase
-    purchase_number="10190"
-    purchase_date="2003-11-19"
-    required_date="2003-11-29"
-    shipped_date="2003-11-20"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10191"
-    purchase_date="2003-11-20"
-    required_date="2003-11-30"
-    shipped_date="2003-11-24"
-    status="SHIPPED"
-    comments="We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down."
-    customer_number="259"/>
-  <purchase
-    purchase_number="10192"
-    purchase_date="2003-11-20"
-    required_date="2003-11-29"
-    shipped_date="2003-11-25"
-    status="SHIPPED"
-    customer_number="363"/>
-  <purchase
-    purchase_number="10193"
-    purchase_date="2003-11-21"
-    required_date="2003-11-28"
-    shipped_date="2003-11-27"
-    status="SHIPPED"
-    customer_number="471"/>
-  <purchase
-    purchase_number="10194"
-    purchase_date="2003-11-25"
-    required_date="2003-12-02"
-    shipped_date="2003-11-26"
-    status="SHIPPED"
-    customer_number="146"/>
-  <purchase
-    purchase_number="10195"
-    purchase_date="2003-11-25"
-    required_date="2003-12-01"
-    shipped_date="2003-11-28"
-    status="SHIPPED"
-    customer_number="319"/>
-  <purchase
-    purchase_number="10196"
-    purchase_date="2003-11-26"
-    required_date="2003-12-03"
-    shipped_date="2003-12-01"
-    status="SHIPPED"
-    customer_number="455"/>
-  <purchase
-    purchase_number="10197"
-    purchase_date="2003-11-26"
-    required_date="2003-12-02"
-    shipped_date="2003-12-01"
-    status="SHIPPED"
-    comments="Customer inquired about remote controlled models and gold models."
-    customer_number="216"/>
-  <purchase
-    purchase_number="10198"
-    purchase_date="2003-11-27"
-    required_date="2003-12-06"
-    shipped_date="2003-12-03"
-    status="SHIPPED"
-    customer_number="385"/>
-  <purchase
-    purchase_number="10199"
-    purchase_date="2003-12-01"
-    required_date="2003-12-10"
-    shipped_date="2003-12-06"
-    status="SHIPPED"
-    customer_number="475"/>
-  <purchase
-    purchase_number="10200"
-    purchase_date="2003-12-01"
-    required_date="2003-12-09"
-    shipped_date="2003-12-06"
-    status="SHIPPED"
-    customer_number="211"/>
-  <purchase
-    purchase_number="10201"
-    purchase_date="2003-12-01"
-    required_date="2003-12-11"
-    shipped_date="2003-12-02"
-    status="SHIPPED"
-    customer_number="129"/>
-  <purchase
-    purchase_number="10202"
-    purchase_date="2003-12-02"
-    required_date="2003-12-09"
-    shipped_date="2003-12-06"
-    status="SHIPPED"
-    customer_number="357"/>
-  <purchase
-    purchase_number="10203"
-    purchase_date="2003-12-02"
-    required_date="2003-12-11"
-    shipped_date="2003-12-07"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10204"
-    purchase_date="2003-12-02"
-    required_date="2003-12-10"
-    shipped_date="2003-12-04"
-    status="SHIPPED"
-    customer_number="151"/>
-  <purchase
-    purchase_number="10205"
-    purchase_date="2003-12-03"
-    required_date="2003-12-09"
-    shipped_date="2003-12-07"
-    status="SHIPPED"
-    comments="I need all the information I can get on our competitors."
-    customer_number="141"/>
-  <purchase
-    purchase_number="10206"
-    purchase_date="2003-12-05"
-    required_date="2003-12-13"
-    shipped_date="2003-12-08"
-    status="SHIPPED"
-    comments="Can we renegotiate this one?"
-    customer_number="202"/>
-  <purchase
-    purchase_number="10207"
-    purchase_date="2003-12-09"
-    required_date="2003-12-17"
-    shipped_date="2003-12-11"
-    status="SHIPPED"
-    comments="Check on availability."
-    customer_number="495"/>
-  <purchase
-    purchase_number="10208"
-    purchase_date="2004-01-02"
-    required_date="2004-01-11"
-    shipped_date="2004-01-04"
-    status="SHIPPED"
-    customer_number="146"/>
-  <purchase
-    purchase_number="10209"
-    purchase_date="2004-01-09"
-    required_date="2004-01-15"
-    shipped_date="2004-01-12"
-    status="SHIPPED"
-    customer_number="347"/>
-  <purchase
-    purchase_number="10210"
-    purchase_date="2004-01-12"
-    required_date="2004-01-22"
-    shipped_date="2004-01-20"
-    status="SHIPPED"
-    customer_number="177"/>
-  <purchase
-    purchase_number="10211"
-    purchase_date="2004-01-15"
-    required_date="2004-01-25"
-    shipped_date="2004-01-18"
-    status="SHIPPED"
-    customer_number="406"/>
-  <purchase
-    purchase_number="10212"
-    purchase_date="2004-01-16"
-    required_date="2004-01-24"
-    shipped_date="2004-01-18"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10213"
-    purchase_date="2004-01-22"
-    required_date="2004-01-28"
-    shipped_date="2004-01-27"
-    status="SHIPPED"
-    comments="Difficult to negotiate with customer. We need more marketing materials"
-    customer_number="489"/>
-  <purchase
-    purchase_number="10214"
-    purchase_date="2004-01-26"
-    required_date="2004-02-04"
-    shipped_date="2004-01-29"
-    status="SHIPPED"
-    customer_number="458"/>
-  <purchase
-    purchase_number="10215"
-    purchase_date="2004-01-29"
-    required_date="2004-02-08"
-    shipped_date="2004-02-01"
-    status="SHIPPED"
-    comments="Customer requested that FedEx Ground is used for this shipping"
-    customer_number="475"/>
-  <purchase
-    purchase_number="10216"
-    purchase_date="2004-02-02"
-    required_date="2004-02-10"
-    shipped_date="2004-02-04"
-    status="SHIPPED"
-    customer_number="256"/>
-  <purchase
-    purchase_number="10217"
-    purchase_date="2004-02-04"
-    required_date="2004-02-14"
-    shipped_date="2004-02-06"
-    status="SHIPPED"
-    customer_number="166"/>
-  <purchase
-    purchase_number="10218"
-    purchase_date="2004-02-09"
-    required_date="2004-02-16"
-    shipped_date="2004-02-11"
-    status="SHIPPED"
-    comments="Customer requested that ad materials (such as posters, pamphlets) be included in the shippment"
-    customer_number="473"/>
-  <purchase
-    purchase_number="10219"
-    purchase_date="2004-02-10"
-    required_date="2004-02-17"
-    shipped_date="2004-02-12"
-    status="SHIPPED"
-    customer_number="487"/>
-  <purchase
-    purchase_number="10220"
-    purchase_date="2004-02-12"
-    required_date="2004-02-19"
-    shipped_date="2004-02-16"
-    status="SHIPPED"
-    customer_number="189"/>
-  <purchase
-    purchase_number="10221"
-    purchase_date="2004-02-18"
-    required_date="2004-02-26"
-    shipped_date="2004-02-19"
-    status="SHIPPED"
-    customer_number="314"/>
-  <purchase
-    purchase_number="10222"
-    purchase_date="2004-02-19"
-    required_date="2004-02-27"
-    shipped_date="2004-02-20"
-    status="SHIPPED"
-    customer_number="239"/>
-  <purchase
-    purchase_number="10223"
-    purchase_date="2004-02-20"
-    required_date="2004-02-29"
-    shipped_date="2004-02-24"
-    status="SHIPPED"
-    customer_number="114"/>
-  <purchase
-    purchase_number="10224"
-    purchase_date="2004-02-21"
-    required_date="2004-03-02"
-    shipped_date="2004-02-26"
-    status="SHIPPED"
-    comments="Customer has worked with some of our vendors in the past and is aware of their MSRP"
-    customer_number="171"/>
-  <purchase
-    purchase_number="10225"
-    purchase_date="2004-02-22"
-    required_date="2004-03-01"
-    shipped_date="2004-02-24"
-    status="SHIPPED"
-    customer_number="298"/>
-  <purchase
-    purchase_number="10226"
-    purchase_date="2004-02-26"
-    required_date="2004-03-06"
-    shipped_date="2004-03-02"
-    status="SHIPPED"
-    customer_number="239"/>
-  <purchase
-    purchase_number="10227"
-    purchase_date="2004-03-02"
-    required_date="2004-03-12"
-    shipped_date="2004-03-08"
-    status="SHIPPED"
-    customer_number="146"/>
-  <purchase
-    purchase_number="10228"
-    purchase_date="2004-03-10"
-    required_date="2004-03-18"
-    shipped_date="2004-03-13"
-    status="SHIPPED"
-    customer_number="173"/>
-  <purchase
-    purchase_number="10229"
-    purchase_date="2004-03-11"
-    required_date="2004-03-20"
-    shipped_date="2004-03-12"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10230"
-    purchase_date="2004-03-15"
-    required_date="2004-03-24"
-    shipped_date="2004-03-20"
-    status="SHIPPED"
-    comments="Customer very concerned about the exact color of the models. There is high risk that he may dispute the purchase because there is a slight color mismatch"
-    customer_number="128"/>
-  <purchase
-    purchase_number="10231"
-    purchase_date="2004-03-19"
-    required_date="2004-03-26"
-    shipped_date="2004-03-25"
-    status="SHIPPED"
-    customer_number="344"/>
-  <purchase
-    purchase_number="10232"
-    purchase_date="2004-03-20"
-    required_date="2004-03-30"
-    shipped_date="2004-03-25"
-    status="SHIPPED"
-    customer_number="240"/>
-  <purchase
-    purchase_number="10233"
-    purchase_date="2004-03-29"
-    required_date="2004-04-04"
-    shipped_date="2004-04-02"
-    status="SHIPPED"
-    comments="Customer requested special shippment. The instructions were passed along to the warehouse"
-    customer_number="328"/>
-  <purchase
-    purchase_number="10234"
-    purchase_date="2004-03-30"
-    required_date="2004-04-05"
-    shipped_date="2004-04-02"
-    status="SHIPPED"
-    customer_number="412"/>
-  <purchase
-    purchase_number="10235"
-    purchase_date="2004-04-02"
-    required_date="2004-04-12"
-    shipped_date="2004-04-06"
-    status="SHIPPED"
-    customer_number="260"/>
-  <purchase
-    purchase_number="10236"
-    purchase_date="2004-04-03"
-    required_date="2004-04-11"
-    shipped_date="2004-04-08"
-    status="SHIPPED"
-    customer_number="486"/>
-  <purchase
-    purchase_number="10237"
-    purchase_date="2004-04-05"
-    required_date="2004-04-12"
-    shipped_date="2004-04-10"
-    status="SHIPPED"
-    customer_number="181"/>
-  <purchase
-    purchase_number="10238"
-    purchase_date="2004-04-09"
-    required_date="2004-04-16"
-    shipped_date="2004-04-10"
-    status="SHIPPED"
-    customer_number="145"/>
-  <purchase
-    purchase_number="10239"
-    purchase_date="2004-04-12"
-    required_date="2004-04-21"
-    shipped_date="2004-04-17"
-    status="SHIPPED"
-    customer_number="311"/>
-  <purchase
-    purchase_number="10240"
-    purchase_date="2004-04-13"
-    required_date="2004-04-20"
-    shipped_date="2004-04-20"
-    status="SHIPPED"
-    customer_number="177"/>
-  <purchase
-    purchase_number="10241"
-    purchase_date="2004-04-13"
-    required_date="2004-04-20"
-    shipped_date="2004-04-19"
-    status="SHIPPED"
-    customer_number="209"/>
-  <purchase
-    purchase_number="10242"
-    purchase_date="2004-04-20"
-    required_date="2004-04-28"
-    shipped_date="2004-04-25"
-    status="SHIPPED"
-    comments="Customer is interested in buying more Ferrari models"
-    customer_number="456"/>
-  <purchase
-    purchase_number="10243"
-    purchase_date="2004-04-26"
-    required_date="2004-05-03"
-    shipped_date="2004-04-28"
-    status="SHIPPED"
-    customer_number="495"/>
-  <purchase
-    purchase_number="10244"
-    purchase_date="2004-04-29"
-    required_date="2004-05-09"
-    shipped_date="2004-05-04"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10245"
-    purchase_date="2004-05-04"
-    required_date="2004-05-12"
-    shipped_date="2004-05-09"
-    status="SHIPPED"
-    customer_number="455"/>
-  <purchase
-    purchase_number="10246"
-    purchase_date="2004-05-05"
-    required_date="2004-05-13"
-    shipped_date="2004-05-06"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10247"
-    purchase_date="2004-05-05"
-    required_date="2004-05-11"
-    shipped_date="2004-05-08"
-    status="SHIPPED"
-    customer_number="334"/>
-  <purchase
-    purchase_number="10248"
-    purchase_date="2004-05-07"
-    required_date="2004-05-14"
-    status="CANCELED"
-    comments="Purchase was mistakenly placed. The warehouse noticed the lack of documentation."
-    customer_number="131"/>
-  <purchase
-    purchase_number="10249"
-    purchase_date="2004-05-08"
-    required_date="2004-05-17"
-    shipped_date="2004-05-11"
-    status="SHIPPED"
-    comments="Can we deliver the new Ford Mustang models by end-of-quarter?"
-    customer_number="173"/>
-  <purchase
-    purchase_number="10250"
-    purchase_date="2004-05-11"
-    required_date="2004-05-19"
-    shipped_date="2004-05-15"
-    status="SHIPPED"
-    customer_number="450"/>
-  <purchase
-    purchase_number="10251"
-    purchase_date="2004-05-18"
-    required_date="2004-05-24"
-    shipped_date="2004-05-24"
-    status="SHIPPED"
-    customer_number="328"/>
-  <purchase
-    purchase_number="10252"
-    purchase_date="2004-05-26"
-    required_date="2004-06-04"
-    shipped_date="2004-05-29"
-    status="SHIPPED"
-    customer_number="406"/>
-  <purchase
-    purchase_number="10253"
-    purchase_date="2004-06-01"
-    required_date="2004-06-09"
-    shipped_date="2004-06-02"
-    status="CANCELED"
-    comments="Customer disputed the purchase and we agreed to cancel it. We must be more cautions with this customer going forward, since they are very hard to please. We must cover the shipping fees."
-    customer_number="201"/>
-  <purchase
-    purchase_number="10254"
-    purchase_date="2004-06-03"
-    required_date="2004-06-13"
-    shipped_date="2004-06-04"
-    status="SHIPPED"
-    comments="Customer requested that DHL is used for this shipping"
-    customer_number="323"/>
-  <purchase
-    purchase_number="10255"
-    purchase_date="2004-06-04"
-    required_date="2004-06-12"
-    shipped_date="2004-06-09"
-    status="SHIPPED"
-    customer_number="209"/>
-  <purchase
-    purchase_number="10256"
-    purchase_date="2004-06-08"
-    required_date="2004-06-16"
-    shipped_date="2004-06-10"
-    status="SHIPPED"
-    customer_number="145"/>
-  <purchase
-    purchase_number="10257"
-    purchase_date="2004-06-14"
-    required_date="2004-06-24"
-    shipped_date="2004-06-15"
-    status="SHIPPED"
-    customer_number="450"/>
-  <purchase
-    purchase_number="10258"
-    purchase_date="2004-06-15"
-    required_date="2004-06-25"
-    shipped_date="2004-06-23"
-    status="SHIPPED"
-    customer_number="398"/>
-  <purchase
-    purchase_number="10259"
-    purchase_date="2004-06-15"
-    required_date="2004-06-22"
-    shipped_date="2004-06-17"
-    status="SHIPPED"
-    customer_number="166"/>
-  <purchase
-    purchase_number="10260"
-    purchase_date="2004-06-16"
-    required_date="2004-06-22"
-    status="CANCELED"
-    comments="Customer heard complaints from their customers and called to cancel this purchase. Will notify the Sales Manager."
-    customer_number="357"/>
-  <purchase
-    purchase_number="10261"
-    purchase_date="2004-06-17"
-    required_date="2004-06-25"
-    shipped_date="2004-06-22"
-    status="SHIPPED"
-    customer_number="233"/>
-  <purchase
-    purchase_number="10262"
-    purchase_date="2004-06-24"
-    required_date="2004-07-01"
-    status="CANCELED"
-    comments="This customer found a better offer from one of our competitors. Will call back to renegotiate."
-    customer_number="141"/>
-  <purchase
-    purchase_number="10263"
-    purchase_date="2004-06-28"
-    required_date="2004-07-04"
-    shipped_date="2004-07-02"
-    status="SHIPPED"
-    customer_number="175"/>
-  <purchase
-    purchase_number="10264"
-    purchase_date="2004-06-30"
-    required_date="2004-07-06"
-    shipped_date="2004-07-01"
-    status="SHIPPED"
-    comments="Customer will send a truck to our local warehouse on 7/1/2004"
-    customer_number="362"/>
-  <purchase
-    purchase_number="10265"
-    purchase_date="2004-07-02"
-    required_date="2004-07-09"
-    shipped_date="2004-07-07"
-    status="SHIPPED"
-    customer_number="471"/>
-  <purchase
-    purchase_number="10266"
-    purchase_date="2004-07-06"
-    required_date="2004-07-14"
-    shipped_date="2004-07-10"
-    status="SHIPPED"
-    customer_number="386"/>
-  <purchase
-    purchase_number="10267"
-    purchase_date="2004-07-07"
-    required_date="2004-07-17"
-    shipped_date="2004-07-09"
-    status="SHIPPED"
-    customer_number="151"/>
-  <purchase
-    purchase_number="10268"
-    purchase_date="2004-07-12"
-    required_date="2004-07-18"
-    shipped_date="2004-07-14"
-    status="SHIPPED"
-    customer_number="412"/>
-  <purchase
-    purchase_number="10269"
-    purchase_date="2004-07-16"
-    required_date="2004-07-22"
-    shipped_date="2004-07-18"
-    status="SHIPPED"
-    customer_number="382"/>
-  <purchase
-    purchase_number="10270"
-    purchase_date="2004-07-19"
-    required_date="2004-07-27"
-    shipped_date="2004-07-24"
-    status="SHIPPED"
-    comments="Can we renegotiate this one?"
-    customer_number="282"/>
-  <purchase
-    purchase_number="10271"
-    purchase_date="2004-07-20"
-    required_date="2004-07-29"
-    shipped_date="2004-07-23"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10272"
-    purchase_date="2004-07-20"
-    required_date="2004-07-26"
-    shipped_date="2004-07-22"
-    status="SHIPPED"
-    customer_number="157"/>
-  <purchase
-    purchase_number="10273"
-    purchase_date="2004-07-21"
-    required_date="2004-07-28"
-    shipped_date="2004-07-22"
-    status="SHIPPED"
-    customer_number="314"/>
-  <purchase
-    purchase_number="10274"
-    purchase_date="2004-07-21"
-    required_date="2004-07-29"
-    shipped_date="2004-07-22"
-    status="SHIPPED"
-    customer_number="379"/>
-  <purchase
-    purchase_number="10275"
-    purchase_date="2004-07-23"
-    required_date="2004-08-02"
-    shipped_date="2004-07-29"
-    status="SHIPPED"
-    customer_number="119"/>
-  <purchase
-    purchase_number="10276"
-    purchase_date="2004-08-02"
-    required_date="2004-08-11"
-    shipped_date="2004-08-08"
-    status="SHIPPED"
-    customer_number="204"/>
-  <purchase
-    purchase_number="10277"
-    purchase_date="2004-08-04"
-    required_date="2004-08-12"
-    shipped_date="2004-08-05"
-    status="SHIPPED"
-    customer_number="148"/>
-  <purchase
-    purchase_number="10278"
-    purchase_date="2004-08-06"
-    required_date="2004-08-16"
-    shipped_date="2004-08-09"
-    status="SHIPPED"
-    customer_number="112"/>
-  <purchase
-    purchase_number="10279"
-    purchase_date="2004-08-09"
-    required_date="2004-08-19"
-    shipped_date="2004-08-15"
-    status="SHIPPED"
-    comments="Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10280"
-    purchase_date="2004-08-17"
-    required_date="2004-08-27"
-    shipped_date="2004-08-19"
-    status="SHIPPED"
-    customer_number="249"/>
-  <purchase
-    purchase_number="10281"
-    purchase_date="2004-08-19"
-    required_date="2004-08-28"
-    shipped_date="2004-08-23"
-    status="SHIPPED"
-    customer_number="157"/>
-  <purchase
-    purchase_number="10282"
-    purchase_date="2004-08-20"
-    required_date="2004-08-26"
-    shipped_date="2004-08-22"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10283"
-    purchase_date="2004-08-20"
-    required_date="2004-08-30"
-    shipped_date="2004-08-23"
-    status="SHIPPED"
-    customer_number="260"/>
-  <purchase
-    purchase_number="10284"
-    purchase_date="2004-08-21"
-    required_date="2004-08-29"
-    shipped_date="2004-08-26"
-    status="SHIPPED"
-    comments="Custom shipping instructions sent to warehouse"
-    customer_number="299"/>
-  <purchase
-    purchase_number="10285"
-    purchase_date="2004-08-27"
-    required_date="2004-09-04"
-    shipped_date="2004-08-31"
-    status="SHIPPED"
-    customer_number="286"/>
-  <purchase
-    purchase_number="10286"
-    purchase_date="2004-08-28"
-    required_date="2004-09-06"
-    shipped_date="2004-09-01"
-    status="SHIPPED"
-    customer_number="172"/>
-  <purchase
-    purchase_number="10287"
-    purchase_date="2004-08-30"
-    required_date="2004-09-06"
-    shipped_date="2004-09-01"
-    status="SHIPPED"
-    customer_number="298"/>
-  <purchase
-    purchase_number="10288"
-    purchase_date="2004-09-01"
-    required_date="2004-09-11"
-    shipped_date="2004-09-05"
-    status="SHIPPED"
-    customer_number="166"/>
-  <purchase
-    purchase_number="10289"
-    purchase_date="2004-09-03"
-    required_date="2004-09-13"
-    shipped_date="2004-09-04"
-    status="SHIPPED"
-    comments="We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases."
-    customer_number="167"/>
-  <purchase
-    purchase_number="10290"
-    purchase_date="2004-09-07"
-    required_date="2004-09-15"
-    shipped_date="2004-09-13"
-    status="SHIPPED"
-    customer_number="198"/>
-  <purchase
-    purchase_number="10291"
-    purchase_date="2004-09-08"
-    required_date="2004-09-17"
-    shipped_date="2004-09-14"
-    status="SHIPPED"
-    customer_number="448"/>
-  <purchase
-    purchase_number="10292"
-    purchase_date="2004-09-08"
-    required_date="2004-09-18"
-    shipped_date="2004-09-11"
-    status="SHIPPED"
-    comments="They want to reevaluate their terms agreement with Finance."
-    customer_number="131"/>
-  <purchase
-    purchase_number="10293"
-    purchase_date="2004-09-09"
-    required_date="2004-09-18"
-    shipped_date="2004-09-14"
-    status="SHIPPED"
-    customer_number="249"/>
-  <purchase
-    purchase_number="10294"
-    purchase_date="2004-09-10"
-    required_date="2004-09-17"
-    shipped_date="2004-09-14"
-    status="SHIPPED"
-    customer_number="204"/>
-  <purchase
-    purchase_number="10295"
-    purchase_date="2004-09-10"
-    required_date="2004-09-17"
-    shipped_date="2004-09-14"
-    status="SHIPPED"
-    comments="They want to reevaluate their terms agreement with Finance."
-    customer_number="362"/>
-  <purchase
-    purchase_number="10296"
-    purchase_date="2004-09-15"
-    required_date="2004-09-22"
-    shipped_date="2004-09-16"
-    status="SHIPPED"
-    customer_number="415"/>
-  <purchase
-    purchase_number="10297"
-    purchase_date="2004-09-16"
-    required_date="2004-09-22"
-    shipped_date="2004-09-21"
-    status="SHIPPED"
-    comments="We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down."
-    customer_number="189"/>
-  <purchase
-    purchase_number="10298"
-    purchase_date="2004-09-27"
-    required_date="2004-10-05"
-    shipped_date="2004-10-01"
-    status="SHIPPED"
-    customer_number="103"/>
-  <purchase
-    purchase_number="10299"
-    purchase_date="2004-09-30"
-    required_date="2004-10-10"
-    shipped_date="2004-10-01"
-    status="SHIPPED"
-    customer_number="186"/>
-  <purchase
-    purchase_number="10300"
-    purchase_date="2003-10-04"
-    required_date="2003-10-13"
-    shipped_date="2003-10-09"
-    status="SHIPPED"
-    customer_number="128"/>
-  <purchase
-    purchase_number="10301"
-    purchase_date="2003-10-05"
-    required_date="2003-10-15"
-    shipped_date="2003-10-08"
-    status="SHIPPED"
-    customer_number="299"/>
-  <purchase
-    purchase_number="10302"
-    purchase_date="2003-10-06"
-    required_date="2003-10-16"
-    shipped_date="2003-10-07"
-    status="SHIPPED"
-    customer_number="201"/>
-  <purchase
-    purchase_number="10303"
-    purchase_date="2004-10-06"
-    required_date="2004-10-14"
-    shipped_date="2004-10-09"
-    status="SHIPPED"
-    comments="Customer inquired about remote controlled models and gold models."
-    customer_number="484"/>
-  <purchase
-    purchase_number="10304"
-    purchase_date="2004-10-11"
-    required_date="2004-10-20"
-    shipped_date="2004-10-17"
-    status="SHIPPED"
-    customer_number="256"/>
-  <purchase
-    purchase_number="10305"
-    purchase_date="2004-10-13"
-    required_date="2004-10-22"
-    shipped_date="2004-10-15"
-    status="SHIPPED"
-    comments="Check on availability."
-    customer_number="286"/>
-  <purchase
-    purchase_number="10306"
-    purchase_date="2004-10-14"
-    required_date="2004-10-21"
-    shipped_date="2004-10-17"
-    status="SHIPPED"
-    customer_number="187"/>
-  <purchase
-    purchase_number="10307"
-    purchase_date="2004-10-14"
-    required_date="2004-10-23"
-    shipped_date="2004-10-20"
-    status="SHIPPED"
-    customer_number="339"/>
-  <purchase
-    purchase_number="10308"
-    purchase_date="2004-10-15"
-    required_date="2004-10-24"
-    shipped_date="2004-10-20"
-    status="SHIPPED"
-    comments="Customer requested that FedEx Ground is used for this shipping"
-    customer_number="319"/>
-  <purchase
-    purchase_number="10309"
-    purchase_date="2004-10-15"
-    required_date="2004-10-24"
-    shipped_date="2004-10-18"
-    status="SHIPPED"
-    customer_number="121"/>
-  <purchase
-    purchase_number="10310"
-    purchase_date="2004-10-16"
-    required_date="2004-10-24"
-    shipped_date="2004-10-18"
-    status="SHIPPED"
-    customer_number="259"/>
-  <purchase
-    purchase_number="10311"
-    purchase_date="2004-10-16"
-    required_date="2004-10-23"
-    shipped_date="2004-10-20"
-    status="SHIPPED"
-    comments="Difficult to negotiate with customer. We need more marketing materials"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10312"
-    purchase_date="2004-10-21"
-    required_date="2004-10-27"
-    shipped_date="2004-10-23"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10313"
-    purchase_date="2004-10-22"
-    required_date="2004-10-28"
-    shipped_date="2004-10-25"
-    status="SHIPPED"
-    comments="Customer requested that FedEx Ground is used for this shipping"
-    customer_number="202"/>
-  <purchase
-    purchase_number="10314"
-    purchase_date="2004-10-22"
-    required_date="2004-11-01"
-    shipped_date="2004-10-23"
-    status="SHIPPED"
-    customer_number="227"/>
-  <purchase
-    purchase_number="10315"
-    purchase_date="2004-10-29"
-    required_date="2004-11-08"
-    shipped_date="2004-10-30"
-    status="SHIPPED"
-    customer_number="119"/>
-  <purchase
-    purchase_number="10316"
-    purchase_date="2004-11-01"
-    required_date="2004-11-09"
-    shipped_date="2004-11-07"
-    status="SHIPPED"
-    comments="Customer requested that ad materials (such as posters, pamphlets) be included in the shippment"
-    customer_number="240"/>
-  <purchase
-    purchase_number="10317"
-    purchase_date="2004-11-02"
-    required_date="2004-11-12"
-    shipped_date="2004-11-08"
-    status="SHIPPED"
-    customer_number="161"/>
-  <purchase
-    purchase_number="10318"
-    purchase_date="2004-11-02"
-    required_date="2004-11-09"
-    shipped_date="2004-11-07"
-    status="SHIPPED"
-    customer_number="157"/>
-  <purchase
-    purchase_number="10319"
-    purchase_date="2004-11-03"
-    required_date="2004-11-11"
-    shipped_date="2004-11-06"
-    status="SHIPPED"
-    comments="Customer requested that DHL is used for this shipping"
-    customer_number="456"/>
-  <purchase
-    purchase_number="10320"
-    purchase_date="2004-11-03"
-    required_date="2004-11-13"
-    shipped_date="2004-11-07"
-    status="SHIPPED"
-    customer_number="144"/>
-  <purchase
-    purchase_number="10321"
-    purchase_date="2004-11-04"
-    required_date="2004-11-12"
-    shipped_date="2004-11-07"
-    status="SHIPPED"
-    customer_number="462"/>
-  <purchase
-    purchase_number="10322"
-    purchase_date="2004-11-04"
-    required_date="2004-11-12"
-    shipped_date="2004-11-10"
-    status="SHIPPED"
-    comments="Customer has worked with some of our vendors in the past and is aware of their MSRP"
-    customer_number="363"/>
-  <purchase
-    purchase_number="10323"
-    purchase_date="2004-11-05"
-    required_date="2004-11-12"
-    shipped_date="2004-11-09"
-    status="SHIPPED"
-    customer_number="128"/>
-  <purchase
-    purchase_number="10324"
-    purchase_date="2004-11-05"
-    required_date="2004-11-11"
-    shipped_date="2004-11-08"
-    status="SHIPPED"
-    customer_number="181"/>
-  <purchase
-    purchase_number="10325"
-    purchase_date="2004-11-05"
-    required_date="2004-11-13"
-    shipped_date="2004-11-08"
-    status="SHIPPED"
-    customer_number="121"/>
-  <purchase
-    purchase_number="10326"
-    purchase_date="2004-11-09"
-    required_date="2004-11-16"
-    shipped_date="2004-11-10"
-    status="SHIPPED"
-    customer_number="144"/>
-  <purchase
-    purchase_number="10327"
-    purchase_date="2004-11-10"
-    required_date="2004-11-19"
-    shipped_date="2004-11-13"
-    status="RESOLVED"
-    comments="Purchase was disputed and resolved on 12/1/04. The Sales Manager was involved. Customer claims the scales of the models don't match what was discussed."
-    customer_number="145"/>
-  <purchase
-    purchase_number="10328"
-    purchase_date="2004-11-12"
-    required_date="2004-11-21"
-    shipped_date="2004-11-18"
-    status="SHIPPED"
-    comments="Customer very concerned about the exact color of the models. There is high risk that he may dispute the purchase because there is a slight color mismatch"
-    customer_number="278"/>
-  <purchase
-    purchase_number="10329"
-    purchase_date="2004-11-15"
-    required_date="2004-11-24"
-    shipped_date="2004-11-16"
-    status="SHIPPED"
-    customer_number="131"/>
-  <purchase
-    purchase_number="10330"
-    purchase_date="2004-11-16"
-    required_date="2004-11-25"
-    shipped_date="2004-11-21"
-    status="SHIPPED"
-    customer_number="385"/>
-  <purchase
-    purchase_number="10331"
-    purchase_date="2004-11-17"
-    required_date="2004-11-23"
-    shipped_date="2004-11-23"
-    status="SHIPPED"
-    comments="Customer requested special shippment. The instructions were passed along to the warehouse"
-    customer_number="486"/>
-  <purchase
-    purchase_number="10332"
-    purchase_date="2004-11-17"
-    required_date="2004-11-25"
-    shipped_date="2004-11-18"
-    status="SHIPPED"
-    customer_number="187"/>
-  <purchase
-    purchase_number="10333"
-    purchase_date="2004-11-18"
-    required_date="2004-11-27"
-    shipped_date="2004-11-20"
-    status="SHIPPED"
-    customer_number="129"/>
-  <purchase
-    purchase_number="10334"
-    purchase_date="2004-11-19"
-    required_date="2004-11-28"
-    status="ON_HOLD"
-    comments="The outstaniding balance for this customer exceeds their credit limit. Purchase will be shipped when a payment is received."
-    customer_number="144"/>
-  <purchase
-    purchase_number="10335"
-    purchase_date="2004-11-19"
-    required_date="2004-11-29"
-    shipped_date="2004-11-23"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10336"
-    purchase_date="2004-11-20"
-    required_date="2004-11-26"
-    shipped_date="2004-11-24"
-    status="SHIPPED"
-    comments="Customer requested that DHL is used for this shipping"
-    customer_number="172"/>
-  <purchase
-    purchase_number="10337"
-    purchase_date="2004-11-21"
-    required_date="2004-11-30"
-    shipped_date="2004-11-26"
-    status="SHIPPED"
-    customer_number="424"/>
-  <purchase
-    purchase_number="10338"
-    purchase_date="2004-11-22"
-    required_date="2004-12-02"
-    shipped_date="2004-11-27"
-    status="SHIPPED"
-    customer_number="381"/>
-  <purchase
-    purchase_number="10339"
-    purchase_date="2004-11-23"
-    required_date="2004-11-30"
-    shipped_date="2004-11-30"
-    status="SHIPPED"
-    customer_number="398"/>
-  <purchase
-    purchase_number="10340"
-    purchase_date="2004-11-24"
-    required_date="2004-12-01"
-    shipped_date="2004-11-25"
-    status="SHIPPED"
-    comments="Customer is interested in buying more Ferrari models"
-    customer_number="216"/>
-  <purchase
-    purchase_number="10341"
-    purchase_date="2004-11-24"
-    required_date="2004-12-01"
-    shipped_date="2004-11-29"
-    status="SHIPPED"
-    customer_number="382"/>
-  <purchase
-    purchase_number="10342"
-    purchase_date="2004-11-24"
-    required_date="2004-12-01"
-    shipped_date="2004-11-29"
-    status="SHIPPED"
-    customer_number="114"/>
-  <purchase
-    purchase_number="10343"
-    purchase_date="2004-11-24"
-    required_date="2004-12-01"
-    shipped_date="2004-11-26"
-    status="SHIPPED"
-    customer_number="353"/>
-  <purchase
-    purchase_number="10344"
-    purchase_date="2004-11-25"
-    required_date="2004-12-02"
-    shipped_date="2004-11-29"
-    status="SHIPPED"
-    customer_number="350"/>
-  <purchase
-    purchase_number="10345"
-    purchase_date="2004-11-25"
-    required_date="2004-12-01"
-    shipped_date="2004-11-26"
-    status="SHIPPED"
-    customer_number="103"/>
-  <purchase
-    purchase_number="10346"
-    purchase_date="2004-11-29"
-    required_date="2004-12-05"
-    shipped_date="2004-11-30"
-    status="SHIPPED"
-    customer_number="112"/>
-  <purchase
-    purchase_number="10347"
-    purchase_date="2004-11-29"
-    required_date="2004-12-07"
-    shipped_date="2004-11-30"
-    status="SHIPPED"
-    comments="Can we deliver the new Ford Mustang models by end-of-quarter?"
-    customer_number="114"/>
-  <purchase
-    purchase_number="10348"
-    purchase_date="2004-11-01"
-    required_date="2004-11-08"
-    shipped_date="2004-11-05"
-    status="SHIPPED"
-    customer_number="458"/>
-  <purchase
-    purchase_number="10349"
-    purchase_date="2004-12-01"
-    required_date="2004-12-07"
-    shipped_date="2004-12-03"
-    status="SHIPPED"
-    customer_number="151"/>
-  <purchase
-    purchase_number="10350"
-    purchase_date="2004-12-02"
-    required_date="2004-12-08"
-    shipped_date="2004-12-05"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10351"
-    purchase_date="2004-12-03"
-    required_date="2004-12-11"
-    shipped_date="2004-12-07"
-    status="SHIPPED"
-    customer_number="324"/>
-  <purchase
-    purchase_number="10352"
-    purchase_date="2004-12-03"
-    required_date="2004-12-12"
-    shipped_date="2004-12-09"
-    status="SHIPPED"
-    customer_number="198"/>
-  <purchase
-    purchase_number="10353"
-    purchase_date="2004-12-04"
-    required_date="2004-12-11"
-    shipped_date="2004-12-05"
-    status="SHIPPED"
-    customer_number="447"/>
-  <purchase
-    purchase_number="10354"
-    purchase_date="2004-12-04"
-    required_date="2004-12-10"
-    shipped_date="2004-12-05"
-    status="SHIPPED"
-    customer_number="323"/>
-  <purchase
-    purchase_number="10355"
-    purchase_date="2004-12-07"
-    required_date="2004-12-14"
-    shipped_date="2004-12-13"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10356"
-    purchase_date="2004-12-09"
-    required_date="2004-12-15"
-    shipped_date="2004-12-12"
-    status="SHIPPED"
-    customer_number="250"/>
-  <purchase
-    purchase_number="10357"
-    purchase_date="2004-12-10"
-    required_date="2004-12-16"
-    shipped_date="2004-12-14"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10358"
-    purchase_date="2004-12-10"
-    required_date="2004-12-16"
-    shipped_date="2004-12-16"
-    status="SHIPPED"
-    comments="Customer requested that DHL is used for this shipping"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10359"
-    purchase_date="2004-12-15"
-    required_date="2004-12-23"
-    shipped_date="2004-12-18"
-    status="SHIPPED"
-    customer_number="353"/>
-  <purchase
-    purchase_number="10360"
-    purchase_date="2004-12-16"
-    required_date="2004-12-22"
-    shipped_date="2004-12-18"
-    status="SHIPPED"
-    customer_number="496"/>
-  <purchase
-    purchase_number="10361"
-    purchase_date="2004-12-17"
-    required_date="2004-12-24"
-    shipped_date="2004-12-20"
-    status="SHIPPED"
-    customer_number="282"/>
-  <purchase
-    purchase_number="10362"
-    purchase_date="2005-01-05"
-    required_date="2005-01-16"
-    shipped_date="2005-01-10"
-    status="SHIPPED"
-    customer_number="161"/>
-  <purchase
-    purchase_number="10363"
-    purchase_date="2005-01-06"
-    required_date="2005-01-12"
-    shipped_date="2005-01-10"
-    status="SHIPPED"
-    customer_number="334"/>
-  <purchase
-    purchase_number="10364"
-    purchase_date="2005-01-06"
-    required_date="2005-01-17"
-    shipped_date="2005-01-09"
-    status="SHIPPED"
-    customer_number="350"/>
-  <purchase
-    purchase_number="10365"
-    purchase_date="2005-01-07"
-    required_date="2005-01-18"
-    shipped_date="2005-01-11"
-    status="SHIPPED"
-    customer_number="320"/>
-  <purchase
-    purchase_number="10366"
-    purchase_date="2005-01-10"
-    required_date="2005-01-19"
-    shipped_date="2005-01-12"
-    status="SHIPPED"
-    customer_number="381"/>
-  <purchase
-    purchase_number="10367"
-    purchase_date="2005-01-12"
-    required_date="2005-01-21"
-    shipped_date="2005-01-16"
-    status="RESOLVED"
-    comments="This purchase was disputed and resolved on 2/1/2005. Customer claimed that container with shipment was damaged. FedEx's investigation proved this wrong."
-    customer_number="205"/>
-  <purchase
-    purchase_number="10368"
-    purchase_date="2005-01-19"
-    required_date="2005-01-27"
-    shipped_date="2005-01-24"
-    status="SHIPPED"
-    comments="Can we renegotiate this one?"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10369"
-    purchase_date="2005-01-20"
-    required_date="2005-01-28"
-    shipped_date="2005-01-24"
-    status="SHIPPED"
-    customer_number="379"/>
-  <purchase
-    purchase_number="10370"
-    purchase_date="2005-01-20"
-    required_date="2005-02-01"
-    shipped_date="2005-01-25"
-    status="SHIPPED"
-    customer_number="276"/>
-  <purchase
-    purchase_number="10371"
-    purchase_date="2005-01-23"
-    required_date="2005-02-03"
-    shipped_date="2005-01-25"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10372"
-    purchase_date="2005-01-26"
-    required_date="2005-02-05"
-    shipped_date="2005-01-28"
-    status="SHIPPED"
-    customer_number="398"/>
-  <purchase
-    purchase_number="10373"
-    purchase_date="2005-01-31"
-    required_date="2005-02-08"
-    shipped_date="2005-02-06"
-    status="SHIPPED"
-    customer_number="311"/>
-  <purchase
-    purchase_number="10374"
-    purchase_date="2005-02-02"
-    required_date="2005-02-09"
-    shipped_date="2005-02-03"
-    status="SHIPPED"
-    customer_number="333"/>
-  <purchase
-    purchase_number="10375"
-    purchase_date="2005-02-03"
-    required_date="2005-02-10"
-    shipped_date="2005-02-06"
-    status="SHIPPED"
-    customer_number="119"/>
-  <purchase
-    purchase_number="10376"
-    purchase_date="2005-02-08"
-    required_date="2005-02-18"
-    shipped_date="2005-02-13"
-    status="SHIPPED"
-    customer_number="219"/>
-  <purchase
-    purchase_number="10377"
-    purchase_date="2005-02-09"
-    required_date="2005-02-21"
-    shipped_date="2005-02-12"
-    status="SHIPPED"
-    comments="Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches"
-    customer_number="186"/>
-  <purchase
-    purchase_number="10378"
-    purchase_date="2005-02-10"
-    required_date="2005-02-18"
-    shipped_date="2005-02-11"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10379"
-    purchase_date="2005-02-10"
-    required_date="2005-02-18"
-    shipped_date="2005-02-11"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10380"
-    purchase_date="2005-02-16"
-    required_date="2005-02-24"
-    shipped_date="2005-02-18"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10381"
-    purchase_date="2005-02-17"
-    required_date="2005-02-25"
-    shipped_date="2005-02-18"
-    status="SHIPPED"
-    customer_number="321"/>
-  <purchase
-    purchase_number="10382"
-    purchase_date="2005-02-17"
-    required_date="2005-02-23"
-    shipped_date="2005-02-18"
-    status="SHIPPED"
-    comments="Custom shipping instructions sent to warehouse"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10383"
-    purchase_date="2005-02-22"
-    required_date="2005-03-02"
-    shipped_date="2005-02-25"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10384"
-    purchase_date="2005-02-23"
-    required_date="2005-03-06"
-    shipped_date="2005-02-27"
-    status="SHIPPED"
-    customer_number="321"/>
-  <purchase
-    purchase_number="10385"
-    purchase_date="2005-02-28"
-    required_date="2005-03-09"
-    shipped_date="2005-03-01"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10386"
-    purchase_date="2005-03-01"
-    required_date="2005-03-09"
-    shipped_date="2005-03-06"
-    status="RESOLVED"
-    comments="Disputed then Resolved on 3/15/2005. Customer doesn't like the craftsmaship of the models."
-    customer_number="141"/>
-  <purchase
-    purchase_number="10387"
-    purchase_date="2005-03-02"
-    required_date="2005-03-09"
-    shipped_date="2005-03-06"
-    status="SHIPPED"
-    comments="We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases."
-    customer_number="148"/>
-  <purchase
-    purchase_number="10388"
-    purchase_date="2005-03-03"
-    required_date="2005-03-11"
-    shipped_date="2005-03-09"
-    status="SHIPPED"
-    customer_number="462"/>
-  <purchase
-    purchase_number="10389"
-    purchase_date="2005-03-03"
-    required_date="2005-03-09"
-    shipped_date="2005-03-08"
-    status="SHIPPED"
-    customer_number="448"/>
-  <purchase
-    purchase_number="10390"
-    purchase_date="2005-03-04"
-    required_date="2005-03-11"
-    shipped_date="2005-03-07"
-    status="SHIPPED"
-    comments="They want to reevaluate their terms agreement with Finance."
-    customer_number="124"/>
-  <purchase
-    purchase_number="10391"
-    purchase_date="2005-03-09"
-    required_date="2005-03-20"
-    shipped_date="2005-03-15"
-    status="SHIPPED"
-    customer_number="276"/>
-  <purchase
-    purchase_number="10392"
-    purchase_date="2005-03-10"
-    required_date="2005-03-18"
-    shipped_date="2005-03-12"
-    status="SHIPPED"
-    customer_number="452"/>
-  <purchase
-    purchase_number="10393"
-    purchase_date="2005-03-11"
-    required_date="2005-03-22"
-    shipped_date="2005-03-14"
-    status="SHIPPED"
-    comments="They want to reevaluate their terms agreement with Finance."
-    customer_number="323"/>
-  <purchase
-    purchase_number="10394"
-    purchase_date="2005-03-15"
-    required_date="2005-03-25"
-    shipped_date="2005-03-19"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10395"
-    purchase_date="2005-03-17"
-    required_date="2005-03-24"
-    shipped_date="2005-03-23"
-    status="SHIPPED"
-    comments="We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down."
-    customer_number="250"/>
-  <purchase
-    purchase_number="10396"
-    purchase_date="2005-03-23"
-    required_date="2005-04-02"
-    shipped_date="2005-03-28"
-    status="SHIPPED"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10397"
-    purchase_date="2005-03-28"
-    required_date="2005-04-09"
-    shipped_date="2005-04-01"
-    status="SHIPPED"
-    customer_number="242"/>
-  <purchase
-    purchase_number="10398"
-    purchase_date="2005-03-30"
-    required_date="2005-04-09"
-    shipped_date="2005-03-31"
-    status="SHIPPED"
-    customer_number="353"/>
-  <purchase
-    purchase_number="10399"
-    purchase_date="2005-04-01"
-    required_date="2005-04-12"
-    shipped_date="2005-04-03"
-    status="SHIPPED"
-    customer_number="496"/>
-  <purchase
-    purchase_number="10400"
-    purchase_date="2005-04-01"
-    required_date="2005-04-11"
-    shipped_date="2005-04-04"
-    status="SHIPPED"
-    comments="Customer requested that DHL is used for this shipping"
-    customer_number="450"/>
-  <purchase
-    purchase_number="10401"
-    purchase_date="2005-04-03"
-    required_date="2005-04-14"
-    status="ON_HOLD"
-    comments="Customer credit limit exceeded. Will ship when a payment is received."
-    customer_number="328"/>
-  <purchase
-    purchase_number="10402"
-    purchase_date="2005-04-07"
-    required_date="2005-04-14"
-    shipped_date="2005-04-12"
-    status="SHIPPED"
-    customer_number="406"/>
-  <purchase
-    purchase_number="10403"
-    purchase_date="2005-04-08"
-    required_date="2005-04-18"
-    shipped_date="2005-04-11"
-    status="SHIPPED"
-    customer_number="201"/>
-  <purchase
-    purchase_number="10404"
-    purchase_date="2005-04-08"
-    required_date="2005-04-14"
-    shipped_date="2005-04-11"
-    status="SHIPPED"
-    customer_number="323"/>
-  <purchase
-    purchase_number="10405"
-    purchase_date="2005-04-14"
-    required_date="2005-04-24"
-    shipped_date="2005-04-20"
-    status="SHIPPED"
-    customer_number="209"/>
-  <purchase
-    purchase_number="10406"
-    purchase_date="2005-04-15"
-    required_date="2005-04-25"
-    shipped_date="2005-04-21"
-    status="DISPUTED"
-    comments="Customer claims container with shipment was damaged during shipping and some items were missing. I am talking to FedEx about this."
-    customer_number="145"/>
-  <purchase
-    purchase_number="10407"
-    purchase_date="2005-04-22"
-    required_date="2005-05-04"
-    status="ON_HOLD"
-    comments="Customer credit limit exceeded. Will ship when a payment is received."
-    customer_number="450"/>
-  <purchase
-    purchase_number="10408"
-    purchase_date="2005-04-22"
-    required_date="2005-04-29"
-    shipped_date="2005-04-27"
-    status="SHIPPED"
-    customer_number="398"/>
-  <purchase
-    purchase_number="10409"
-    purchase_date="2005-04-23"
-    required_date="2005-05-05"
-    shipped_date="2005-04-24"
-    status="SHIPPED"
-    customer_number="166"/>
-  <purchase
-    purchase_number="10410"
-    purchase_date="2005-04-29"
-    required_date="2005-05-10"
-    shipped_date="2005-04-30"
-    status="SHIPPED"
-    customer_number="357"/>
-  <purchase
-    purchase_number="10411"
-    purchase_date="2005-05-01"
-    required_date="2005-05-08"
-    shipped_date="2005-05-06"
-    status="SHIPPED"
-    customer_number="233"/>
-  <purchase
-    purchase_number="10412"
-    purchase_date="2005-05-03"
-    required_date="2005-05-13"
-    shipped_date="2005-05-05"
-    status="SHIPPED"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10413"
-    purchase_date="2005-05-05"
-    required_date="2005-05-14"
-    shipped_date="2005-05-09"
-    status="SHIPPED"
-    comments="Customer requested that DHL is used for this shipping"
-    customer_number="175"/>
-  <purchase
-    purchase_number="10414"
-    purchase_date="2005-05-06"
-    required_date="2005-05-13"
-    status="ON_HOLD"
-    comments="Customer credit limit exceeded. Will ship when a payment is received."
-    customer_number="362"/>
-  <purchase
-    purchase_number="10415"
-    purchase_date="2005-05-09"
-    required_date="2005-05-20"
-    shipped_date="2005-05-12"
-    status="DISPUTED"
-    comments="Customer claims the scales of the models don't match what was discussed. I keep all the paperwork though to prove otherwise"
-    customer_number="471"/>
-  <purchase
-    purchase_number="10416"
-    purchase_date="2005-05-10"
-    required_date="2005-05-16"
-    shipped_date="2005-05-14"
-    status="SHIPPED"
-    customer_number="386"/>
-  <purchase
-    purchase_number="10417"
-    purchase_date="2005-05-13"
-    required_date="2005-05-19"
-    shipped_date="2005-05-19"
-    status="DISPUTED"
-    comments="Customer doesn't like the colors and precision of the models."
-    customer_number="141"/>
-  <purchase
-    purchase_number="10418"
-    purchase_date="2005-05-16"
-    required_date="2005-05-24"
-    shipped_date="2005-05-20"
-    status="SHIPPED"
-    customer_number="412"/>
-  <purchase
-    purchase_number="10419"
-    purchase_date="2005-05-17"
-    required_date="2005-05-28"
-    shipped_date="2005-05-19"
-    status="SHIPPED"
-    customer_number="382"/>
-  <purchase
-    purchase_number="10420"
-    purchase_date="2005-05-29"
-    required_date="2005-06-07"
-    status="IN_PROCESS"
-    customer_number="282"/>
-  <purchase
-    purchase_number="10421"
-    purchase_date="2005-05-29"
-    required_date="2005-06-06"
-    status="IN_PROCESS"
-    comments="Custom shipping instructions were sent to warehouse"
-    customer_number="124"/>
-  <purchase
-    purchase_number="10422"
-    purchase_date="2005-05-30"
-    required_date="2005-06-11"
-    status="IN_PROCESS"
-    customer_number="157"/>
-  <purchase
-    purchase_number="10423"
-    purchase_date="2005-05-30"
-    required_date="2005-06-05"
-    status="IN_PROCESS"
-    customer_number="314"/>
-  <purchase
-    purchase_number="10424"
-    purchase_date="2005-05-31"
-    required_date="2005-06-08"
-    status="IN_PROCESS"
-    customer_number="141"/>
-  <purchase
-    purchase_number="10425"
-    purchase_date="2005-05-31"
-    required_date="2005-06-07"
-    status="IN_PROCESS"
-    customer_number="119"/>
+  <purchase purchase_number="10100" customer_number="363" purchase_date="2003-01-06" required_date="2003-01-13" shipped_date="2003-01-10" status="SHIPPED"/>
+  <purchase purchase_number="10101" customer_number="128" purchase_date="2003-01-09" required_date="2003-01-18" shipped_date="2003-01-11" status="SHIPPED"  comments="Check on availability."/>
+  <purchase purchase_number="10102" customer_number="181" purchase_date="2003-01-10" required_date="2003-01-18" shipped_date="2003-01-14" status="SHIPPED"/>
+  <purchase purchase_number="10103" customer_number="121" purchase_date="2003-01-29" required_date="2003-02-07" shipped_date="2003-02-02" status="SHIPPED"/>
+  <purchase purchase_number="10104" customer_number="141" purchase_date="2003-01-31" required_date="2003-02-09" shipped_date="2003-02-01" status="SHIPPED"/>
+  <purchase purchase_number="10105" customer_number="145" purchase_date="2003-02-11" required_date="2003-02-21" shipped_date="2003-02-12" status="SHIPPED"/>
+  <purchase purchase_number="10106" customer_number="278" purchase_date="2003-02-17" required_date="2003-02-24" shipped_date="2003-02-21" status="SHIPPED"/>
+  <purchase purchase_number="10107" customer_number="131" purchase_date="2003-02-24" required_date="2003-03-03" shipped_date="2003-02-26" status="SHIPPED"  comments="Difficult to negotiate with customer. We need more marketing materials"/>
+  <purchase purchase_number="10108" customer_number="385" purchase_date="2003-03-03" required_date="2003-03-12" shipped_date="2003-03-08" status="SHIPPED"/>
+  <purchase purchase_number="10109" customer_number="486" purchase_date="2003-03-10" required_date="2003-03-19" shipped_date="2003-03-11" status="SHIPPED"  comments="Customer requested that FedEx Ground is used for this shipping"/>
+  <purchase purchase_number="10110" customer_number="187" purchase_date="2003-03-18" required_date="2003-03-24" shipped_date="2003-03-20" status="SHIPPED"/>
+  <purchase purchase_number="10111" customer_number="129" purchase_date="2003-03-25" required_date="2003-03-31" shipped_date="2003-03-30" status="SHIPPED"/>
+  <purchase purchase_number="10112" customer_number="144" purchase_date="2003-03-24" required_date="2003-04-03" shipped_date="2003-03-29" status="SHIPPED"  comments="Customer requested that ad materials (such as posters, pamphlets) be included in the shippment"/>
+  <purchase purchase_number="10113" customer_number="124" purchase_date="2003-03-26" required_date="2003-04-02" shipped_date="2003-03-27" status="SHIPPED"/>
+  <purchase purchase_number="10114" customer_number="172" purchase_date="2003-04-01" required_date="2003-04-07" shipped_date="2003-04-02" status="SHIPPED"/>
+  <purchase purchase_number="10115" customer_number="424" purchase_date="2003-04-04" required_date="2003-04-12" shipped_date="2003-04-07" status="SHIPPED"/>
+  <purchase purchase_number="10116" customer_number="381" purchase_date="2003-04-11" required_date="2003-04-19" shipped_date="2003-04-13" status="SHIPPED"/>
+  <purchase purchase_number="10117" customer_number="148" purchase_date="2003-04-16" required_date="2003-04-24" shipped_date="2003-04-17" status="SHIPPED"/>
+  <purchase purchase_number="10118" customer_number="216" purchase_date="2003-04-21" required_date="2003-04-29" shipped_date="2003-04-26" status="SHIPPED"  comments="Customer has worked with some of our vendors in the past and is aware of their MSRP"/>
+  <purchase purchase_number="10119" customer_number="382" purchase_date="2003-04-28" required_date="2003-05-05" shipped_date="2003-05-02" status="SHIPPED"/>
+  <purchase purchase_number="10120" customer_number="114" purchase_date="2003-04-29" required_date="2003-05-08" shipped_date="2003-05-01" status="SHIPPED"/>
+  <purchase purchase_number="10121" customer_number="353" purchase_date="2003-05-07" required_date="2003-05-13" shipped_date="2003-05-13" status="SHIPPED"/>
+  <purchase purchase_number="10122" customer_number="350" purchase_date="2003-05-08" required_date="2003-05-16" shipped_date="2003-05-13" status="SHIPPED"/>
+  <purchase purchase_number="10123" customer_number="103" purchase_date="2003-05-20" required_date="2003-05-29" shipped_date="2003-05-22" status="SHIPPED"/>
+  <purchase purchase_number="10124" customer_number="112" purchase_date="2003-05-21" required_date="2003-05-29" shipped_date="2003-05-25" status="SHIPPED"  comments="Customer very concerned about the exact color of the models. There is high risk that he may dispute the purchase because there is a slight color mismatch"/>
+  <purchase purchase_number="10125" customer_number="114" purchase_date="2003-05-21" required_date="2003-05-27" shipped_date="2003-05-24" status="SHIPPED"/>
+  <purchase purchase_number="10126" customer_number="458" purchase_date="2003-05-28" required_date="2003-06-07" shipped_date="2003-06-02" status="SHIPPED"/>
+  <purchase purchase_number="10127" customer_number="151" purchase_date="2003-06-03" required_date="2003-06-09" shipped_date="2003-06-06" status="SHIPPED"  comments="Customer requested special shippment. The instructions were passed along to the warehouse"/>
+  <purchase purchase_number="10128" customer_number="141" purchase_date="2003-06-06" required_date="2003-06-12" shipped_date="2003-06-11" status="SHIPPED"/>
+  <purchase purchase_number="10129" customer_number="324" purchase_date="2003-06-12" required_date="2003-06-18" shipped_date="2003-06-14" status="SHIPPED"/>
+  <purchase purchase_number="10130" customer_number="198" purchase_date="2003-06-16" required_date="2003-06-24" shipped_date="2003-06-21" status="SHIPPED"/>
+  <purchase purchase_number="10131" customer_number="447" purchase_date="2003-06-16" required_date="2003-06-25" shipped_date="2003-06-21" status="SHIPPED"/>
+  <purchase purchase_number="10132" customer_number="323" purchase_date="2003-06-25" required_date="2003-07-01" shipped_date="2003-06-28" status="SHIPPED"/>
+  <purchase purchase_number="10133" customer_number="141" purchase_date="2003-06-27" required_date="2003-07-04" shipped_date="2003-07-03" status="SHIPPED"/>
+  <purchase purchase_number="10134" customer_number="250" purchase_date="2003-07-01" required_date="2003-07-10" shipped_date="2003-07-05" status="SHIPPED"/>
+  <purchase purchase_number="10135" customer_number="124" purchase_date="2003-07-02" required_date="2003-07-12" shipped_date="2003-07-03" status="SHIPPED"/>
+  <purchase purchase_number="10136" customer_number="242" purchase_date="2003-07-04" required_date="2003-07-14" shipped_date="2003-07-06" status="SHIPPED"  comments="Customer is interested in buying more Ferrari models"/>
+  <purchase purchase_number="10137" customer_number="353" purchase_date="2003-07-10" required_date="2003-07-20" shipped_date="2003-07-14" status="SHIPPED"/>
+  <purchase purchase_number="10138" customer_number="496" purchase_date="2003-07-07" required_date="2003-07-16" shipped_date="2003-07-13" status="SHIPPED"/>
+  <purchase purchase_number="10139" customer_number="282" purchase_date="2003-07-16" required_date="2003-07-23" shipped_date="2003-07-21" status="SHIPPED"/>
+  <purchase purchase_number="10140" customer_number="161" purchase_date="2003-07-24" required_date="2003-08-02" shipped_date="2003-07-30" status="SHIPPED"/>
+  <purchase purchase_number="10141" customer_number="334" purchase_date="2003-08-01" required_date="2003-08-09" shipped_date="2003-08-04" status="SHIPPED"/>
+  <purchase purchase_number="10142" customer_number="124" purchase_date="2003-08-08" required_date="2003-08-16" shipped_date="2003-08-13" status="SHIPPED"/>
+  <purchase purchase_number="10143" customer_number="320" purchase_date="2003-08-10" required_date="2003-08-18" shipped_date="2003-08-12" status="SHIPPED"  comments="Can we deliver the new Ford Mustang models by end-of-quarter?"/>
+  <purchase purchase_number="10144" customer_number="381" purchase_date="2003-08-13" required_date="2003-08-21" shipped_date="2003-08-14" status="SHIPPED"/>
+  <purchase purchase_number="10145" customer_number="205" purchase_date="2003-08-25" required_date="2003-09-02" shipped_date="2003-08-31" status="SHIPPED"/>
+  <purchase purchase_number="10146" customer_number="447" purchase_date="2003-09-03" required_date="2003-09-13" shipped_date="2003-09-06" status="SHIPPED"/>
+  <purchase purchase_number="10147" customer_number="379" purchase_date="2003-09-05" required_date="2003-09-12" shipped_date="2003-09-09" status="SHIPPED"/>
+  <purchase purchase_number="10148" customer_number="276" purchase_date="2003-09-11" required_date="2003-09-21" shipped_date="2003-09-15" status="SHIPPED"  comments="They want to reevaluate their terms agreement with Finance."/>
+  <purchase purchase_number="10149" customer_number="487" purchase_date="2003-09-12" required_date="2003-09-18" shipped_date="2003-09-17" status="SHIPPED"/>
+  <purchase purchase_number="10150" customer_number="148" purchase_date="2003-09-19" required_date="2003-09-27" shipped_date="2003-09-21" status="SHIPPED"  comments="They want to reevaluate their terms agreement with Finance."/>
+  <purchase purchase_number="10151" customer_number="311" purchase_date="2003-09-21" required_date="2003-09-30" shipped_date="2003-09-24" status="SHIPPED"/>
+  <purchase purchase_number="10152" customer_number="333" purchase_date="2003-09-25" required_date="2003-10-03" shipped_date="2003-10-01" status="SHIPPED"/>
+  <purchase purchase_number="10153" customer_number="141" purchase_date="2003-09-28" required_date="2003-10-05" shipped_date="2003-10-03" status="SHIPPED"/>
+  <purchase purchase_number="10154" customer_number="219" purchase_date="2003-10-02" required_date="2003-10-12" shipped_date="2003-10-08" status="SHIPPED"/>
+  <purchase purchase_number="10155" customer_number="186" purchase_date="2003-10-06" required_date="2003-10-13" shipped_date="2003-10-07" status="SHIPPED"/>
+  <purchase purchase_number="10156" customer_number="141" purchase_date="2003-10-08" required_date="2003-10-17" shipped_date="2003-10-11" status="SHIPPED"/>
+  <purchase purchase_number="10157" customer_number="473" purchase_date="2003-10-09" required_date="2003-10-15" shipped_date="2003-10-14" status="SHIPPED"/>
+  <purchase purchase_number="10158" customer_number="121" purchase_date="2003-10-10" required_date="2003-10-18" shipped_date="2003-10-15" status="SHIPPED"/>
+  <purchase purchase_number="10159" customer_number="321" purchase_date="2003-10-10" required_date="2003-10-19" shipped_date="2003-10-16" status="SHIPPED"/>
+  <purchase purchase_number="10160" customer_number="347" purchase_date="2003-10-11" required_date="2003-10-17" shipped_date="2003-10-17" status="SHIPPED"/>
+  <purchase purchase_number="10161" customer_number="227" purchase_date="2003-10-17" required_date="2003-10-25" shipped_date="2003-10-20" status="SHIPPED"/>
+  <purchase purchase_number="10162" customer_number="321" purchase_date="2003-10-18" required_date="2003-10-26" shipped_date="2003-10-19" status="SHIPPED"/>
+  <purchase purchase_number="10163" customer_number="424" purchase_date="2003-10-20" required_date="2003-10-27" shipped_date="2003-10-24" status="SHIPPED"/>
+  <purchase purchase_number="10164" customer_number="452" purchase_date="2003-10-21" required_date="2003-10-30" shipped_date="2003-10-23" status="RESOLVED" comments="This purchase was disputed, but resolved on 11/1/2003; Customer doesn't like the colors and precision of the models."/>
+  <purchase purchase_number="10165" customer_number="148" purchase_date="2003-10-22" required_date="2003-10-31" shipped_date="2003-12-26" status="SHIPPED"  comments="This purchase was on hold because customers's credit limit had been exceeded. Purchase will ship when payment is received"/>
+  <purchase purchase_number="10166" customer_number="462" purchase_date="2003-10-21" required_date="2003-10-30" shipped_date="2003-10-27" status="SHIPPED"/>
+  <purchase purchase_number="10167" customer_number="448" purchase_date="2003-10-23" required_date="2003-10-30"                           status="CANCELED" comments="Customer called to cancel. The warehouse was notified in time and the purchase didn't ship. They have a new VP of Sales and are shifting their sales model. Our VP of Sales should contact them."/>
+  <purchase purchase_number="10168" customer_number="161" purchase_date="2003-10-28" required_date="2003-11-03" shipped_date="2003-11-01" status="SHIPPED"/>
+  <purchase purchase_number="10169" customer_number="276" purchase_date="2003-11-04" required_date="2003-11-14" shipped_date="2003-11-09" status="SHIPPED"/>
+  <purchase purchase_number="10170" customer_number="452" purchase_date="2003-11-04" required_date="2003-11-12" shipped_date="2003-11-07" status="SHIPPED"/>
+  <purchase purchase_number="10171" customer_number="233" purchase_date="2003-11-05" required_date="2003-11-13" shipped_date="2003-11-07" status="SHIPPED"/>
+  <purchase purchase_number="10172" customer_number="175" purchase_date="2003-11-05" required_date="2003-11-14" shipped_date="2003-11-11" status="SHIPPED"/>
+  <purchase purchase_number="10173" customer_number="278" purchase_date="2003-11-05" required_date="2003-11-15" shipped_date="2003-11-09" status="SHIPPED"  comments="Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches"/>
+  <purchase purchase_number="10174" customer_number="333" purchase_date="2003-11-06" required_date="2003-11-15" shipped_date="2003-11-10" status="SHIPPED"/>
+  <purchase purchase_number="10175" customer_number="324" purchase_date="2003-11-06" required_date="2003-11-14" shipped_date="2003-11-09" status="SHIPPED"/>
+  <purchase purchase_number="10176" customer_number="386" purchase_date="2003-11-06" required_date="2003-11-15" shipped_date="2003-11-12" status="SHIPPED"/>
+  <purchase purchase_number="10177" customer_number="344" purchase_date="2003-11-07" required_date="2003-11-17" shipped_date="2003-11-12" status="SHIPPED"/>
+  <purchase purchase_number="10178" customer_number="242" purchase_date="2003-11-08" required_date="2003-11-16" shipped_date="2003-11-10" status="SHIPPED"  comments="Custom shipping instructions sent to warehouse"/>
+  <purchase purchase_number="10179" customer_number="496" purchase_date="2003-11-11" required_date="2003-11-17" shipped_date="2003-11-13" status="CANCELED" comments="Customer canceled due to urgent budgeting issues. Must be cautious when dealing with them in the future. Since purchase shipped already we must discuss who would cover the shipping charges."/>
+  <purchase purchase_number="10180" customer_number="171" purchase_date="2003-11-11" required_date="2003-11-19" shipped_date="2003-11-14" status="SHIPPED"/>
+  <purchase purchase_number="10181" customer_number="167" purchase_date="2003-11-12" required_date="2003-11-19" shipped_date="2003-11-15" status="SHIPPED"/>
+  <purchase purchase_number="10182" customer_number="124" purchase_date="2003-11-12" required_date="2003-11-21" shipped_date="2003-11-18" status="SHIPPED"/>
+  <purchase purchase_number="10183" customer_number="339" purchase_date="2003-11-13" required_date="2003-11-22" shipped_date="2003-11-15" status="SHIPPED"  comments="We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases."/>
+  <purchase purchase_number="10184" customer_number="484" purchase_date="2003-11-14" required_date="2003-11-22" shipped_date="2003-11-20" status="SHIPPED"/>
+  <purchase purchase_number="10185" customer_number="320" purchase_date="2003-11-14" required_date="2003-11-21" shipped_date="2003-11-20" status="SHIPPED"/>
+  <purchase purchase_number="10186" customer_number="489" purchase_date="2003-11-14" required_date="2003-11-20" shipped_date="2003-11-18" status="SHIPPED"  comments="They want to reevaluate their terms agreement with the VP of Sales"/>
+  <purchase purchase_number="10187" customer_number="211" purchase_date="2003-11-15" required_date="2003-11-24" shipped_date="2003-11-16" status="SHIPPED"/>
+  <purchase purchase_number="10188" customer_number="167" purchase_date="2003-11-18" required_date="2003-11-26" shipped_date="2003-11-24" status="SHIPPED"/>
+  <purchase purchase_number="10189" customer_number="205" purchase_date="2003-11-18" required_date="2003-11-25" shipped_date="2003-11-24" status="SHIPPED"  comments="They want to reevaluate their terms agreement with Finance."/>
+  <purchase purchase_number="10190" customer_number="141" purchase_date="2003-11-19" required_date="2003-11-29" shipped_date="2003-11-20" status="SHIPPED"/>
+  <purchase purchase_number="10191" customer_number="259" purchase_date="2003-11-20" required_date="2003-11-30" shipped_date="2003-11-24" status="SHIPPED"  comments="We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down."/>
+  <purchase purchase_number="10192" customer_number="363" purchase_date="2003-11-20" required_date="2003-11-29" shipped_date="2003-11-25" status="SHIPPED"/>
+  <purchase purchase_number="10193" customer_number="471" purchase_date="2003-11-21" required_date="2003-11-28" shipped_date="2003-11-27" status="SHIPPED"/>
+  <purchase purchase_number="10194" customer_number="146" purchase_date="2003-11-25" required_date="2003-12-02" shipped_date="2003-11-26" status="SHIPPED"/>
+  <purchase purchase_number="10195" customer_number="319" purchase_date="2003-11-25" required_date="2003-12-01" shipped_date="2003-11-28" status="SHIPPED"/>
+  <purchase purchase_number="10196" customer_number="455" purchase_date="2003-11-26" required_date="2003-12-03" shipped_date="2003-12-01" status="SHIPPED"/>
+  <purchase purchase_number="10197" customer_number="216" purchase_date="2003-11-26" required_date="2003-12-02" shipped_date="2003-12-01" status="SHIPPED"  comments="Customer inquired about remote controlled models and gold models."/>
+  <purchase purchase_number="10198" customer_number="385" purchase_date="2003-11-27" required_date="2003-12-06" shipped_date="2003-12-03" status="SHIPPED"/>
+  <purchase purchase_number="10199" customer_number="475" purchase_date="2003-12-01" required_date="2003-12-10" shipped_date="2003-12-06" status="SHIPPED"/>
+  <purchase purchase_number="10200" customer_number="211" purchase_date="2003-12-01" required_date="2003-12-09" shipped_date="2003-12-06" status="SHIPPED"/>
+  <purchase purchase_number="10201" customer_number="129" purchase_date="2003-12-01" required_date="2003-12-11" shipped_date="2003-12-02" status="SHIPPED"/>
+  <purchase purchase_number="10202" customer_number="357" purchase_date="2003-12-02" required_date="2003-12-09" shipped_date="2003-12-06" status="SHIPPED"/>
+  <purchase purchase_number="10203" customer_number="141" purchase_date="2003-12-02" required_date="2003-12-11" shipped_date="2003-12-07" status="SHIPPED"/>
+  <purchase purchase_number="10204" customer_number="151" purchase_date="2003-12-02" required_date="2003-12-10" shipped_date="2003-12-04" status="SHIPPED"/>
+  <purchase purchase_number="10205" customer_number="141" purchase_date="2003-12-03" required_date="2003-12-09" shipped_date="2003-12-07" status="SHIPPED"  comments="I need all the information I can get on our competitors."/>
+  <purchase purchase_number="10206" customer_number="202" purchase_date="2003-12-05" required_date="2003-12-13" shipped_date="2003-12-08" status="SHIPPED"  comments="Can we renegotiate this one?"/>
+  <purchase purchase_number="10207" customer_number="495" purchase_date="2003-12-09" required_date="2003-12-17" shipped_date="2003-12-11" status="SHIPPED"  comments="Check on availability."/>
+  <purchase purchase_number="10208" customer_number="146" purchase_date="2004-01-02" required_date="2004-01-11" shipped_date="2004-01-04" status="SHIPPED"/>
+  <purchase purchase_number="10209" customer_number="347" purchase_date="2004-01-09" required_date="2004-01-15" shipped_date="2004-01-12" status="SHIPPED"/>
+  <purchase purchase_number="10210" customer_number="177" purchase_date="2004-01-12" required_date="2004-01-22" shipped_date="2004-01-20" status="SHIPPED"/>
+  <purchase purchase_number="10211" customer_number="406" purchase_date="2004-01-15" required_date="2004-01-25" shipped_date="2004-01-18" status="SHIPPED"/>
+  <purchase purchase_number="10212" customer_number="141" purchase_date="2004-01-16" required_date="2004-01-24" shipped_date="2004-01-18" status="SHIPPED"/>
+  <purchase purchase_number="10213" customer_number="489" purchase_date="2004-01-22" required_date="2004-01-28" shipped_date="2004-01-27" status="SHIPPED"  comments="Difficult to negotiate with customer. We need more marketing materials"/>
+  <purchase purchase_number="10214" customer_number="458" purchase_date="2004-01-26" required_date="2004-02-04" shipped_date="2004-01-29" status="SHIPPED"/>
+  <purchase purchase_number="10215" customer_number="475" purchase_date="2004-01-29" required_date="2004-02-08" shipped_date="2004-02-01" status="SHIPPED"  comments="Customer requested that FedEx Ground is used for this shipping"/>
+  <purchase purchase_number="10216" customer_number="256" purchase_date="2004-02-02" required_date="2004-02-10" shipped_date="2004-02-04" status="SHIPPED"/>
+  <purchase purchase_number="10217" customer_number="166" purchase_date="2004-02-04" required_date="2004-02-14" shipped_date="2004-02-06" status="SHIPPED"/>
+  <purchase purchase_number="10218" customer_number="473" purchase_date="2004-02-09" required_date="2004-02-16" shipped_date="2004-02-11" status="SHIPPED"  comments="Customer requested that ad materials (such as posters, pamphlets) be included in the shippment"/>
+  <purchase purchase_number="10219" customer_number="487" purchase_date="2004-02-10" required_date="2004-02-17" shipped_date="2004-02-12" status="SHIPPED"/>
+  <purchase purchase_number="10220" customer_number="189" purchase_date="2004-02-12" required_date="2004-02-19" shipped_date="2004-02-16" status="SHIPPED"/>
+  <purchase purchase_number="10221" customer_number="314" purchase_date="2004-02-18" required_date="2004-02-26" shipped_date="2004-02-19" status="SHIPPED"/>
+  <purchase purchase_number="10222" customer_number="239" purchase_date="2004-02-19" required_date="2004-02-27" shipped_date="2004-02-20" status="SHIPPED"/>
+  <purchase purchase_number="10223" customer_number="114" purchase_date="2004-02-20" required_date="2004-02-29" shipped_date="2004-02-24" status="SHIPPED"/>
+  <purchase purchase_number="10224" customer_number="171" purchase_date="2004-02-21" required_date="2004-03-02" shipped_date="2004-02-26" status="SHIPPED"  comments="Customer has worked with some of our vendors in the past and is aware of their MSRP"/>
+  <purchase purchase_number="10225" customer_number="298" purchase_date="2004-02-22" required_date="2004-03-01" shipped_date="2004-02-24" status="SHIPPED"/>
+  <purchase purchase_number="10226" customer_number="239" purchase_date="2004-02-26" required_date="2004-03-06" shipped_date="2004-03-02" status="SHIPPED"/>
+  <purchase purchase_number="10227" customer_number="146" purchase_date="2004-03-02" required_date="2004-03-12" shipped_date="2004-03-08" status="SHIPPED"/>
+  <purchase purchase_number="10228" customer_number="173" purchase_date="2004-03-10" required_date="2004-03-18" shipped_date="2004-03-13" status="SHIPPED"/>
+  <purchase purchase_number="10229" customer_number="124" purchase_date="2004-03-11" required_date="2004-03-20" shipped_date="2004-03-12" status="SHIPPED"/>
+  <purchase purchase_number="10230" customer_number="128" purchase_date="2004-03-15" required_date="2004-03-24" shipped_date="2004-03-20" status="SHIPPED"  comments="Customer very concerned about the exact color of the models. There is high risk that he may dispute the purchase because there is a slight color mismatch"/>
+  <purchase purchase_number="10231" customer_number="344" purchase_date="2004-03-19" required_date="2004-03-26" shipped_date="2004-03-25" status="SHIPPED"/>
+  <purchase purchase_number="10232" customer_number="240" purchase_date="2004-03-20" required_date="2004-03-30" shipped_date="2004-03-25" status="SHIPPED"/>
+  <purchase purchase_number="10233" customer_number="328" purchase_date="2004-03-29" required_date="2004-04-04" shipped_date="2004-04-02" status="SHIPPED"  comments="Customer requested special shippment. The instructions were passed along to the warehouse"/>
+  <purchase purchase_number="10234" customer_number="412" purchase_date="2004-03-30" required_date="2004-04-05" shipped_date="2004-04-02" status="SHIPPED"/>
+  <purchase purchase_number="10235" customer_number="260" purchase_date="2004-04-02" required_date="2004-04-12" shipped_date="2004-04-06" status="SHIPPED"/>
+  <purchase purchase_number="10236" customer_number="486" purchase_date="2004-04-03" required_date="2004-04-11" shipped_date="2004-04-08" status="SHIPPED"/>
+  <purchase purchase_number="10237" customer_number="181" purchase_date="2004-04-05" required_date="2004-04-12" shipped_date="2004-04-10" status="SHIPPED"/>
+  <purchase purchase_number="10238" customer_number="145" purchase_date="2004-04-09" required_date="2004-04-16" shipped_date="2004-04-10" status="SHIPPED"/>
+  <purchase purchase_number="10239" customer_number="311" purchase_date="2004-04-12" required_date="2004-04-21" shipped_date="2004-04-17" status="SHIPPED"/>
+  <purchase purchase_number="10240" customer_number="177" purchase_date="2004-04-13" required_date="2004-04-20" shipped_date="2004-04-20" status="SHIPPED"/>
+  <purchase purchase_number="10241" customer_number="209" purchase_date="2004-04-13" required_date="2004-04-20" shipped_date="2004-04-19" status="SHIPPED"/>
+  <purchase purchase_number="10242" customer_number="456" purchase_date="2004-04-20" required_date="2004-04-28" shipped_date="2004-04-25" status="SHIPPED"  comments="Customer is interested in buying more Ferrari models"/>
+  <purchase purchase_number="10243" customer_number="495" purchase_date="2004-04-26" required_date="2004-05-03" shipped_date="2004-04-28" status="SHIPPED"/>
+  <purchase purchase_number="10244" customer_number="141" purchase_date="2004-04-29" required_date="2004-05-09" shipped_date="2004-05-04" status="SHIPPED"/>
+  <purchase purchase_number="10245" customer_number="455" purchase_date="2004-05-04" required_date="2004-05-12" shipped_date="2004-05-09" status="SHIPPED"/>
+  <purchase purchase_number="10246" customer_number="141" purchase_date="2004-05-05" required_date="2004-05-13" shipped_date="2004-05-06" status="SHIPPED"/>
+  <purchase purchase_number="10247" customer_number="334" purchase_date="2004-05-05" required_date="2004-05-11" shipped_date="2004-05-08" status="SHIPPED"/>
+  <purchase purchase_number="10248" customer_number="131" purchase_date="2004-05-07" required_date="2004-05-14"                           status="CANCELED" comments="Purchase was mistakenly placed. The warehouse noticed the lack of documentation."/>
+  <purchase purchase_number="10249" customer_number="173" purchase_date="2004-05-08" required_date="2004-05-17" shipped_date="2004-05-11" status="SHIPPED"  comments="Can we deliver the new Ford Mustang models by end-of-quarter?"/>
+  <purchase purchase_number="10250" customer_number="450" purchase_date="2004-05-11" required_date="2004-05-19" shipped_date="2004-05-15" status="SHIPPED"/>
+  <purchase purchase_number="10251" customer_number="328" purchase_date="2004-05-18" required_date="2004-05-24" shipped_date="2004-05-24" status="SHIPPED"/>
+  <purchase purchase_number="10252" customer_number="406" purchase_date="2004-05-26" required_date="2004-06-04" shipped_date="2004-05-29" status="SHIPPED"/>
+  <purchase purchase_number="10253" customer_number="201" purchase_date="2004-06-01" required_date="2004-06-09" shipped_date="2004-06-02" status="CANCELED" comments="Customer disputed the purchase and we agreed to cancel it. We must be more cautions with this customer going forward, since they are very hard to please. We must cover the shipping fees."/>
+  <purchase purchase_number="10254" customer_number="323" purchase_date="2004-06-03" required_date="2004-06-13" shipped_date="2004-06-04" status="SHIPPED"  comments="Customer requested that DHL is used for this shipping"/>
+  <purchase purchase_number="10255" customer_number="209" purchase_date="2004-06-04" required_date="2004-06-12" shipped_date="2004-06-09" status="SHIPPED"/>
+  <purchase purchase_number="10256" customer_number="145" purchase_date="2004-06-08" required_date="2004-06-16" shipped_date="2004-06-10" status="SHIPPED"/>
+  <purchase purchase_number="10257" customer_number="450" purchase_date="2004-06-14" required_date="2004-06-24" shipped_date="2004-06-15" status="SHIPPED"/>
+  <purchase purchase_number="10258" customer_number="398" purchase_date="2004-06-15" required_date="2004-06-25" shipped_date="2004-06-23" status="SHIPPED"/>
+  <purchase purchase_number="10259" customer_number="166" purchase_date="2004-06-15" required_date="2004-06-22" shipped_date="2004-06-17" status="SHIPPED"/>
+  <purchase purchase_number="10260" customer_number="357" purchase_date="2004-06-16" required_date="2004-06-22"                           status="CANCELED" comments="Customer heard complaints from their customers and called to cancel this purchase. Will notify the Sales Manager."/>
+  <purchase purchase_number="10261" customer_number="233" purchase_date="2004-06-17" required_date="2004-06-25" shipped_date="2004-06-22" status="SHIPPED"/>
+  <purchase purchase_number="10262" customer_number="141" purchase_date="2004-06-24" required_date="2004-07-01"                           status="CANCELED" comments="This customer found a better offer from one of our competitors. Will call back to renegotiate."/>
+  <purchase purchase_number="10263" customer_number="175" purchase_date="2004-06-28" required_date="2004-07-04" shipped_date="2004-07-02" status="SHIPPED"/>
+  <purchase purchase_number="10264" customer_number="362" purchase_date="2004-06-30" required_date="2004-07-06" shipped_date="2004-07-01" status="SHIPPED"  comments="Customer will send a truck to our local warehouse on 7/1/2004"/>
+  <purchase purchase_number="10265" customer_number="471" purchase_date="2004-07-02" required_date="2004-07-09" shipped_date="2004-07-07" status="SHIPPED"/>
+  <purchase purchase_number="10266" customer_number="386" purchase_date="2004-07-06" required_date="2004-07-14" shipped_date="2004-07-10" status="SHIPPED"/>
+  <purchase purchase_number="10267" customer_number="151" purchase_date="2004-07-07" required_date="2004-07-17" shipped_date="2004-07-09" status="SHIPPED"/>
+  <purchase purchase_number="10268" customer_number="412" purchase_date="2004-07-12" required_date="2004-07-18" shipped_date="2004-07-14" status="SHIPPED"/>
+  <purchase purchase_number="10269" customer_number="382" purchase_date="2004-07-16" required_date="2004-07-22" shipped_date="2004-07-18" status="SHIPPED"/>
+  <purchase purchase_number="10270" customer_number="282" purchase_date="2004-07-19" required_date="2004-07-27" shipped_date="2004-07-24" status="SHIPPED"  comments="Can we renegotiate this one?"/>
+  <purchase purchase_number="10271" customer_number="124" purchase_date="2004-07-20" required_date="2004-07-29" shipped_date="2004-07-23" status="SHIPPED"/>
+  <purchase purchase_number="10272" customer_number="157" purchase_date="2004-07-20" required_date="2004-07-26" shipped_date="2004-07-22" status="SHIPPED"/>
+  <purchase purchase_number="10273" customer_number="314" purchase_date="2004-07-21" required_date="2004-07-28" shipped_date="2004-07-22" status="SHIPPED"/>
+  <purchase purchase_number="10274" customer_number="379" purchase_date="2004-07-21" required_date="2004-07-29" shipped_date="2004-07-22" status="SHIPPED"/>
+  <purchase purchase_number="10275" customer_number="119" purchase_date="2004-07-23" required_date="2004-08-02" shipped_date="2004-07-29" status="SHIPPED"/>
+  <purchase purchase_number="10276" customer_number="204" purchase_date="2004-08-02" required_date="2004-08-11" shipped_date="2004-08-08" status="SHIPPED"/>
+  <purchase purchase_number="10277" customer_number="148" purchase_date="2004-08-04" required_date="2004-08-12" shipped_date="2004-08-05" status="SHIPPED"/>
+  <purchase purchase_number="10278" customer_number="112" purchase_date="2004-08-06" required_date="2004-08-16" shipped_date="2004-08-09" status="SHIPPED"/>
+  <purchase purchase_number="10279" customer_number="141" purchase_date="2004-08-09" required_date="2004-08-19" shipped_date="2004-08-15" status="SHIPPED"  comments="Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches"/>
+  <purchase purchase_number="10280" customer_number="249" purchase_date="2004-08-17" required_date="2004-08-27" shipped_date="2004-08-19" status="SHIPPED"/>
+  <purchase purchase_number="10281" customer_number="157" purchase_date="2004-08-19" required_date="2004-08-28" shipped_date="2004-08-23" status="SHIPPED"/>
+  <purchase purchase_number="10282" customer_number="124" purchase_date="2004-08-20" required_date="2004-08-26" shipped_date="2004-08-22" status="SHIPPED"/>
+  <purchase purchase_number="10283" customer_number="260" purchase_date="2004-08-20" required_date="2004-08-30" shipped_date="2004-08-23" status="SHIPPED"/>
+  <purchase purchase_number="10284" customer_number="299" purchase_date="2004-08-21" required_date="2004-08-29" shipped_date="2004-08-26" status="SHIPPED"  comments="Custom shipping instructions sent to warehouse"/>
+  <purchase purchase_number="10285" customer_number="286" purchase_date="2004-08-27" required_date="2004-09-04" shipped_date="2004-08-31" status="SHIPPED"/>
+  <purchase purchase_number="10286" customer_number="172" purchase_date="2004-08-28" required_date="2004-09-06" shipped_date="2004-09-01" status="SHIPPED"/>
+  <purchase purchase_number="10287" customer_number="298" purchase_date="2004-08-30" required_date="2004-09-06" shipped_date="2004-09-01" status="SHIPPED"/>
+  <purchase purchase_number="10288" customer_number="166" purchase_date="2004-09-01" required_date="2004-09-11" shipped_date="2004-09-05" status="SHIPPED"/>
+  <purchase purchase_number="10289" customer_number="167" purchase_date="2004-09-03" required_date="2004-09-13" shipped_date="2004-09-04" status="SHIPPED"  comments="We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases."/>
+  <purchase purchase_number="10290" customer_number="198" purchase_date="2004-09-07" required_date="2004-09-15" shipped_date="2004-09-13" status="SHIPPED"/>
+  <purchase purchase_number="10291" customer_number="448" purchase_date="2004-09-08" required_date="2004-09-17" shipped_date="2004-09-14" status="SHIPPED"/>
+  <purchase purchase_number="10292" customer_number="131" purchase_date="2004-09-08" required_date="2004-09-18" shipped_date="2004-09-11" status="SHIPPED"  comments="They want to reevaluate their terms agreement with Finance."/>
+  <purchase purchase_number="10293" customer_number="249" purchase_date="2004-09-09" required_date="2004-09-18" shipped_date="2004-09-14" status="SHIPPED"/>
+  <purchase purchase_number="10294" customer_number="204" purchase_date="2004-09-10" required_date="2004-09-17" shipped_date="2004-09-14" status="SHIPPED"/>
+  <purchase purchase_number="10295" customer_number="362" purchase_date="2004-09-10" required_date="2004-09-17" shipped_date="2004-09-14" status="SHIPPED"  comments="They want to reevaluate their terms agreement with Finance."/>
+  <purchase purchase_number="10296" customer_number="415" purchase_date="2004-09-15" required_date="2004-09-22" shipped_date="2004-09-16" status="SHIPPED"/>
+  <purchase purchase_number="10297" customer_number="189" purchase_date="2004-09-16" required_date="2004-09-22" shipped_date="2004-09-21" status="SHIPPED"  comments="We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down."/>
+  <purchase purchase_number="10298" customer_number="103" purchase_date="2004-09-27" required_date="2004-10-05" shipped_date="2004-10-01" status="SHIPPED"/>
+  <purchase purchase_number="10299" customer_number="186" purchase_date="2004-09-30" required_date="2004-10-10" shipped_date="2004-10-01" status="SHIPPED"/>
+  <purchase purchase_number="10300" customer_number="128" purchase_date="2003-10-04" required_date="2003-10-13" shipped_date="2003-10-09" status="SHIPPED"/>
+  <purchase purchase_number="10301" customer_number="299" purchase_date="2003-10-05" required_date="2003-10-15" shipped_date="2003-10-08" status="SHIPPED"/>
+  <purchase purchase_number="10302" customer_number="201" purchase_date="2003-10-06" required_date="2003-10-16" shipped_date="2003-10-07" status="SHIPPED"/>
+  <purchase purchase_number="10303" customer_number="484" purchase_date="2004-10-06" required_date="2004-10-14" shipped_date="2004-10-09" status="SHIPPED"  comments="Customer inquired about remote controlled models and gold models."/>
+  <purchase purchase_number="10304" customer_number="256" purchase_date="2004-10-11" required_date="2004-10-20" shipped_date="2004-10-17" status="SHIPPED"/>
+  <purchase purchase_number="10305" customer_number="286" purchase_date="2004-10-13" required_date="2004-10-22" shipped_date="2004-10-15" status="SHIPPED"  comments="Check on availability."/>
+  <purchase purchase_number="10306" customer_number="187" purchase_date="2004-10-14" required_date="2004-10-21" shipped_date="2004-10-17" status="SHIPPED"/>
+  <purchase purchase_number="10307" customer_number="339" purchase_date="2004-10-14" required_date="2004-10-23" shipped_date="2004-10-20" status="SHIPPED"/>
+  <purchase purchase_number="10308" customer_number="319" purchase_date="2004-10-15" required_date="2004-10-24" shipped_date="2004-10-20" status="SHIPPED"  comments="Customer requested that FedEx Ground is used for this shipping"/>
+  <purchase purchase_number="10309" customer_number="121" purchase_date="2004-10-15" required_date="2004-10-24" shipped_date="2004-10-18" status="SHIPPED"/>
+  <purchase purchase_number="10310" customer_number="259" purchase_date="2004-10-16" required_date="2004-10-24" shipped_date="2004-10-18" status="SHIPPED"/>
+  <purchase purchase_number="10311" customer_number="141" purchase_date="2004-10-16" required_date="2004-10-23" shipped_date="2004-10-20" status="SHIPPED"  comments="Difficult to negotiate with customer. We need more marketing materials"/>
+  <purchase purchase_number="10312" customer_number="124" purchase_date="2004-10-21" required_date="2004-10-27" shipped_date="2004-10-23" status="SHIPPED"/>
+  <purchase purchase_number="10313" customer_number="202" purchase_date="2004-10-22" required_date="2004-10-28" shipped_date="2004-10-25" status="SHIPPED"  comments="Customer requested that FedEx Ground is used for this shipping"/>
+  <purchase purchase_number="10314" customer_number="227" purchase_date="2004-10-22" required_date="2004-11-01" shipped_date="2004-10-23" status="SHIPPED"/>
+  <purchase purchase_number="10315" customer_number="119" purchase_date="2004-10-29" required_date="2004-11-08" shipped_date="2004-10-30" status="SHIPPED"/>
+  <purchase purchase_number="10316" customer_number="240" purchase_date="2004-11-01" required_date="2004-11-09" shipped_date="2004-11-07" status="SHIPPED"  comments="Customer requested that ad materials (such as posters, pamphlets) be included in the shippment"/>
+  <purchase purchase_number="10317" customer_number="161" purchase_date="2004-11-02" required_date="2004-11-12" shipped_date="2004-11-08" status="SHIPPED"/>
+  <purchase purchase_number="10318" customer_number="157" purchase_date="2004-11-02" required_date="2004-11-09" shipped_date="2004-11-07" status="SHIPPED"/>
+  <purchase purchase_number="10319" customer_number="456" purchase_date="2004-11-03" required_date="2004-11-11" shipped_date="2004-11-06" status="SHIPPED"  comments="Customer requested that DHL is used for this shipping"/>
+  <purchase purchase_number="10320" customer_number="144" purchase_date="2004-11-03" required_date="2004-11-13" shipped_date="2004-11-07" status="SHIPPED"/>
+  <purchase purchase_number="10321" customer_number="462" purchase_date="2004-11-04" required_date="2004-11-12" shipped_date="2004-11-07" status="SHIPPED"/>
+  <purchase purchase_number="10322" customer_number="363" purchase_date="2004-11-04" required_date="2004-11-12" shipped_date="2004-11-10" status="SHIPPED"  comments="Customer has worked with some of our vendors in the past and is aware of their MSRP"/>
+  <purchase purchase_number="10323" customer_number="128" purchase_date="2004-11-05" required_date="2004-11-12" shipped_date="2004-11-09" status="SHIPPED"/>
+  <purchase purchase_number="10324" customer_number="181" purchase_date="2004-11-05" required_date="2004-11-11" shipped_date="2004-11-08" status="SHIPPED"/>
+  <purchase purchase_number="10325" customer_number="121" purchase_date="2004-11-05" required_date="2004-11-13" shipped_date="2004-11-08" status="SHIPPED"/>
+  <purchase purchase_number="10326" customer_number="144" purchase_date="2004-11-09" required_date="2004-11-16" shipped_date="2004-11-10" status="SHIPPED"/>
+  <purchase purchase_number="10327" customer_number="145" purchase_date="2004-11-10" required_date="2004-11-19" shipped_date="2004-11-13" status="RESOLVED" comments="Purchase was disputed and resolved on 12/1/04. The Sales Manager was involved. Customer claims the scales of the models don't match what was discussed."/>
+  <purchase purchase_number="10328" customer_number="278" purchase_date="2004-11-12" required_date="2004-11-21" shipped_date="2004-11-18" status="SHIPPED"  comments="Customer very concerned about the exact color of the models. There is high risk that he may dispute the purchase because there is a slight color mismatch"/>
+  <purchase purchase_number="10329" customer_number="131" purchase_date="2004-11-15" required_date="2004-11-24" shipped_date="2004-11-16" status="SHIPPED"/>
+  <purchase purchase_number="10330" customer_number="385" purchase_date="2004-11-16" required_date="2004-11-25" shipped_date="2004-11-21" status="SHIPPED"/>
+  <purchase purchase_number="10331" customer_number="486" purchase_date="2004-11-17" required_date="2004-11-23" shipped_date="2004-11-23" status="SHIPPED"  comments="Customer requested special shippment. The instructions were passed along to the warehouse"/>
+  <purchase purchase_number="10332" customer_number="187" purchase_date="2004-11-17" required_date="2004-11-25" shipped_date="2004-11-18" status="SHIPPED"/>
+  <purchase purchase_number="10333" customer_number="129" purchase_date="2004-11-18" required_date="2004-11-27" shipped_date="2004-11-20" status="SHIPPED"/>
+  <purchase purchase_number="10334" customer_number="144" purchase_date="2004-11-19" required_date="2004-11-28"                           status="ON_HOLD" comments="The outstaniding balance for this customer exceeds their credit limit. Purchase will be shipped when a payment is received."/>
+  <purchase purchase_number="10335" customer_number="124" purchase_date="2004-11-19" required_date="2004-11-29" shipped_date="2004-11-23" status="SHIPPED"/>
+  <purchase purchase_number="10336" customer_number="172" purchase_date="2004-11-20" required_date="2004-11-26" shipped_date="2004-11-24" status="SHIPPED"  comments="Customer requested that DHL is used for this shipping"/>
+  <purchase purchase_number="10337" customer_number="424" purchase_date="2004-11-21" required_date="2004-11-30" shipped_date="2004-11-26" status="SHIPPED"/>
+  <purchase purchase_number="10338" customer_number="381" purchase_date="2004-11-22" required_date="2004-12-02" shipped_date="2004-11-27" status="SHIPPED"/>
+  <purchase purchase_number="10339" customer_number="398" purchase_date="2004-11-23" required_date="2004-11-30" shipped_date="2004-11-30" status="SHIPPED"/>
+  <purchase purchase_number="10340" customer_number="216" purchase_date="2004-11-24" required_date="2004-12-01" shipped_date="2004-11-25" status="SHIPPED"  comments="Customer is interested in buying more Ferrari models"/>
+  <purchase purchase_number="10341" customer_number="382" purchase_date="2004-11-24" required_date="2004-12-01" shipped_date="2004-11-29" status="SHIPPED"/>
+  <purchase purchase_number="10342" customer_number="114" purchase_date="2004-11-24" required_date="2004-12-01" shipped_date="2004-11-29" status="SHIPPED"/>
+  <purchase purchase_number="10343" customer_number="353" purchase_date="2004-11-24" required_date="2004-12-01" shipped_date="2004-11-26" status="SHIPPED"/>
+  <purchase purchase_number="10344" customer_number="350" purchase_date="2004-11-25" required_date="2004-12-02" shipped_date="2004-11-29" status="SHIPPED"/>
+  <purchase purchase_number="10345" customer_number="103" purchase_date="2004-11-25" required_date="2004-12-01" shipped_date="2004-11-26" status="SHIPPED"/>
+  <purchase purchase_number="10346" customer_number="112" purchase_date="2004-11-29" required_date="2004-12-05" shipped_date="2004-11-30" status="SHIPPED"/>
+  <purchase purchase_number="10347" customer_number="114" purchase_date="2004-11-29" required_date="2004-12-07" shipped_date="2004-11-30" status="SHIPPED"  comments="Can we deliver the new Ford Mustang models by end-of-quarter?"/>
+  <purchase purchase_number="10348" customer_number="458" purchase_date="2004-11-01" required_date="2004-11-08" shipped_date="2004-11-05" status="SHIPPED"/>
+  <purchase purchase_number="10349" customer_number="151" purchase_date="2004-12-01" required_date="2004-12-07" shipped_date="2004-12-03" status="SHIPPED"/>
+  <purchase purchase_number="10350" customer_number="141" purchase_date="2004-12-02" required_date="2004-12-08" shipped_date="2004-12-05" status="SHIPPED"/>
+  <purchase purchase_number="10351" customer_number="324" purchase_date="2004-12-03" required_date="2004-12-11" shipped_date="2004-12-07" status="SHIPPED"/>
+  <purchase purchase_number="10352" customer_number="198" purchase_date="2004-12-03" required_date="2004-12-12" shipped_date="2004-12-09" status="SHIPPED"/>
+  <purchase purchase_number="10353" customer_number="447" purchase_date="2004-12-04" required_date="2004-12-11" shipped_date="2004-12-05" status="SHIPPED"/>
+  <purchase purchase_number="10354" customer_number="323" purchase_date="2004-12-04" required_date="2004-12-10" shipped_date="2004-12-05" status="SHIPPED"/>
+  <purchase purchase_number="10355" customer_number="141" purchase_date="2004-12-07" required_date="2004-12-14" shipped_date="2004-12-13" status="SHIPPED"/>
+  <purchase purchase_number="10356" customer_number="250" purchase_date="2004-12-09" required_date="2004-12-15" shipped_date="2004-12-12" status="SHIPPED"/>
+  <purchase purchase_number="10357" customer_number="124" purchase_date="2004-12-10" required_date="2004-12-16" shipped_date="2004-12-14" status="SHIPPED"/>
+  <purchase purchase_number="10358" customer_number="141" purchase_date="2004-12-10" required_date="2004-12-16" shipped_date="2004-12-16" status="SHIPPED"  comments="Customer requested that DHL is used for this shipping"/>
+  <purchase purchase_number="10359" customer_number="353" purchase_date="2004-12-15" required_date="2004-12-23" shipped_date="2004-12-18" status="SHIPPED"/>
+  <purchase purchase_number="10360" customer_number="496" purchase_date="2004-12-16" required_date="2004-12-22" shipped_date="2004-12-18" status="SHIPPED"/>
+  <purchase purchase_number="10361" customer_number="282" purchase_date="2004-12-17" required_date="2004-12-24" shipped_date="2004-12-20" status="SHIPPED"/>
+  <purchase purchase_number="10362" customer_number="161" purchase_date="2005-01-05" required_date="2005-01-16" shipped_date="2005-01-10" status="SHIPPED"/>
+  <purchase purchase_number="10363" customer_number="334" purchase_date="2005-01-06" required_date="2005-01-12" shipped_date="2005-01-10" status="SHIPPED"/>
+  <purchase purchase_number="10364" customer_number="350" purchase_date="2005-01-06" required_date="2005-01-17" shipped_date="2005-01-09" status="SHIPPED"/>
+  <purchase purchase_number="10365" customer_number="320" purchase_date="2005-01-07" required_date="2005-01-18" shipped_date="2005-01-11" status="SHIPPED"/>
+  <purchase purchase_number="10366" customer_number="381" purchase_date="2005-01-10" required_date="2005-01-19" shipped_date="2005-01-12" status="SHIPPED"/>
+  <purchase purchase_number="10367" customer_number="205" purchase_date="2005-01-12" required_date="2005-01-21" shipped_date="2005-01-16" status="RESOLVED" comments="This purchase was disputed and resolved on 2/1/2005. Customer claimed that container with shipment was damaged. FedEx's investigation proved this wrong."/>
+  <purchase purchase_number="10368" customer_number="124" purchase_date="2005-01-19" required_date="2005-01-27" shipped_date="2005-01-24" status="SHIPPED"  comments="Can we renegotiate this one?"/>
+  <purchase purchase_number="10369" customer_number="379" purchase_date="2005-01-20" required_date="2005-01-28" shipped_date="2005-01-24" status="SHIPPED"/>
+  <purchase purchase_number="10370" customer_number="276" purchase_date="2005-01-20" required_date="2005-02-01" shipped_date="2005-01-25" status="SHIPPED"/>
+  <purchase purchase_number="10371" customer_number="124" purchase_date="2005-01-23" required_date="2005-02-03" shipped_date="2005-01-25" status="SHIPPED"/>
+  <purchase purchase_number="10372" customer_number="398" purchase_date="2005-01-26" required_date="2005-02-05" shipped_date="2005-01-28" status="SHIPPED"/>
+  <purchase purchase_number="10373" customer_number="311" purchase_date="2005-01-31" required_date="2005-02-08" shipped_date="2005-02-06" status="SHIPPED"/>
+  <purchase purchase_number="10374" customer_number="333" purchase_date="2005-02-02" required_date="2005-02-09" shipped_date="2005-02-03" status="SHIPPED"/>
+  <purchase purchase_number="10375" customer_number="119" purchase_date="2005-02-03" required_date="2005-02-10" shipped_date="2005-02-06" status="SHIPPED"/>
+  <purchase purchase_number="10376" customer_number="219" purchase_date="2005-02-08" required_date="2005-02-18" shipped_date="2005-02-13" status="SHIPPED"/>
+  <purchase purchase_number="10377" customer_number="186" purchase_date="2005-02-09" required_date="2005-02-21" shipped_date="2005-02-12" status="SHIPPED"  comments="Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches"/>
+  <purchase purchase_number="10378" customer_number="141" purchase_date="2005-02-10" required_date="2005-02-18" shipped_date="2005-02-11" status="SHIPPED"/>
+  <purchase purchase_number="10379" customer_number="141" purchase_date="2005-02-10" required_date="2005-02-18" shipped_date="2005-02-11" status="SHIPPED"/>
+  <purchase purchase_number="10380" customer_number="141" purchase_date="2005-02-16" required_date="2005-02-24" shipped_date="2005-02-18" status="SHIPPED"/>
+  <purchase purchase_number="10381" customer_number="321" purchase_date="2005-02-17" required_date="2005-02-25" shipped_date="2005-02-18" status="SHIPPED"/>
+  <purchase purchase_number="10382" customer_number="124" purchase_date="2005-02-17" required_date="2005-02-23" shipped_date="2005-02-18" status="SHIPPED"  comments="Custom shipping instructions sent to warehouse"/>
+  <purchase purchase_number="10383" customer_number="141" purchase_date="2005-02-22" required_date="2005-03-02" shipped_date="2005-02-25" status="SHIPPED"/>
+  <purchase purchase_number="10384" customer_number="321" purchase_date="2005-02-23" required_date="2005-03-06" shipped_date="2005-02-27" status="SHIPPED"/>
+  <purchase purchase_number="10385" customer_number="124" purchase_date="2005-02-28" required_date="2005-03-09" shipped_date="2005-03-01" status="SHIPPED"/>
+  <purchase purchase_number="10386" customer_number="141" purchase_date="2005-03-01" required_date="2005-03-09" shipped_date="2005-03-06" status="RESOLVED" comments="Disputed then Resolved on 3/15/2005. Customer doesn't like the craftsmaship of the models."/>
+  <purchase purchase_number="10387" customer_number="148" purchase_date="2005-03-02" required_date="2005-03-09" shipped_date="2005-03-06" status="SHIPPED"  comments="We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases."/>
+  <purchase purchase_number="10388" customer_number="462" purchase_date="2005-03-03" required_date="2005-03-11" shipped_date="2005-03-09" status="SHIPPED"/>
+  <purchase purchase_number="10389" customer_number="448" purchase_date="2005-03-03" required_date="2005-03-09" shipped_date="2005-03-08" status="SHIPPED"/>
+  <purchase purchase_number="10390" customer_number="124" purchase_date="2005-03-04" required_date="2005-03-11" shipped_date="2005-03-07" status="SHIPPED"  comments="They want to reevaluate their terms agreement with Finance."/>
+  <purchase purchase_number="10391" customer_number="276" purchase_date="2005-03-09" required_date="2005-03-20" shipped_date="2005-03-15" status="SHIPPED"/>
+  <purchase purchase_number="10392" customer_number="452" purchase_date="2005-03-10" required_date="2005-03-18" shipped_date="2005-03-12" status="SHIPPED"/>
+  <purchase purchase_number="10393" customer_number="323" purchase_date="2005-03-11" required_date="2005-03-22" shipped_date="2005-03-14" status="SHIPPED"  comments="They want to reevaluate their terms agreement with Finance."/>
+  <purchase purchase_number="10394" customer_number="141" purchase_date="2005-03-15" required_date="2005-03-25" shipped_date="2005-03-19" status="SHIPPED"/>
+  <purchase purchase_number="10395" customer_number="250" purchase_date="2005-03-17" required_date="2005-03-24" shipped_date="2005-03-23" status="SHIPPED"  comments="We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down."/>
+  <purchase purchase_number="10396" customer_number="124" purchase_date="2005-03-23" required_date="2005-04-02" shipped_date="2005-03-28" status="SHIPPED"/>
+  <purchase purchase_number="10397" customer_number="242" purchase_date="2005-03-28" required_date="2005-04-09" shipped_date="2005-04-01" status="SHIPPED"/>
+  <purchase purchase_number="10398" customer_number="353" purchase_date="2005-03-30" required_date="2005-04-09" shipped_date="2005-03-31" status="SHIPPED"/>
+  <purchase purchase_number="10399" customer_number="496" purchase_date="2005-04-01" required_date="2005-04-12" shipped_date="2005-04-03" status="SHIPPED"/>
+  <purchase purchase_number="10400" customer_number="450" purchase_date="2005-04-01" required_date="2005-04-11" shipped_date="2005-04-04" status="SHIPPED"  comments="Customer requested that DHL is used for this shipping"/>
+  <purchase purchase_number="10401" customer_number="328" purchase_date="2005-04-03" required_date="2005-04-14"                           status="ON_HOLD"  comments="Customer credit limit exceeded. Will ship when a payment is received."/>
+  <purchase purchase_number="10402" customer_number="406" purchase_date="2005-04-07" required_date="2005-04-14" shipped_date="2005-04-12" status="SHIPPED"/>
+  <purchase purchase_number="10403" customer_number="201" purchase_date="2005-04-08" required_date="2005-04-18" shipped_date="2005-04-11" status="SHIPPED"/>
+  <purchase purchase_number="10404" customer_number="323" purchase_date="2005-04-08" required_date="2005-04-14" shipped_date="2005-04-11" status="SHIPPED"/>
+  <purchase purchase_number="10405" customer_number="209" purchase_date="2005-04-14" required_date="2005-04-24" shipped_date="2005-04-20" status="SHIPPED"/>
+  <purchase purchase_number="10406" customer_number="145" purchase_date="2005-04-15" required_date="2005-04-25" shipped_date="2005-04-21" status="DISPUTED" comments="Customer claims container with shipment was damaged during shipping and some items were missing. I am talking to FedEx about this."/>
+  <purchase purchase_number="10407" customer_number="450" purchase_date="2005-04-22" required_date="2005-05-04"                           status="ON_HOLD"  comments="Customer credit limit exceeded. Will ship when a payment is received."/>
+  <purchase purchase_number="10408" customer_number="398" purchase_date="2005-04-22" required_date="2005-04-29" shipped_date="2005-04-27" status="SHIPPED"/>
+  <purchase purchase_number="10409" customer_number="166" purchase_date="2005-04-23" required_date="2005-05-05" shipped_date="2005-04-24" status="SHIPPED"/>
+  <purchase purchase_number="10410" customer_number="357" purchase_date="2005-04-29" required_date="2005-05-10" shipped_date="2005-04-30" status="SHIPPED"/>
+  <purchase purchase_number="10411" customer_number="233" purchase_date="2005-05-01" required_date="2005-05-08" shipped_date="2005-05-06" status="SHIPPED"/>
+  <purchase purchase_number="10412" customer_number="141" purchase_date="2005-05-03" required_date="2005-05-13" shipped_date="2005-05-05" status="SHIPPED"/>
+  <purchase purchase_number="10413" customer_number="175" purchase_date="2005-05-05" required_date="2005-05-14" shipped_date="2005-05-09" status="SHIPPED"  comments="Customer requested that DHL is used for this shipping"/>
+  <purchase purchase_number="10414" customer_number="362" purchase_date="2005-05-06" required_date="2005-05-13"                           status="ON_HOLD"  comments="Customer credit limit exceeded. Will ship when a payment is received."/>
+  <purchase purchase_number="10415" customer_number="471" purchase_date="2005-05-09" required_date="2005-05-20" shipped_date="2005-05-12" status="DISPUTED" comments="Customer claims the scales of the models don't match what was discussed. I keep all the paperwork though to prove otherwise"/>
+  <purchase purchase_number="10416" customer_number="386" purchase_date="2005-05-10" required_date="2005-05-16" shipped_date="2005-05-14" status="SHIPPED"/>
+  <purchase purchase_number="10417" customer_number="141" purchase_date="2005-05-13" required_date="2005-05-19" shipped_date="2005-05-19" status="DISPUTED" comments="Customer doesn't like the colors and precision of the models."/>
+  <purchase purchase_number="10418" customer_number="412" purchase_date="2005-05-16" required_date="2005-05-24" shipped_date="2005-05-20" status="SHIPPED"/>
+  <purchase purchase_number="10419" customer_number="382" purchase_date="2005-05-17" required_date="2005-05-28" shipped_date="2005-05-19" status="SHIPPED"/>
+  <purchase purchase_number="10420" customer_number="282" purchase_date="2005-05-29" required_date="2005-06-07"                           status="IN_PROCESS"/>
+  <purchase purchase_number="10421" customer_number="124" purchase_date="2005-05-29" required_date="2005-06-06"                           status="IN_PROCESS" comments="Custom shipping instructions were sent to warehouse"/>
+  <purchase purchase_number="10422" customer_number="157" purchase_date="2005-05-30" required_date="2005-06-11"                           status="IN_PROCESS"/>
+  <purchase purchase_number="10423" customer_number="314" purchase_date="2005-05-30" required_date="2005-06-05"                           status="IN_PROCESS"/>
+  <purchase purchase_number="10424" customer_number="141" purchase_date="2005-05-31" required_date="2005-06-08"                           status="IN_PROCESS"/>
+  <purchase purchase_number="10425" customer_number="119" purchase_date="2005-05-31" required_date="2005-06-07"                           status="IN_PROCESS"/>
 </classicmodels>

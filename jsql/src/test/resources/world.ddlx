@@ -83,7 +83,9 @@
     <column name="gnp" xsi:type="decimal" precision="8" scale="1"/>
     <column name="local_name" xsi:type="char" varying="true" length="45" null="false"/>
     <column name="government_form" xsi:type="char" varying="true" length="45" null="false"/>
-    <column name="head_of_state" xsi:type="char" varying="true" length="60" null="false"/>
+    <column name="head_of_state" xsi:type="char" varying="true" length="60">
+      <check operator="ne" value=""/>
+    </column>
     <column name="capital" xsi:type="bigint" precision="11" min="0"/>
 
     <constraints>

@@ -19,210 +19,27 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="urn:jaxdb:sqlx:classicmodels ../../../target/generated-test-resources/jaxdb/classicmodels.xsd">
   <xi:include href="office.sqlx"/>
-  <employee
-    employee_number="1002"
-    last_name="Murphy"
-    first_name="Diane"
-    extension="5800"
-    email="dmurphy@classicmodelcars.com"
-    office_code="1"
-    job_title="President"/>
-  <employee
-    employee_number="1056"
-    last_name="Patterson"
-    first_name="Mary"
-    extension="4611"
-    email="mpatterso@classicmodelcars.com"
-    office_code="1"
-    reports_to="1002"
-    job_title="VP Sales"/>
-  <employee
-    employee_number="1076"
-    last_name="Firrelli"
-    first_name="Jeff"
-    extension="9273"
-    email="jfirrelli@classicmodelcars.com"
-    office_code="1"
-    reports_to="1002"
-    job_title="VP Marketing"/>
-  <employee
-    employee_number="1088"
-    last_name="Patterson"
-    first_name="William"
-    extension="4871"
-    email="wpatterson@classicmodelcars.com"
-    office_code="6"
-    reports_to="1056"
-    job_title="Sales Manager (APAC)"/>
-  <employee
-    employee_number="1102"
-    last_name="Bondur"
-    first_name="Gerard"
-    extension="5408"
-    email="gbondur@classicmodelcars.com"
-    office_code="4"
-    reports_to="1056"
-    job_title="Sale Manager (EMEA)"/>
-  <employee
-    employee_number="1143"
-    last_name="Bow"
-    first_name="Anthony"
-    extension="5428"
-    email="abow@classicmodelcars.com"
-    office_code="1"
-    reports_to="1056"
-    job_title="Sales Manager (NA)"/>
-  <employee
-    employee_number="1165"
-    last_name="Jennings"
-    first_name="Leslie"
-    extension="3291"
-    email="ljennings@classicmodelcars.com"
-    office_code="1"
-    reports_to="1143"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1166"
-    last_name="Thompson"
-    first_name="Leslie"
-    extension="4065"
-    email="lthompson@classicmodelcars.com"
-    office_code="1"
-    reports_to="1143"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1188"
-    last_name="Firrelli"
-    first_name="Julie"
-    extension="2173"
-    email="jfirrelli@classicmodelcars.com"
-    office_code="2"
-    reports_to="1143"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1216"
-    last_name="Patterson"
-    first_name="Steve"
-    extension="4334"
-    email="spatterson@classicmodelcars.com"
-    office_code="2"
-    reports_to="1143"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1286"
-    last_name="Tseng"
-    first_name="Foon Yue"
-    extension="2248"
-    email="ftseng@classicmodelcars.com"
-    office_code="3"
-    reports_to="1143"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1323"
-    last_name="Vanauf"
-    first_name="George"
-    extension="4102"
-    email="gvanauf@classicmodelcars.com"
-    office_code="3"
-    reports_to="1143"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1337"
-    last_name="Bondur"
-    first_name="Loui"
-    extension="6493"
-    email="lbondur@classicmodelcars.com"
-    office_code="4"
-    reports_to="1102"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1370"
-    last_name="Hernandez"
-    first_name="Gerard"
-    extension="2028"
-    email="ghernande@classicmodelcars.com"
-    office_code="4"
-    reports_to="1102"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1401"
-    last_name="Castillo"
-    first_name="Pamela"
-    extension="2759"
-    email="pcastillo@classicmodelcars.com"
-    office_code="4"
-    reports_to="1102"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1501"
-    last_name="Bott"
-    first_name="Larry"
-    extension="2311"
-    email="lbott@classicmodelcars.com"
-    office_code="7"
-    reports_to="1102"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1504"
-    last_name="Jones"
-    first_name="Barry"
-    extension="102"
-    email="bjones@classicmodelcars.com"
-    office_code="7"
-    reports_to="1102"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1611"
-    last_name="Fixter"
-    first_name="Andy"
-    extension="101"
-    email="afixter@classicmodelcars.com"
-    office_code="6"
-    reports_to="1088"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1612"
-    last_name="Marsh"
-    first_name="Peter"
-    extension="102"
-    email="pmarsh@classicmodelcars.com"
-    office_code="6"
-    reports_to="1088"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1619"
-    last_name="King"
-    first_name="Tom"
-    extension="103"
-    email="tking@classicmodelcars.com"
-    office_code="6"
-    reports_to="1088"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1621"
-    last_name="Nishi"
-    first_name="Mami"
-    extension="101"
-    email="mnishi@classicmodelcars.com"
-    office_code="5"
-    reports_to="1056"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1625"
-    last_name="Kato"
-    first_name="Yoshimi"
-    extension="102"
-    email="ykato@classicmodelcars.com"
-    office_code="5"
-    reports_to="1621"
-    job_title="Sales Rep"/>
-  <employee
-    employee_number="1702"
-    last_name="Gerard"
-    first_name="Martin"
-    extension="2312"
-    email="mgerard@classicmodelcars.com"
-    office_code="4"
-    reports_to="1102"
-    job_title="Sales Rep"/>
+  <employee employee_number="1002" first_name="Diane"    last_name="Murphy"    email="dmurphy@classicmodelcars.com"    extension="5800" office_code="1"                   job_title="President"/>
+  <employee employee_number="1056" first_name="Mary"     last_name="Patterson" email="mpatterso@classicmodelcars.com"  extension="4611" office_code="1" reports_to="1002" job_title="VP Sales"/>
+  <employee employee_number="1076" first_name="Jeff"     last_name="Firrelli"  email="jfirrelli@classicmodelcars.com"  extension="9273" office_code="1" reports_to="1002" job_title="VP Marketing"/>
+  <employee employee_number="1088" first_name="William"  last_name="Patterson" email="wpatterson@classicmodelcars.com" extension="4871" office_code="6" reports_to="1056" job_title="Sales Manager (APAC)"/>
+  <employee employee_number="1102" first_name="Gerard"   last_name="Bondur"    email="gbondur@classicmodelcars.com"    extension="5408" office_code="4" reports_to="1056" job_title="Sale Manager (EMEA)"/>
+  <employee employee_number="1143" first_name="Anthony"  last_name="Bow"       email="abow@classicmodelcars.com"       extension="5428" office_code="1" reports_to="1056" job_title="Sales Manager (NA)"/>
+  <employee employee_number="1165" first_name="Leslie"   last_name="Jennings"  email="ljennings@classicmodelcars.com"  extension="3291" office_code="1" reports_to="1143" job_title="Sales Rep"/>
+  <employee employee_number="1166" first_name="Leslie"   last_name="Thompson"  email="lthompson@classicmodelcars.com"  extension="4065" office_code="1" reports_to="1143" job_title="Sales Rep"/>
+  <employee employee_number="1188" first_name="Julie"    last_name="Firrelli"  email="jfirrelli@classicmodelcars.com"  extension="2173" office_code="2" reports_to="1143" job_title="Sales Rep"/>
+  <employee employee_number="1216" first_name="Steve"    last_name="Patterson" email="spatterson@classicmodelcars.com" extension="4334" office_code="2" reports_to="1143" job_title="Sales Rep"/>
+  <employee employee_number="1286" first_name="Foon Yue" last_name="Tseng"     email="ftseng@classicmodelcars.com"     extension="2248" office_code="3" reports_to="1143" job_title="Sales Rep"/>
+  <employee employee_number="1323" first_name="George"   last_name="Vanauf"    email="gvanauf@classicmodelcars.com"    extension="4102" office_code="3" reports_to="1143" job_title="Sales Rep"/>
+  <employee employee_number="1337" first_name="Loui"     last_name="Bondur"    email="lbondur@classicmodelcars.com"    extension="6493" office_code="4" reports_to="1102" job_title="Sales Rep"/>
+  <employee employee_number="1370" first_name="Gerard"   last_name="Hernandez" email="ghernande@classicmodelcars.com"  extension="2028" office_code="4" reports_to="1102" job_title="Sales Rep"/>
+  <employee employee_number="1401" first_name="Pamela"   last_name="Castillo"  email="pcastillo@classicmodelcars.com"  extension="2759" office_code="4" reports_to="1102" job_title="Sales Rep"/>
+  <employee employee_number="1501" first_name="Larry"    last_name="Bott"      email="lbott@classicmodelcars.com"      extension="2311" office_code="7" reports_to="1102" job_title="Sales Rep"/>
+  <employee employee_number="1504" first_name="Barry"    last_name="Jones"     email="bjones@classicmodelcars.com"     extension="102"  office_code="7" reports_to="1102" job_title="Sales Rep"/>
+  <employee employee_number="1611" first_name="Andy"     last_name="Fixter"    email="afixter@classicmodelcars.com"    extension="101"  office_code="6" reports_to="1088" job_title="Sales Rep"/>
+  <employee employee_number="1612" first_name="Peter"    last_name="Marsh"     email="pmarsh@classicmodelcars.com"     extension="102"  office_code="6" reports_to="1088" job_title="Sales Rep"/>
+  <employee employee_number="1619" first_name="Tom"      last_name="King"      email="tking@classicmodelcars.com"      extension="103"  office_code="6" reports_to="1088" job_title="Sales Rep"/>
+  <employee employee_number="1621" first_name="Mami"     last_name="Nishi"     email="mnishi@classicmodelcars.com"     extension="101"  office_code="5" reports_to="1056" job_title="Sales Rep"/>
+  <employee employee_number="1625" first_name="Yoshimi"  last_name="Kato"      email="ykato@classicmodelcars.com"      extension="102"  office_code="5" reports_to="1621" job_title="Sales Rep"/>
+  <employee employee_number="1702" first_name="Martin"   last_name="Gerard"    email="mgerard@classicmodelcars.com"    extension="2312" office_code="4" reports_to="1102" job_title="Sales Rep"/>
 </classicmodels>
