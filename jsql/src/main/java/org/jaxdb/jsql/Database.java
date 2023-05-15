@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.DML.SELECT;
+import static org.jaxdb.jsql.DML.*;
 import static org.jaxdb.jsql.Notification.Action.*;
 import static org.jaxdb.jsql.Notification.Action.DELETE;
 import static org.jaxdb.jsql.Notification.Action.INSERT;
@@ -285,12 +285,10 @@ public class Database extends Notifiable {
         SELECT(table).
         FROM(table)
           .execute(defaultConnector, withoutCacheSelectEntity)) {
-        while (rows.nextRow()) {
-          final data.Table row = rows.nextEntity();
-          notifier.onSelect(row);
-        }
+        while (rows.nextRow())
+          notifier.onSelect(rows.nextEntity());
 
-        table.getCache().addKey(data.Key.ALL);
+        table._commitSelectAll$();
       }
     };
   }
