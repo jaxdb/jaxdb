@@ -44,38 +44,29 @@ public final class Notification<T extends data.Table> {
       }
     }
 
-    public abstract static class UP extends Action {
+    public static class UP extends Action {
       private static final byte ordinal = 1;
 
       private UP(final String name) {
         super(name, "UPDATE", ordinal, Notification.UpdateListener.class);
       }
 
-      private UP() {
-        super("UP", "UPDATE", ordinal, Notification.UpdateListener.class);
+      @Override
+      final <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
       }
     }
 
-    // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified alongside each other
+    // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified in one set of actions
     public static final class UPDATE extends UP {
       private UPDATE() {
         super("UPDATE");
-      }
-
-      @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, null);
       }
     }
 
     public static final class UPGRADE extends UP {
       private UPGRADE() {
         super("UPGRADE");
-      }
-
-      @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
       }
     }
 
@@ -90,47 +81,29 @@ public final class Notification<T extends data.Table> {
       }
     }
 
-    static final UP UP = new UP() {
-      @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        throw new UnsupportedOperationException();
-      }
-    };
+    static final UP UP = new UP("UP");
 
-    public static final class SELECT extends Action {
-      private SELECT() {
-        super("SELECT", "SELECT", (byte)3, Notification.SelectListener.class);
-      }
+    static <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row) {
+      if (!(listener instanceof Notification.SelectListener))
+        throw new UnsupportedOperationException("Unsupported action: SELECT");
 
-      @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        throw new UnsupportedOperationException();
-      }
-
-      <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row) {
-        if (!super.listenerClass.isInstance(listener))
-          throw new UnsupportedOperationException("Unsupported action: " + super.name);
-
-        ((SelectListener<T>)listener).onSelect(row);
-      }
+      ((SelectListener<T>)listener).onSelect(row);
     }
 
     public static final INSERT INSERT;
     public static final UPDATE UPDATE;
     public static final UPGRADE UPGRADE;
     public static final DELETE DELETE;
-    public static final SELECT SELECT;
 
     private static final Action[] values = {
       INSERT = new INSERT(),
       UPDATE = new UPDATE(),
       UPGRADE = new UPGRADE(),
-      DELETE = new DELETE(),
-      SELECT = new SELECT()
+      DELETE = new DELETE()
     };
 
     public static Action valueOf(final String name) {
-      return "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "UPGRADE".equals(name) ? UPGRADE : "DELETE".equals(name) ? DELETE : "SELECT".equals(name) ? SELECT : null;
+      return "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "UPGRADE".equals(name) ? UPGRADE : "DELETE".equals(name) ? DELETE : null;
     }
 
     public static Action[] values() {

@@ -612,12 +612,11 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          entry.getKey().onConnect(connection, table);
+        entry.getKey().onConnect(connection, table);
   }
 
   @Override
-  @SuppressWarnings("rawtypes")
+  @SuppressWarnings({"rawtypes", "unchecked"})
   void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
@@ -625,9 +624,8 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          entry.getKey().onFailure(sessionId, timestamp, table, e);
+      for (final Notification.Listener listener : notificationListenerToActions.keySet()) // [S]
+        listener.onFailure(sessionId, timestamp, table, e);
   }
 
   @Override
@@ -639,8 +637,8 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        Action.SELECT.onSelect(entry.getKey(), row);
+      for (final Notification.Listener listener : notificationListenerToActions.keySet()) // [S]
+        Action.onSelect(listener, row);
   }
 
   @Override
@@ -651,10 +649,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       return;
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
-    if (notificationListenerToActions.size() > 0)
+    if (notificationListenerToActions.size() > 0) {
+      final byte ordinal = Action.INSERT.ordinal();
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.INSERT.ordinal()] != null)
+        if (entry.getValue()[ordinal] != null)
           Action.INSERT.invoke(sessionId, timestamp, entry.getKey(), null, row);
+    }
   }
 
   @Override
@@ -666,13 +666,10 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0) {
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) { // [S]
-        final Action[] actions = entry.getValue();
-        if (actions[Action.UPDATE.ordinal()] != null)
-          Action.UPDATE.invoke(sessionId, timestamp, entry.getKey(), null, row);
-        else if (actions[Action.UPGRADE.ordinal()] != null)
-          Action.UPGRADE.invoke(sessionId, timestamp, entry.getKey(), keyForUpdate, row);
-      }
+      final byte ordinal = Action.UP.ordinal();
+      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
+        if (entry.getValue()[ordinal] != null)
+          Action.UP.invoke(sessionId, timestamp, entry.getKey(), keyForUpdate, row);
     }
   }
 
@@ -684,10 +681,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       return;
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
-    if (notificationListenerToActions.size() > 0)
+    if (notificationListenerToActions.size() > 0) {
+      final byte ordinal = Action.DELETE.ordinal();
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.DELETE.ordinal()] != null)
+        if (entry.getValue()[ordinal] != null)
           Action.DELETE.invoke(sessionId, timestamp, entry.getKey(), null, row);
+    }
   }
 
   @Override
