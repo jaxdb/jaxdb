@@ -731,14 +731,14 @@ abstract class Command<E> extends Keyword implements Closeable {
               final boolean cacheSelectEntity = QueryConfig.getCacheSelectEntity(contextQueryConfig, defaultQueryConfig);
               compile(compilation, false, cacheSelectEntity);
               final Notifier<?> notifier;
-              final data.Key[] rangeIntervals;
+              final boolean isSelectAll;
               if (cacheSelectEntity) {
                 notifier = cacheSelectEntity ? connector.getNotifier() : null;
-                rangeIntervals = isEntityOnlySelect && !isConditionalSelect ? data.Key.ALLS : null;
+                isSelectAll = isEntityOnlySelect && !isConditionalSelect;
               }
               else {
                 notifier = null;
-                rangeIntervals = null;
+                isSelectAll = false;
               }
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
@@ -764,8 +764,8 @@ abstract class Command<E> extends Keyword implements Closeable {
 
                   try {
                     if (endReached = !resultSet.next()) {
-                      if (notifier != null && rangeIntervals != null)
-                        table.getCache().addKey(rangeIntervals);
+                      if (isSelectAll)
+                        table._commitSelectAll$();
 
                       return false;
                     }

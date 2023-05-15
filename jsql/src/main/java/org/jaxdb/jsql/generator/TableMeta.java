@@ -843,6 +843,23 @@ class TableMeta {
         declared.clear();
 
         out.append("\n\n    @").append(Override.class.getName());
+        out.append("\n    void _commitSelectAll$() {");
+        out.append("\n      if (!").append(className).append("._cacheEnabled$)");
+        out.append("\n        return;\n");
+        out.append("\n      getCache().addKey(").append(data.Key.class.getCanonicalName()).append(".ALL);");
+        if (allRelations.size() > 0) {
+          for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+            for (final Relation relation : relations) { // [S]
+              write("\n      ", relation.writeCacheSelectAll(), out, declared);
+            }
+          }
+        }
+
+        out.append("\n    }\n");
+
+        declared.clear();
+
+        out.append("\n\n    @").append(Override.class.getName());
         out.append("\n    void _commitInsert$() {");
         out.append("\n      if (!").append(className).append("._cacheEnabled$)");
         out.append("\n        return;\n");
@@ -856,6 +873,8 @@ class TableMeta {
         }
 
         out.append("\n    }\n");
+
+        declared.clear();
 
         out.append("\n    @").append(Override.class.getName());
         out.append("\n    void _commitDelete$() {");

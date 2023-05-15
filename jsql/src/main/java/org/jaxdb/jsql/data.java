@@ -4091,8 +4091,6 @@ public final class data {
       ALL.min = null;
     }
 
-    static final Key[] ALLS = {ALL};
-
     private static final data.ARRAY<?>[] _array = {data.ARRAY()};
     private static final data.BIGINT[] _bigint = {data.BIGINT()};
     private static final data.BINARY[] _binary = {data.BINARY()};
@@ -5121,6 +5119,9 @@ public final class data {
     }
 
     void _commitInsert$() {
+    }
+
+    void _commitSelectAll$() {
     }
 
     @SuppressWarnings("unchecked")

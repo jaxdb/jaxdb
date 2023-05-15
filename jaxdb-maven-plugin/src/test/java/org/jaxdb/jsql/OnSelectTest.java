@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -93,39 +94,52 @@ public abstract class OnSelectTest {
       }
     }, new ConcurrentLinkedQueue<>(), c -> c
       .with(OnConnectPreLoad.ALL, classicmodels.Product(), classicmodels.Employee())
-      .with(classicmodels.Office(), classicmodels.ProductLine(), classicmodels.Purchase(), classicmodels.PurchaseDetail()));
+      .with(classicmodels.Customer(), classicmodels.Office(), classicmodels.ProductLine(), classicmodels.Purchase(), classicmodels.PurchaseDetail()));
 
     assertTrue(TestDatabase.called());
   }
 
-  private static void testTreeSingle(final NavigableMap<data.Key,classicmodels.Purchase> map, final boolean selectCalled) throws IOException, SQLException {
-    final int start = 10100;
-    final int total = 10426 - start;
-    for (int i = start; i <= 10425; ++i) { // [N]
+  private static void testTreeSingle(final NavigableMap<data.Key,classicmodels.Customer> map, final ArrayList<Short> customerNumbers, final boolean selectCalled) throws IOException, SQLException {
+    for (int i = 0, i$ = customerNumbers.size(); i < i$;) { // [RA]
       assertFalse(TestDatabase.called());
-      final classicmodels.Purchase p = classicmodels.Purchase.purchaseNumberToPurchase(i);
+      final short customerNumber = customerNumbers.get(i);
+      final classicmodels.Customer c = classicmodels.Customer.customerNumberToCustomer(customerNumber);
       assertEquals(selectCalled, TestDatabase.called());
-      assertEquals(selectCalled ? 1 + i - start : total, map.size());
-      assertEquals(i, p.purchaseNumber.getAsInt());
+      ++i;
+      assertEquals(selectCalled ? i : i$, map.size());
+      assertEquals(customerNumber, c.customerNumber.getAsShort());
     }
   }
 
   @Test
   @Spec(order = 1)
   public void testTreeSingle(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final NavigableMap<data.Key,classicmodels.Purchase> map = classicmodels.Purchase.purchaseNumberToPurchase();
+    classicmodels.Customer c = classicmodels.Customer();
+    final ArrayList<Short> customerNumbers = new ArrayList<>();
+    try (final RowIterator<data.SMALLINT> rows =
+
+      SELECT(c.customerNumber).
+      FROM(c).
+      ORDER_BY(c.customerNumber)
+        .execute(transaction)) {
+
+      while (rows.nextRow())
+        customerNumbers.add(rows.nextEntity().get());
+    }
+
+    final NavigableMap<data.Key,classicmodels.Customer> map = classicmodels.Customer.customerNumberToCustomer();
 
     assertFalse(TestDatabase.called());
     assertEquals(0, map.size());
 
-    final classicmodels.Purchase p = classicmodels.Purchase.purchaseNumberToPurchase(0);
+    c = classicmodels.Customer.customerNumberToCustomer((short)0);
 
     assertTrue(TestDatabase.called());
     assertEquals(0, map.size());
-    assertNull(p);
+    assertNull(c);
 
-    testTreeSingle(map, true);
-    testTreeSingle(map, false);
+    testTreeSingle(map, customerNumbers, true);
+    testTreeSingle(map, customerNumbers, false);
   }
 
   private static void testTreeRange(final NavigableMap<data.Key,classicmodels.Office> map, final boolean selectCalled) throws IOException, SQLException {
@@ -237,6 +251,7 @@ public abstract class OnSelectTest {
   public void testOnConnectPreLoadAllTree(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Employee e = classicmodels.Employee();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(e)).
       FROM(e)
         .execute(transaction)) {
@@ -262,11 +277,27 @@ public abstract class OnSelectTest {
     assertFalse(TestDatabase.called());
     classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10110, "S24_3969");
     assertTrue(TestDatabase.called());
-    final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10110, "S24_3969");
+    final classicmodels.PurchaseDetail pd0 = classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10110, "S24_3969");
     assertFalse(TestDatabase.called());
-    assertNotNull(p.productCode$Product_code());
+    assertNotNull(pd0.productCode$Product_code());
     assertFalse(TestDatabase.called());
-    assertNotNull(p.purchaseNumber$Purchase_purchaseNumber());
+    classicmodels.Purchase p = pd0.purchaseNumber$Purchase_purchaseNumber();
+    assertNotNull(p);
+    assertTrue(TestDatabase.called());
+
+    assertFalse(TestDatabase.called());
+    final Map<data.Key,classicmodels.PurchaseDetail> map = p.purchaseNumber$PurchaseDetail_purchaseNumber();
+    assertTrue(TestDatabase.called());
+    assertEquals(16, map.size());
+    p.purchaseNumber$PurchaseDetail_purchaseNumber();
+    assertFalse(TestDatabase.called());
+
+    for (final classicmodels.PurchaseDetail pd1 : map.values()) {
+      assertSame(p, pd1.purchaseNumber$Purchase_purchaseNumber());
+      assertFalse(TestDatabase.called());
+    }
+
+    assertNotNull(p.customerNumber$Customer_customerNumber());
     assertFalse(TestDatabase.called());
   }
 
