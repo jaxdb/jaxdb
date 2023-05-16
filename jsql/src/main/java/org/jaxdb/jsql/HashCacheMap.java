@@ -73,11 +73,13 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
 
   @Override
   final V superRemove(final type.Key key) {
+    mask.remove(key);
     return map.remove(key);
   }
 
   @Override
   final V superRemoveOld(final type.Key key) {
+    mask.remove(key);
     return map.remove(key);
   }
 

@@ -19,7 +19,6 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.NavigableMap;
 
 public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
   OneToManyHashMap(final data.Table table, final String name) {

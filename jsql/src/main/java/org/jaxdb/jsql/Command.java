@@ -733,7 +733,7 @@ abstract class Command<E> extends Keyword implements Closeable {
               final Notifier<?> notifier;
               final boolean isSelectAll;
               if (cacheSelectEntity) {
-                notifier = cacheSelectEntity ? connector.getNotifier() : null;
+                notifier = connector.getNotifier();
                 isSelectAll = isEntityOnlySelect && !isConditionalSelect;
               }
               else {

@@ -157,7 +157,8 @@ class Relation {
       "\n      return " + declarationName + "." + cacheMapFieldName + ".select(" + keyArgs + ");" +
       "\n    }\n" +
       writeGetRangeMethod(returnType) +
-      "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "() {" +
+      "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "() throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      " + declarationName + "." + cacheMapFieldName + ".selectAll();" +
       "\n      return " + declarationName + "." + cacheMapFieldName + ";" +
       "\n    }";
   }

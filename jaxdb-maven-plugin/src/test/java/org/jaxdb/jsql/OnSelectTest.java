@@ -127,9 +127,7 @@ public abstract class OnSelectTest {
         customerNumbers.add(rows.nextEntity().get());
     }
 
-    final NavigableMap<data.Key,classicmodels.Customer> map = classicmodels.Customer.customerNumberToCustomer();
-
-    assertFalse(TestDatabase.called());
+    final NavigableMap<data.Key,classicmodels.Customer> map = classicmodels.Customer._customerNumberToCustomerMap$;
     assertEquals(0, map.size());
 
     c = classicmodels.Customer.customerNumberToCustomer((short)0);
@@ -181,9 +179,7 @@ public abstract class OnSelectTest {
   @Test
   @Spec(order = 2)
   public void testTreeRange(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final NavigableMap<data.Key,classicmodels.Office> map = classicmodels.Office.officeCodeToOffice();
-
-    assertFalse(TestDatabase.called());
+    final NavigableMap<data.Key,classicmodels.Office> map = classicmodels.Office._officeCodeToOfficeMap$;
     assertEquals(0, map.size());
 
     final SortedMap<data.Key,classicmodels.Office> sub = classicmodels.Office.officeCodeToOffice(-5, 1);
@@ -214,9 +210,7 @@ public abstract class OnSelectTest {
   @Test
   @Spec(order = 3)
   public void testHashSingle(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final Map<data.Key,classicmodels.ProductLine> map = classicmodels.ProductLine.productLineToProductLine();
-
-    assertFalse(TestDatabase.called());
+    final Map<data.Key,classicmodels.ProductLine> map = classicmodels.ProductLine._productLineToProductLineMap$;
     assertEquals(0, map.size());
 
     final classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine("foo");
@@ -234,6 +228,7 @@ public abstract class OnSelectTest {
   public void testOnConnectPreLoadAllHash(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(p)).
       FROM(p)
         .execute(transaction)) {

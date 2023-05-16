@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.libj.util.Interval;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -149,6 +150,11 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
       while (rows.nextRow())
         notifier.onSelect(rows.nextEntity());
     }
+  }
+
+  void selectAll() throws IOException, SQLException {
+    if (!containsKey(data.Key.ALL))
+      OnConnectPreLoad.ALL.accept(table);
   }
 
   V select(final data.Key key) throws IOException, SQLException {
