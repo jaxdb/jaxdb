@@ -29,7 +29,19 @@ import org.mapdb.HTreeMap;
 public abstract class HashCacheMap<V> extends CacheMap<V> {
   final String name;
   final Map<data.Key,V> map;
-  final HashSet<type.Key> mask = new HashSet<>();
+  final HashSet<data.Key> mask = new HashSet<data.Key>() {
+    private boolean all;
+
+    @Override
+    public boolean add(final data.Key e) {
+      return e == data.Key.ALL ? all = true : super.add(e);
+    }
+
+    @Override
+    public boolean contains(final Object o) {
+      return all || super.contains(o);
+    }
+  };
 
   @SuppressWarnings("unchecked")
   HashCacheMap(final data.Table table, final String name) {
@@ -45,13 +57,13 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
   abstract HashCacheMap<V> newInstance(data.Table table, String name, Map<data.Key,V> map);
 
   @Override
-  final void addKey(final type.Key key) {
+  final void addKey(final data.Key key) {
     mask.add(key);
   }
 
   @Override
-  final void addKey(final type.Key[] keys) {
-    for (final type.Key key : keys)
+  final void addKey(final data.Key[] keys) {
+    for (final data.Key key : keys)
       mask.add(key);
   }
 
@@ -72,13 +84,13 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
   }
 
   @Override
-  final V superRemove(final type.Key key) {
+  final V superRemove(final data.Key key) {
     mask.remove(key);
     return map.remove(key);
   }
 
   @Override
-  final V superRemoveOld(final type.Key key) {
+  final V superRemoveOld(final data.Key key) {
     mask.remove(key);
     return map.remove(key);
   }

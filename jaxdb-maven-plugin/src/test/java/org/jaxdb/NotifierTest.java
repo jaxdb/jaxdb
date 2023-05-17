@@ -81,10 +81,10 @@ public abstract class NotifierTest {
 
   private static final int id = 10000;
   private static final Random r = new Random();
-  private static final Map<Integer,Integer> checks = new HashMap<>();
-  private static final Map<Integer,data.Table> pre = new HashMap<>();
-  private final Map<Integer,data.Table> post = new HashMap<>();
-  private final Map<Integer,Integer> expectedChecks = new HashMap<>();
+  private static final HashMap<Integer,Integer> checks = new HashMap<>();
+  private static final HashMap<Integer,data.Table> pre = new HashMap<>();
+  private final HashMap<Integer,data.Table> post = new HashMap<>();
+  private final HashMap<Integer,Integer> expectedChecks = new HashMap<>();
 
   private static void setPre(final types.Type t) {
     pre.put(t.id.get(), t);

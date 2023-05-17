@@ -35,7 +35,7 @@ import org.mapdb.BTreeMap;
 import org.openjax.binarytree.IntervalTreeSet;
 
 public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMap<data.Key,V> {
-  private static data.BOOLEAN where(final Interval<type.Key>[] intervals) {
+  private static data.BOOLEAN where(final Interval<data.Key>[] intervals) {
     data.BOOLEAN or = andRange(intervals[0]);
     for (int i = 1, i$ = intervals.length; i < i$; ++i)
       or = OR(or, andRange(intervals[i]));
@@ -45,7 +45,7 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
 
   final String name;
   final NavigableMap<data.Key,V> map;
-  final IntervalTreeSet<type.Key> mask = new IntervalTreeSet<>();
+  final IntervalTreeSet<data.Key> mask = new IntervalTreeSet<>();
 
   @SuppressWarnings("unchecked")
   TreeCacheMap(final data.Table table, final String name) {
@@ -61,13 +61,13 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
   abstract TreeCacheMap<V> newInstance(data.Table table, String name, NavigableMap<data.Key,V> map);
 
   @Override
-  final void addKey(final type.Key key) {
+  final void addKey(final data.Key key) {
     mask.add(key);
   }
 
   @Override
-  final void addKey(final type.Key[] keys) {
-    for (final type.Key key : keys)
+  final void addKey(final data.Key[] keys) {
+    for (final data.Key key : keys)
       mask.add(key);
   }
 
@@ -76,7 +76,7 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
     return mask.contains(key);
   }
 
-  final Interval<type.Key>[] diffKeys(final data.Key fromKey, final data.Key toKey) {
+  final Interval<data.Key>[] diffKeys(final data.Key fromKey, final data.Key toKey) {
     return mask.difference(new Interval<>(fromKey, toKey));
   }
 
@@ -92,13 +92,13 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
   }
 
   @Override
-  final V superRemove(final type.Key key) {
+  final V superRemove(final data.Key key) {
     mask.remove(key);
     return map.remove(key);
   }
 
   @Override
-  final V superRemoveOld(final type.Key key) {
+  final V superRemoveOld(final data.Key key) {
     return map.remove(key);
   }
 
@@ -251,7 +251,7 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
     if (fromKey.length() > 1)
       throw new UnsupportedOperationException("Composite keys are not yet supported");
 
-    final Interval<type.Key>[] diff = diffKeys(fromKey, toKey);
+    final Interval<data.Key>[] diff = diffKeys(fromKey, toKey);
     if (diff.length > 0) {
       select(where(diff));
       mask.addAll(diff);

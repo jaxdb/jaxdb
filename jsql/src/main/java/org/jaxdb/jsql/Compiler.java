@@ -597,7 +597,7 @@ abstract class Compiler extends DbVendorCompiler {
 
     // No changes were found
     if (!modified)
-      throw new IllegalArgumentException("UPDATE does not SET any columns");
+      throw new IllegalArgumentException("UPDATE did not SET any columns");
 
     modified = false;
     for (final data.Column<?> column : columns) { // [A]

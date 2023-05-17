@@ -38,11 +38,11 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     this.table = table;
   }
 
-  abstract void addKey(type.Key key);
-  abstract void addKey(type.Key[] keys);
-  public abstract boolean containsKey(final data.Key key);
-  abstract V superRemove(type.Key key);
-  abstract V superRemoveOld(type.Key key);
+  abstract void addKey(data.Key key);
+  abstract void addKey(data.Key[] keys);
+  public abstract boolean containsKey(data.Key key);
+  abstract V superRemove(data.Key key);
+  abstract V superRemoveOld(data.Key key);
   abstract V superGet(data.Key key);
   abstract V superPut(data.Key key, V value);
 
@@ -50,9 +50,9 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     return AND(new ComparisonPredicate.Gte<>(c, min), new ComparisonPredicate.Lt<>(c, max));
   }
 
-  static data.BOOLEAN andRange(final Interval<type.Key> i) {
-    final type.Key min = i.getMin();
-    final type.Key max = i.getMax();
+  static data.BOOLEAN andRange(final Interval<data.Key> i) {
+    final data.Key min = i.getMin();
+    final data.Key max = i.getMax();
     data.BOOLEAN and = andRange(min.column(0), min.value(0), max.value(0));
     for (int j = 1, i$ = min.length(); j < i$; ++j)
       and = AND(and, andRange(min.column(j), min.value(j), max.value(j)));
@@ -64,8 +64,8 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     return new ComparisonPredicate.Eq<>(c, v);
   }
 
-  static data.BOOLEAN andEq(final Interval<type.Key> i) {
-    final type.Key min = i.getMin();
+  static data.BOOLEAN andEq(final Interval<data.Key> i) {
+    final data.Key min = i.getMin();
     data.BOOLEAN and = eq(min.column(0), min.value(0));
     for (int j = 1, i$ = min.length(); j < i$; ++j)
       and = AND(and, eq(min.column(j), min.value(j)));

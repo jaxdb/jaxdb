@@ -52,16 +52,16 @@ public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<dat
     if (v == null)
       map.put(key, v = new OneToOneHashMap<>(table, name + ":" + key));
 
-    v.superPut(value.getKey().immutable(), value);
+    v.superPut(value.getKey(), value);
   }
 
-  final void superRemove(final type.Key key, final V value) {
+  final void superRemove(final data.Key key, final V value) {
     final OneToOneHashMap<V> v = (OneToOneHashMap<V>)map.get(key);
     if (v != null)
       v.superRemove(value.getKey());
   }
 
-  final void superRemoveOld(final type.Key key, final V value) {
+  final void superRemoveOld(final data.Key key, final V value) {
     final OneToOneHashMap<V> v = (OneToOneHashMap<V>)map.get(key);
     if (v != null)
       v.superRemove(value.getKeyOld());

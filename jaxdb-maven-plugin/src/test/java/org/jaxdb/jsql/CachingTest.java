@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.Notification.Action.*;
-
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.SQLException;
@@ -33,6 +31,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.jaxdb.jsql.keyword.Delete.DELETE_NOTIFY;
 import org.jaxdb.jsql.keyword.Insert.CONFLICT_ACTION_NOTIFY;
 import org.jaxdb.jsql.keyword.Update.UPDATE_NOTIFY;
@@ -43,6 +42,7 @@ import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.runner.Vendor;
 import org.junit.Assert;
 import org.junit.Test;
+import org.libj.test.TestAide;
 import org.xml.sax.SAXException;
 
 public abstract class CachingTest {
@@ -213,8 +213,8 @@ public abstract class CachingTest {
     transaction.commit();
 
     final Connector connector = transaction.getConnector();
-    final Database database = Database.global(transaction.getSchemaClass());
-    database.addNotificationListener(connector, INSERT, UPDATE, DELETE, new DefaultCache() {
+    final Database database = TestDatabase.global(transaction.getSchemaClass());
+    database.configCache(connector, new DefaultCache() {
       @Override
       protected Connector getConnector() {
         return connector;
@@ -224,6 +224,6 @@ public abstract class CachingTest {
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
-    }, new ConcurrentLinkedQueue<>(), caching.getTables());
+    }, new ConcurrentLinkedQueue<>(), c -> c.with(OnConnectPreLoad.ALL, caching.getTables()));
   }
 }

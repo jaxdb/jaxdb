@@ -24,113 +24,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Objects;
-
-import org.libj.util.DiscreteTopology;
-import org.libj.util.Interval;
 
 public interface type {
-  public abstract static class Key extends Interval<Key> implements Serializable {
-    Key() {
-      min = this;
-      c = (o1, o2) -> o1.compareTo(o2);
-    }
-
-    @Override
-    public Key getMax() {
-      return max == null ? max = next() : max;
-    }
-
-    abstract Key next();
-    abstract DiscreteTopology<Object[]> topology();
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public int compareTo(final Interval<Key> o) {
-      if (o == data.Key.ALL)
-        return 1;
-
-      final Key key = (Key)o;
-      final int i$ = length();
-      if (i$ != key.length())
-        throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + key.length() + ")");
-
-      for (int i = 0; i < i$; ++i) { // [RA]
-        final Object a = value(i);
-        final Object b = key.value(i);
-        if (a == null) {
-          if (b == null)
-            continue;
-
-          return -1;
-        }
-
-        if (b == null)
-          return 1;
-
-        if (a.getClass() != b.getClass())
-          throw new IllegalArgumentException(a.getClass().getName() + " != " + b.getClass().getName());
-
-        final int c = ((Comparable<Object>)a).compareTo(b);
-        if (c != 0)
-          return c;
-      }
-
-      return 0;
-    }
-
-    public abstract Object value(int i);
-    public abstract Column column(int i);
-    public abstract Key immutable();
-    abstract int length();
-
-    @Override
-    public final int hashCode() {
-      int hashCode = 1;
-      for (int i = 0, i$ = length(); i < i$; ++i) { // [RA]
-        hashCode *= 31;
-        final Object value = value(i);
-        if (value != null)
-          hashCode += value.hashCode();
-      }
-
-      return hashCode;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-      if (obj == this)
-        return true;
-
-      if (!(obj instanceof Key))
-        return false;
-
-      final Key that = (Key)obj;
-      final int i$ = length();
-      if (i$ != that.length())
-        return false;
-
-      for (int i = 0; i < i$; ++i) // [RA]
-        if (!Objects.equals(value(i), that.value(i)))
-          return false;
-
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      final int i$ = length();
-      if (i$ == 0)
-        return "{}";
-
-      final StringBuilder s = new StringBuilder();
-      s.append('{');
-      for (int i = 0; i < i$; ++i) // [RA]
-        s.append(value(i)).append(',');
-
-      s.setCharAt(s.length() - 1, '}');
-      return s.toString();
-    }
+  abstract static interface Key extends Serializable {
+    Object value(int i);
+    Column column(int i);
+    int length();
   }
 
   public interface ApproxNumeric<V extends Number> extends Numeric<V> {

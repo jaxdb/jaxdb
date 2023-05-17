@@ -126,7 +126,7 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
-    protected boolean setIfNotEqual(Object value) {
+    protected boolean setIfNotEqual(final Object value) {
       return false;
     }
 
@@ -136,12 +136,17 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
-    protected boolean setIfNotNullOrEqual(Object value) {
+    protected boolean setIfNotNullOrEqual(final Object value) {
       return false;
     }
 
     @Override
     boolean setValue(final Object value) {
+      return false;
+    }
+
+    @Override
+    boolean setValueNull() {
       return false;
     }
 

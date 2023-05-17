@@ -145,8 +145,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     if (logger.isTraceEnabled()) logger.trace("onUpdate(" + ObjectUtil.simpleIdentityString(cache) + "," + log(sessionId, timestamp) + "," + log(row) + "," + JSON.toString(keyForUpdate) + ")");
     Exception exception = null;
     try {
-      final data.MutableKey key = row.getKey();
-      final data.MutableKey keyOld = row.getKeyOld();
+      final data.Key key = row.getKey();
+      final data.Key keyOld = row.getKeyOld();
       T entity;
       if (keyOld.equals(key)) {
         entity = cache.get(key);
@@ -156,7 +156,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
       else {
         entity = cache.superRemove(keyOld);
         if (entity != null) {
-          cache.superPut(key.immutable(), entity);
+          cache.superPut(key, entity);
         }
         else {
           entity = cache.get(key);
@@ -215,7 +215,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   protected void delete(final data.Table row) {
     if (logger.isTraceEnabled()) logger.trace("delete(" + log(row) + ")");
     final CacheMap<? extends data.Table> cache = row.getCache();
-    final data.MutableKey key = row.getKey();
+    final data.Key key = row.getKey();
     cache.superRemove(key);
   }
 
@@ -236,10 +236,10 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     row.reset(data.Except.PRIMARY_KEY);
     selectRow(row);
 
-    final data.MutableKey key = row.getKey();
+    final data.Key key = row.getKey();
     T entity = cache.get(key);
     if (entity == null) {
-      cache.superPut(key.immutable(), entity = (T)row.clone(false));
+      cache.superPut(key, entity = (T)row.clone(false));
       entity._commitInsert$();
     }
     else {
