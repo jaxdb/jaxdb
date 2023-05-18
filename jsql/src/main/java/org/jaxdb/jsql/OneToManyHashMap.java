@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Map;
 
 public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
@@ -38,11 +36,6 @@ public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<dat
   public final OneToOneHashMap<V> get(final Object key) {
     final OneToOneHashMap<V> v = (OneToOneHashMap<V>)map.get(key);
     return v != null ? v : OneToOneHashMap.EMPTY;
-  }
-
-  @Override
-  final Map<data.Key,V> select(final data.Key key) throws IOException, SQLException {
-    return selectMany(key);
   }
 
   final void superAdd(final data.Key key, final V value) {

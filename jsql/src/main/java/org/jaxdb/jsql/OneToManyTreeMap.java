@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.NavigableMap;
 
 public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
@@ -38,11 +36,6 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<Navigab
   public final NavigableMap<data.Key,V> get(final Object key) {
     final NavigableMap<data.Key,V> v = map.get(key);
     return v != null ? v : OneToOneTreeMap.EMPTY;
-  }
-
-  @Override
-  final NavigableMap<data.Key,V> select(final data.Key key) throws IOException, SQLException {
-    return selectMany(key);
   }
 
   final void superAdd(final data.Key key, final V value) {

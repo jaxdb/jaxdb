@@ -166,7 +166,7 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     return get(key);
   }
 
-  final V selectMany(final data.Key key) throws IOException, SQLException {
+  private V selectMany(final data.Key key) throws IOException, SQLException {
     if (!containsKey(data.Key.ALL)) {
       select(andEq(key));
       addKey(data.Key.ALL);
