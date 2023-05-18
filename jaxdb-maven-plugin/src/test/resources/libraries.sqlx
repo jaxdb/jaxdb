@@ -1,0 +1,47 @@
+<!--
+  Copyright (c) 2023 JAX-DB
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<libraries xmlns="urn:jaxdb:sqlx:libraries"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:jaxdb:sqlx:libraries ../../../target/generated-test-sources/jaxdb/libraries.xsd">
+  
+  <library id="2a5324cc-6de9-498d-a36c-0a0d295c741b" address1="96 Euston Rd." city="London" country="GB" latitude="51.5306124" longitude="-0.1277617" email="boxoffice@bl.uk" open_time="09:30:00" close_time="20:00:00"/>
+  
+  <book id="505908fa-1397-4709-8c1f-db49920c11dd" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="The House of the Spirits" author="Isabel Allende" genre="magical realism" publisher="Atria Books" publish_year="1982" aisle="12" shelf="3"/>
+  <book id="6598920e-37e8-40e3-aba7-010100d0527e" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="The Handmaid's Tale" author="Margaret Atwood" genre="science fiction" publisher="McClelland and Stewart Houghton Mifflin Harcourt" publish_year="1985" aisle="6" shelf="2"/>
+  <book id="f4377a0c-0ac9-4967-8f92-d21ec133fd71" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="In Mad Love and War" author="Joy Harjo" genre="poetry" publisher="Wesleyan University Press" publish_year="1990" aisle="15" shelf="1"/>
+  <book id="caf4fa7a-ca23-4c86-8e3d-c13625a4d1de" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="Invisible Man" author="Ralph Ellison" genre="fiction" publisher="Random House" publish_year="1952" aisle="9" shelf="2"/>
+  <book id="0e01d10a-343e-4a29-af3f-943a341f80e3" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="Howl and Other Poems" author="Allen Ginsberg" genre="poetry" publisher="City Lights Publishers" publish_year="1956" aisle="8" shelf="3"/>
+  <book id="143de86e-3e1e-4964-987a-3639959c478b" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="Bodega Dreams" author="Ernesto Qui√±onez" genre="fiction" publisher="Vintage" publish_year="2000" aisle="1" shelf="2"/>
+  <book id="5b6e8e54-00c7-435d-a693-0268590ce2b1" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="Things Fall Apart" author="Chinua Achebe" genre="historical fiction" publisher="Penguin Publishing Group" publish_year="1958" aisle="2" shelf="3"/>
+  <book id="24a0207b-9e18-4ecf-86dd-c20cb296f068" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="The Three-Body Problem" author="Liu Cixin" genre="science fiction" publisher="Tor Books" publish_year="2008" aisle="5" shelf="4"/>
+  <book id="4ab4ce79-d45e-4823-b018-54b21609d799" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="A Wizard of Earthsea" author="Ursula K. Le Guin" genre="fantasy" publisher="Clarion Books" publish_year="1968" aisle="7" shelf="3"/>
+  <book id="6e8a0f3f-1f6b-432e-a34e-a748f59e140e" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="The Stone Sky" author="N. K. Jemisin" genre="fantasy" publisher="Orbit" publish_year="2017" aisle="11" shelf="1"/>
+  <book id="7b5f385f-7ade-4c10-b651-df0df826afe1" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="The Hobbit" author="J.R.R. Tolkien" genre="fantasy" publisher="Houghton Mifflin Harcourt" publish_year="1937" aisle="8" shelf="2"/>
+  <book id="fe030bee-5c6c-43a1-8ee3-168ede6f09db" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="Unaccustomed Earth" author="Jhumpa Lahiri" genre="fiction" publisher="Knopf Doubleday Publishing Group" publish_year="2008" aisle="3" shelf="1"/>
+  
+  <card id="f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454" address1="96 Great North Road" city="Alvaston" country="GB" latitude="52.2999503" longitude="-0.2488152" given_name="Bob" family_name="Smith" gender="M" email="bob@abcdefg.co.uk"/>
+  
+  <book_card book_id="6598920e-37e8-40e3-aba7-010100d0527e" card_id="f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454" due="2020-01-01 12:30:00"/>
+  <book_card book_id="caf4fa7a-ca23-4c86-8e3d-c13625a4d1de" card_id="f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454" due="2020-02-05 21:15:00"/>
+  <book_card book_id="143de86e-3e1e-4964-987a-3639959c478b" card_id="f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454" due="2019-09-01 07:00:00"/>
+  <book_card book_id="24a0207b-9e18-4ecf-86dd-c20cb296f068" card_id="f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454" due="2018-08-13 15:30:00"/>
+  <book_card book_id="6e8a0f3f-1f6b-432e-a34e-a748f59e140e" card_id="f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454" due="2020-01-01 19:45:00"/>
+  <book_card book_id="7b5f385f-7ade-4c10-b651-df0df826afe1" card_id="f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454" due="2020-12-12 09:00:00"/>
+  <book_card book_id="505908fa-1397-4709-8c1f-db49920c11dd" card_id="f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454" due="2021-07-30 10:00:00"/>
+  
+</libraries> 

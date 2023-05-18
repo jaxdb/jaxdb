@@ -17,6 +17,7 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -39,7 +40,11 @@ public abstract class DDLxTest {
 
   // FIXME: The efficiency of this is TERRIBLE!
   public static Schema recreateSchema(final Connection connection, final String ddlxFileName, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
-    final DDLx ddlx = new DDLx(ClassLoader.getSystemClassLoader().getResource(ddlxFileName + ".ddlx"));
+    final URL url = ClassLoader.getSystemClassLoader().getResource(ddlxFileName + ".ddlx");
+    if (url == null)
+      throw new IllegalStateException("Cannot find " + ddlxFileName + ".ddlx");
+
+    final DDLx ddlx = new DDLx(url);
     final Schema schema = ddlx.getNormalizedSchema();
     if (!unaltered) {
       final Dialect dialect = DbVendor.valueOf(connection.getMetaData()).getDialect();

@@ -131,7 +131,7 @@ public class Generator {
     out.append('\n').append(s).append("  public static ").append(className).append(" valueOf(final ").append(String.class.getName()).append(" string) {");
     out.append('\n').append(s).append("    if (string == null)");
     out.append('\n').append(s).append("      return null;\n");
-    out.append('\n').append(s).append("    for (final ").append(className).append(" value : values()) // [A]");
+    out.append('\n').append(s).append("    for (final ").append(className).append(" value : values) // [A]"); // FIXME: Implement binary search here
     out.append('\n').append(s).append("      if (string.equals(value.name))");
     out.append('\n').append(s).append("        return value;\n");
     out.append('\n').append(s).append("    return null;");
