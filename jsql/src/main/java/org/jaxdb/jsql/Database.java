@@ -82,7 +82,13 @@ public class Database extends Notifiable {
 
   private static ConnectionFactory toConnectionFactory(final DataSource dataSource) {
     assertNotNull(dataSource, "dataSource is null");
-    return () -> AuditConnection.wrapIfDebugEnabled(dataSource.getConnection());
+    return (final Transaction.Isolation isolation) -> {
+      final Connection connection = dataSource.getConnection();
+      if (isolation != null)
+        connection.setTransactionIsolation(isolation.getLevel());
+
+      return AuditConnection.wrapIfDebugEnabled(connection);
+    };
   }
 
   @SuppressWarnings("unchecked")

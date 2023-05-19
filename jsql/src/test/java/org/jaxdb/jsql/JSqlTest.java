@@ -58,7 +58,7 @@ public abstract class JSqlTest {
 
   @SuppressWarnings("unchecked")
   static Result loadEntitiesJaxSB(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, TransformerException {
-    Database.threadLocal((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name)).connectPrepared(() -> connection);
+    Database.threadLocal((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name)).connectPrepared((final Transaction.Isolation isolation) -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);

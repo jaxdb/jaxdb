@@ -146,7 +146,7 @@ public class Connector implements ConnectionFactory {
       synchronized (this.notifier) {
         notifier = this.notifier.get();
         if (notifier == null) {
-          final Connection connection = connectionFactory.getConnection();
+          final Connection connection = connectionFactory.getConnection(null);
           final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
           if (vendor == DbVendor.POSTGRE_SQL) {
             this.notifier.set(notifier = new PostgreSQLNotifier(connection, this));
@@ -240,9 +240,9 @@ public class Connector implements ConnectionFactory {
   }
 
   @Override
-  public Connection getConnection() throws IOException, SQLException {
+  public Connection getConnection(final Transaction.Isolation isolation) throws IOException, SQLException {
     try {
-      final Connection connection = connectionFactory.getConnection();
+      final Connection connection = connectionFactory.getConnection(isolation);
       final String url = connection.getMetaData().getURL();
       ConcurrentHashSet<Class<? extends Schema>> schemas = initialized.get(url);
       if (schemas == null) {

@@ -178,7 +178,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
             return;
 
           try {
-            reconnect(getConnection(), this);
+            reconnect(getConnection(null), this);
           }
           catch (final IOException | SQLException e) {
             if (logger.isErrorEnabled()) logger.error("Failed getConnection()", e);

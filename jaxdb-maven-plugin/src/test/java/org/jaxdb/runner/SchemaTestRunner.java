@@ -91,7 +91,7 @@ public class SchemaTestRunner extends DBTestRunner {
       protected Connector getConnector() {
         Connector connector = schemaClassToConnector.get(executor.getDB());
         if (connector == null) {
-          schemaClassToConnector.put(executor.getDB(), connector = new PreparedConnector(schemaClass, executor::getConnection));
+          schemaClassToConnector.put(executor.getDB(), connector = new PreparedConnector(schemaClass, i -> i != null ? executor.getConnection(i.getLevel()) : executor.getConnection()));
           Database.threadLocal(schemaClass).connect(connector);
         }
 

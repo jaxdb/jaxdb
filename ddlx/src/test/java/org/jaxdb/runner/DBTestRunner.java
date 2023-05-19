@@ -184,6 +184,10 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       return vendorInstance.getConnection();
     }
 
+    Connection getConnection(final int transactionIsolationLevel) throws IOException, SQLException {
+      return vendorInstance.getConnection(transactionIsolationLevel);
+    }
+
     void execute(final Runnable command) {
       executor.execute(command);
     }

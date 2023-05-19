@@ -73,10 +73,32 @@ public abstract class Vendor implements Closeable {
    * @return The {@link Connection} for this {@link Vendor} instance.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
+   * @see Connection#setTransactionIsolation(int)
    */
   public Connection getConnection() throws IOException, SQLException {
+    return getConnection(Connection.TRANSACTION_READ_UNCOMMITTED);
+  }
+
+  /**
+   * Returns the {@link Connection} for this {@link Vendor} instance.
+   *
+   * @param transactionIsolationLevel One of the following {@link Connection} constants:
+   *          {@link Connection#TRANSACTION_READ_UNCOMMITTED}>,<br>
+   *          {@link Connection#TRANSACTION_READ_COMMITTED}>,<br>
+   *          {@link Connection#TRANSACTION_REPEATABLE_READ}, or<br>
+   *          {@link Connection#TRANSACTION_SERIALIZABLE}>.<br>
+   *          (Note that {@link Connection#TRANSACTION_NONE} cannot be used because it
+   *          specifies that transactions are not supported.)
+   * @return The {@link Connection} for this {@link Vendor} instance.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   * @see Connection#setTransactionIsolation(int)
+   */
+  public Connection getConnection(final int transactionIsolationLevel) throws IOException, SQLException {
     try {
-      return new AuditConnection(DriverManager.getConnection(url));
+      final Connection connection = DriverManager.getConnection(url);
+      connection.setTransactionIsolation(transactionIsolationLevel);
+      return new AuditConnection(connection);
     }
     catch (final SQLException e1) {
       if (!"08001".equals(e1.getSQLState()))
