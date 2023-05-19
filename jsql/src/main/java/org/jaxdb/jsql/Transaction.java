@@ -30,8 +30,26 @@ import org.jaxdb.vendor.DbVendor;
 import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
+  public enum Isolation {
+    READ_UNCOMMITTED(Connection.TRANSACTION_READ_UNCOMMITTED),
+    READ_COMMITTED(Connection.TRANSACTION_READ_COMMITTED),
+    REPEATABLE_READ(Connection.TRANSACTION_REPEATABLE_READ),
+    SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE);
+
+    private final int level;
+
+    private Isolation(final int level) {
+      this.level = level;
+    }
+
+    public int getLevel() {
+      return this.level;
+    }
+  }
+
   private final Class<? extends Schema> schemaClass;
   private final String dataSourceId;
+  private final Isolation isolation;
   private DbVendor vendor;
   private boolean closed;
   private int totalCount = 0;
@@ -42,13 +60,22 @@ public class Transaction implements AutoCloseable {
 
   private Callbacks callbacks;
 
-  public Transaction(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+  public Transaction(final Class<? extends Schema> schemaClass, final String dataSourceId, final Isolation isolation) {
     this.schemaClass = assertNotNull(schemaClass);
     this.dataSourceId = dataSourceId;
+    this.isolation = isolation;
   }
 
-  public Transaction(final Class<? extends Schema> schema) {
-    this(schema, null);
+  public Transaction(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    this(schemaClass, dataSourceId, null);
+  }
+
+  public Transaction(final Class<? extends Schema> schemaClass, final Isolation isolation) {
+    this(schemaClass, null, isolation);
+  }
+
+  public Transaction(final Class<? extends Schema> schemaClass) {
+    this(schemaClass, null, null);
   }
 
   public Transaction(final Connector connector) {
@@ -73,7 +100,7 @@ public class Transaction implements AutoCloseable {
       return connection;
 
     try {
-      connection = getConnector().getConnection();
+      connection = getConnector().getConnection(isolation);
       connection.setAutoCommit(false);
       return connection;
     }

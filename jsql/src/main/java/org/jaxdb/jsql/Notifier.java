@@ -342,12 +342,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
-  public final Connection getConnection() throws IOException, SQLException {
+  public final Connection getConnection(final Transaction.Isolation isolation) throws IOException, SQLException {
     logm(logger, TRACE, "%?.getConnection", this);
     if (!connection.isClosed())
       return connection;
 
-    connection = connectionFactory.getConnection();
+    connection = connectionFactory.getConnection(isolation);
     connection.setAutoCommit(true);
 
     if (logger.isDebugEnabled()) logger.debug("getConnection(): New connection: " + ObjectUtil.simpleIdentityString(connection));
@@ -479,7 +479,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (!hasChanges)
       return false;
 
-    try (final Connection connection = connectionFactory.getConnection()) {
+    try (final Connection connection = connectionFactory.getConnection(null)) {
       recreateTrigger(connection, tables, actionSets);
     }
 
@@ -560,7 +560,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       synchronized (state) {
         if (state.get() != Notifier.State.STARTED) {
           // This will be the Connection for PG-JDBC I/O
-          final Connection connection = getConnection();
+          final Connection connection = getConnection(null);
 
           addListenerForTables(connection, insert, up, delete, notificationListener, queue, tables);
 
@@ -579,7 +579,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
 
     // Create a connection that will close, because Notifier is already running on another connection.
-    try (final Connection connection = connectionFactory.getConnection()) {
+    try (final Connection connection = connectionFactory.getConnection(null)) {
       addListenerForTables(connection, insert, up, delete, notificationListener, queue, tables);
 
       // If `this.connection != connection` it means the onConnect(data.Table) call

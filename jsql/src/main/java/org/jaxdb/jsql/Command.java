@@ -693,7 +693,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @SuppressWarnings("unchecked")
-        RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
           assertNotClosed();
 
           final boolean closeConnection = transaction == null && connection == null;
@@ -715,7 +715,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
               isPrepared = connector.isPrepared();
               if (connection == null) {
-                connection = connector.getConnection();
+                connection = connector.getConnection(isolation);
                 connection.setAutoCommit(true);
               }
             }
@@ -898,53 +898,73 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @Override
+        public final RowIterator<D> execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
+          return execute(null, null, null, dataSourceId, isolation, null);
+        }
+
+        @Override
         public final RowIterator<D> execute(final String dataSourceId) throws IOException, SQLException {
-          return execute(null, null, null, dataSourceId, null);
+          return execute(null, null, null, dataSourceId, null, null);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Transaction.Isolation isolation) throws IOException, SQLException {
+          return execute(null, null, null, null, isolation, null);
         }
 
         @Override
         public final RowIterator<D> execute(final Connector connector) throws IOException, SQLException {
-          return execute(null, connector, null, null, null);
+          return execute(null, connector, null, null, null, null);
         }
 
         @Override
         public final RowIterator<D> execute(final Connection connection) throws IOException, SQLException {
-          return execute(null, null, connection, null, null);
+          return execute(null, null, connection, null, null, null);
         }
 
         @Override
         public final RowIterator<D> execute(final Transaction transaction) throws IOException, SQLException {
-          return execute(transaction, null, null, null, null);
+          return execute(transaction, null, null, null, null, null);
         }
 
         @Override
         public RowIterator<D> execute() throws IOException, SQLException {
-          return execute(null, null, null, null, null);
+          return execute(null, null, null, null, null, null);
         }
 
         @Override
         public final RowIterator<D> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
-          return execute(null, null, null, dataSourceId, config);
+          return execute(null, null, null, dataSourceId, null, config);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final String dataSourceId, final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
+          return execute(null, null, null, dataSourceId, isolation, config);
         }
 
         @Override
         public final RowIterator<D> execute(final Connector connector, final QueryConfig config) throws IOException, SQLException {
-          return execute(null, connector, null, null, config);
+          return execute(null, connector, null, null, null, config);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
+          return execute(null, null, null, null, isolation, config);
         }
 
         @Override
         public final RowIterator<D> execute(final Connection connection, final QueryConfig config) throws IOException, SQLException {
-          return execute(null, null, connection, null, null);
+          return execute(null, null, connection, null, null, null);
         }
 
         @Override
         public final RowIterator<D> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
-          return execute(transaction, null, null, null, config);
+          return execute(transaction, null, null, null, null, config);
         }
 
         @Override
         public RowIterator<D> execute(final QueryConfig config) throws IOException, SQLException {
-          return execute(null, null, null, null, config);
+          return execute(null, null, null, null, null, config);
         }
 
         @Override

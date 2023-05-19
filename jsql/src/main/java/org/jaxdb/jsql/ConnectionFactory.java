@@ -22,5 +22,5 @@ import java.sql.SQLException;
 
 @FunctionalInterface
 public interface ConnectionFactory {
-  Connection getConnection() throws IOException, SQLException;
+  Connection getConnection(final Transaction.Isolation isolation) throws IOException, SQLException;
 }

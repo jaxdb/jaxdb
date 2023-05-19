@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import org.jaxdb.jsql.Transaction.Isolation;
 import org.jaxdb.jsql.keyword.Insert.CONFLICT_ACTION_NOTIFY;
 import org.jaxdb.jsql.keyword.Update.UPDATE_NOTIFY;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
@@ -52,12 +53,23 @@ public abstract class CachingLoadTest extends NotificationTest {
   //@DB(MySQL.class)
   @DB(PostgreSQL.class)
   //@DB(Oracle.class)
-  @Ignore("Need to finish implementing this")
+  @Ignore
   public static class RegressionTest extends CachingLoadTest {
   }
 
   private static final int cardinality = 10;
   private static final int iterations = 100;
+
+  Integer[] insert(final int iteration, final AtomicInteger count) {
+    final Integer[] ids = new Integer[cardinality];
+    for (int c = 0; c < cardinality; ++c) { // [N]
+      final int id = ids[c] = iteration * c;
+      exec(() -> insertOne(id, count), count);
+      exec(() -> insertOneOne(id, count), count);
+    }
+
+    return ids;
+  }
 
   @Test
   public void test(@Schema(caching.class) final Transaction transaction) throws Exception {
@@ -68,32 +80,19 @@ public abstract class CachingLoadTest extends NotificationTest {
     for (int i = 0; i < iterations; ++i) { // [N]
       final int iteration = i;
       final int j = i % 3;
-      if (j == 0) {
+//      if (j == 0) {
+//        executor.execute(Throwing.rethrow(() -> {
+//          final AtomicInteger count = new AtomicInteger();
+//          final Integer[] ids = insert(iteration, count);
+//          count.set(0);
+//          final caching.OneOneId oo = new caching.OneOneId();
+//          exec(() -> update(oo, IN(oo.oneId, ids), count), count);
+//        }));
+//      }
+//      else if (j == 1) {
         executor.execute(Throwing.rethrow(() -> {
-          final Integer[] ids = new Integer[cardinality];
-
           final AtomicInteger count = new AtomicInteger();
-          for (int c = 0; c < cardinality; ++c) { // [N]
-            final int id = ids[c] = iteration * c;
-            exec(() -> insertOne(id, count), count);
-            exec(() -> insertOneOne(id, count), count);
-          }
-
-          count.set(0);
-          final caching.OneOneId oo = new caching.OneOneId();
-          exec(() -> update(oo, IN(oo.oneId, ids), count), count);
-        }));
-      }
-      else if (j == 1) {
-        executor.execute(Throwing.rethrow(() -> {
-          final Integer[] ids = new Integer[cardinality];
-
-          final AtomicInteger count = new AtomicInteger();
-          for (int c = 0; c < cardinality; ++c) { // [N]
-            final int id = ids[c] = iteration * c;
-            exec(() -> insertOne(id, count), count);
-            exec(() -> insertOneOne(id, count), count);
-          }
+          final Integer[] ids = insert(iteration, count);
 
           for (int k = 0, j$ = ids.length; k < j$; ++k) { // [RA]
             final Integer id = ids[k];
@@ -103,30 +102,25 @@ public abstract class CachingLoadTest extends NotificationTest {
             exec(() -> update(oo, EQ(oo.oneId, id), count), count);
           }
         }));
-      }
-      else {
-        executor.execute(Throwing.rethrow(() -> {
-          final Integer[] ids = new Integer[cardinality];
-
-          final AtomicInteger count = new AtomicInteger();
-          for (int c = 0; c < cardinality; ++c) { // [N]
-            final int id = ids[c] = iteration * c;
-            exec(() -> insertOne(id, count), count);
-            exec(() -> insertOneOne(id, count), count);
-          }
-
-          exec(() -> {
-            final caching.OneOneId oo = new caching.OneOneId();
-            final Batch batch = new Batch();
-            for (int k = 0, j$ = ids.length; k < j$; ++k) { // [RA]
-              final Integer id = ids[k];
-              batch.addStatement(update(oo, EQ(oo.oneId, id), count));
-            }
-
-            return batch;
-          }, count);
-        }));
-      }
+//      }
+//      else {
+//        executor.execute(Throwing.rethrow(() -> {
+//          final AtomicInteger count = new AtomicInteger();
+//          final Integer[] ids = insert(iteration, count);
+//
+//          count.set(0);
+//          exec(() -> {
+//            final caching.OneOneId oo = new caching.OneOneId();
+//            final Batch batch = new Batch();
+//            for (int k = 0, j$ = ids.length; k < j$; ++k) { // [RA]
+//              final Integer id = ids[k];
+//              batch.addStatement(update(oo, EQ(oo.oneId, id), count));
+//            }
+//
+//            return batch;
+//          }, count);
+//        }));
+//      }
     }
 
     executor.shutdown();
@@ -187,7 +181,7 @@ public abstract class CachingLoadTest extends NotificationTest {
 
   private static void exec(final Supplier<statement.NotifiableModification> update, final AtomicInteger count) {
     PERMA_SQL.run(() -> {
-      try (final Transaction transaction = new Transaction(caching.class, "repeatable")) {
+      try (final Transaction transaction = new Transaction(caching.class, Isolation.REPEATABLE_READ)) {
         final NotifiableResult result = update.get().execute(transaction);
 
         transaction.commit();

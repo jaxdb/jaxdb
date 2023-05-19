@@ -185,7 +185,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
   }
 
   @SuppressWarnings({"null", "resource"})
-  private NotifiableBatchResult execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+  private NotifiableBatchResult execute(final Transaction transaction, final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
     final int noCommands;
     if (commands == null || (noCommands = commands.size()) == 0)
       return null;
@@ -207,7 +207,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       }
       else {
         connector = Database.getConnector(schemaClass, dataSourceId);
-        connection = connector.getConnection();
+        connection = connector.getConnection(isolation);
         connection.setAutoCommit(true);
         isPrepared = connector.isPrepared();
       }
@@ -372,18 +372,24 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       throw SQLExceptions.toStrongType(e);
     }
   }
+
+  @Override
+  public final NotifiableBatchResult execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
+    return execute(null, dataSourceId, isolation);
+  }
+
   @Override
   public final NotifiableBatchResult execute(final String dataSourceId) throws IOException, SQLException {
-    return execute(null, dataSourceId);
+    return execute(null, dataSourceId, null);
   }
 
   @Override
   public final NotifiableBatchResult execute(final Transaction transaction) throws IOException, SQLException {
-    return execute(transaction, transaction != null ? transaction.getDataSourceId() : null);
+    return execute(transaction, null, null);
   }
 
   @Override
   public NotifiableBatchResult execute() throws IOException, SQLException {
-    return execute(null, (String)null);
+    return execute(null, null, null);
   }
 }
