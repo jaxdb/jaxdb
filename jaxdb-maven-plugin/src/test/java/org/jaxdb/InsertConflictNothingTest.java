@@ -42,7 +42,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(Derby.class)
   @DB(SQLite.class)
   public static class IntegrationTest extends InsertConflictNothingTest {
   }
