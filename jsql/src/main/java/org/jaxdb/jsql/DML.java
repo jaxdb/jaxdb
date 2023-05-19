@@ -63,7 +63,6 @@ public final class DML {
 
   /* START ComparisonPredicate */
 
-  static data.BOOLEAN EQ(final data.Column<?> a, final Object b) { return new ComparisonPredicate.Eq<>(a, b); }
   public static data.BOOLEAN EQ(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate.Eq<>(a, b); }
   public static <V extends EntityEnum>data.BOOLEAN EQ(final V a, final type.CHAR b) { return new ComparisonPredicate.Eq<>(a, b); }
   public static <V extends EntityEnum>data.BOOLEAN EQ(final V a, final type.ENUM<V> b) { return new ComparisonPredicate.Eq<>(a, b); }

@@ -100,7 +100,7 @@ public abstract class CachingLoadTest extends NotificationTest {
             final caching.OneOneId oo = new caching.OneOneId();
 
             count.set(0);
-            exec(() -> update(oo, EQ((data.Column<?>)oo.oneId, id), count), count);
+            exec(() -> update(oo, EQ(oo.oneId, id), count), count);
           }
         }));
       }
@@ -120,7 +120,7 @@ public abstract class CachingLoadTest extends NotificationTest {
             final Batch batch = new Batch();
             for (int k = 0, j$ = ids.length; k < j$; ++k) { // [RA]
               final Integer id = ids[k];
-              batch.addStatement(update(oo, EQ((data.Column<?>)oo.oneId, id), count));
+              batch.addStatement(update(oo, EQ(oo.oneId, id), count));
             }
 
             return batch;

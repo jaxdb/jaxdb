@@ -1046,7 +1046,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             return createObjectQueryConditions(columns, length, index + 1, depth);
 
           final Condition<?>[] conditions = createObjectQueryConditions(columns, length, index + 1, depth + 1);
-          conditions[depth] = DML.EQ(column, column.get());
+          conditions[depth] = new ComparisonPredicate.Eq<>(column, column.get());
           return conditions;
         }
 
