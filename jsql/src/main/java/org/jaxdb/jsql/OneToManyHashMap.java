@@ -24,7 +24,7 @@ public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<dat
   }
 
   private OneToManyHashMap(final data.Table table, final String name, final Map<data.Key,Map<data.Key,V>> map) {
-    super(table, name, map);
+    super(table, table.getSchema(), name, map);
   }
 
   @Override

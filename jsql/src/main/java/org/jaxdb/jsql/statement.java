@@ -16,8 +16,7 @@
 
 package org.jaxdb.jsql;
 
-import static org.libj.logging.LoggerUtil.*;
-import static org.slf4j.event.Level.*;
+import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -38,39 +37,29 @@ import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class statement {
-  private static final Logger logger = LoggerFactory.getLogger(Modification.class);
-
   @SuppressWarnings({"null", "resource"})
-  private static <D extends type.Entity,E,C,R>Modification.Result execute(final boolean async, final Command.Modification<E,C,R> command, final Transaction transaction, final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
-    logm(logger, TRACE, "statement.execute", "%b,%?,%?,%s", async, command, transaction, dataSourceId);
+  private static <D extends type.Entity,E,C,R>Modification.Result execute(final boolean async, final Command.Modification<E,C,R> command, final Transaction transaction, final Connector connector, Connection connection, boolean isPrepared, final Transaction.Isolation isolation) throws IOException, SQLException {
     command.assertNotClosed();
 
-    final Connection connection;
-    final Connector connector;
     Statement statement = null;
     Compilation compilation = null;
     SQLException suppressed = null;
 
     final data.Column<?>[] autos = command instanceof Command.Insert && ((Command.Insert<?>)command).autos.length > 0 ? ((Command.Insert<?>)command).autos : null;
     try {
+      final Schema schema = command.getSchema();
       final String sessionId = command.sessionId;
-      final boolean isPrepared;
-      if (transaction != null) {
-        connector = transaction.getConnector();
-        connection = transaction.getConnection();
-        isPrepared = transaction.isPrepared();
-
-        transaction.addCallbacks(command.callbacks);
-      }
-      else {
-        connector = Database.getConnector(command.getSchema().getClass(), dataSourceId);
-        connection = connector.getConnection();
-        connection.setAutoCommit(true);
+      if (connector != null) {
         isPrepared = connector.isPrepared();
+        connection = connector.getConnection(isolation);
+        connection.setAutoCommit(true);
+      }
+      else if (transaction != null) {
+        isPrepared = transaction.isPrepared();
+        connection = transaction.getConnection();
+        transaction.addCallbacks(command.callbacks);
       }
 
       final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
@@ -81,7 +70,7 @@ public final class statement {
       if (sessionId != null) {
         onNotifyCallbackList = async && command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
         if (onNotifyCallbackList != null) {
-          connector.getSchema().awaitNotify(sessionId, onNotifyCallbackList);
+          schema.awaitNotify(sessionId, onNotifyCallbackList);
 
           if (transaction != null)
             transaction.onNotify(onNotifyCallbackList);
@@ -228,7 +217,7 @@ public final class statement {
         if (statement != null)
           suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
 
-        if (transaction == null)
+        if (connector != null)
           suppressed = Throwables.addSuppressed(suppressed, AuditConnection.close(connection));
       }
 
@@ -288,24 +277,40 @@ public final class statement {
       T onRollback(OnRollback onRollback);
     }
 
+    default Result execute(final Transaction transaction) throws IOException, SQLException {
+      return statement.execute(false, (Command.Modification<?,?,?>)this, assertNotNull(transaction), null, null, false, null);
+    }
+
+    default Result execute(final Connector connector, final Transaction.Isolation isolation) throws IOException, SQLException {
+      return statement.execute(false, (Command.Modification<?,?,?>)this, null, assertNotNull(connector), null, false, isolation);
+    }
+
+    default Result execute(final Connector connector) throws IOException, SQLException {
+      return statement.execute(false, (Command.Modification<?,?,?>)this, null, assertNotNull(connector), null, false, null);
+    }
+
+    default Result execute(final Connection connection, final boolean isPrepared) throws IOException, SQLException {
+      return statement.execute(false, (Command.Modification<?,?,?>)this, null, null, assertNotNull(connection), isPrepared, null);
+    }
+
     default Result execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?>)this, null, dataSourceId, isolation);
+      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
+      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), dataSourceId)), null, false, isolation);
     }
 
     default Result execute(final String dataSourceId) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?>)this, null, dataSourceId, null);
+      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
+      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), dataSourceId)), null, false, null);
     }
 
     default Result execute(final Transaction.Isolation isolation) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?>)this, null, null, isolation);
-    }
-
-    default Result execute(final Transaction transaction) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?>)this, transaction, null, null);
+      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
+      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), null)), null, false, isolation);
     }
 
     default Result execute() throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?>)this, null, null, null);
+      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
+      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), null)), null, false, null);
     }
 
     public interface Delete extends Modification {
@@ -377,28 +382,47 @@ public final class statement {
     }
 
     @Override
+    default NotifiableResult execute(final Transaction transaction) throws IOException, SQLException {
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, assertNotNull(transaction), null, null, false, null);
+    }
+
+    @Override
+    default NotifiableResult execute(final Connector connector, final Transaction.Isolation isolation) throws IOException, SQLException {
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, assertNotNull(connector), null, false, isolation);
+    }
+
+    @Override
+    default NotifiableResult execute(final Connector connector) throws IOException, SQLException {
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, assertNotNull(connector), null, false, null);
+    }
+
+    @Override
+    default NotifiableResult execute(final Connection connection, boolean isPrepared) throws IOException, SQLException {
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, null, assertNotNull(connection), isPrepared, null);
+    }
+
+    @Override
     default NotifiableResult execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, dataSourceId, isolation);
+      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
+      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), dataSourceId)), null, false, isolation);
     }
 
     @Override
     default NotifiableResult execute(final String dataSourceId) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, dataSourceId, null);
+      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
+      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), dataSourceId)), null, false, null);
     }
 
     @Override
     default NotifiableResult execute(final Transaction.Isolation isolation) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, null, isolation);
-    }
-
-    @Override
-    default NotifiableResult execute(final Transaction transaction) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, transaction, null, null);
+      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
+      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), null)), null, false, isolation);
     }
 
     @Override
     default NotifiableResult execute() throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, null, null);
+      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
+      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), null)), null, false, null);
     }
 
     public interface Delete extends statement.Modification.Delete, NotifiableModification {
@@ -460,7 +484,8 @@ public final class statement {
     RowIterator<D> execute(String dataSourceId) throws IOException, SQLException;
     RowIterator<D> execute(Transaction.Isolation isolation) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector) throws IOException, SQLException;
-    RowIterator<D> execute(Connection connection) throws IOException, SQLException;
+    RowIterator<D> execute(Connector connector, Transaction.Isolation isolation) throws IOException, SQLException;
+    RowIterator<D> execute(Connection connection, boolean isPrepared) throws IOException, SQLException;
     RowIterator<D> execute(Transaction transaction) throws IOException, SQLException;
     RowIterator<D> execute() throws IOException, SQLException;
 
@@ -468,7 +493,8 @@ public final class statement {
     RowIterator<D> execute(String dataSourceId, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Transaction.Isolation isolation, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector, QueryConfig config) throws IOException, SQLException;
-    RowIterator<D> execute(Connection connection, QueryConfig config) throws IOException, SQLException;
+    RowIterator<D> execute(Connector connector, Transaction.Isolation isolation, QueryConfig config) throws IOException, SQLException;
+    RowIterator<D> execute(Connection connection, boolean isPrepared, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Transaction transaction, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(QueryConfig config) throws IOException, SQLException;
   }

@@ -35,7 +35,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,8 +54,9 @@ public abstract class BatchTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void test(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
 
     final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;

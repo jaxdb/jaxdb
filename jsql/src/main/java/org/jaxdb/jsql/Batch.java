@@ -185,7 +185,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
   }
 
   @SuppressWarnings({"null", "resource"})
-  private NotifiableBatchResult execute(final Transaction transaction, final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
+  private NotifiableBatchResult execute(final Schema schema, final Transaction transaction, final Connector connector, Connection connection, boolean isPrepared, final Transaction.Isolation isolation) throws IOException, SQLException {
     final int noCommands;
     if (commands == null || (noCommands = commands.size()) == 0)
       return null;
@@ -193,23 +193,17 @@ public class Batch implements statement.NotifiableModification.Delete, statement
     try {
       final Command.Insert<?>[] insertsWithGeneratedKeys = new Command.Insert<?>[noCommands];
       final Compilation[] compilations = new Compilation[noCommands];
-      final Connection connection;
-      final Connector connector;
-      boolean isPrepared;
 
-      final Command<?> command0 = commands.get(0);
-      final Schema schema = command0.getSchema();
       final Class<? extends Schema> schemaClass = schema.getClass();
-      if (transaction != null) {
-        connector = transaction.getConnector();
-        connection = transaction.getConnection();
-        isPrepared = transaction.isPrepared();
-      }
-      else {
-        connector = Database.getConnector(schemaClass, dataSourceId);
+
+      if (connector != null) {
+        isPrepared = connector.isPrepared();
         connection = connector.getConnection(isolation);
         connection.setAutoCommit(true);
-        isPrepared = connector.isPrepared();
+      }
+      else if (transaction != null) {
+        isPrepared = transaction.isPrepared();
+        connection = transaction.getConnection();
       }
 
       String last = null;
@@ -358,7 +352,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       }
       finally {
         SQLException e = Throwables.addSuppressed(preparedStatement != null ? AuditStatement.close(preparedStatement) : statement != null ? AuditStatement.close(statement) : null, suppressed);
-        if (transaction == null && connection != null)
+        if (connector != null)
           e = Throwables.addSuppressed(e, AuditConnection.close(connection));
 
         if (e != null)
@@ -374,22 +368,46 @@ public class Batch implements statement.NotifiableModification.Delete, statement
   }
 
   @Override
+  public final NotifiableBatchResult execute(final Transaction transaction) throws IOException, SQLException {
+    return execute(commands.get(0).getSchema(), assertNotNull(transaction), null, null, false, null);
+  }
+
+  @Override
+  public final NotifiableBatchResult execute(final Connector connector, final Transaction.Isolation isolation) throws IOException, SQLException {
+    return execute(commands.get(0).getSchema(), null, assertNotNull(connector), null, false, isolation);
+  }
+
+  @Override
+  public final NotifiableBatchResult execute(final Connector connector) throws IOException, SQLException {
+    return execute(commands.get(0).getSchema(), null, assertNotNull(connector), null, false, null);
+  }
+
+  @Override
+  public final NotifiableBatchResult execute(final Connection connection, final boolean isPrepared) throws IOException, SQLException {
+    return execute(commands.get(0).getSchema(), null, null, assertNotNull(connection), isPrepared, null);
+  }
+
+  @Override
   public final NotifiableBatchResult execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
-    return execute(null, dataSourceId, isolation);
+    final Schema schema = commands.get(0).getSchema();
+    return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), dataSourceId)), null, false, isolation);
   }
 
   @Override
   public final NotifiableBatchResult execute(final String dataSourceId) throws IOException, SQLException {
-    return execute(null, dataSourceId, null);
+    final Schema schema = commands.get(0).getSchema();
+    return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), dataSourceId)), null, false, null);
   }
 
   @Override
-  public final NotifiableBatchResult execute(final Transaction transaction) throws IOException, SQLException {
-    return execute(transaction, null, null);
+  public final NotifiableBatchResult execute(final Transaction.Isolation isolation) throws IOException, SQLException {
+    final Schema schema = commands.get(0).getSchema();
+    return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), null)), null, false, isolation);
   }
 
   @Override
   public NotifiableBatchResult execute() throws IOException, SQLException {
-    return execute(null, null, null);
+    final Schema schema = commands.get(0).getSchema();
+    return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), null)), null, false, null);
   }
 }

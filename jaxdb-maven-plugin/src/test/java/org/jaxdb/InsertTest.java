@@ -42,7 +42,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Test;
@@ -176,16 +176,18 @@ public abstract class InsertTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertEntity(final Transaction transaction) throws IOException, SQLException {
     testInsertEntity(transaction, t1);
     testInsertEntity(transaction, t2);
     testInsertEntity(transaction, t3);
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertColumns(final Transaction transaction) throws IOException, SQLException {
     final types.Type t3 = new types.Type();
     t3.bigintType.set(8493L);
     t3.charType.set("hello");
@@ -213,8 +215,9 @@ public abstract class InsertTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertBatch(final Transaction transaction) throws IOException, SQLException {
     final DbVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DbVendor.ORACLE;
     final Batch batch = new Batch();
@@ -242,9 +245,10 @@ public abstract class InsertTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertSelectIntoTable(final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 
     DELETE(b)
@@ -263,8 +267,9 @@ public abstract class InsertTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertSelectIntoColumns(final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
     final types.Type t1 = new types.Type();
     final types.Type t2 = new types.Type();

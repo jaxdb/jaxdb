@@ -16,123 +16,91 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.Notification.Action.*;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
+import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
+import org.jaxdb.jsql.Notification.DefaultListener;
 import org.libj.lang.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Schema extends Notifiable {
+public abstract class Schema {
   private static final Logger logger = LoggerFactory.getLogger(Schema.class);
-  private static final IdentityHashMap<Class<? extends Schema>,Schema> instances = new IdentityHashMap<>();
+  private static final ConcurrentHashMap<Class<? extends Schema>,Schema> instances = new ConcurrentHashMap<>();
 
   Schema() {
     instances.put(getClass(), this);
   }
 
-  static Schema getSchema(final Class<? extends Schema> schemaClass) {
+  static Schema get(final Class<? extends Schema> schemaClass) {
     final Schema schema = instances.get(assertNotNull(schemaClass));
-    if (schema == null) {
-      try {
-        Class.forName(schemaClass.getName());
-      }
-      catch (final ClassNotFoundException e) {
-      }
+    if (schema != null)
+      return schema;
+
+    try {
+      Class.forName(schemaClass.getName());
+    }
+    catch (final ClassNotFoundException e) {
+      return null;
     }
 
-    return instances.get(assertNotNull(schemaClass));
+    return instances.get(schemaClass);
+  }
+
+  private Connector cacheConnector;
+
+  Connector getCacheConnector() {
+    return cacheConnector;
+  }
+
+  private Notifier<?> cacheNotifier;
+
+  Notifier<?> getCacheNotifier() {
+    return cacheNotifier;
+  }
+
+  void initCache(final Connector cacheConnector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Set<data.Table> tables, final ArrayList<OnConnectPreLoad> onConnectPreLoads) throws IOException, SQLException {
+    if (this.cacheConnector != null)
+      throw new IllegalStateException("Cache was already initialized");
+
+    final int len = tables.size();
+    final data.Table[] array = tables.toArray(new data.Table[len]);
+    for (int i = 0; i < len; ++i) // [RA]
+      array[i]._initCache$();
+
+    cacheConnector.addNotificationListener(INSERT, UPGRADE, DELETE, notificationListener, queue, array);
+
+    this.cacheConnector = cacheConnector;
+    this.cacheNotifier = cacheConnector.getNotifier();
+
+    for (int i = 0; i < len; ++i) {
+      final OnConnectPreLoad onConnectPreLoad = onConnectPreLoads.get(i);
+      if (onConnectPreLoad != null)
+        onConnectPreLoad.accept(array[i]);
+    }
+  }
+
+  public void configCache(final Connector connector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
+    if (cacheNotifier != null)
+      throw new IllegalStateException("Cache already configured");
+
+    final CacheConfig builder = new CacheConfig(this, connector, notificationListener, queue);
+    cacheBuilder.accept(builder);
+    builder.commit();
   }
 
   QueryConfig defaultQueryConfig;
-  Listeners<Notification.Listener<?>> listeners;
-  Listeners<Notification.SelectListener<?>> selectListeners;
-  Listeners<Notification.InsertListener<?>> insertListeners;
-  Listeners<Notification.UpdateListener<?>> updateListeners;
-  Listeners<Notification.DeleteListener<?>> deleteListeners;
   ConcurrentHashMap<String,OnNotifyCallbackList> notifyListeners;
-
-  @SuppressWarnings("unchecked")
-  private static Class<? extends data.Table> getTableClass(final data.Table table) {
-    Class<?> c = table.getClass();
-    while (c.isAnonymousClass())
-      c = c.getSuperclass();
-
-    return (Class<? extends data.Table>)c;
-  }
-
-  private class Listeners<K extends Notification.Listener<?>> extends LinkedHashMap<K,LinkedHashSet<Class<? extends data.Table>>> {
-    @Override
-    @SuppressWarnings("unchecked")
-    public LinkedHashSet<Class<? extends data.Table>> get(final Object key) {
-      LinkedHashSet<Class<? extends data.Table>> value = super.get(key);
-      if (value == null)
-        put((K)key, value = new LinkedHashSet<>());
-
-      return value;
-    }
-
-    void add(final K key, final data.Table[] tables) {
-      final LinkedHashSet<Class<? extends data.Table>> set = get(key);
-      for (final data.Table table : tables) // [A]
-        set.add(getTableClass(table));
-    }
-  }
-
-  void addListener(final Notification.Listener<?> listener, final data.Table[] tables) {
-    if (listeners == null)
-      listeners = new Listeners<>();
-
-    listeners.add(listener, tables);
-    if (listener instanceof Notification.SelectListener)
-      addListener((Notification.SelectListener<?>)listener, tables);
-
-    if (listener instanceof Notification.InsertListener)
-      addListener((Notification.InsertListener<?>)listener, tables);
-
-    if (listener instanceof Notification.UpdateListener)
-      addListener((Notification.UpdateListener<?>)listener, tables);
-
-    if (listener instanceof Notification.DeleteListener)
-      addListener((Notification.DeleteListener<?>)listener, tables);
-  }
-
-  private void addListener(final Notification.SelectListener<?> listener, final data.Table[] tables) {
-    if (selectListeners == null)
-      selectListeners = new Listeners<>();
-
-    selectListeners.add(listener, tables);
-  }
-
-  private void addListener(final Notification.InsertListener<?> listener, final data.Table[] tables) {
-    if (insertListeners == null)
-      insertListeners = new Listeners<>();
-
-    insertListeners.add(listener, tables);
-  }
-
-  private void addListener(final Notification.UpdateListener<?> listener, final data.Table[] tables) {
-    if (updateListeners == null)
-      updateListeners = new Listeners<>();
-
-    updateListeners.add(listener, tables);
-  }
-
-  private void addListener(final Notification.DeleteListener<?> listener, final data.Table[] tables) {
-    if (deleteListeners == null)
-      deleteListeners = new Listeners<>();
-
-    deleteListeners.add(listener, tables);
-  }
 
   void awaitNotify(final String sessionId, final OnNotifyCallbackList onNotifyCallbackList) {
     if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".awaitNotify(" + sessionId + "," + ObjectUtil.simpleIdentityString(onNotifyCallbackList) + ")");
@@ -157,77 +125,5 @@ public abstract class Schema extends Notifiable {
     final OnNotifyCallbackList onNotifyCallbackList = notifyListeners == null ? null : notifyListeners.get(sessionId);
     if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".getSession(" + sessionId + "): " + ObjectUtil.simpleIdentityString(onNotifyCallbackList));
     return onNotifyCallbackList;
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
-    if (listeners == null)
-      return;
-
-    final Class<?> tableClass = table.getClass();
-    for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet()) // [S]
-      if (entry.getValue().contains(tableClass))
-        entry.getKey().onConnect(connection, table);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
-    if (listeners == null)
-      return;
-
-    final Class<?> tableClass = table.getClass();
-    for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet()) // [S]
-      if (entry.getValue().contains(tableClass))
-        entry.getKey().onFailure(sessionId, timestamp, table, e);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onSelect(final data.Table row) {
-    if (selectListeners == null)
-      return;
-
-    final Class<?> rowClass = row.getClass();
-    for (final Map.Entry<? extends Notification.SelectListener,LinkedHashSet<Class<? extends data.Table>>> entry : selectListeners.entrySet()) // [S]
-      if (entry.getValue().contains(rowClass))
-        entry.getKey().onSelect(row);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onInsert(final String sessionId, final long timestamp, final data.Table row) {
-    if (insertListeners == null)
-      return;
-
-    final Class<?> rowClass = row.getClass();
-    for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table>>> entry : insertListeners.entrySet()) // [S]
-      if (entry.getValue().contains(rowClass))
-        entry.getKey().onInsert(sessionId, timestamp, row);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
-    if (updateListeners == null)
-      return;
-
-    final Class<?> rowClass = row.getClass();
-    for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table>>> entry : updateListeners.entrySet()) // [S]
-      if (entry.getValue().contains(rowClass))
-        entry.getKey().onUpdate(sessionId, timestamp, row, keyForUpdate);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onDelete(final String sessionId, final long timestamp, final data.Table row) {
-    if (deleteListeners == null)
-      return;
-
-    final Class<?> rowClass = row.getClass();
-    for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table>>> entry : deleteListeners.entrySet()) // [S]
-      if (entry.getValue().contains(rowClass))
-        entry.getKey().onDelete(sessionId, timestamp, row);
   }
 }

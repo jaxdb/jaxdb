@@ -34,7 +34,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,8 +52,9 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testLimitPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLimitPrimary(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
 
@@ -70,8 +71,9 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLimit(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLimit(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -95,8 +97,9 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLimitOffset(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLimitOffset(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =
 

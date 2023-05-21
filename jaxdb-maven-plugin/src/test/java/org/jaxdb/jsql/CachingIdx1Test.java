@@ -26,10 +26,10 @@ import java.util.Map;
 
 import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
-import org.jaxdb.runner.DBTestRunner.Spec;
+import org.jaxdb.runner.DBTestRunner.TestSpec;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,8 +50,9 @@ public abstract class CachingIdx1Test extends CachingTest {
   private static final boolean afterSleep = false;
 
   @Test
-  @Spec(order = 1)
-  public void testInsert(@Schema(caching.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
+  @TestSpec(order = 1)
+  @TestSchema(caching.class)
+  public void testInsert(final Transaction transaction) throws InterruptedException, IOException, SQLException {
     for (int i = 0; i < iterations; ++i) { // [N]
       final caching.One o = new caching.One(i);
       o.idu.set(i);
@@ -114,8 +115,9 @@ public abstract class CachingIdx1Test extends CachingTest {
   }
 
   @Test
-  @Spec(order = 2)
-  public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
+  @TestSpec(order = 2)
+  @TestSchema(caching.class)
+  public void testUpdatePrimaryKey(final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final ArrayList<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdx1 mm = list.get(i).clone();
@@ -201,8 +203,9 @@ public abstract class CachingIdx1Test extends CachingTest {
   }
 
   @Test
-  @Spec(order = 3)
-  public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
+  @TestSpec(order = 3)
+  @TestSchema(caching.class)
+  public void testUpdateForeignKey(final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final ArrayList<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.One o = list.get(i).clone();
@@ -252,8 +255,9 @@ public abstract class CachingIdx1Test extends CachingTest {
   }
 
   @Test
-  @Spec(order = 4)
-  public void testDelete(@Schema(caching.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
+  @TestSpec(order = 4)
+  @TestSchema(caching.class)
+  public void testDelete(final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final ArrayList<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdx1 mm = list.get(i);

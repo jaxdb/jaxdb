@@ -35,7 +35,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,8 +53,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBooleanToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBooleanToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -69,8 +70,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBooleanToClob(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBooleanToClob(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CLOB> rows =
 
@@ -85,8 +87,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFloatToDouble(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
@@ -101,8 +104,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFloatToDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -117,8 +121,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFloatToSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
@@ -134,8 +139,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFloatToMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
@@ -151,8 +157,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFloatToInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
@@ -167,8 +174,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFloatToBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -183,8 +191,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDoubleToFloat(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
@@ -199,8 +208,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDoubleToDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -215,8 +225,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDoubleToSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
@@ -232,8 +243,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDoubleToMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
@@ -249,8 +261,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDoubleToInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
@@ -265,8 +278,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDoubleToBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -281,8 +295,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimalToFloat(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
@@ -297,8 +312,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimalToDouble(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
@@ -313,8 +329,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimalToDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -329,8 +346,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimalToSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
@@ -346,8 +364,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimalToMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
@@ -363,8 +382,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimalToInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
@@ -380,8 +400,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimalToBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -397,8 +418,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimalToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -413,8 +435,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallIntToFloat(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
@@ -429,8 +452,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallIntToDouble(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
@@ -445,8 +469,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallIntToDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -461,8 +486,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallIntToSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
@@ -478,8 +504,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallIntToMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
@@ -495,8 +522,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallIntToInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
@@ -511,8 +539,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallIntToBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -527,8 +556,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallIntToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -543,8 +573,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMediumIntToFloat(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
@@ -559,8 +590,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMediumIntToDouble(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
@@ -575,8 +607,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMediumIntToDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -591,8 +624,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMediumIntToSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
@@ -608,8 +642,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMediumIntToMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
@@ -625,8 +660,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMediumIntToInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
@@ -641,8 +677,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMediumIntToBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -657,8 +694,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMediumIntToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -673,8 +711,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testIntToFloat(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
@@ -689,8 +728,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testIntToDouble(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
@@ -705,8 +745,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testIntToDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -721,8 +762,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testIntToSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
@@ -738,8 +780,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testIntToMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
@@ -755,8 +798,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testIntToInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
@@ -771,8 +815,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testIntToBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -787,8 +832,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testIntToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -803,8 +849,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigIntToFloat(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
@@ -819,8 +866,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigIntToDouble(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
@@ -835,8 +883,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigIntToDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -855,8 +904,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigIntToSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
@@ -872,8 +922,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigIntToMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
@@ -889,8 +940,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigIntToInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
@@ -906,8 +958,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigIntToBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -922,8 +975,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigIntToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -938,8 +992,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
@@ -958,8 +1013,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
@@ -975,8 +1031,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
@@ -992,8 +1049,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
@@ -1009,8 +1067,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -1026,8 +1085,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -1042,8 +1102,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToDate(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DATE> rows =
 
@@ -1059,8 +1120,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TIME> rows =
 
@@ -1076,8 +1138,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToDateTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DATETIME> rows =
 
@@ -1093,8 +1156,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToClob(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCharToClob(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CLOB> rows =
 
@@ -1109,8 +1173,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDateToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -1125,8 +1190,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testTimeToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testTimeToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -1141,8 +1207,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testTimeToTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testTimeToTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TIME> rows =
 
@@ -1157,8 +1224,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTimeToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDateTimeToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -1173,8 +1241,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTimeToDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDateTimeToDate(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DATE> rows =
 
@@ -1189,8 +1258,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTimeToTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDateTimeToTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TIME> rows =
 
@@ -1205,8 +1275,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTimeToDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDateTimeToDateTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DATETIME> rows =
 
@@ -1221,8 +1292,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testClobToChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testClobToChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -1237,8 +1309,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testClobToClob(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testClobToClob(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CLOB> rows =
 
@@ -1253,8 +1326,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBlobToBlob(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBlobToBlob(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BLOB> rows =
 
@@ -1269,8 +1343,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBinaryToBlob(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBinaryToBlob(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BLOB> rows =
 
@@ -1285,8 +1360,9 @@ public abstract class CastTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBinaryToBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBinaryToBinary(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BINARY> rows =
 

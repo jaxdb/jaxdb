@@ -34,7 +34,7 @@ import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,19 +60,20 @@ public abstract class CachingLoadTest extends NotificationTest {
   private static final int cardinality = 10;
   private static final int iterations = 100;
 
-  Integer[] insert(final int iteration, final AtomicInteger count) {
+  Integer[] insert(final int iteration, final AtomicInteger count, final Connector connector) {
     final Integer[] ids = new Integer[cardinality];
     for (int c = 0; c < cardinality; ++c) { // [N]
       final int id = ids[c] = iteration * c;
-      exec(() -> insertOne(id, count), count);
-      exec(() -> insertOneOne(id, count), count);
+      exec(() -> insertOne(id, count), count, connector);
+      exec(() -> insertOneOne(id, count), count, connector);
     }
 
     return ids;
   }
 
   @Test
-  public void test(@Schema(caching.class) final Transaction transaction) throws Exception {
+  @TestSchema(caching.class)
+  public void test(final Connector connector) throws Exception {
     final ExecutorService executor = Executors.newFixedThreadPool(iterations, new ThreadFactoryBuilder()
       .withUncaughtExceptionHandler(uncaughtExceptionHandler)
       .build());
@@ -92,14 +93,14 @@ public abstract class CachingLoadTest extends NotificationTest {
 //      else if (j == 1) {
         executor.execute(Throwing.rethrow(() -> {
           final AtomicInteger count = new AtomicInteger();
-          final Integer[] ids = insert(iteration, count);
+          final Integer[] ids = insert(iteration, count, connector);
 
           for (int k = 0, j$ = ids.length; k < j$; ++k) { // [RA]
             final Integer id = ids[k];
             final caching.OneOneId oo = new caching.OneOneId();
 
             count.set(0);
-            exec(() -> update(oo, EQ(oo.oneId, id), count), count);
+            exec(() -> update(oo, EQ(oo.oneId, id), count), count, connector);
           }
         }));
 //      }
@@ -179,9 +180,9 @@ public abstract class CachingLoadTest extends NotificationTest {
         });
   }
 
-  private static void exec(final Supplier<statement.NotifiableModification> update, final AtomicInteger count) {
+  private static void exec(final Supplier<statement.NotifiableModification> update, final AtomicInteger count, final Connector connector) {
     PERMA_SQL.run(() -> {
-      try (final Transaction transaction = new Transaction(caching.class, Isolation.REPEATABLE_READ)) {
+      try (final Transaction transaction = new Transaction(connector, Isolation.REPEATABLE_READ)) {
         final NotifiableResult result = update.get().execute(transaction);
 
         transaction.commit();

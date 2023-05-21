@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -31,18 +32,17 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
+import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.jaxdb.jsql.keyword.Delete.DELETE_NOTIFY;
 import org.jaxdb.jsql.keyword.Insert.CONFLICT_ACTION_NOTIFY;
 import org.jaxdb.jsql.keyword.Update.UPDATE_NOTIFY;
 import org.jaxdb.jsql.statement.NotifiableModification;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
-import org.jaxdb.runner.DBTestRunner.Spec;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.DBTestRunner.TestSpec;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.runner.Vendor;
 import org.junit.Assert;
 import org.junit.Test;
-import org.libj.test.TestAide;
 import org.xml.sax.SAXException;
 
 public abstract class CachingTest {
@@ -201,20 +201,21 @@ public abstract class CachingTest {
   }
 
   @Test
-  @Spec(order = 0)
-  public void setUp(@Schema(caching.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  @TestSpec(order = 0)
+  @TestSchema(caching.class)
+  public void setUp(final Connector connector, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.err.flush();
       System.exit(1);
     };
-    Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
-    DDLxTest.recreateSchema(transaction.getConnection(), "caching");
-    transaction.commit();
 
-    final Connector connector = transaction.getConnector();
-    final Database database = TestDatabase.global(transaction.getSchemaClass());
-    database.configCache(connector, new DefaultCache() {
+    Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
+    try (final Connection connection = connector.getConnection(null)) {
+      DDLxTest.recreateSchema(connection, "caching");
+    }
+
+    connector.getSchema().configCache(connector, new DefaultCache() {
       @Override
       protected Connector getConnector() {
         return connector;

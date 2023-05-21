@@ -27,7 +27,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,10 +48,11 @@ public abstract class UpdateRowIteratorTest {
   private static final QueryConfig queryConfig = new QueryConfig.Builder().withConcurrency(Concurrency.UPDATABLE).build();
 
   @Test
+  @TestSchema(types.class)
   @SuppressWarnings("unchecked")
-  @SchemaTestRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  @SchemaTestRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
+  public void testEnum(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
@@ -82,9 +83,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDate(final Transaction transaction) throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
     final types.Type t = types.Type();
     final int id;
@@ -116,9 +118,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testTime(final Transaction transaction) throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     final types.Type t = types.Type();
     final int id;
@@ -150,9 +153,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDateTime(final Transaction transaction) throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
     final types.Type t = types.Type();
     final int id;
@@ -184,9 +188,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testChar(final Transaction transaction) throws IOException, SQLException {
     final String str = "123helloxyz";
     final types.Type t = types.Type();
     final int id;
@@ -218,9 +223,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBoolean(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<?> rows =
 
@@ -250,9 +256,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBinary(final Transaction transaction) throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
     final types.Type t = types.Type();
     final int id;
@@ -284,9 +291,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDecimal(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
@@ -317,9 +325,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testTinyInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testTinyInt(final Transaction transaction) throws IOException, SQLException {
     byte value = 0;
     boolean testing = false;
     final types.Type t = types.Type();
@@ -369,9 +378,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSmallInt(final Transaction transaction) throws IOException, SQLException {
     short value = 0;
     boolean testing = false;
     final types.Type t = types.Type();
@@ -421,9 +431,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
@@ -454,9 +465,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
@@ -487,9 +499,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFloat(final Transaction transaction) throws IOException, SQLException {
     Float value = 0f;
     boolean testing = false;
     final types.Type t = types.Type();
@@ -540,9 +553,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDouble(final Transaction transaction) throws IOException, SQLException {
     Double value = null;
     boolean testing = false;
     final types.Type t = types.Type();

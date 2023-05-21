@@ -24,7 +24,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<Navigab
   }
 
   private OneToManyTreeMap(final data.Table table, final String name, final NavigableMap<data.Key,NavigableMap<data.Key,V>> map) {
-    super(table, name, map);
+    super(table, table.getSchema(), name, map);
   }
 
   @Override

@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,10 +34,10 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
+import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
-import org.jaxdb.runner.DBTestRunner.Spec;
+import org.jaxdb.runner.DBTestRunner.TestSpec;
 import org.jaxdb.runner.DBTestRunner.Unsupported;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -44,7 +45,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.runner.Vendor;
 import org.jaxdb.sqlx.SQLxTest;
 import org.junit.AfterClass;
@@ -67,22 +68,22 @@ public abstract class OnSelectTest {
   }
 
   @Test
-  @Spec(order = 0)
+  @TestSpec(order = 0)
+  @TestSchema(classicmodels.class)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void setUp(@Schema(classicmodels.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  public void setUp(final Connector connector, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.err.flush();
       System.exit(1);
     };
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
-    DDLxTest.recreateSchema(transaction.getConnection(), "classicmodels");
-    SQLxTest.loadData(transaction.getConnection(), "classicmodels");
-    transaction.commit();
+    try (final Connection connection = connector.getConnection(null)) {
+      DDLxTest.recreateSchema(connection, "classicmodels");
+      SQLxTest.loadData(connection, "classicmodels");
+    }
 
-    final Connector connector = transaction.getConnector();
-    final Database database = TestDatabase.global(transaction.getSchemaClass());
-    database.configCache(connector, new DefaultCache() {
+    connector.getSchema().configCache(connector, new DefaultCache() {
       @Override
       protected Connector getConnector() {
         return connector;
@@ -96,15 +97,15 @@ public abstract class OnSelectTest {
       .with(OnConnectPreLoad.ALL, classicmodels.Product(), classicmodels.Employee())
       .with(classicmodels.Customer(), classicmodels.Office(), classicmodels.ProductLine(), classicmodels.Purchase(), classicmodels.PurchaseDetail()));
 
-    assertTrue(TestDatabase.called());
+    assertTrue(TestConnector.called());
   }
 
   private static void testTreeSingle(final NavigableMap<data.Key,classicmodels.Customer> map, final ArrayList<Short> customerNumbers, final boolean selectCalled) throws IOException, SQLException {
     for (int i = 0, i$ = customerNumbers.size(); i < i$;) { // [RA]
-      assertFalse(TestDatabase.called());
+      assertFalse(TestConnector.called());
       final short customerNumber = customerNumbers.get(i);
       final classicmodels.Customer c = classicmodels.Customer.customerNumberToCustomer(customerNumber);
-      assertEquals(selectCalled, TestDatabase.called());
+      assertEquals(selectCalled, TestConnector.called());
       ++i;
       assertEquals(selectCalled ? i : i$, map.size());
       assertEquals(customerNumber, c.customerNumber.getAsShort());
@@ -112,8 +113,9 @@ public abstract class OnSelectTest {
   }
 
   @Test
-  @Spec(order = 1)
-  public void testTreeSingle(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSpec(order = 1)
+  @TestSchema(classicmodels.class)
+  public void testTreeSingle(final Transaction transaction) throws IOException, SQLException {
     classicmodels.Customer c = classicmodels.Customer();
     final ArrayList<Short> customerNumbers = new ArrayList<>();
     try (final RowIterator<data.SMALLINT> rows =
@@ -132,7 +134,7 @@ public abstract class OnSelectTest {
 
     c = classicmodels.Customer.customerNumberToCustomer((short)0);
 
-    assertTrue(TestDatabase.called());
+    assertTrue(TestConnector.called());
     assertEquals(0, map.size());
     assertNull(c);
 
@@ -141,34 +143,34 @@ public abstract class OnSelectTest {
   }
 
   private static void testTreeRange(final NavigableMap<data.Key,classicmodels.Office> map, final boolean selectCalled) throws IOException, SQLException {
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
     SortedMap<data.Key,classicmodels.Office> sub = classicmodels.Office.officeCodeToOffice(-3, 2);
-    assertEquals(selectCalled, TestDatabase.called());
+    assertEquals(selectCalled, TestConnector.called());
     assertEquals(selectCalled ? 1 : 7, map.size());
     assertEquals(1, sub.size());
     assertEquals(1, sub.values().iterator().next().officeCode.getAsInt());
 
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
     sub = classicmodels.Office.officeCodeToOffice(1, 4);
-    assertEquals(selectCalled, TestDatabase.called());;
+    assertEquals(selectCalled, TestConnector.called());;
     assertEquals(selectCalled ? 3 : 7, map.size());
     assertEquals(3, sub.size());
     Iterator<classicmodels.Office> iterator = sub.values().iterator();
     for (int i = 1; i <= 3; ++i) // [N]
       assertEquals(i, iterator.next().officeCode.getAsInt());
 
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
     sub = classicmodels.Office.officeCodeToOffice(5, 9);
-    assertEquals(selectCalled, TestDatabase.called());;
+    assertEquals(selectCalled, TestConnector.called());;
     assertEquals(selectCalled ? 6 : 7, map.size());
     assertEquals(3, sub.size());
     iterator = sub.values().iterator();
     for (int i = 5; i <= 7; ++i) // [N]
       assertEquals(i, iterator.next().officeCode.getAsInt());
 
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
     sub = classicmodels.Office.officeCodeToOffice(0, 20);
-    assertEquals(selectCalled, TestDatabase.called());;
+    assertEquals(selectCalled, TestConnector.called());;
     assertEquals(7, map.size());
     assertEquals(7, sub.size());
     iterator = sub.values().iterator();
@@ -177,14 +179,15 @@ public abstract class OnSelectTest {
   }
 
   @Test
-  @Spec(order = 2)
-  public void testTreeRange(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSpec(order = 2)
+  @TestSchema(classicmodels.class)
+  public void testTreeRange(final Transaction transaction) throws IOException, SQLException {
     final NavigableMap<data.Key,classicmodels.Office> map = classicmodels.Office._officeCodeToOfficeMap$;
     assertEquals(0, map.size());
 
     final SortedMap<data.Key,classicmodels.Office> sub = classicmodels.Office.officeCodeToOffice(-5, 1);
 
-    assertTrue(TestDatabase.called());
+    assertTrue(TestConnector.called());
     assertEquals(0, map.size());
     assertEquals(0, sub.size());
 
@@ -197,10 +200,10 @@ public abstract class OnSelectTest {
 
   private static void testHashSingle(final Map<data.Key,classicmodels.ProductLine> map, final boolean selectCalled) throws IOException, SQLException {
     for (int i = 0; i < noProductLines;) { // [N]
-      assertFalse(TestDatabase.called());
+      assertFalse(TestConnector.called());
       final String productLine = productLines[i];
       final classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine(productLine);
-      assertEquals(selectCalled, TestDatabase.called());
+      assertEquals(selectCalled, TestConnector.called());
       ++i;
       assertEquals(selectCalled ? i : noProductLines, map.size());
       assertEquals(productLine, pl.productLine.get());
@@ -208,14 +211,15 @@ public abstract class OnSelectTest {
   }
 
   @Test
-  @Spec(order = 3)
-  public void testHashSingle(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSpec(order = 3)
+  @TestSchema(classicmodels.class)
+  public void testHashSingle(final Transaction transaction) throws IOException, SQLException {
     final Map<data.Key,classicmodels.ProductLine> map = classicmodels.ProductLine._productLineToProductLineMap$;
     assertEquals(0, map.size());
 
     final classicmodels.ProductLine pl = classicmodels.ProductLine.productLineToProductLine("foo");
 
-    assertTrue(TestDatabase.called());
+    assertTrue(TestConnector.called());
     assertEquals(0, map.size());
     assertNull(pl);
 
@@ -224,8 +228,9 @@ public abstract class OnSelectTest {
   }
 
   @Test
-  @Spec(order = 4)
-  public void testOnConnectPreLoadAllHash(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSpec(order = 4)
+  @TestSchema(classicmodels.class)
+  public void testOnConnectPreLoadAllHash(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -242,8 +247,9 @@ public abstract class OnSelectTest {
   }
 
   @Test
-  @Spec(order = 5)
-  public void testOnConnectPreLoadAllTree(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSpec(order = 5)
+  @TestSchema(classicmodels.class)
+  public void testOnConnectPreLoadAllTree(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Employee e = classicmodels.Employee();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -260,8 +266,9 @@ public abstract class OnSelectTest {
   }
 
   @Test
-  @Spec(order = 6)
-  public void testTreeTwoDimensions(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSpec(order = 6)
+  @TestSchema(classicmodels.class)
+  public void testTreeTwoDimensions(final Transaction transaction) throws IOException, SQLException {
     try {
       classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10100, 10114, "S10_1678", "S10_1950");
       fail("Expected UnsupportedOperationException");
@@ -269,35 +276,36 @@ public abstract class OnSelectTest {
     catch (final UnsupportedOperationException e) {
     }
 
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
     classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10110, "S24_3969");
-    assertTrue(TestDatabase.called());
+    assertTrue(TestConnector.called());
     final classicmodels.PurchaseDetail pd0 = classicmodels.PurchaseDetail.purchaseNumber$productCodeToPurchaseDetail(10110, "S24_3969");
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
     assertNotNull(pd0.productCode$Product_code());
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
     classicmodels.Purchase p = pd0.purchaseNumber$Purchase_purchaseNumber();
     assertNotNull(p);
-    assertTrue(TestDatabase.called());
+    assertTrue(TestConnector.called());
 
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
     final Map<data.Key,classicmodels.PurchaseDetail> map = p.purchaseNumber$PurchaseDetail_purchaseNumber();
-    assertTrue(TestDatabase.called());
+    assertTrue(TestConnector.called());
     assertEquals(16, map.size());
     p.purchaseNumber$PurchaseDetail_purchaseNumber();
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
 
     for (final classicmodels.PurchaseDetail pd1 : map.values()) {
       assertSame(p, pd1.purchaseNumber$Purchase_purchaseNumber());
-      assertFalse(TestDatabase.called());
+      assertFalse(TestConnector.called());
     }
 
     assertNotNull(p.customerNumber$Customer_customerNumber());
-    assertFalse(TestDatabase.called());
+    assertFalse(TestConnector.called());
   }
 
   @AfterClass
-  public static void recreateSchema(@Schema(classicmodels.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  @TestSchema(classicmodels.class)
+  public static void recreateSchema(final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(transaction.getConnection(), "classicmodels");
   }
 }

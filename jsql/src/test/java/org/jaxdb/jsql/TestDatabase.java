@@ -16,40 +16,31 @@
 
 package org.jaxdb.jsql;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.libj.util.ConcurrentNullHashMap;
 
 public class TestDatabase extends Database {
-  public static Database global(final Class<? extends Schema> schemaClass) {
-    final Object[] localGlobal = schemaClassToLocalGlobal.get(schemaClass);
-    Database database = (Database)localGlobal[1];
-    if (database == null)
-      localGlobal[1] = database = new TestDatabase(schemaClass);
+  public static Database get(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    ConcurrentNullHashMap<String,Database> localGlobal = schemaClassToLocalGlobal.get(schemaClass);
+    Database database;
+    if (localGlobal == null)
+      schemaClassToLocalGlobal.put(schemaClass, localGlobal = new ConcurrentNullHashMap<>(2));
+    else if ((database = localGlobal.get(dataSourceId)) != null)
+      return database;
 
+    localGlobal.put(dataSourceId, database = new TestDatabase(schemaClass, dataSourceId));
     return database;
   }
 
-  public static boolean called() {
-    if (!called.get().get())
-      return false;
-
-    called.get().set(false);
-    return true;
+  public static Database get(final Class<? extends Schema> schemaClass) {
+    return get(schemaClass, null);
   }
 
-  private static ThreadLocal<AtomicBoolean> called = new ThreadLocal<AtomicBoolean>() {
-    @Override
-    protected AtomicBoolean initialValue() {
-      return new AtomicBoolean();
-    }
-  };
-
-  TestDatabase(final Class<? extends Schema> schemaClass) {
-    super(schemaClass);
+  TestDatabase(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    super(schemaClass, dataSourceId);
   }
 
   @Override
-  Notifier<?> getCacheNotifier() {
-    called.get().set(true);
-    return super.getCacheNotifier();
+  Connector newConnector(final ConnectionFactory connectionFactory, final boolean isPrepared) {
+    return new TestConnector(schemaClass, dataSourceId, connectionFactory, isPrepared);
   }
 }

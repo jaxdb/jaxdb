@@ -43,8 +43,8 @@ public class Connector implements ConnectionFactory {
   private final Class<? extends Schema> schemaClass;
   private final String dataSourceId;
 
-  private ConnectionFactory connectionFactory;
-  private boolean isPrepared;
+  private final ConnectionFactory connectionFactory;
+  private final boolean isPrepared;
 
   private final AtomicReference<Notifier<?>> notifier = new AtomicReference<>();
 
@@ -52,10 +52,12 @@ public class Connector implements ConnectionFactory {
     return notifier.get();
   }
 
-  protected Connector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    this.schema = Schema.getSchema(schemaClass);
+  protected Connector(final Class<? extends Schema> schemaClass, final String dataSourceId, final ConnectionFactory connectionFactory, final boolean isPrepared) {
+    this.schema = Schema.get(schemaClass);
     this.schemaClass = schemaClass;
     this.dataSourceId = dataSourceId;
+    this.connectionFactory = assertNotNull(connectionFactory);
+    this.isPrepared = isPrepared;
   }
 
   public Schema getSchema() {
@@ -64,11 +66,6 @@ public class Connector implements ConnectionFactory {
 
   public String getDataSourceId() {
     return dataSourceId;
-  }
-
-  protected void set(final ConnectionFactory connectionFactory, final boolean isPrepared) {
-    this.connectionFactory = assertNotNull(connectionFactory);
-    this.isPrepared = isPrepared;
   }
 
   public boolean isPrepared() {

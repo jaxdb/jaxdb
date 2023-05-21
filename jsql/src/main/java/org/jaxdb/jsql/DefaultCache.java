@@ -257,10 +257,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     if (logger.isTraceEnabled()) logger.trace("selectRow(" + log(row) + ")");
 
     try (
-      final Connection connection = getConnector().getConnection(null);
       final RowIterator<data.Table> rows =
         SELECT(row)
-          .execute(connection)) {
+          .execute(getConnector())) {
 
         if (!rows.nextRow())
           throw new IllegalStateException("Expected a row");

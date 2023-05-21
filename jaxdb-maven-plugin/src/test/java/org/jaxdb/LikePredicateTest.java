@@ -34,7 +34,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,8 +52,9 @@ public abstract class LikePredicateTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testLikeSimple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLikeSimple(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
 
@@ -70,8 +71,9 @@ public abstract class LikePredicateTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testLikePrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLikePrimary(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
 
@@ -90,8 +92,9 @@ public abstract class LikePredicateTest {
   private static final String $Ford$ = "%Ford%";
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testLikeComplex(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLikeComplex(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 

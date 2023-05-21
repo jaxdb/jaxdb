@@ -35,7 +35,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,8 +53,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testNextRowNotCalled(@Schema(classicmodels.class) final Transaction transaction) throws IOException {
+  public void testNextRowNotCalled(final Transaction transaction) throws IOException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
@@ -84,8 +85,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testObjectSelectFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testObjectSelectFound(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
@@ -105,8 +107,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testObjectSelectNotFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testObjectSelectNotFound(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
@@ -121,8 +124,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testFrom(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFrom(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
 
@@ -141,8 +145,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testFromMultiple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFromMultiple(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     final classicmodels.Customer c = new classicmodels.Customer();
     try (final RowIterator<classicmodels.Address> rows =
@@ -160,8 +165,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testWhere(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<? extends data.Column<?>> rows =
 

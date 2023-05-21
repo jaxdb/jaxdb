@@ -49,11 +49,11 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
 
   @SuppressWarnings("unchecked")
   TreeCacheMap(final data.Table table, final String name) {
-    this(table, name, (BTreeMap<data.Key,V>)db.treeMap(name).counterEnable().create());
+    this(table, table.getSchema(), name, (BTreeMap<data.Key,V>)db.treeMap(name).counterEnable().create());
   }
 
-  TreeCacheMap(final data.Table table, final String name, final NavigableMap<data.Key,V> map) {
-    super(table);
+  TreeCacheMap(final data.Table table, final Schema schema, final String name, final NavigableMap<data.Key,V> map) {
+    super(table, schema);
     this.name = name;
     this.map = map;
   }

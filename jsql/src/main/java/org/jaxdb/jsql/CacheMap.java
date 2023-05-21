@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import org.jaxdb.jsql.Database.OnConnectPreLoad;
+import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.libj.util.Interval;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -32,10 +32,12 @@ import org.mapdb.DBMaker;
 public abstract class CacheMap<V> implements Map<data.Key,V> {
   static final DB db = DBMaker.heapDB().make();
 
-  data.Table table;
+  final data.Table table;
+  private final Schema schema;
 
-  CacheMap(final data.Table table) {
+  CacheMap(final data.Table table, final Schema schema) {
     this.table = table;
+    this.schema = schema;
   }
 
   abstract void addKey(data.Key key);
@@ -134,19 +136,17 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
   }
 
   final void select(final data.BOOLEAN condition) throws IOException, SQLException {
-    final Class<? extends Schema> schemaClass = table.getSchema().getClass();
-    final Database database = Database.global(schemaClass);
-    final Notifier<?> notifier = database.getCacheNotifier();
+    final Notifier<?> notifier = schema.getCacheNotifier();
     if (notifier == null)
       return;
 
-    final Connector defaultConnector = database.getConnectors(schemaClass).get(null);
+    final Connector cacheConnector = schema.getCacheConnector();
     try (final RowIterator<? extends data.Table> rows =
 
       SELECT(table).
       FROM(table).
       WHERE(condition)
-        .execute(defaultConnector)) {
+        .execute(cacheConnector)) {
 
       while (rows.nextRow())
         notifier.onSelect(rows.nextEntity());

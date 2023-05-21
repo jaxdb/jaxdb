@@ -39,7 +39,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,8 +58,9 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void test(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     final data.BIGINT b = new data.BIGINT();
     try (final RowIterator<data.BIGINT> rows =
@@ -100,8 +101,9 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testAdd(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testAdd(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
 
@@ -142,8 +144,9 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testSubtract(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSubtract(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
 
@@ -184,8 +187,9 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testMultiply(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testMultiply(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
 
@@ -226,8 +230,9 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testDivide(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDivide(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
 
@@ -268,8 +273,9 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @TestSchema(world.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testUpdateVersion(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
+  public void testUpdateVersion(final Transaction transaction) throws IOException, SQLException {
     world.City c = world.City();
     try (final RowIterator<world.City> rows =
 

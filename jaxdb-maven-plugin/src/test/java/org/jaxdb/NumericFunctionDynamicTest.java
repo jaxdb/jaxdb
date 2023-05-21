@@ -37,7 +37,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libj.math.SafeMath;
@@ -101,20 +101,23 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testUpdateRound0(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testUpdateRound0(final Transaction transaction) throws IOException, SQLException {
     testUpdateRoundN(transaction, 0);
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testUpdateRound1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testUpdateRound1(final Transaction transaction) throws IOException, SQLException {
     testUpdateRoundN(transaction, 1);
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testSign(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSign(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
@@ -145,8 +148,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testFloor(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFloor(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
@@ -177,8 +181,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testCeil(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCeil(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
@@ -209,8 +214,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSqrt(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -251,8 +257,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDegrees(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -293,8 +300,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testRadians(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -335,8 +343,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testSin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSin(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
@@ -367,8 +376,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testAsin(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -518,8 +528,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testCos(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
@@ -550,8 +561,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testAcos(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -701,8 +713,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testTan(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
@@ -733,8 +746,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testAtan(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
@@ -795,20 +809,23 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testModIntPos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testModIntPos(final Transaction transaction) throws IOException, SQLException {
     testMod(transaction, 3);
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testModIntNeg(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testModIntNeg(final Transaction transaction) throws IOException, SQLException {
     testMod(transaction, -3);
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testModX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testModX(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -849,8 +866,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testExp(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -1156,14 +1174,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testPowIntPow(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testPowIntPow(final Transaction transaction) throws IOException, SQLException {
     testPow(transaction, 3);
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testPowIntNeg(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testPowIntNeg(final Transaction transaction) throws IOException, SQLException {
     testPow(transaction, -3);
   }
 
@@ -1324,14 +1344,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testPow3X(final Transaction transaction) throws IOException, SQLException {
     testPow2(transaction, .2);
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testPowXX(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -1481,8 +1503,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLogX3(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -1632,8 +1655,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLog3X(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -1783,8 +1807,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLogXX(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -1934,8 +1959,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLn(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -2085,8 +2111,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLog2(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
@@ -2237,8 +2264,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLog10(final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
 

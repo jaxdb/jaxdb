@@ -35,7 +35,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,8 +53,9 @@ public abstract class TestCommandTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testFailEntityOnlySelectTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFailEntityOnlySelectTrue(final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
@@ -73,8 +74,9 @@ public abstract class TestCommandTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFailEntityOnlySelectFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testFailEntityOnlySelectFalse(final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
@@ -95,8 +97,9 @@ public abstract class TestCommandTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testRowIteratorFullConsumeRequiredTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testRowIteratorFullConsumeRequiredTrue(final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
@@ -117,8 +120,9 @@ public abstract class TestCommandTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testRowIteratorFullConsumeRequiredFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testRowIteratorFullConsumeRequiredFalse(final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {

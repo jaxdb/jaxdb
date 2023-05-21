@@ -693,31 +693,19 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @SuppressWarnings("unchecked")
-        RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, Connection connection, boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
 
-          final boolean closeConnection = transaction == null && connection == null;
-          final Schema schema = getSchema();
           Statement statement = null;
           try {
-            final boolean isPrepared;
-            if (transaction != null) {
-              if (connector != null)
-                throw new IllegalArgumentException();
-
-              connector = transaction.getConnector();
-              connection = transaction.getConnection();
-              isPrepared = transaction.isPrepared();
-            }
-            else {
-              if (connector == null)
-                connector = Database.getConnector(getSchema().getClass(), dataSourceId);
-
+            if (connector != null) {
               isPrepared = connector.isPrepared();
-              if (connection == null) {
-                connection = connector.getConnection(isolation);
-                connection.setAutoCommit(true);
-              }
+              connection = connector.getConnection(isolation);
+              connection.setAutoCommit(true);
+            }
+            else if (transaction != null) {
+              isPrepared = transaction.isPrepared();
+              connection = transaction.getConnection();
             }
 
             final Connection finalConnection = connection;
@@ -733,7 +721,7 @@ abstract class Command<E> extends Keyword implements Closeable {
               final Notifier<?> notifier;
               final boolean isSelectAll;
               if (cacheSelectEntity) {
-                notifier = connector.getNotifier();
+                notifier = schema.getCacheNotifier();
                 isSelectAll = isEntityOnlySelect && !isConditionalSelect;
               }
               else {
@@ -871,7 +859,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                 public void close() throws SQLException {
                   SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
                   e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
-                  if (closeConnection)
+                  if (connector != null)
                     e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
 
                   prototypes = null;
@@ -882,89 +870,107 @@ abstract class Command<E> extends Keyword implements Closeable {
                 }
               };
             }
-            finally {
-              close();
-            }
           }
           catch (SQLException e) {
             if (statement != null)
               e = Throwables.addSuppressed(e, AuditStatement.close(statement));
 
-            if (closeConnection) // Connection cannot be null here
+            if (connector != null)
               e = Throwables.addSuppressed(e, AuditConnection.close(connection));
 
             throw SQLExceptions.toStrongType(e);
           }
-        }
-
-        @Override
-        public final RowIterator<D> execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
-          return execute(null, null, null, dataSourceId, isolation, null);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final String dataSourceId) throws IOException, SQLException {
-          return execute(null, null, null, dataSourceId, null, null);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final Transaction.Isolation isolation) throws IOException, SQLException {
-          return execute(null, null, null, null, isolation, null);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final Connector connector) throws IOException, SQLException {
-          return execute(null, connector, null, null, null, null);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final Connection connection) throws IOException, SQLException {
-          return execute(null, null, connection, null, null, null);
+          finally {
+            close();
+          }
         }
 
         @Override
         public final RowIterator<D> execute(final Transaction transaction) throws IOException, SQLException {
-          return execute(transaction, null, null, null, null, null);
+          return execute(getSchema(), assertNotNull(transaction), null, null, false, null, null);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Connector connector, final Transaction.Isolation isolation) throws IOException, SQLException {
+          return execute(getSchema(), null, assertNotNull(connector), null, false, isolation, null);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Connector connector) throws IOException, SQLException {
+          return execute(getSchema(), null, assertNotNull(connector), null, false, null, null);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Connection connection, final boolean isPrepared) throws IOException, SQLException {
+          return execute(getSchema(), null, null, assertNotNull(connection), isPrepared, null, null);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
+          final Schema schema = getSchema();
+          return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), dataSourceId)), null, false, isolation, null);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final String dataSourceId) throws IOException, SQLException {
+          final Schema schema = getSchema();
+          return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), dataSourceId)), null, false, null, null);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Transaction.Isolation isolation) throws IOException, SQLException {
+          final Schema schema = getSchema();
+          return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), null)), null, false, null, null);
         }
 
         @Override
         public RowIterator<D> execute() throws IOException, SQLException {
-          return execute(null, null, null, null, null, null);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
-          return execute(null, null, null, dataSourceId, null, config);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final String dataSourceId, final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
-          return execute(null, null, null, dataSourceId, isolation, config);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final Connector connector, final QueryConfig config) throws IOException, SQLException {
-          return execute(null, connector, null, null, null, config);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
-          return execute(null, null, null, null, isolation, config);
-        }
-
-        @Override
-        public final RowIterator<D> execute(final Connection connection, final QueryConfig config) throws IOException, SQLException {
-          return execute(null, null, connection, null, null, null);
+          final Schema schema = getSchema();
+          return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), null)), null, false, null, null);
         }
 
         @Override
         public final RowIterator<D> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
-          return execute(transaction, null, null, null, null, config);
+          return execute(getSchema(), assertNotNull(transaction), null, null, false, null, config);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Connector connector, final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
+          return execute(getSchema(), null, assertNotNull(connector), null, false, isolation, config);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Connector connector, final QueryConfig config) throws IOException, SQLException {
+          return execute(getSchema(), null, assertNotNull(connector), null, false, null, config);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Connection connection, final boolean isPrepared, final QueryConfig config) throws IOException, SQLException {
+          return execute(getSchema(), null, null, assertNotNull(connection), isPrepared, null, null);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
+          final Schema schema = getSchema();
+          return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), dataSourceId)), null, false, null, config);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final String dataSourceId, final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
+          final Schema schema = getSchema();
+          return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), dataSourceId)), null, false, isolation, config);
+        }
+
+        @Override
+        public final RowIterator<D> execute(final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
+          final Schema schema = getSchema();
+          return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), null)), null, false, isolation, config);
         }
 
         @Override
         public RowIterator<D> execute(final QueryConfig config) throws IOException, SQLException {
-          return execute(null, null, null, null, null, config);
+          final Schema schema = getSchema();
+          return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), null)), null, false, null, null);
         }
 
         @Override

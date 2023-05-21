@@ -21,19 +21,19 @@ import java.util.Map;
 
 public class OneToOneHashMap<V extends data.Table> extends HashCacheMap<V> implements OneToOneMap<V> {
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static final OneToOneHashMap EMPTY = new OneToOneHashMap(null, null, new HashMap<>(0));
+  static final OneToOneHashMap EMPTY = new OneToOneHashMap(null, null, null, new HashMap<>(0));
 
   OneToOneHashMap(final data.Table table, final String name) {
     super(table, name);
   }
 
-  private OneToOneHashMap(final data.Table table, final String name, final Map<data.Key,V> map) {
-    super(table, name, map);
+  private OneToOneHashMap(final data.Table table, final Schema schema, final String name, final Map<data.Key,V> map) {
+    super(table, schema, name, map);
   }
 
   @Override
   HashCacheMap<V> newInstance(final data.Table table, final String name, final Map<data.Key,V> map) {
-    return new OneToOneHashMap<>(table, name, map);
+    return new OneToOneHashMap<>(table, table.getSchema(), name, map);
   }
 
   @Override

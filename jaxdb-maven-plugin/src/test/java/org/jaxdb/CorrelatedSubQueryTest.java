@@ -35,7 +35,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,8 +53,9 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testWhereEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testWhereEntity(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c1 = new classicmodels.Customer();
     final classicmodels.Customer c2 = new classicmodels.Customer();
@@ -81,8 +82,9 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testWhereColumn(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testWhereColumn(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c1 = new classicmodels.Customer();
     final classicmodels.Customer c2 = new classicmodels.Customer();
@@ -110,8 +112,9 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSelect(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSelect(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     final data.INT n = new data.INT();
@@ -135,8 +138,9 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testJoin(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = new classicmodels.Customer();
 

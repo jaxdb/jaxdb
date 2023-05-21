@@ -45,11 +45,11 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
 
   @SuppressWarnings("unchecked")
   HashCacheMap(final data.Table table, final String name) {
-    this(table, name, (HTreeMap<data.Key,V>)db.hashMap(name).counterEnable().create());
+    this(table, table.getSchema(), name, (HTreeMap<data.Key,V>)db.hashMap(name).counterEnable().create());
   }
 
-  HashCacheMap(final data.Table table, final String name, final Map<data.Key,V> map) {
-    super(table);
+  HashCacheMap(final data.Table table, final Schema schema, final String name, final Map<data.Key,V> map) {
+    super(table, schema);
     this.name = name;
     this.map = map;
   }

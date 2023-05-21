@@ -95,9 +95,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -123,9 +123,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -151,9 +151,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -179,9 +179,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -207,9 +207,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -235,9 +235,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -263,9 +263,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -291,9 +291,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -319,9 +319,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -347,9 +347,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -375,9 +375,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -403,9 +403,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -431,9 +431,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -459,9 +459,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -487,9 +487,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -515,9 +515,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -543,9 +543,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -571,9 +571,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -599,9 +599,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -627,9 +627,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -655,9 +655,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -683,9 +683,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -711,9 +711,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override
@@ -739,9 +739,9 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, final Connection connection, final boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           called = true;
-          return super.execute(transaction, connector, connection, dataSourceId, contextQueryConfig);
+          return super.execute(schema, transaction, connector, connection, isPrepared, isolation, contextQueryConfig);
         }
 
         @Override

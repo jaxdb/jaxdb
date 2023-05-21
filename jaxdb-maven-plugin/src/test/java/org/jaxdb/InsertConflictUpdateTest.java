@@ -38,7 +38,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -76,8 +76,9 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertEntity(final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
         .execute(transaction)
@@ -115,8 +116,9 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertColumns(final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .execute(transaction)
@@ -146,7 +148,8 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSchema(types.class)
+  public void testInsertBatch(final Transaction transaction) throws IOException, SQLException {
     final Batch batch = new Batch();
     final int expectedCount = transaction.getVendor() == DbVendor.ORACLE ? 0 : 1;
 
@@ -164,9 +167,10 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertSelectIntoTable1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertSelectIntoTable1(final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 
     DELETE(b)
@@ -186,9 +190,10 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertSelectIntoTable2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertSelectIntoTable2(final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 
     DELETE(b)
@@ -209,8 +214,10 @@ public abstract class InsertConflictUpdateTest {
         .getCount());
   }
 
+  @Test
+  @TestSchema(types.class)
   @Ignore("Not sure if this is supported by MERGE")
-  public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsertSelectIntoColumns(final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
     final types.Type t1 = new types.Type();
     final types.Type t2 = new types.Type();

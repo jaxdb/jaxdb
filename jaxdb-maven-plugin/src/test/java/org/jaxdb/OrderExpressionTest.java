@@ -34,7 +34,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,8 +52,9 @@ public abstract class OrderExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testOrderExpressionError(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testOrderExpressionError(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
       SELECT(p).
@@ -69,8 +70,9 @@ public abstract class OrderExpressionTest {
   }
 
   @Test
+  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testOrderExpression(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testOrderExpression(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =
       SELECT(p.msrp, p.price).

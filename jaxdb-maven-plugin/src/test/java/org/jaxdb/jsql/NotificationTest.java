@@ -20,6 +20,7 @@ import static org.jaxdb.jsql.Notification.Action.*;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLNonTransientConnectionException;
@@ -32,8 +33,8 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
-import org.jaxdb.runner.DBTestRunner.Spec;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.DBTestRunner.TestSpec;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.runner.Vendor;
 import org.junit.Test;
 import org.libj.sql.exception.SQLInternalErrorException;
@@ -96,19 +97,19 @@ public abstract class NotificationTest {
   static final RetryPolicy<RetryFailureRuntimeException> PERMA_SQL = PERMA.withMaxRetries(Integer.MAX_VALUE).build(NotificationTest::sql);
 
   @Test
-  @Spec(order = 0)
-  public void setUp(@Schema(caching.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  @TestSpec(order = 0)
+  @TestSchema(caching.class)
+  public void setUp(final Connector connector, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.exit(1);
     };
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
-    DDLxTest.recreateSchema(transaction.getConnection(), "caching");
-    transaction.commit();
+    try (final Connection connection = connector.getConnection(null)) {
+      DDLxTest.recreateSchema(connection, "caching");
+    }
 
-    final Connector connector = transaction.getConnector();
-    final Database database = Database.global(transaction.getSchemaClass());
-    database.addNotificationListener(connector, INSERT, UPDATE, DELETE, new DefaultCache() {
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new DefaultCache() {
       @Override
       protected Connector getConnector() {
         return connector;

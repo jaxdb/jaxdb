@@ -79,7 +79,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface Spec {
+  public @interface TestSpec {
     int order() default 1;
     int cardinality() default 1;
   }
@@ -105,11 +105,11 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   }
 
   private static final Comparator<FrameworkMethod> orderComparator = (o1, o2) -> {
-    final Spec a1 = o1.getAnnotation(Spec.class);
+    final TestSpec a1 = o1.getAnnotation(TestSpec.class);
     if (a1 == null)
       return -1;
 
-    final Spec a2 = o2.getAnnotation(Spec.class);
+    final TestSpec a2 = o2.getAnnotation(TestSpec.class);
     if (a2 == null)
       return -1;
 
@@ -392,9 +392,10 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
    */
   protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Object target, final Object ... params) throws Throwable {
     final Method method = frameworkMethod.getMethod();
-    final Class<? extends Vendor> vendor = frameworkMethod.getExecutor().getDB().value();
+    final Executor executor = frameworkMethod.getExecutor();
+    final Class<? extends Vendor> vendor = executor.getDB().value();
     if (method.getParameterTypes().length == 1) {
-      try (final Connection connection = frameworkMethod.getExecutor().getConnection()) {
+      try (final Connection connection = executor.getConnection()) {
         if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
         return frameworkMethod.invokeExplosivelySuper(target, connection);
       }
@@ -413,7 +414,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     }
 
     private void runChild(final Statement statement, final Description description, final RunNotifier notifier) {
-      final Spec spec = getMethod().getAnnotation(Spec.class);
+      final TestSpec spec = getMethod().getAnnotation(TestSpec.class);
       final int cardinality = spec == null ? 1 : spec.cardinality();
       for (int c = 0; c < cardinality; ++c) { // [N]
         if (sync)
@@ -500,7 +501,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
 
     int numTests = 0;
     for (final Description child : description.getChildren()) { // [L]
-      final Spec spec = child.getAnnotation(Spec.class);
+      final TestSpec spec = child.getAnnotation(TestSpec.class);
       numTests += spec == null ? 1 : spec.cardinality();
     }
 

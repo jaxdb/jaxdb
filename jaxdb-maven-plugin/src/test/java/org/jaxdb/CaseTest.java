@@ -41,7 +41,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,8 +59,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSimpleBooleanPrimary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleBooleanPrimary(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -77,8 +78,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleBoolean(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -99,8 +101,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleFloat(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -139,8 +142,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleDouble(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -179,8 +183,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleDecimal(final Transaction transaction) throws IOException, SQLException {
     final BigDecimal three = new BigDecimal(3);
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
@@ -220,8 +225,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -260,8 +266,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -300,8 +307,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -340,8 +348,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -380,8 +389,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleBinary(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BINARY> rows =
 
@@ -402,8 +412,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleDate(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DATE> rows =
 
@@ -424,8 +435,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TIME> rows =
 
@@ -446,8 +458,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleDateTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DATETIME> rows =
 
@@ -468,8 +481,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -493,8 +507,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSimpleEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSimpleEnum(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Textual<?>> rows =
 
@@ -518,8 +533,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchBoolean(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -540,8 +556,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchFloat(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -580,8 +597,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchDouble(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -620,8 +638,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchDecimal(final Transaction transaction) throws IOException, SQLException {
     final BigDecimal three = new BigDecimal(3);
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
@@ -661,8 +680,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchSmallInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -701,8 +721,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchMediumInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -741,8 +762,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -781,8 +803,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchBigInt(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
@@ -821,8 +844,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchBinary(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BINARY> rows =
 
@@ -843,8 +867,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchDate(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DATE> rows =
 
@@ -865,8 +890,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.TIME> rows =
 
@@ -883,8 +909,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchDateTime(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.DATETIME> rows =
 
@@ -905,8 +932,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchChar(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
@@ -930,8 +958,9 @@ public abstract class CaseTest {
   }
 
   @Test
+  @TestSchema(types.class)
   @AssertCommand(ignore=true)
-  public void testSearchEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSearchEnum(final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Textual<?>> rows =
 

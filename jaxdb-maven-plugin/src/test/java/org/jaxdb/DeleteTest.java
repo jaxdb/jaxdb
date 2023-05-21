@@ -33,7 +33,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +52,8 @@ public abstract class DeleteTest {
   }
 
   @Test
-  public void testDeleteEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSchema(classicmodels.class)
+  public void testDeleteEntity(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     p.purchaseNumber.set(10102);
     p.customerNumber.set((short)181);
@@ -64,7 +65,8 @@ public abstract class DeleteTest {
   }
 
   @Test
-  public void testDeleteEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSchema(classicmodels.class)
+  public void testDeleteEntities(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p1 = new classicmodels.Purchase();
     p1.purchaseNumber.set(10102);
     p1.customerNumber.set((short)181);
@@ -94,7 +96,8 @@ public abstract class DeleteTest {
   }
 
   @Test
-  public void testDeleteWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSchema(classicmodels.class)
+  public void testDeleteWhere(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
 
     assertEquals(1,
@@ -105,7 +108,8 @@ public abstract class DeleteTest {
   }
 
   @Test
-  public void testDeleteAll(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @TestSchema(classicmodels.class)
+  public void testDeleteAll(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
 
     assertTrue(2985 <

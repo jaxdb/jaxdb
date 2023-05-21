@@ -65,7 +65,7 @@ public abstract class WorldTest extends JSqlTest {
   }
 
   @org.junit.Test
-  public void testReloadJaxSB(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  public void testReloadJaxSB(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(connection, name);
     JSqlTest.loadEntitiesJaxSB(connection, name);
   }

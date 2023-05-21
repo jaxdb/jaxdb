@@ -16,7 +16,6 @@
 
 package org.jaxdb.runner;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,6 +28,7 @@ import java.util.Map;
 
 import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Database;
+import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.TestCommand;
 import org.jaxdb.jsql.Transaction;
 import org.junit.runners.model.FrameworkMethod;
@@ -38,10 +38,10 @@ import org.libj.util.ArrayUtil;
 public class SchemaTestRunner extends DBTestRunner {
   private static final Map<DBTestRunner.DB,Connector> schemaClassToConnector = Collections.synchronizedMap(new HashMap<>());
 
-  @Target(ElementType.PARAMETER)
+  @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface Schema {
-    Class<? extends org.jaxdb.jsql.Schema> value();
+  public @interface TestSchema {
+    Class<? extends Schema> value();
   }
 
   public SchemaTestRunner(final Class<?> cls) throws InitializationError {
@@ -54,7 +54,15 @@ public class SchemaTestRunner extends DBTestRunner {
       errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(method.getMethod().getParameterTypes(), ',', Class::getSimpleName) + ") must declare no parameters or one parameter of type: " + Transaction.class.getName()));
   }
 
+  private static Class<? extends Schema> getSchemaClass(final Method method, final TestSchema testSchema) {
+    if (testSchema == null)
+      throw new RuntimeException("@TestSchema must be specified on Transaction parameter for " + method.getName());
+
+    return testSchema.value();
+  }
+
   @Override
+  @SuppressWarnings("resource")
   protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Object target, Object ... params) throws Throwable {
     final Method method = frameworkMethod.getMethod();
     final Class<?>[] parameterTypes = method.getParameterTypes();
@@ -65,41 +73,57 @@ public class SchemaTestRunner extends DBTestRunner {
 
     final DBTestRunner.Executor executor = frameworkMethod.getExecutor();
     params = new Object[parameterTypes.length];
-    int transactionArg = -1;
+    Transaction transaction = null;
+
+    final TestSchema testSchema = method.getAnnotation(TestSchema.class);
     for (int i = 0, i$ = parameterTypes.length; i < i$; ++i) { // [A]
-      if (Transaction.class.isAssignableFrom(parameterTypes[i]))
-        transactionArg = i;
+      if (Connector.class.isAssignableFrom(parameterTypes[i]))
+        params[i] = getConnector(getSchemaClass(method, testSchema), executor);
+      else if (Transaction.class.isAssignableFrom(parameterTypes[i]))
+        params[i] = transaction = newTransaction(getSchemaClass(method, testSchema), executor);
       else if (org.jaxdb.runner.Vendor.class.isAssignableFrom(parameterTypes[i]))
         params[i] = executor.getVendor();
       else
         throw new UnsupportedOperationException("Unsupported parameter type: " + parameterTypes[i].getName());
     }
 
-    if (transactionArg == -1)
-      throw new RuntimeException("Transaction parameter was not found");
+    final Object result;
 
-    for (final Annotation annotation : method.getParameterAnnotations()[transactionArg]) // [A]
-      if (annotation.annotationType() == Schema.class)
-        return invokeInTransaction(((Schema)annotation).value(), executor, params, transactionArg, frameworkMethod, target);
+    try {
+      result = frameworkMethod.invokeExplosivelySuper(target, params);
+    }
+    catch (final Throwable t) {
+      if (transaction != null) {
+        transaction.rollback(t);
+        transaction.close();
+      }
 
-    throw new RuntimeException("@Schema must be specified on Transaction parameter for " + frameworkMethod.getMethod().getName());
+      throw t;
+    }
+
+    if (transaction != null) {
+      transaction.rollback();
+      transaction.close();
+    }
+
+    return result;
   }
 
-  private static <S extends org.jaxdb.jsql.Schema>Object invokeInTransaction(final Class<S> schemaClass, final DBTestRunner.Executor executor, final Object[] params, final int transactionArg, final VendorFrameworkMethod frameworkMethod, final Object target) throws Throwable {
-    try (final Transaction transaction = new PreparedTransaction(executor.getVendor(), schemaClass) {
+  private static Connector getConnector(final Class<? extends Schema> schemaClass, final DBTestRunner.Executor executor) {
+    final DB db = executor.getDB();
+    Connector connector = schemaClassToConnector.get(db);
+    if (connector == null)
+      schemaClassToConnector.put(db, connector = Database.get(schemaClass, db.value().getSimpleName()).connect(i -> i != null ? executor.getConnection(i.getLevel()) : executor.getConnection()));
+
+    return connector;
+  }
+
+  private static Transaction newTransaction(final Class<? extends Schema> schemaClass, final DBTestRunner.Executor executor) {
+    return new Transaction(schemaClass) {
       @Override
       protected Connector getConnector() {
-        Connector connector = schemaClassToConnector.get(executor.getDB());
-        if (connector == null) {
-          schemaClassToConnector.put(executor.getDB(), connector = new PreparedConnector(schemaClass, i -> i != null ? executor.getConnection(i.getLevel()) : executor.getConnection()));
-          Database.threadLocal(schemaClass).connect(connector);
-        }
-
-        return connector;
+        return SchemaTestRunner.getConnector(schemaClass, executor);
       }
-    }) {
-      params[transactionArg] = transaction;
-      return frameworkMethod.invokeExplosivelySuper(target, params);
-    }
+    };
   }
 }

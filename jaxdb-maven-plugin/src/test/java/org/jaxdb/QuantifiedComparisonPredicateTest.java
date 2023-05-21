@@ -34,7 +34,7 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,9 +52,10 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @TestSchema(classicmodels.class)
   @SchemaTestRunner.Unsupported(SQLite.class)
-  public void testAll(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testAll(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
@@ -75,9 +76,10 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @TestSchema(classicmodels.class)
   @SchemaTestRunner.Unsupported(SQLite.class)
-  public void testAny(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testAny(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
@@ -98,9 +100,10 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @TestSchema(classicmodels.class)
   @SchemaTestRunner.Unsupported(SQLite.class)
-  public void testSome(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testSome(final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 

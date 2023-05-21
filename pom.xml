@@ -167,13 +167,13 @@
         <dependency>
           <groupId>org.xerial</groupId>
           <artifactId>sqlite-jdbc</artifactId>
-          <version>3.39.4.0</version>
+          <version>3.41.2.2</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>8.0.31</version>
+          <version>8.0.33</version>
           <scope>test</scope>
         </dependency>
         <dependency>
@@ -354,7 +354,7 @@
           <!-- https://www.oracle.com/technetwork/database/enterprise-edition/jdbc-faq-090281.html#01_02 -->
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>21.7.0.0</version>
+          <version>23.2.0.0</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
