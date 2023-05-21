@@ -50,8 +50,8 @@ public class SchemaTestRunner extends DBTestRunner {
 
   @Override
   protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
-    if (method.getMethod().getParameterTypes().length > 0 && !Transaction.class.isAssignableFrom(method.getMethod().getParameterTypes()[0]))
-      errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(method.getMethod().getParameterTypes(), ',', Class::getSimpleName) + ") must declare no parameters or one parameter of type: " + Transaction.class.getName()));
+    if (method.getMethod().getParameterTypes().length > 0 && !Transaction.class.isAssignableFrom(method.getMethod().getParameterTypes()[0]) && !Connector.class.isAssignableFrom(method.getMethod().getParameterTypes()[0]))
+      errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(method.getMethod().getParameterTypes(), ',', Class::getSimpleName) + ") must declare no parameters or one parameter of type " + Transaction.class.getName() + " or " + Connector.class.getName()));
   }
 
   private static Class<? extends Schema> getSchemaClass(final Method method, final TestSchema testSchema) {

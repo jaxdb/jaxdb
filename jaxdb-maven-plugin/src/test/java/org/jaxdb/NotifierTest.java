@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -77,6 +76,8 @@ public abstract class NotifierTest {
   }
 
   private static final int id = 10000;
+  private static final int count = 100;
+  private static final int sleep = 100;
   private static final Random r = new Random();
   private static final HashMap<Integer,Integer> checks = new HashMap<>();
   private static final HashMap<Integer,data.Table> pre = new HashMap<>();
@@ -88,17 +89,13 @@ public abstract class NotifierTest {
   }
 
   private void checkPre(final Action action, final types.Type t) {
-    try {
-      final data.Table e = pre.get(t.id.get());
-      assertNotNull(action.toString(), e);
-      assertEquals(action.toString(), e.toString(), t.toString());
-      checks.put(t.id.get(), checks.getOrDefault(t.id.get(), 0) + 1);
-      post.put(t.id.get(), t);
-      System.err.println("[OK] checkPre(" + action + "," + t.getName() + ")");
-    }
-    catch (final Throwable e) {
-      throw e;
-    }
+    final String message = action + "," + t.getName() + "," + t.id.get();
+    final data.Table e = pre.get(t.id.get());
+    assertNotNull(message, e);
+    assertEquals(message, e.toString(), t.toString());
+    checks.put(t.id.get(), checks.getOrDefault(t.id.get(), 0) + 1);
+    post.put(t.id.get(), t);
+    System.err.println("[OK] checkPre(" + message + ")");
   }
 
   private void checkPost(final types.Type t) {
@@ -173,6 +170,7 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testFast(final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast0", vendor), queue, types.Type());
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast1", vendor), queue, types.Type());
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast2", vendor), queue, types.Type());
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast3", vendor), queue, types.Type());
@@ -182,37 +180,37 @@ public abstract class NotifierTest {
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast7", vendor), queue, types.Type());
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast8", vendor), queue, types.Type());
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast9", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast10", vendor), queue, types.Type());
 
     types.Type t = types.Type();
-    final ArrayList<types.Type> inserts = new ArrayList<>();
-    for (int id = 0; id < 100; ++id) { // [N]
-      inserts.add(t = new types.Type());
+    final types.Type[] inserts = new types.Type[count];
+    for (int id = 0; id < count; ++id) { // [N]
+      inserts[id] = t = new types.Type();
       t.id.set(NotifierTest.id + 50 + id);
       t.intType.set(r.nextInt());
 
+      setPre(t);
+
       INSERT(t)
         .execute(connector);
-
-      setPre(t);
     }
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
 
-    for (int i = 0, i$ = inserts.size(); i < i$; ++i) // [RA]
-      checkPost(inserts.get(i));
+    for (int i = 0; i < count; ++i) // [RA]
+      checkPost(inserts[i]);
 
     for (int i = 0; i < 10; ++i) { // [N]
       final int value = r.nextInt();
+      pre.values().forEach(c -> ((types.Type)c).intType.set(value));
+
       UPDATE(t).
       SET(t.intType, value)
         .execute(connector);
 
-      Thread.sleep(300);
-      pre.values().forEach(c -> ((types.Type)c).intType.set(value));
+      Thread.sleep(sleep);
     }
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     post.clear();
     connector.removeNotificationListeners();
   }
@@ -239,7 +237,7 @@ public abstract class NotifierTest {
     INSERT(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     t.intType.set(489234);
@@ -249,7 +247,7 @@ public abstract class NotifierTest {
     UPDATE(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     setPre(t);
@@ -257,7 +255,7 @@ public abstract class NotifierTest {
     DELETE(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     // https://www.wolframalpha.com/input/?i=0%2C+3%2C+9%2C+18%2C+30%2C+45%2C+63%2C+84%2C+108%2C+135%2C+165%2C+198
@@ -288,7 +286,7 @@ public abstract class NotifierTest {
     INSERT(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     expectedChecks.put(id, 4);
@@ -317,7 +315,7 @@ public abstract class NotifierTest {
     INSERT(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     t.intType.set(489234);
@@ -327,7 +325,7 @@ public abstract class NotifierTest {
     UPDATE(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     expectedChecks.put(id, 9);
@@ -356,7 +354,7 @@ public abstract class NotifierTest {
     INSERT(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     setPre(t);
@@ -364,7 +362,7 @@ public abstract class NotifierTest {
     DELETE(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     expectedChecks.put(id, 10);
@@ -382,10 +380,10 @@ public abstract class NotifierTest {
     final types.Type t = new types.Type();
 
     DELETE(t).
-    WHERE(BETWEEN(t.id, id, id + 100))
+    WHERE(BETWEEN(t.id, id, id + count))
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
 
     connector.removeNotificationListeners(INSERT);
 
@@ -397,7 +395,7 @@ public abstract class NotifierTest {
     INSERT(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
 
     connector.removeNotificationListeners(UPDATE);
 
@@ -406,7 +404,7 @@ public abstract class NotifierTest {
     UPDATE(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
 
     assertEquals(0, post.size());
     System.err.println("[OK] testRemove()");
@@ -434,7 +432,7 @@ public abstract class NotifierTest {
     INSERT(t)
       .execute(connector);
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     expectedChecks.put(id, 1);

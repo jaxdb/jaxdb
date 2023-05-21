@@ -109,7 +109,7 @@ public abstract class NotificationTest {
       DDLxTest.recreateSchema(connection, "caching");
     }
 
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new DefaultCache() {
+    connector.getSchema().configCache(connector, new DefaultCache() {
       @Override
       protected Connector getConnector() {
         return connector;
@@ -119,6 +119,6 @@ public abstract class NotificationTest {
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
-    }, new ConcurrentLinkedQueue<>(), caching.getTables());
+    }, new ConcurrentLinkedQueue<>(), b -> b.with(caching.getTables()));
   }
 }
