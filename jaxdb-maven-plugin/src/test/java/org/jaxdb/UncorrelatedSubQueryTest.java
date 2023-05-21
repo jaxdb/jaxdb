@@ -34,7 +34,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,9 +51,8 @@ public abstract class UncorrelatedSubQueryTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testAdd(final Transaction transaction) throws IOException, SQLException {
+  public void testAdd(final types types, final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 

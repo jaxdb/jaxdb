@@ -52,15 +52,15 @@ public class Connector implements ConnectionFactory {
     return notifier.get();
   }
 
-  protected Connector(final Class<? extends Schema> schemaClass, final String dataSourceId, final ConnectionFactory connectionFactory, final boolean isPrepared) {
-    this.schema = Schema.get(schemaClass);
-    this.schemaClass = schemaClass;
+  protected Connector(final Schema schema, final String dataSourceId, final ConnectionFactory connectionFactory, final boolean isPrepared) {
+    this.schema = schema;
+    this.schemaClass = schema.getClass();
     this.dataSourceId = dataSourceId;
     this.connectionFactory = assertNotNull(connectionFactory);
     this.isPrepared = isPrepared;
   }
 
-  public Schema getSchema() {
+  Schema getSchema() {
     return schema;
   }
 

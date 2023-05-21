@@ -33,7 +33,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,9 +51,8 @@ public abstract class DeleteTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
-  public void testDeleteEntity(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
+  public void testDeleteEntity(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Purchase p = classicmodels.new Purchase();
     p.purchaseNumber.set(10102);
     p.customerNumber.set((short)181);
 
@@ -65,17 +63,16 @@ public abstract class DeleteTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
-  public void testDeleteEntities(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p1 = new classicmodels.Purchase();
+  public void testDeleteEntities(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Purchase p1 = classicmodels.new Purchase();
     p1.purchaseNumber.set(10102);
     p1.customerNumber.set((short)181);
 
-    final classicmodels.Purchase p2 = new classicmodels.Purchase();
+    final classicmodels.Purchase p2 = classicmodels.new Purchase();
     p2.purchaseNumber.set(10100);
     p2.customerNumber.set((short)363);
 
-    final classicmodels.Payment pa = new classicmodels.Payment();
+    final classicmodels.Payment pa = classicmodels.new Payment();
     pa.customerNumber.set((short)103);
 
     // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
@@ -96,8 +93,7 @@ public abstract class DeleteTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
-  public void testDeleteWhere(final Transaction transaction) throws IOException, SQLException {
+  public void testDeleteWhere(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
 
     assertEquals(1,
@@ -108,8 +104,7 @@ public abstract class DeleteTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
-  public void testDeleteAll(final Transaction transaction) throws IOException, SQLException {
+  public void testDeleteAll(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
 
     assertTrue(2985 <

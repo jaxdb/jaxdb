@@ -35,7 +35,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,10 +52,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testNextRowNotCalled(final Transaction transaction) throws IOException {
-    final classicmodels.Office o = new classicmodels.Office();
+  public void testNextRowNotCalled(final classicmodels classicmodels, final Transaction transaction) throws IOException {
+    final classicmodels.Office o = classicmodels.new Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("CA");
@@ -85,10 +83,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testObjectSelectFound(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
+  public void testObjectSelectFound(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Office o = classicmodels.new Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("CA");
@@ -107,10 +104,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testObjectSelectNotFound(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
+  public void testObjectSelectNotFound(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Office o = classicmodels.new Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("");
@@ -124,10 +120,9 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testFrom(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
+  public void testFrom(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Office o = classicmodels.new Office();
     try (final RowIterator<classicmodels.Office> rows =
 
       SELECT(o).
@@ -145,11 +140,10 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testFromMultiple(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
-    final classicmodels.Customer c = new classicmodels.Customer();
+  public void testFromMultiple(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Office o = classicmodels.new Office();
+    final classicmodels.Customer c = classicmodels.new Customer();
     try (final RowIterator<classicmodels.Address> rows =
 
       SELECT(o, c).
@@ -165,9 +159,8 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testWhere(final Transaction transaction) throws IOException, SQLException {
+  public void testWhere(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<? extends data.Column<?>> rows =
 

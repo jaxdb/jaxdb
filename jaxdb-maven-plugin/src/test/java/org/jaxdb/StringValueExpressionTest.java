@@ -37,7 +37,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,9 +55,8 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testConcatStatic(final Transaction transaction) throws IOException, SQLException {
+  public void testConcatStatic(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.CHAR> rows =
 
@@ -170,9 +168,8 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testConcatDynamic(final Transaction transaction) throws IOException, SQLException {
+  public void testConcatDynamic(final types types, final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
 
@@ -216,9 +213,8 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testChangeCaseStatic(final Transaction transaction) throws IOException, SQLException {
+  public void testChangeCaseStatic(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.CHAR> rows =
 
@@ -239,9 +235,8 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testChangeCaseDynamic(final Transaction transaction) throws IOException, SQLException {
+  public void testChangeCaseDynamic(final types types, final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
 
@@ -273,9 +268,8 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @Ignore
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testLengthStatic(final Transaction transaction) throws IOException, SQLException {
+  public void testLengthStatic(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.INT> rows =
 
@@ -300,9 +294,8 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @Ignore
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testLengthDynamic(final Transaction transaction) throws IOException, SQLException {
+  public void testLengthDynamic(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.INT> rows =
 
@@ -318,16 +311,14 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @Ignore
-  public void testSubstringStatic(final Transaction transaction) throws IOException, SQLException {
+  public void testSubstringStatic(final types types, final Transaction transaction) throws IOException, SQLException {
     // TODO: Implement this
   }
 
   @Test
-  @TestSchema(types.class)
   @Ignore
-  public void testSubstringDynamic(final Transaction transaction) throws IOException, SQLException {
+  public void testSubstringDynamic(final types types, final Transaction transaction) throws IOException, SQLException {
     // TODO: Implement this
   }
 }

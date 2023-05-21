@@ -16,7 +16,6 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.InsertTest.*;
 import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
@@ -38,7 +37,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -46,7 +44,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
-public abstract class InsertConflictUpdateTest {
+public abstract class InsertConflictUpdateTest extends InsertTest {
   @DB(Derby.class)
   @DB(SQLite.class)
   public static class IntegrationTest extends InsertConflictUpdateTest {
@@ -58,13 +56,23 @@ public abstract class InsertConflictUpdateTest {
   public static class RegressionTest extends InsertConflictUpdateTest {
   }
 
-  final types.Type t1 = T1.clone();
-  final types.Type t2 = T2.clone();
-  final types.Type t3 = T3.clone();
+  types.Type t1;
+  types.Type t2;
+  types.Type t3;
 
   @Before
-  public void before() {
+  @Override
+  public void before(final types types) {
+    T1 = types.new Type();
+    T2 = types.new Type();
+    T3 = types.new Type();
+
+    t1 = T1.clone();
+    t2 = T2.clone();
+    t3 = T3.clone();
+
     init(t1, t2, t3);
+
     t1.id.set(1001);
     t2.id.set(1002);
     t3.id.set(1003);
@@ -76,9 +84,9 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  @TestSchema(types.class)
+  @Override
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertEntity(final Transaction transaction) throws IOException, SQLException {
+  public void testInsertEntity(final types types, final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
         .execute(transaction)
@@ -116,9 +124,9 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  @TestSchema(types.class)
+  @Override
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertColumns(final Transaction transaction) throws IOException, SQLException {
+  public void testInsertColumns(final types types, final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .execute(transaction)
@@ -148,8 +156,8 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  @TestSchema(types.class)
-  public void testInsertBatch(final Transaction transaction) throws IOException, SQLException {
+  @Override
+  public void testInsertBatch(final types types, final Transaction transaction) throws IOException, SQLException {
     final Batch batch = new Batch();
     final int expectedCount = transaction.getVendor() == DbVendor.ORACLE ? 0 : 1;
 
@@ -167,11 +175,10 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertSelectIntoTable1(final Transaction transaction) throws IOException, SQLException {
-    final types.Backup b = new types.Backup();
+  public void testInsertSelectIntoTable1(final types types, final Transaction transaction) throws IOException, SQLException {
+    final types.Backup b = types.new Backup();
 
     DELETE(b)
       .execute(transaction);
@@ -190,11 +197,10 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertSelectIntoTable2(final Transaction transaction) throws IOException, SQLException {
-    final types.Backup b = new types.Backup();
+  public void testInsertSelectIntoTable2(final types types, final Transaction transaction) throws IOException, SQLException {
+    final types.Backup b = types.new Backup();
 
     DELETE(b)
       .execute(transaction);
@@ -214,14 +220,14 @@ public abstract class InsertConflictUpdateTest {
         .getCount());
   }
 
+  @Override
   @Test
-  @TestSchema(types.class)
   @Ignore("Not sure if this is supported by MERGE")
-  public void testInsertSelectIntoColumns(final Transaction transaction) throws IOException, SQLException {
+  public void testInsertSelectIntoColumns(final types types, final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
-    final types.Type t1 = new types.Type();
-    final types.Type t2 = new types.Type();
-    final types.Type t3 = new types.Type();
+    final types.Type t1 = types.new Type();
+    final types.Type t2 = types.new Type();
+    final types.Type t3 = types.new Type();
 
     DELETE(b)
       .execute(transaction);

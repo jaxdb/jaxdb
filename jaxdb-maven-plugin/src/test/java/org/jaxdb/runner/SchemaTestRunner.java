@@ -16,10 +16,7 @@
 
 package org.jaxdb.runner;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,28 +35,58 @@ import org.libj.util.ArrayUtil;
 public class SchemaTestRunner extends DBTestRunner {
   private static final Map<DBTestRunner.DB,Connector> schemaClassToConnector = Collections.synchronizedMap(new HashMap<>());
 
-  @Target(ElementType.METHOD)
-  @Retention(RetentionPolicy.RUNTIME)
-  public @interface TestSchema {
-    Class<? extends Schema> value();
-  }
-
   public SchemaTestRunner(final Class<?> cls) throws InitializationError {
     super(cls);
   }
 
+  private static boolean checkParameterType(final List<? super Throwable> errors, final Method method, final Class<?>[] parameterTypes, final Class<?> parameterType, final Class<?> expectedType, final boolean has) {
+    if (!expectedType.isAssignableFrom(parameterType))
+      return has;
+
+    if (has)
+      errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(parameterTypes, ',', Class::getSimpleName) + ") can only declare one paramter of type " + expectedType.getName()));
+
+    return true;
+  }
+
   @Override
-  protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
-    if (method.getMethod().getParameterTypes().length > 0 && !Transaction.class.isAssignableFrom(method.getMethod().getParameterTypes()[0]) && !Connector.class.isAssignableFrom(method.getMethod().getParameterTypes()[0]))
-      errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(method.getMethod().getParameterTypes(), ',', Class::getSimpleName) + ") must declare no parameters or one parameter of type " + Transaction.class.getName() + " or " + Connector.class.getName()));
+  protected void checkParameters(final FrameworkMethod frameworkMethod, final List<? super Throwable> errors) {
+    final Method method = frameworkMethod.getMethod();
+    final Class<?>[] parameterTypes = method.getParameterTypes();
+    boolean hasTransaction = false;
+    boolean hasConnector = false;
+    boolean hasSchema = false;
+    boolean hasVendor = false;
+    for (int i = 0, i$ = parameterTypes.length; i < i$; ++i) { // [A]
+      final Class<?> parameterType = parameterTypes[i];
+      hasTransaction = checkParameterType(errors, method, parameterTypes, parameterType, Transaction.class, hasTransaction);
+      hasConnector = checkParameterType(errors, method, parameterTypes, parameterType, Connector.class, hasConnector);
+      hasSchema = checkParameterType(errors, method, parameterTypes, parameterType, Schema.class, hasSchema);
+      hasVendor = checkParameterType(errors, method, parameterTypes, parameterType, Vendor.class, hasVendor);
+    }
+
+    if ((hasTransaction || hasConnector) && !hasSchema)
+      errors.add(new Exception("Method " + frameworkMethod.getDeclaringClass().getSimpleName() + "." + frameworkMethod.getName() + "(" + ArrayUtil.toString(parameterTypes, ',', Class::getSimpleName) + ") must declare a " + Schema.class.getSimpleName() + " parameter for " + Transaction.class.getSimpleName() + " or " + Connector.class.getSimpleName() + " parameters to be able to be specified"));
   }
 
-  private static Class<? extends Schema> getSchemaClass(final Method method, final TestSchema testSchema) {
-    if (testSchema == null)
-      throw new RuntimeException("@TestSchema must be specified on Transaction parameter for " + method.getName());
+  private final HashMap<Class<?>,Schema> schemaClassToSchema = new HashMap<Class<?>,Schema>() {
+    @Override
+    @SuppressWarnings("unchecked")
+    public Schema get(final Object key) {
+      Schema value = super.get(key);
+      if (value == null) {
+        final Class<? extends Schema> cls = (Class<? extends Schema>)key;
+        try {
+          super.put(cls, value = cls.getConstructor().newInstance());
+        }
+        catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+          throw new RuntimeException(e);
+        }
+      }
 
-    return testSchema.value();
-  }
+      return value;
+    }
+  };
 
   @Override
   @SuppressWarnings("resource")
@@ -75,17 +102,28 @@ public class SchemaTestRunner extends DBTestRunner {
     params = new Object[parameterTypes.length];
     Transaction transaction = null;
 
-    final TestSchema testSchema = method.getAnnotation(TestSchema.class);
+    int connectorParam = -1;
+    int transactionParam = -1;
+    Schema schema = null;
     for (int i = 0, i$ = parameterTypes.length; i < i$; ++i) { // [A]
-      if (Connector.class.isAssignableFrom(parameterTypes[i]))
-        params[i] = getConnector(getSchemaClass(method, testSchema), executor);
-      else if (Transaction.class.isAssignableFrom(parameterTypes[i]))
-        params[i] = transaction = newTransaction(getSchemaClass(method, testSchema), executor);
-      else if (org.jaxdb.runner.Vendor.class.isAssignableFrom(parameterTypes[i]))
+      final Class<?> parameterType = parameterTypes[i];
+      if (Connector.class.isAssignableFrom(parameterType))
+        connectorParam = i;
+      else if (Transaction.class.isAssignableFrom(parameterType))
+        transactionParam = i;
+      else if (Vendor.class.isAssignableFrom(parameterType))
         params[i] = executor.getVendor();
+      else if (Schema.class.isAssignableFrom(parameterType))
+        params[i] = schema = schemaClassToSchema.get(parameterType);
       else
-        throw new UnsupportedOperationException("Unsupported parameter type: " + parameterTypes[i].getName());
+        throw new UnsupportedOperationException("Unsupported parameter type: " + parameterType.getName());
     }
+
+    if (connectorParam != -1)
+      params[connectorParam] = getConnector(schema, executor);
+
+    if (transactionParam != -1)
+      params[transactionParam] = transaction = newTransaction(schema, executor);
 
     final Object result;
 
@@ -109,20 +147,20 @@ public class SchemaTestRunner extends DBTestRunner {
     return result;
   }
 
-  private static Connector getConnector(final Class<? extends Schema> schemaClass, final DBTestRunner.Executor executor) {
+  private static Connector getConnector(final Schema schema, final DBTestRunner.Executor executor) {
     final DB db = executor.getDB();
     Connector connector = schemaClassToConnector.get(db);
     if (connector == null)
-      schemaClassToConnector.put(db, connector = Database.get(schemaClass, db.value().getSimpleName()).connect(i -> i != null ? executor.getConnection(i.getLevel()) : executor.getConnection()));
+      schemaClassToConnector.put(db, connector = Database.get(schema, db.value().getSimpleName()).connect(i -> i != null ? executor.getConnection(i.getLevel()) : executor.getConnection()));
 
     return connector;
   }
 
-  private static Transaction newTransaction(final Class<? extends Schema> schemaClass, final DBTestRunner.Executor executor) {
-    return new Transaction(schemaClass) {
+  private static Transaction newTransaction(final Schema schema, final DBTestRunner.Executor executor) {
+    return new Transaction(schema) {
       @Override
       protected Connector getConnector() {
-        return SchemaTestRunner.getConnector(schemaClass, executor);
+        return SchemaTestRunner.getConnector(schema, executor);
       }
     };
   }

@@ -17,7 +17,7 @@
 package org.jaxdb;
 
 import static org.jaxdb.jsql.TestDML.*;
-import static org.jaxdb.jsql.classicmodels.Purchase.Status.*;
+import static org.jaxdb.jsql.classicmodels.$Purchase.Status.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -35,7 +35,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,9 +53,8 @@ public abstract class BatchTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void test(final Transaction transaction) throws IOException, SQLException {
+  public void test(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
 
     final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;
@@ -113,7 +111,7 @@ public abstract class BatchTest {
       WHERE(EQ(p.status, IN_PROCESS))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
 
-    final classicmodels.Purchase p1 = new classicmodels.Purchase();
+    final classicmodels.Purchase p1 = classicmodels.new Purchase();
     p1.purchaseDate.set(LocalDate.now());
     p1.requiredDate.set(LocalDate.now());
     p1.customerNumber.set((short)114);

@@ -42,6 +42,11 @@ public abstract class Schema {
     instances.put(getClass(), this);
   }
 
+  public abstract String getName();
+  public abstract data.Table getTable(String name);
+  public abstract data.Table[] getTables();
+  public abstract void setDefaultQueryConfig(QueryConfig queryConfig);
+
   static Schema get(final Class<? extends Schema> schemaClass) {
     final Schema schema = instances.get(assertNotNull(schemaClass));
     if (schema != null)

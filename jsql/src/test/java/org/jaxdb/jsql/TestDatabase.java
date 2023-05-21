@@ -19,28 +19,28 @@ package org.jaxdb.jsql;
 import org.libj.util.ConcurrentNullHashMap;
 
 public class TestDatabase extends Database {
-  public static Database get(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    ConcurrentNullHashMap<String,Database> localGlobal = schemaClassToLocalGlobal.get(schemaClass);
+  public static Database get(final Schema schema, final String dataSourceId) {
+    ConcurrentNullHashMap<String,Database> localGlobal = schemaClassToLocalGlobal.get(schema);
     Database database;
     if (localGlobal == null)
-      schemaClassToLocalGlobal.put(schemaClass, localGlobal = new ConcurrentNullHashMap<>(2));
+      schemaClassToLocalGlobal.put(schema, localGlobal = new ConcurrentNullHashMap<>(2));
     else if ((database = localGlobal.get(dataSourceId)) != null)
       return database;
 
-    localGlobal.put(dataSourceId, database = new TestDatabase(schemaClass, dataSourceId));
+    localGlobal.put(dataSourceId, database = new TestDatabase(schema, dataSourceId));
     return database;
   }
 
-  public static Database get(final Class<? extends Schema> schemaClass) {
-    return get(schemaClass, null);
+  public static Database get(final Schema schema) {
+    return get(schema, null);
   }
 
-  TestDatabase(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    super(schemaClass, dataSourceId);
+  TestDatabase(final Schema schema, final String dataSourceId) {
+    super(schema, dataSourceId);
   }
 
   @Override
   Connector newConnector(final ConnectionFactory connectionFactory, final boolean isPrepared) {
-    return new TestConnector(schemaClass, dataSourceId, connectionFactory, isPrepared);
+    return new TestConnector(schema, dataSourceId, connectionFactory, isPrepared);
   }
 }

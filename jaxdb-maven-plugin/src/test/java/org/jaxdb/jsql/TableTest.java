@@ -23,6 +23,7 @@ import org.junit.Test;
 public class TableTest {
   @Test
   public void testAuto() {
+    final auto auto = new auto();
     for (final data.Table table : auto.getTables()) { // [A]
       assertEquals(table.getName(), auto.getTable(table.getName()).getName());
       for (final data.Column<?> column : table.getTable().getColumns()) { // [A]
@@ -33,6 +34,7 @@ public class TableTest {
 
   @Test
   public void testClassicModels() {
+    final classicmodels classicmodels = new classicmodels();
     for (final data.Table table : classicmodels.getTables()) { // [A]
       assertEquals(table.getName(), classicmodels.getTable(table.getName()).getName());
       for (final data.Column<?> column : table.getColumns()) { // [A]
@@ -43,6 +45,7 @@ public class TableTest {
 
   @Test
   public void testTypes() {
+    final types types = new types();
     for (final data.Table table : types.getTables()) { // [A]
       assertEquals(table.getName(), types.getTable(table.getName()).getName());
       for (final data.Column<?> column : table.getColumns()) { // [A]
@@ -53,6 +56,7 @@ public class TableTest {
 
   @Test
   public void testWorld() {
+    final world world = new world();
     for (final data.Table table : world.getTables()) { // [A]
       assertEquals(table.getName(), world.getTable(table.getName()).getName());
       for (final data.Column<?> column : table.getColumns()) { // [A]

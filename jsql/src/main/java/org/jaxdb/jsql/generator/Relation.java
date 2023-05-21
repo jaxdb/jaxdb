@@ -115,13 +115,13 @@ class Relation {
       return "";
 
     return
-      "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      return " + declarationName + "." + cacheMapFieldName + ".select(" + rangeArgs + ");" +
+      "\n    public " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      return " + tableMeta.classCase + "()." + cacheMapFieldName + ".select(" + rangeArgs + ");" +
       "\n    }\n";
   }
 
   String keyClause() {
-    return keyClause(cacheIndexFieldName);
+    return keyClause(tableMeta.classCase + "()." + cacheIndexFieldName);
   }
 
   String keyClause(final String cacheColumnsName) {
@@ -151,15 +151,15 @@ class Relation {
     keyClauseColumnAssignments(keyClauseColumnAssignments);
     final String returnType = indexType.isUnique ? declarationName : indexType.getInterfaceClass(declarationName);
     return
-      "\n    private static " + data.Column.class.getCanonicalName() + "<?>[] " + cacheIndexFieldName + ";" +
-      "\n    static " + indexType.getConcreteClass(declarationName) + " " + cacheMapFieldName + ";\n" +
-      "\n    public static " + returnType + " " + cacheMethodName + "(" + keyParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      return " + declarationName + "." + cacheMapFieldName + ".select(" + keyArgs + ");" +
+      "\n    private " + data.Column.class.getCanonicalName() + "<?>[] " + cacheIndexFieldName + ";" +
+      "\n    " + indexType.getConcreteClass(declarationName) + " " + cacheMapFieldName + ";\n" +
+      "\n    public " + returnType + " " + cacheMethodName + "(" + keyParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      return " + tableMeta.classCase + "()." + cacheMapFieldName + ".select(" + keyArgs + ");" +
       "\n    }\n" +
       writeGetRangeMethod(returnType) +
-      "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "() throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      " + declarationName + "." + cacheMapFieldName + ".selectAll();" +
-      "\n      return " + declarationName + "." + cacheMapFieldName + ";" +
+      "\n    public " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "() throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      " + tableMeta.classCase + "()." + cacheMapFieldName + ".selectAll();" +
+      "\n      return " + tableMeta.classCase + "()." + cacheMapFieldName + ";" +
       "\n    }";
   }
 
@@ -169,19 +169,19 @@ class Relation {
 
   String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
     final String method = indexType.isUnique ? "superPut" : "superAdd";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheMapFieldName + "." + method + "(" + keyClause().replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
+    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableMeta.classCase + "()." + cacheMapFieldName + "." + method + "(" + keyClause().replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
   }
 
   String writeCacheSelectAll() {
-    return declarationName + "." + cacheMapFieldName + ".addKey(" + data.Key.class.getCanonicalName() + ".ALL);";
+    return tableMeta.classCase + "()." + cacheMapFieldName + ".addKey(" + data.Key.class.getCanonicalName() + ".ALL);";
   }
 
   String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {
-    return declarationName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
+    return tableMeta.classCase + "()." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
   }
 
   String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final CurOld curOld, final CurOld curOld2) {
-//    return declarationName + "." + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ");";
+//    return tableMeta.classCase + "()." + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ");";
     return null;
   }
 

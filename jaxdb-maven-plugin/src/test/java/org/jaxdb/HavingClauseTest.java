@@ -35,7 +35,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,9 +52,8 @@ public abstract class HavingClauseTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testPrimary(final Transaction transaction) throws IOException, SQLException {
+  public void testPrimary(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -70,9 +68,8 @@ public abstract class HavingClauseTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testNotPrimary(final Transaction transaction) throws IOException, SQLException {
+  public void testNotPrimary(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -87,10 +84,9 @@ public abstract class HavingClauseTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void test(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+  public void test(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.new Product();
     final data.DECIMAL d = p.msrp.clone();
     try (final RowIterator<data.DECIMAL> rows =
 

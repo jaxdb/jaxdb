@@ -27,6 +27,7 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.classicmodels.Country;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -35,7 +36,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,9 +53,8 @@ public abstract class SetFunctionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSetFunctions(final Transaction transaction) throws IOException, SQLException {
+  public void testSetFunctions(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends data.Column<?>> rows =
 
@@ -70,7 +69,7 @@ public abstract class SetFunctionTest {
       assertTrue(rows.nextRow());
       assertEquals(24367857008L, rows.nextEntity().get());
       assertEquals("White Plains", rows.nextEntity().get());
-      assertEquals(classicmodels.Country.AU, rows.nextEntity().get());
+      assertEquals(Country.AU, rows.nextEntity().get());
       assertEquals(21003, rows.nextEntity().get());
       assertFalse(rows.nextRow());
     }

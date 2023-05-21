@@ -35,7 +35,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,9 +52,8 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testInList(final Transaction transaction) throws IOException, SQLException {
+  public void testInList(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -80,9 +78,8 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testNotInList(final Transaction transaction) throws IOException, SQLException {
+  public void testNotInList(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -107,9 +104,8 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testInSubQuery(final Transaction transaction) throws IOException, SQLException {
+  public void testInSubQuery(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -134,9 +130,8 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testNotInSubQuery(final Transaction transaction) throws IOException, SQLException {
+  public void testNotInSubQuery(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 

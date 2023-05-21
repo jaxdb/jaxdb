@@ -32,22 +32,22 @@ import org.slf4j.LoggerFactory;
 
 public class Database {
   private static final Logger logger = LoggerFactory.getLogger(Database.class);
-  static final ConcurrentHashMap<Class<? extends Schema>,ConcurrentNullHashMap<String,Database>> schemaClassToLocalGlobal = new ConcurrentHashMap<>();
+  static final ConcurrentHashMap<Schema,ConcurrentNullHashMap<String,Database>> schemaClassToLocalGlobal = new ConcurrentHashMap<>();
 
-  public static Database get(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    ConcurrentNullHashMap<String,Database> localGlobal = schemaClassToLocalGlobal.get(schemaClass);
+  public static Database get(final Schema schema, final String dataSourceId) {
+    ConcurrentNullHashMap<String,Database> localGlobal = schemaClassToLocalGlobal.get(schema);
     Database database;
     if (localGlobal == null)
-      schemaClassToLocalGlobal.put(schemaClass, localGlobal = new ConcurrentNullHashMap<>(2));
+      schemaClassToLocalGlobal.put(schema, localGlobal = new ConcurrentNullHashMap<>(2));
     else if ((database = localGlobal.get(dataSourceId)) != null)
       return database;
 
-    localGlobal.put(dataSourceId, database = new Database(schemaClass, dataSourceId));
+    localGlobal.put(dataSourceId, database = new Database(schema, dataSourceId));
     return database;
   }
 
-  public static Database get(final Class<? extends Schema> schemaClass) {
-    return get(schemaClass, null);
+  public static Database get(final Schema schema) {
+    return get(schema, null);
   }
 
   private static ConnectionFactory toConnectionFactory(final DataSource dataSource) {
@@ -61,8 +61,8 @@ public class Database {
     };
   }
 
-  static Connector getConnector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    final ConcurrentNullHashMap<String,Database> dataSourceIdToConnector = schemaClassToLocalGlobal.get(schemaClass);
+  static Connector getConnector(final Schema schema, final String dataSourceId) {
+    final ConcurrentNullHashMap<String,Database> dataSourceIdToConnector = schemaClassToLocalGlobal.get(schema);
     if (dataSourceIdToConnector == null)
       return null;
 
@@ -70,12 +70,12 @@ public class Database {
     return database == null ? null : database.getConnector();
   }
 
-  final Class<? extends Schema> schemaClass;
+  final Schema schema;
   final String dataSourceId;
   private Connector connector;
 
-  Database(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    this.schemaClass = schemaClass;
+  Database(final Schema schema, final String dataSourceId) {
+    this.schema = schema;
     this.dataSourceId = dataSourceId;
   }
 
@@ -84,12 +84,12 @@ public class Database {
   }
 
   private Connector connect(final ConnectionFactory connectionFactory, final boolean isPrepared) {
-    logm(logger, TRACE, "%?.connect", "%s,%s,%b", this, schemaClass, connectionFactory, isPrepared);
+    logm(logger, TRACE, "%?.connect", "%s,%s,%b", this, schema, connectionFactory, isPrepared);
     return connector == null ? connector = newConnector(connectionFactory, isPrepared) : connector;
   }
 
   Connector newConnector(final ConnectionFactory connectionFactory, final boolean isPrepared) {
-    return new Connector(schemaClass, dataSourceId, connectionFactory, isPrepared);
+    return new Connector(schema, dataSourceId, connectionFactory, isPrepared);
   }
 
   public Connector connect(final ConnectionFactory connectionFactory) {

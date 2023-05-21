@@ -34,7 +34,6 @@ import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libj.util.concurrent.ThreadFactoryBuilder;
@@ -58,40 +57,39 @@ public abstract class CachingLoadTest extends NotificationTest {
   private static final int cardinality = 10;
   private static final int iterations = 100;
 
-  Integer[] insert(final Connector connector) {
+  Integer[] insert(final caching caching, final Connector connector) {
     final AtomicInteger count = new AtomicInteger();
     final Integer[] ids = new Integer[cardinality];
     for (int c = 0; c < cardinality; ++c) { // [N]
       final int id = ids[c] = c;
-      exec(() -> insertOne(id, count), count, connector);
-      exec(() -> insertOneOne(id, count), count, connector);
+      exec(() -> insertOne(caching, id, count), count, connector);
+      exec(() -> insertOneOne(caching, id, count), count, connector);
     }
 
     return ids;
   }
 
   @Test
-  @TestSchema(caching.class)
-  public void test(final Connector connector) throws Exception {
+  public void test(final caching caching, final Connector connector) throws Exception {
     final ExecutorService executor = Executors.newFixedThreadPool(iterations, new ThreadFactoryBuilder()
       .withUncaughtExceptionHandler(uncaughtExceptionHandler)
       .build());
 
-    final Integer[] ids = insert(connector);
+    final Integer[] ids = insert(caching, connector);
 
     for (int i = 0; i < iterations; ++i) { // [N]
       final int j = i % 3;
       if (j == 0) {
         executor.execute(Throwing.rethrow(() -> {
           final AtomicInteger count = new AtomicInteger();
-          final caching.OneOneId oo = new caching.OneOneId();
+          final caching.OneOneId oo = caching.new OneOneId();
           exec(() -> update(oo, IN(oo.oneId, ids), count), count, connector);
         }));
       }
       else if (j == 1) {
         executor.execute(Throwing.rethrow(() -> {
           for (final Integer id : ids) { // [RA]
-            final caching.OneOneId oo = new caching.OneOneId();
+            final caching.OneOneId oo = caching.new OneOneId();
 
             final AtomicInteger count = new AtomicInteger();
             exec(() -> update(oo, EQ(oo.oneId, id), count), count, connector);
@@ -102,7 +100,7 @@ public abstract class CachingLoadTest extends NotificationTest {
         executor.execute(Throwing.rethrow(() -> {
           final AtomicInteger count = new AtomicInteger();
           exec(() -> {
-            final caching.OneOneId oo = new caching.OneOneId();
+            final caching.OneOneId oo = caching.new OneOneId();
             final Batch batch = new Batch();
             for (final Integer id : ids) // [RA]
               batch.addStatement(update(oo, EQ(oo.oneId, id), count));
@@ -117,13 +115,13 @@ public abstract class CachingLoadTest extends NotificationTest {
     executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 
     for (int id = 0; id < cardinality; ++id) { // [RA]
-      final caching.One o = caching.One.idToOne(id);
+      final caching.One o = caching.One().idToOne(id);
       assertEquals(id, 1 + iterations, o.id$OneOneId_oneId().version.getAsInt());
     }
   }
 
-  private static CONFLICT_ACTION_NOTIFY insertOne(final int id, final AtomicInteger count) {
-    final caching.One o = new caching.One();
+  private static CONFLICT_ACTION_NOTIFY insertOne(final caching caching, final int id, final AtomicInteger count) {
+    final caching.One o = caching.new One();
     o.id.set(id);
     o.idu.set(id);
     o.idx1.set(id);
@@ -131,8 +129,8 @@ public abstract class CachingLoadTest extends NotificationTest {
     return insert(o, count);
   }
 
-  private static CONFLICT_ACTION_NOTIFY insertOneOne(final int id, final AtomicInteger count) {
-    final caching.OneOneId oo = new caching.OneOneId();
+  private static CONFLICT_ACTION_NOTIFY insertOneOne(final caching caching, final int id, final AtomicInteger count) {
+    final caching.OneOneId oo = caching.new OneOneId();
     oo.oneId.set(id);
     return insert(oo, count);
   }

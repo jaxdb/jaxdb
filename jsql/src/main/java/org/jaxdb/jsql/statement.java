@@ -295,22 +295,22 @@ public final class statement {
 
     default Result execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), dataSourceId)), null, false, isolation);
+      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema(), dataSourceId)), null, false, isolation);
     }
 
     default Result execute(final String dataSourceId) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), dataSourceId)), null, false, null);
+      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema(), dataSourceId)), null, false, null);
     }
 
     default Result execute(final Transaction.Isolation isolation) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), null)), null, false, isolation);
+      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema(), null)), null, false, isolation);
     }
 
     default Result execute() throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), null)), null, false, null);
+      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema(), null)), null, false, null);
     }
 
     public interface Delete extends Modification {
@@ -404,25 +404,25 @@ public final class statement {
     @Override
     default NotifiableResult execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), dataSourceId)), null, false, isolation);
+      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema(), dataSourceId)), null, false, isolation);
     }
 
     @Override
     default NotifiableResult execute(final String dataSourceId) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), dataSourceId)), null, false, null);
+      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema(), dataSourceId)), null, false, null);
     }
 
     @Override
     default NotifiableResult execute(final Transaction.Isolation isolation) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), null)), null, false, isolation);
+      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema(), null)), null, false, isolation);
     }
 
     @Override
     default NotifiableResult execute() throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema().getClass(), null)), null, false, null);
+      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema(), null)), null, false, null);
     }
 
     public interface Delete extends statement.Modification.Delete, NotifiableModification {

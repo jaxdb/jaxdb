@@ -34,7 +34,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,10 +51,9 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testAll(final Transaction transaction) throws IOException, SQLException {
+  public void testAll(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
@@ -76,10 +74,9 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testAny(final Transaction transaction) throws IOException, SQLException {
+  public void testAny(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
@@ -100,10 +97,9 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSome(final Transaction transaction) throws IOException, SQLException {
+  public void testSome(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 

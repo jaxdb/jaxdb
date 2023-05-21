@@ -34,7 +34,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,10 +51,9 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testLimitPrimary(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+  public void testLimitPrimary(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.new Product();
     try (final RowIterator<classicmodels.Product> rows =
 
       SELECT(p).
@@ -71,10 +69,9 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLimit(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+  public void testLimit(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.new Product();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(p.msrp, p.price).
@@ -97,10 +94,9 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLimitOffset(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+  public void testLimitOffset(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.new Product();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(p.msrp, p.price).

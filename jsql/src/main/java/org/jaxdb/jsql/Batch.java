@@ -390,24 +390,24 @@ public class Batch implements statement.NotifiableModification.Delete, statement
   @Override
   public final NotifiableBatchResult execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
     final Schema schema = commands.get(0).getSchema();
-    return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), dataSourceId)), null, false, isolation);
+    return execute(schema, null, assertNotNull(Database.getConnector(schema, dataSourceId)), null, false, isolation);
   }
 
   @Override
   public final NotifiableBatchResult execute(final String dataSourceId) throws IOException, SQLException {
     final Schema schema = commands.get(0).getSchema();
-    return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), dataSourceId)), null, false, null);
+    return execute(schema, null, assertNotNull(Database.getConnector(schema, dataSourceId)), null, false, null);
   }
 
   @Override
   public final NotifiableBatchResult execute(final Transaction.Isolation isolation) throws IOException, SQLException {
     final Schema schema = commands.get(0).getSchema();
-    return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), null)), null, false, isolation);
+    return execute(schema, null, assertNotNull(Database.getConnector(schema, null)), null, false, isolation);
   }
 
   @Override
   public NotifiableBatchResult execute() throws IOException, SQLException {
     final Schema schema = commands.get(0).getSchema();
-    return execute(schema, null, assertNotNull(Database.getConnector(schema.getClass(), null)), null, false, null);
+    return execute(schema, null, assertNotNull(Database.getConnector(schema, null)), null, false, null);
   }
 }

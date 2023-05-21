@@ -35,7 +35,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,9 +52,8 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBetweenPrimary1(final Transaction transaction) throws IOException, SQLException {
+  public void testBetweenPrimary1(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Payment p = classicmodels.Payment();
     try (final RowIterator<classicmodels.Payment> rows =
 
@@ -74,10 +72,9 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBetweenPrimary2(final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Payment p = new classicmodels.Payment();
+  public void testBetweenPrimary2(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Payment p = classicmodels.new Payment();
     try (final RowIterator<classicmodels.Payment> rows =
 
       SELECT(p).
@@ -95,9 +92,8 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBetween1Wrapped(final Transaction transaction) throws IOException, SQLException {
+  public void testBetween1Wrapped(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -113,9 +109,8 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testBetween1(final Transaction transaction) throws IOException, SQLException {
+  public void testBetween1(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -131,9 +126,8 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testBetween2(final Transaction transaction) throws IOException, SQLException {
+  public void testBetween2(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -152,9 +146,8 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testBetween3(final Transaction transaction) throws IOException, SQLException {
+  public void testBetween3(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -168,9 +161,8 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @TestSchema(classicmodels.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testBetween4(final Transaction transaction) throws IOException, SQLException {
+  public void testBetween4(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 

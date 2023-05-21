@@ -34,6 +34,7 @@ import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
+import org.jaxdb.jsql.types.$AbstractType.EnumType;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -42,7 +43,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Test;
@@ -100,11 +100,7 @@ public abstract class InsertTest {
     }
   }
 
-  static final types.Type T1 = new types.Type();
-  static final types.Type T2 = new types.Type();
-  static final types.Type T3 = new types.Type();
-
-  public static void init(final types.Type t1, final types.Type t2, final types.Type t3) {
+  public void init(final types.Type t1, final types.Type t2, final types.Type t3) {
     t1.bigintType.set(8493L);
     t1.binaryType.set("abc".getBytes());
     t1.blobType.set(new BlobStream("abc"));
@@ -115,7 +111,7 @@ public abstract class InsertTest {
     t1.dateType.set(LocalDate.now());
     t1.decimalType.set(new BigDecimal("12.34"));
     t1.doubleType.set(32d);
-    t1.enumType.set(types.Type.EnumType.FOUR);
+    t1.enumType.set(EnumType.FOUR);
     t1.floatType.set(42f);
     t1.intType.set(2345);
     t1.smallintType.set((short)32432);
@@ -132,7 +128,7 @@ public abstract class InsertTest {
     t2.dateType.set(LocalDate.now());
     t2.decimalType.set(new BigDecimal("12.334"));
     t2.doubleType.set(322d);
-    t2.enumType.set(types.Type.EnumType.FOUR);
+    t2.enumType.set(EnumType.FOUR);
     t2.floatType.set(32f);
     t2.intType.set(1345);
     t2.smallintType.set((short)22432);
@@ -146,12 +142,24 @@ public abstract class InsertTest {
     t3.timeType.set(LocalTime.now());
   }
 
-  final types.Type t1 = T1.clone();
-  final types.Type t2 = T2.clone();
-  final types.Type t3 = T3.clone();
+  types.Type T1;
+  types.Type T2;
+  types.Type T3;
+
+  types.Type t1;
+  types.Type t2;
+  types.Type t3;
 
   @Before
-  public void before() {
+  public void before(final types types) {
+    T1 = types.new Type();
+    T2 = types.new Type();
+    T3 = types.new Type();
+
+    t1 = T1.clone();
+    t2 = T2.clone();
+    t3 = T3.clone();
+
     init(t1, t2, t3);
   }
 
@@ -176,19 +184,17 @@ public abstract class InsertTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertEntity(final Transaction transaction) throws IOException, SQLException {
+  public void testInsertEntity(final types types, final Transaction transaction) throws IOException, SQLException {
     testInsertEntity(transaction, t1);
     testInsertEntity(transaction, t2);
     testInsertEntity(transaction, t3);
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testInsertColumns(final Transaction transaction) throws IOException, SQLException {
-    final types.Type t3 = new types.Type();
+  public void testInsertColumns(final types types, final Transaction transaction) throws IOException, SQLException {
+    final types.Type t3 = types.new Type();
     t3.bigintType.set(8493L);
     t3.charType.set("hello");
     t3.doubleType.set(32d);
@@ -215,9 +221,8 @@ public abstract class InsertTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertBatch(final Transaction transaction) throws IOException, SQLException {
+  public void testInsertBatch(final types types, final Transaction transaction) throws IOException, SQLException {
     final DbVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DbVendor.ORACLE;
     final Batch batch = new Batch();
@@ -245,11 +250,10 @@ public abstract class InsertTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  public void testInsertSelectIntoTable(final Transaction transaction) throws IOException, SQLException {
-    final types.Backup b = new types.Backup();
+  public void testInsertSelectIntoTable(final types types, final Transaction transaction) throws IOException, SQLException {
+    final types.Backup b = types.new Backup();
 
     DELETE(b)
       .execute(transaction);
@@ -267,13 +271,12 @@ public abstract class InsertTest {
   }
 
   @Test
-  @TestSchema(types.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInsertSelectIntoColumns(final Transaction transaction) throws IOException, SQLException {
+  public void testInsertSelectIntoColumns(final types types, final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
-    final types.Type t1 = new types.Type();
-    final types.Type t2 = new types.Type();
-    final types.Type t3 = new types.Type();
+    final types.Type t1 = types.new Type();
+    final types.Type t2 = types.new Type();
+    final types.Type t3 = types.new Type();
 
     DELETE(b)
       .execute(transaction);

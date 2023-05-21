@@ -143,7 +143,7 @@ class SchemaManifest {
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
-    out.append("\n  private static final ").append(data.Table.class.getCanonicalName()).append("[] tables = {");
+    out.append("\n  private final ").append(data.Table.class.getCanonicalName()).append("[] tables = {");
     for (int i = 0, i$ = sortedTables.size(); i < i$; ++i) // [RA]
       getClassNameOfTable(out, sortedTables.get(i)).append("(), ");
 
@@ -151,26 +151,28 @@ class SchemaManifest {
     out.setCharAt(out.length() - 1, ';');
     out.append('\n');
 
-    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append("[] getTables() {");
+    out.append("\n  @").append(Override.class.getName());
+    out.append("\n  public ").append(data.Table.class.getCanonicalName()).append("[] getTables() {");
     out.append("\n    return tables;");
     out.append("\n  }\n");
 
-    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) {");
+    out.append("\n  @").append(Override.class.getName());
+    out.append("\n  public ").append(data.Table.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) {");
     out.append("\n    final int index = ").append(Arrays.class.getName()).append(".binarySearch(names, name);");
     out.append("\n    return index < 0 ? null : tables[index];");
     out.append("\n  }\n");
 
-    out.append("\n  private static final ").append(schemaClassSimpleName).append(" _schema$ = new ").append(schemaClassSimpleName).append("();\n");
-
-    out.append("\n  static ").append(schemaClassSimpleName).append(" getSchema() {");
-    out.append("\n    return _schema$;");
+    out.append("\n  @").append(Override.class.getName());
+    out.append("\n  public void setDefaultQueryConfig(final ").append(QueryConfig.class.getName()).append(" queryConfig) {");
+    out.append("\n    defaultQueryConfig = queryConfig;");
     out.append("\n  }\n");
 
-    out.append("\n  public static void setDefaultQueryConfig(final ").append(QueryConfig.class.getName()).append(" queryConfig) {");
-    out.append("\n    _schema$.defaultQueryConfig = queryConfig;");
+    out.append("\n  @").append(Override.class.getName());
+    out.append("\n  public String getName() {");
+    out.append("\n    return \"").append(name).append("\";");
     out.append("\n  }\n");
 
-    out.append("\n  protected ").append(schemaClassSimpleName).append("() {");
+    out.append("\n  public ").append(schemaClassSimpleName).append("() {");
     out.append("\n  }");
 
     out.append("\n}");
@@ -189,6 +191,6 @@ class SchemaManifest {
   }
 
   StringBuilder getClassNameOfTable(final StringBuilder out, final Table table) {
-    return out.append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text(), '$'));
+    return out.append(Identifiers.toClassCase(table.getName$().text(), '$'));
   }
 }

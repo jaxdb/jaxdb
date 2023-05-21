@@ -30,7 +30,7 @@ import java.time.LocalTime;
 import java.util.function.Supplier;
 
 import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.types.AbstractType.EnumType;
+import org.jaxdb.jsql.types.$AbstractType.EnumType;
 import org.junit.Test;
 import org.libj.lang.ObjectUtil;
 

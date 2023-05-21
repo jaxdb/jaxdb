@@ -44,7 +44,7 @@ abstract class ForeignRelation extends Relation {
 
     final String cacheMethodNameForeign = Columns.getInstanceNameForCache(foreignName, referenceTable.classCase);
     this.cacheMapFieldNameForeign = "_" + cacheMethodNameForeign + "Map$";
-    this.cacheIndexFieldNameForeign = referenceTable.className + "._" + cacheMethodNameForeign + "Index$";
+    this.cacheIndexFieldNameForeign = referenceTable.classCase + "()._" + cacheMethodNameForeign + "Index$";
     this.declarationNameForeign = schemaClassName + "." + referenceTable.classCase;
   }
 
@@ -59,7 +59,7 @@ abstract class ForeignRelation extends Relation {
 
     final StringBuilder out = new StringBuilder();
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" {");
-    out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheMapFieldNameForeign).append(';');
+    out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.classCase).append("().").append(cacheMapFieldNameForeign).append(';');
     out.append("\n      return cache == null ? null : cache.superSelect(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
     out.append("\n    }");
     return out.toString();

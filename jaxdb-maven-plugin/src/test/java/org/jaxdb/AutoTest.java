@@ -37,7 +37,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.TestSchema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,10 +58,9 @@ public abstract class AutoTest {
   private static final int MIN_TERTIARY = 0;
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testCharUuid(final Transaction transaction) throws IOException, SQLException {
-    final auto.CharUuid a = new auto.CharUuid();
+  public void testCharUuid(final auto auto, final Transaction transaction) throws IOException, SQLException {
+    final auto.CharUuid a = auto.new CharUuid();
 
     INSERT(a)
       .execute(transaction);
@@ -82,10 +80,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testTinyintIncrement(final Transaction transaction) throws IOException, SQLException {
-    auto.TinyintIncrement a = new auto.TinyintIncrement();
+  public void testTinyintIncrement(final auto auto, final Transaction transaction) throws IOException, SQLException {
+    auto.TinyintIncrement a = auto.new TinyintIncrement();
 
     DELETE(a)
       .execute(transaction);
@@ -134,10 +131,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testSmallintIncrement(final Transaction transaction) throws IOException, SQLException {
-    auto.SmallintIncrement a = new auto.SmallintIncrement();
+  public void testSmallintIncrement(final auto auto, final Transaction transaction) throws IOException, SQLException {
+    auto.SmallintIncrement a = auto.new SmallintIncrement();
 
     DELETE(a)
       .execute(transaction);
@@ -186,10 +182,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testIntIncrement(final Transaction transaction) throws IOException, SQLException {
-    auto.IntIncrement a = new auto.IntIncrement();
+  public void testIntIncrement(final auto auto, final Transaction transaction) throws IOException, SQLException {
+    auto.IntIncrement a = auto.new IntIncrement();
 
     DELETE(a)
       .execute(transaction);
@@ -240,10 +235,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testIntTimestampMinutes(final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.IntTimestampMinutes a = new auto.IntTimestampMinutes();
+  public void testIntTimestampMinutes(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    auto.IntTimestampMinutes a = auto.new IntTimestampMinutes();
 
     DELETE(a)
       .execute(transaction);
@@ -299,10 +293,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testIntTimestampSeconds(final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.IntTimestampSeconds a = new auto.IntTimestampSeconds();
+  public void testIntTimestampSeconds(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    auto.IntTimestampSeconds a = auto.new IntTimestampSeconds();
 
     DELETE(a)
       .execute(transaction);
@@ -358,10 +351,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBigintIncrement(final Transaction transaction) throws IOException, SQLException {
-    auto.BigintIncrement a = new auto.BigintIncrement();
+  public void testBigintIncrement(final auto auto, final Transaction transaction) throws IOException, SQLException {
+    auto.BigintIncrement a = auto.new BigintIncrement();
 
     DELETE(a)
       .execute(transaction);
@@ -410,10 +402,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBigintTimestampMinutes(final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.BigintTimestampMinutes a = new auto.BigintTimestampMinutes();
+  public void testBigintTimestampMinutes(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    auto.BigintTimestampMinutes a = auto.new BigintTimestampMinutes();
 
     DELETE(a)
       .execute(transaction);
@@ -469,10 +460,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBigintTimestampSeconds(final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.BigintTimestampSeconds a = new auto.BigintTimestampSeconds();
+  public void testBigintTimestampSeconds(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    auto.BigintTimestampSeconds a = auto.new BigintTimestampSeconds();
 
     DELETE(a)
       .execute(transaction);
@@ -528,10 +518,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBigintTimestampMilliseconds(final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.BigintTimestampMilliseconds a = new auto.BigintTimestampMilliseconds();
+  public void testBigintTimestampMilliseconds(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    auto.BigintTimestampMilliseconds a = auto.new BigintTimestampMilliseconds();
 
     DELETE(a)
       .execute(transaction);
@@ -586,10 +575,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testTimeTimestamp(final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.TimeTimestamp a = new auto.TimeTimestamp();
+  public void testTimeTimestamp(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    auto.TimeTimestamp a = auto.new TimeTimestamp();
 
     DELETE(a)
       .execute(transaction);
@@ -644,10 +632,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testDateTimestamp(final Transaction transaction) throws IOException, SQLException {
-    auto.DateTimestamp a = new auto.DateTimestamp();
+  public void testDateTimestamp(final auto auto, final Transaction transaction) throws IOException, SQLException {
+    auto.DateTimestamp a = auto.new DateTimestamp();
 
     DELETE(a)
       .execute(transaction);
@@ -696,10 +683,9 @@ public abstract class AutoTest {
   }
 
   @Test
-  @TestSchema(auto.class)
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testDatetimeTimestamp(final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.DatetimeTimestamp a = new auto.DatetimeTimestamp();
+  public void testDatetimeTimestamp(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    auto.DatetimeTimestamp a = auto.new DatetimeTimestamp();
 
     DELETE(a)
       .execute(transaction);

@@ -47,7 +47,7 @@ public class Transaction implements AutoCloseable {
     }
   }
 
-  private final Class<? extends Schema> schemaClass;
+  private final Schema schema;
   private final String dataSourceId;
   private final Isolation isolation;
   private DbVendor vendor;
@@ -60,26 +60,26 @@ public class Transaction implements AutoCloseable {
 
   private Callbacks callbacks;
 
-  public Transaction(final Class<? extends Schema> schemaClass, final String dataSourceId, final Isolation isolation) {
-    this.schemaClass = assertNotNull(schemaClass);
+  public Transaction(final Schema schema, final String dataSourceId, final Isolation isolation) {
+    this.schema = assertNotNull(schema);
     this.dataSourceId = dataSourceId;
     this.isolation = isolation;
   }
 
-  public Transaction(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    this(schemaClass, dataSourceId, null);
+  public Transaction(final Schema schema, final String dataSourceId) {
+    this(schema, dataSourceId, null);
   }
 
-  public Transaction(final Class<? extends Schema> schemaClass, final Isolation isolation) {
-    this(schemaClass, null, isolation);
+  public Transaction(final Schema schema, final Isolation isolation) {
+    this(schema, null, isolation);
   }
 
-  public Transaction(final Class<? extends Schema> schemaClass) {
-    this(schemaClass, null, null);
+  public Transaction(final Schema schema) {
+    this(schema, null, null);
   }
 
   public Transaction(final Connector connector, final Isolation isolation) {
-    this(connector.getSchema().getClass(), connector.getDataSourceId(), isolation);
+    this(connector.getSchema(), connector.getDataSourceId(), isolation);
     this.connector = connector;
   }
 
@@ -87,8 +87,8 @@ public class Transaction implements AutoCloseable {
     this(connector, null);
   }
 
-  public Class<? extends Schema> getSchemaClass() {
-    return schemaClass;
+  public Schema getSchema() {
+    return schema;
   }
 
   public String getDataSourceId() {
@@ -118,7 +118,7 @@ public class Transaction implements AutoCloseable {
   }
 
   protected Connector getConnector() {
-    return connector == null ? connector = Database.getConnector(schemaClass, dataSourceId) : connector;
+    return connector == null ? connector = Database.getConnector(schema, dataSourceId) : connector;
   }
 
   protected void addCallbacks(final Callbacks callbacks) {

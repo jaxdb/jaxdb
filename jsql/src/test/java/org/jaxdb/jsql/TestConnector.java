@@ -38,8 +38,8 @@ public class TestConnector extends Connector {
     return true;
   }
 
-  protected TestConnector(final Class<? extends Schema> schemaClass, final String dataSourceId, final ConnectionFactory connectionFactory, final boolean isPrepared) {
-    super(schemaClass, dataSourceId, connectionFactory, isPrepared);
+  protected TestConnector(final Schema schema, final String dataSourceId, final ConnectionFactory connectionFactory, final boolean isPrepared) {
+    super(schema, dataSourceId, connectionFactory, isPrepared);
   }
 
   @Override
