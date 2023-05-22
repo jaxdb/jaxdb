@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -53,13 +53,13 @@ public abstract class QueryExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testNextRowNotCalled(final classicmodels classicmodels, final Transaction transaction) throws IOException {
-    final classicmodels.Office o = classicmodels.new Office();
+  public void testNextRowNotCalled(final Classicmodels classicmodels, final Transaction transaction) throws IOException {
+    final Classicmodels.Office o = classicmodels.new Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("CA");
 
-    try (final RowIterator<classicmodels.Office> rows =
+    try (final RowIterator<Classicmodels.Office> rows =
 
       SELECT(o)
         .execute(transaction)) {
@@ -70,7 +70,7 @@ public abstract class QueryExpressionTest {
     catch (final SQLException e) {
     }
 
-    try (final RowIterator<classicmodels.Office> rows =
+    try (final RowIterator<Classicmodels.Office> rows =
 
       SELECT(o)
         .execute(transaction)) {
@@ -84,12 +84,12 @@ public abstract class QueryExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testObjectSelectFound(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.new Office();
+  public void testObjectSelectFound(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.new Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("CA");
-    try (final RowIterator<classicmodels.Office> rows =
+    try (final RowIterator<Classicmodels.Office> rows =
 
       SELECT(o)
         .execute(transaction)) {
@@ -105,12 +105,12 @@ public abstract class QueryExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testObjectSelectNotFound(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.new Office();
+  public void testObjectSelectNotFound(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.new Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("");
-    try (final RowIterator<classicmodels.Office> rows =
+    try (final RowIterator<Classicmodels.Office> rows =
 
       SELECT(o)
         .execute(transaction)) {
@@ -121,9 +121,9 @@ public abstract class QueryExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testFrom(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.new Office();
-    try (final RowIterator<classicmodels.Office> rows =
+  public void testFrom(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.new Office();
+    try (final RowIterator<Classicmodels.Office> rows =
 
       SELECT(o).
       FROM(o)
@@ -141,10 +141,10 @@ public abstract class QueryExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testFromMultiple(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.new Office();
-    final classicmodels.Customer c = classicmodels.new Customer();
-    try (final RowIterator<classicmodels.Address> rows =
+  public void testFromMultiple(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.new Office();
+    final Classicmodels.Customer c = classicmodels.new Customer();
+    try (final RowIterator<Classicmodels.Address> rows =
 
       SELECT(o, c).
       FROM(o, c)
@@ -160,8 +160,8 @@ public abstract class QueryExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testWhere(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  public void testWhere(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<? extends data.Column<?>> rows =
 
       SELECT(o.address1, o.latitude).

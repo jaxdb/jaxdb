@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -52,9 +52,9 @@ public abstract class LikePredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testLikeSimple(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<classicmodels.Product> rows =
+  public void testLikeSimple(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product();
+    try (final RowIterator<Classicmodels.Product> rows =
 
       SELECT(p).
       FROM(p).
@@ -70,9 +70,9 @@ public abstract class LikePredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testLikePrimary(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<classicmodels.Product> rows =
+  public void testLikePrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product();
+    try (final RowIterator<Classicmodels.Product> rows =
 
       SELECT(p).
       FROM(p).
@@ -90,8 +90,8 @@ public abstract class LikePredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testLikeComplex(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
+  public void testLikeComplex(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(OR(

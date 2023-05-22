@@ -26,8 +26,8 @@ import org.jaxdb.jsql.DML.SUM;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.classicmodels.Country;
+import org.jaxdb.jsql.Classicmodels;
+import org.jaxdb.jsql.Classicmodels.Country;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -54,8 +54,8 @@ public abstract class SetFunctionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSetFunctions(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testSetFunctions(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends data.Column<?>> rows =
 
       SELECT(

@@ -42,7 +42,7 @@ import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Notification;
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.DBTestRunner.TestSpec;
@@ -83,11 +83,11 @@ public abstract class NotifierTest {
   private final HashMap<Integer,data.Table> post = new HashMap<>();
   private final HashMap<Integer,Integer> expectedChecks = new HashMap<>();
 
-  private static void setPre(final types.Type t) {
+  private static void setPre(final Types.Type t) {
     pre.put(t.id.get(), t);
   }
 
-  private void checkPre(final Action action, final types.Type t) {
+  private void checkPre(final Action action, final Types.Type t) {
     final String message = action + "," + t.getName() + "," + t.id.get();
     final data.Table e = pre.get(t.id.get());
     assertNotNull(message, e);
@@ -97,7 +97,7 @@ public abstract class NotifierTest {
     System.err.println("[OK] checkPre(" + message + ")");
   }
 
-  private void checkPost(final types.Type t) {
+  private void checkPost(final Types.Type t) {
     assertEquals(t, post.remove(t.id.get()));
   }
 
@@ -112,7 +112,7 @@ public abstract class NotifierTest {
   @Test
   @TestSpec(order = 0)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void setUp(final types types, final Connector connector, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  public void setUp(final Types types, final Connector connector, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.err.flush();
@@ -127,7 +127,7 @@ public abstract class NotifierTest {
 
   private static int run = 1;
 
-  private class Handler<T extends types.Type> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.DeleteListener<T> {
+  private class Handler<T extends Types.Type> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.DeleteListener<T> {
     private final String calledFrom;
     private final Vendor vendor;
 
@@ -165,7 +165,7 @@ public abstract class NotifierTest {
   @TestSpec(order = 1)
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testFast(final types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+  public void testFast(final Types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast0", vendor), queue, types.Type());
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast1", vendor), queue, types.Type());
@@ -178,8 +178,8 @@ public abstract class NotifierTest {
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast8", vendor), queue, types.Type());
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast9", vendor), queue, types.Type());
 
-    types.Type t = types.Type();
-    final types.Type[] inserts = new types.Type[count];
+    Types.Type t = types.Type();
+    final Types.Type[] inserts = new Types.Type[count];
     for (int id = 0; id < count; ++id) { // [N]
       inserts[id] = t = types.new Type();
       t.id.set(NotifierTest.id + 50 + id);
@@ -198,7 +198,7 @@ public abstract class NotifierTest {
 
     for (int i = 0; i < 10; ++i) { // [N]
       final int value = r.nextInt();
-      pre.values().forEach(c -> ((types.Type)c).intType.set(value));
+      pre.values().forEach(c -> ((Types.Type)c).intType.set(value));
 
       UPDATE(t).
       SET(t.intType, value)
@@ -215,13 +215,13 @@ public abstract class NotifierTest {
   @Test
   @TestSpec(order = 2, cardinality = 3)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testMulti(final types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+  public void testMulti(final Types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testMulti", vendor), queue, types.Type());
 
     final int id = NotifierTest.id + 2;
 
-    final types.Type t = types.new Type();
+    final Types.Type t = types.new Type();
 
     t.id.set(id);
     t.tinyintType.set((byte)48);
@@ -263,13 +263,13 @@ public abstract class NotifierTest {
   @Test
   @TestSpec(order = 3)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testInsert(final types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+  public void testInsert(final Types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
     connector.addNotificationListener(INSERT, new Handler<>("testInsert", null), queue, types.Type());
 
     final int id = NotifierTest.id + 3;
 
-    final types.Type t = types.new Type();
+    final Types.Type t = types.new Type();
 
     t.id.set(id);
     t.tinyintType.set((byte)47);
@@ -291,13 +291,13 @@ public abstract class NotifierTest {
   @Test
   @TestSpec(order = 4)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testUpdate(final types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+  public void testUpdate(final Types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
     connector.addNotificationListener(INSERT, UPDATE, new Handler<>("testUpdate", null), queue, types.Type());
 
     final int id = NotifierTest.id + 4;
 
-    final types.Type t = types.new Type();
+    final Types.Type t = types.new Type();
     t.id.set(id);
 
     t.tinyintType.set((byte)48);
@@ -329,13 +329,13 @@ public abstract class NotifierTest {
   @Test
   @TestSpec(order = 5)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testDelete(final types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+  public void testDelete(final Types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
     connector.addNotificationListener(INSERT, DELETE, new Handler<>("testDelete", null), queue, types.Type());
 
     final int id = NotifierTest.id + 5;
 
-    final types.Type t = types.new Type();
+    final Types.Type t = types.new Type();
 
     t.id.set(id);
     t.tinyintType.set((byte)48);
@@ -365,11 +365,11 @@ public abstract class NotifierTest {
   @Test
   @TestSpec(order = 6)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testRemove(final types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+  public void testRemove(final Types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     pre.clear();
     connector.removeNotificationListeners(DELETE);
 
-    final types.Type t = types.new Type();
+    final Types.Type t = types.new Type();
 
     DELETE(t).
     WHERE(BETWEEN(t.id, id, id + count))
@@ -405,13 +405,13 @@ public abstract class NotifierTest {
   @Test
   @TestSpec(order = 7)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testAddAgain(final types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+  public void testAddAgain(final Types types, final Connector connector, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
     connector.addNotificationListener(INSERT, new Handler<>("testAddAgain", null), queue, types.Type());
 
     final int id = NotifierTest.id + 7;
 
-    final types.Type t = types.new Type();
+    final Types.Type t = types.new Type();
 
     t.id.set(id);
     t.tinyintType.set((byte)47);
@@ -433,8 +433,8 @@ public abstract class NotifierTest {
   @Test
   @TestSpec(order = 8)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void cleanUp(final types types, final Connector connector) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void cleanUp(final Types types, final Connector connector) throws IOException, SQLException {
+    final Types.Type t = types.Type();
 
     DELETE(t).
     WHERE(BETWEEN(t.id, id, id + 200))

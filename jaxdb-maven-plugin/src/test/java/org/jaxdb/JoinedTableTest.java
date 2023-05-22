@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -52,9 +52,9 @@ public abstract class JoinedTableTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCrossJoin(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testCrossJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).
@@ -69,9 +69,9 @@ public abstract class JoinedTableTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testNaturalJoin(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testNaturalJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).
@@ -86,10 +86,10 @@ public abstract class JoinedTableTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testInnerJoin(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Employee e = classicmodels.Employee();
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testInnerJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Employee e = classicmodels.Employee();
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).
@@ -105,9 +105,9 @@ public abstract class JoinedTableTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testLeftOuterJoin(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testLeftOuterJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).
@@ -123,9 +123,9 @@ public abstract class JoinedTableTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
-  public void testRightOuterJoin(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testRightOuterJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).
@@ -141,9 +141,9 @@ public abstract class JoinedTableTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported({Derby.class, SQLite.class, MySQL.class})
-  public void testFullOuterJoin(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testFullOuterJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).

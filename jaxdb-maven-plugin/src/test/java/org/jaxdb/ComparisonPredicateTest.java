@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -52,8 +52,8 @@ public abstract class ComparisonPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLt(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
+  public void testLt(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -77,8 +77,8 @@ public abstract class ComparisonPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLte(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testLte(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -102,8 +102,8 @@ public abstract class ComparisonPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testEq(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
+  public void testEq(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -127,8 +127,8 @@ public abstract class ComparisonPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testNe(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
+  public void testNe(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -152,8 +152,8 @@ public abstract class ComparisonPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testGt(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
+  public void testGt(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -177,8 +177,8 @@ public abstract class ComparisonPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testGte(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
+  public void testGte(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(

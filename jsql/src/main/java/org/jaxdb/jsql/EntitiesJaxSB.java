@@ -84,7 +84,7 @@ final class EntitiesJaxSB {
       if (!iterator.hasNext())
         return new data.Table[0];
 
-      final Schema schema = (Schema)Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id())).getConstructor().newInstance();
+      final Schema schema = (Schema)Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toClassCase(database.id())).getConstructor().newInstance();
       final List<data.Table> entities = new ArrayList<>();
       while (iterator.hasNext())
         entities.add(toEntity(schema, iterator.next()));

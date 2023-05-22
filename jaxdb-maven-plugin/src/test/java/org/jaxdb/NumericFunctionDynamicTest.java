@@ -29,7 +29,7 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -69,13 +69,13 @@ public abstract class NumericFunctionDynamicTest {
     return row;
   }
 
-  private void testUpdateRoundN(final types types, final Transaction transaction, final int n) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  private void testUpdateRoundN(final Types types, final Transaction transaction, final int n) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(ROUND(t.tinyintType, n)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(ROUND(t.smallintType, n)).AS.SMALLINT(t.smallintType.precision()));
@@ -101,25 +101,25 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testUpdateRound0(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testUpdateRound0(final Types types, final Transaction transaction) throws IOException, SQLException {
     testUpdateRoundN(types, transaction, 0);
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testUpdateRound1(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testUpdateRound1(final Types types, final Transaction transaction) throws IOException, SQLException {
     testUpdateRoundN(types, transaction, 1);
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testSign(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  public void testSign(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(SIGN(t.tinyintType));
     t.smallintType.set(CAST(SIGN(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -145,13 +145,13 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testFloor(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  public void testFloor(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(FLOOR(t.tinyintType));
     t.smallintType.set(FLOOR(t.smallintType));
@@ -177,13 +177,13 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testCeil(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  public void testCeil(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CEIL(t.tinyintType));
     t.smallintType.set(CEIL(t.smallintType));
@@ -209,8 +209,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testSqrt(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testSqrt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -225,7 +225,7 @@ public abstract class NumericFunctionDynamicTest {
         GTE(t.decimalType, 0)))
           .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(SQRT(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(SQRT(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -251,8 +251,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testDegrees(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testDegrees(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -267,7 +267,7 @@ public abstract class NumericFunctionDynamicTest {
         NE(t.decimalType, 0)))
           .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(DEGREES(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(DEGREES(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -293,8 +293,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testRadians(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testRadians(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -309,7 +309,7 @@ public abstract class NumericFunctionDynamicTest {
         NE(t.decimalType, 0)))
           .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(RADIANS(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(RADIANS(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -335,13 +335,13 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testSin(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  public void testSin(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(SIN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(SIN(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -367,8 +367,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testAsin(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testAsin(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -378,7 +378,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 1)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(ASIN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -518,13 +518,13 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testCos(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  public void testCos(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(COS(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(COS(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -550,8 +550,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testAcos(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testAcos(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -561,7 +561,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 1)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(ACOS(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -701,13 +701,13 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testTan(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  public void testTan(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(TAN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(TAN(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -733,13 +733,13 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testAtan(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  public void testAtan(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(ATAN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(ATAN(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -763,13 +763,13 @@ public abstract class NumericFunctionDynamicTest {
     assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.atan(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-  private void testMod(final types types, final Transaction transaction, final int integer) throws IOException, SQLException {
-    final types.Type t = getNthRow(rowNum++,
+  private void testMod(final Types types, final Transaction transaction, final int integer) throws IOException, SQLException {
+    final Types.Type t = getNthRow(rowNum++,
 
       SELECT(types.Type())
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(MOD(t.tinyintType, integer)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(MOD(t.smallintType, integer)).AS.SMALLINT(t.smallintType.precision()));
@@ -795,20 +795,20 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testModIntPos(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testModIntPos(final Types types, final Transaction transaction) throws IOException, SQLException {
     testMod(types, transaction, 3);
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testModIntNeg(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testModIntNeg(final Types types, final Transaction transaction) throws IOException, SQLException {
     testMod(types, transaction, -3);
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testModX(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testModX(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -823,7 +823,7 @@ public abstract class NumericFunctionDynamicTest {
         NE(t.decimalType, 0)))
           .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(MOD(t.tinyintType, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(MOD(t.smallintType, t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -849,8 +849,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testExp(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testExp(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -860,7 +860,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 1)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(EXP(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -998,8 +998,8 @@ public abstract class NumericFunctionDynamicTest {
     assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.exp(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-  private void testPow(final types types, final Transaction transaction, final int integer) throws IOException, SQLException {
-    types.Type t = types.Type();
+  private void testPow(final Types types, final Transaction transaction, final int integer) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1010,7 +1010,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 1)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(POW(t.tinyintType, integer)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -1156,18 +1156,18 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testPowIntPow(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testPowIntPow(final Types types, final Transaction transaction) throws IOException, SQLException {
     testPow(types, transaction, 3);
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testPowIntNeg(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testPowIntNeg(final Types types, final Transaction transaction) throws IOException, SQLException {
     testPow(types, transaction, -3);
   }
 
-  private void testPow2(final types types, final Transaction transaction, final double value) throws IOException, SQLException {
-    types.Type t = types.Type();
+  private void testPow2(final Types types, final Transaction transaction, final double value) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1178,7 +1178,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 1)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(POW(value, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -1324,14 +1324,14 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testPow3X(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testPow3X(final Types types, final Transaction transaction) throws IOException, SQLException {
     testPow2(types, transaction, .2);
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testPowXX(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testPowXX(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1341,7 +1341,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 1)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(POW(t.tinyintType, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -1481,8 +1481,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLogX3(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testLogX3(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1492,7 +1492,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 10)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(LOG(t.tinyintType, 3)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -1632,8 +1632,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLog3X(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testLog3X(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1643,7 +1643,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 10)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(LOG(3, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -1783,8 +1783,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLogXX(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testLogXX(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1794,7 +1794,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 10)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(LOG(t.tinyintType, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -1934,8 +1934,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLn(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testLn(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1945,7 +1945,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 10)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(LN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -2085,8 +2085,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLog2(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testLog2(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2096,7 +2096,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 10)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(LOG2(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
@@ -2237,8 +2237,8 @@ public abstract class NumericFunctionDynamicTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testLog10(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testLog10(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2248,7 +2248,7 @@ public abstract class NumericFunctionDynamicTest {
         LTE(t.tinyintType, 10)))
           .execute(transaction));
 
-    types.Type clone = t.clone();
+    Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(LOG10(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 

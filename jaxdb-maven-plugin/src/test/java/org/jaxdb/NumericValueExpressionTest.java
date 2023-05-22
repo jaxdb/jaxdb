@@ -28,10 +28,10 @@ import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
-import org.jaxdb.jsql.world;
+import org.jaxdb.jsql.Types;
+import org.jaxdb.jsql.World;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -58,8 +58,8 @@ public abstract class NumericValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void test(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
+  public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product();
     final data.BIGINT b = new data.BIGINT();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -100,8 +100,8 @@ public abstract class NumericValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testAdd(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testAdd(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(0,
 
       SELECT(t).
@@ -116,7 +116,7 @@ public abstract class NumericValueExpressionTest {
         LTE(t.decimalType, 0)))
           .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(ADD(t.tinyintType, t.tinyintType));
     t.smallintType.set(ADD(t.smallintType, t.smallintType));
@@ -142,8 +142,8 @@ public abstract class NumericValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testSubtract(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testSubtract(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(0,
 
       SELECT(t).
@@ -158,7 +158,7 @@ public abstract class NumericValueExpressionTest {
         GTE(t.decimalType, 0)))
           .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(SUB(t.tinyintType, t.tinyintType));
     t.smallintType.set(SUB(t.smallintType, t.smallintType));
@@ -184,8 +184,8 @@ public abstract class NumericValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testMultiply(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testMultiply(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(0,
 
       SELECT(t).
@@ -200,7 +200,7 @@ public abstract class NumericValueExpressionTest {
         GTE(t.decimalType, -100000), LTE(t.decimalType, 100000)))
           .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(MUL(t.tinyintType, t.tinyintType));
     t.smallintType.set(MUL(t.smallintType, t.smallintType));
@@ -226,8 +226,8 @@ public abstract class NumericValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testDivide(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testDivide(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(0,
 
       SELECT(t).
@@ -242,7 +242,7 @@ public abstract class NumericValueExpressionTest {
         NE(t.decimalType, 0)))
           .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(DIV(t.tinyintType, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(DIV(t.smallintType, t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -268,9 +268,9 @@ public abstract class NumericValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testUpdateVersion(final world world, final Transaction transaction) throws IOException, SQLException {
-    world.City c = world.City();
-    try (final RowIterator<world.City> rows =
+  public void testUpdateVersion(final World world, final Transaction transaction) throws IOException, SQLException {
+    World.City c = world.City();
+    try (final RowIterator<World.City> rows =
 
       SELECT(c).
       FROM(c)

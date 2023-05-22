@@ -26,11 +26,11 @@ import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.jsql.type;
-import org.jaxdb.jsql.types;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -60,8 +60,8 @@ public abstract class NumericFunctionStaticTest {
 
   private static final Logger logger = LoggerFactory.getLogger(NumericFunctionStaticTest.class);
 
-  private static Select.untyped.SELECT<type.Entity> selectVicinity(final classicmodels classicmodels, final double latitude, final double longitude, final double distance, final int limit) {
-    final classicmodels.Customer c = classicmodels.Customer();
+  private static Select.untyped.SELECT<type.Entity> selectVicinity(final Classicmodels classicmodels, final double latitude, final double longitude, final double distance, final int limit) {
+    final Classicmodels.Customer c = classicmodels.Customer();
     final data.DOUBLE d = new data.DOUBLE();
 
     return SELECT(c, MUL(3959 * 2, ATAN2(
@@ -87,12 +87,12 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testVicinity(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+  public void testVicinity(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     try (final RowIterator<type.Entity> rows =
       selectVicinity(classicmodels, 37.78536811469731, -122.3931884765625, 10, 1)
         .execute(transaction)) {
       while (rows.nextRow()) {
-        final classicmodels.Customer c = (classicmodels.Customer)rows.nextEntity();
+        final Classicmodels.Customer c = (Classicmodels.Customer)rows.nextEntity();
         assertEquals("Mini Wheels Co.", c.companyName.get());
         final data.DOUBLE d = (data.DOUBLE)rows.nextEntity();
         assertEquals(2.22069, d.get().doubleValue(), 0.00001);
@@ -102,8 +102,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testRound0(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testRound0(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -127,8 +127,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testRound1(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testRound1(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -152,9 +152,9 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testRound2(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<classicmodels.Customer> rows =
+  public void testRound2(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer();
+    try (final RowIterator<Classicmodels.Customer> rows =
 
       SELECT(c).
       FROM(c).
@@ -172,8 +172,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSign(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSign(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -196,8 +196,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testFloor(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testFloor(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -221,8 +221,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testCeil(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCeil(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -246,8 +246,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSqrt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSqrt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -271,8 +271,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testDegrees(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDegrees(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -296,8 +296,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testRadians(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testRadians(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -321,8 +321,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSin(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSin(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -346,8 +346,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testAsin(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testAsin(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -371,8 +371,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testCos(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCos(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -396,8 +396,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testAcos(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testAcos(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -421,8 +421,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testTan(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testTan(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -446,8 +446,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testAtan(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testAtan(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -471,8 +471,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testModInt1(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testModInt1(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.INT a = new data.INT();
     final data.INT b = new data.INT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
@@ -495,8 +495,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testModInt2(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testModInt2(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.INT a = new data.INT();
     final data.INT b = new data.INT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
@@ -519,8 +519,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testModInt3(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testModInt3(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.INT b = new data.INT();
     final data.DOUBLE c = new data.DOUBLE();
@@ -547,8 +547,8 @@ public abstract class NumericFunctionStaticTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   @SchemaTestRunner.Unsupported(SQLite.class)
-  public void testModDouble1(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testModDouble1(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -573,8 +573,8 @@ public abstract class NumericFunctionStaticTest {
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testModDouble2(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testModDouble2(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -599,8 +599,8 @@ public abstract class NumericFunctionStaticTest {
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testModDouble3(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testModDouble3(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.FLOAT b = new data.FLOAT();
     final data.DOUBLE c = new data.DOUBLE();
@@ -634,8 +634,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testExp(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testExp(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -661,8 +661,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testPowX3(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testPowX3(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -686,8 +686,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testPow3X(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testPow3X(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -711,8 +711,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testPowXX(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testPowXX(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     final data.DOUBLE c = new data.DOUBLE();
@@ -739,8 +739,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLog3X(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testLog3X(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -764,8 +764,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLogX3(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testLogX3(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.FLOAT b = new data.FLOAT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
@@ -789,8 +789,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLogXX(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testLogXX(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.INT b = new data.INT();
     final data.DOUBLE c = new data.DOUBLE();
@@ -817,8 +817,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLn(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testLn(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -842,8 +842,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLog2(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testLog2(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
@@ -867,8 +867,8 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testLog10(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testLog10(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =

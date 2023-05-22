@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Year;
 
-import org.jaxdb.jsql.types.$AbstractType.EnumType;
+import org.jaxdb.jsql.Types.$AbstractType.EnumType;
 import org.junit.Test;
 import org.libj.io.UnsynchronizedStringReader;
 
@@ -87,7 +87,7 @@ public class RevertCommitTest {
 
   @Test
   public void testRevertCommit() {
-    final types types = new types();
+    final Types types = new Types();
     test(new data.BIGINT(), 1L, 2L, new Long(2));
     test(new data.BINARY(2), new byte[] {1, 2}, new byte[] {3, 4}, new byte[] {3, 4});
     test(new data.BLOB(), new ByteArrayInputStream(new byte[] {1, 2}), new ByteArrayInputStream(new byte[] {3, 4}), null);
@@ -98,7 +98,7 @@ public class RevertCommitTest {
     test(new data.DATETIME(), LocalDateTime.MIN, LocalDateTime.MAX, LocalDateTime.of(LocalDate.MAX, LocalTime.MAX));
     test(new data.DECIMAL(), BigDecimal.ZERO, BigDecimal.ONE, new BigDecimal("1.0"));
     test(new data.DOUBLE(), 0d, 1d, new Double(1));
-    final types.Type t = types.new Type();
+    final Types.Type t = types.new Type();
     test(t.enumType, EnumType.ZERO, EnumType.ONE, EnumType.ONE);
     test(new data.FLOAT(), 0f, 1f, new Float(1));
     test(new data.INT(), 0, 1, new Integer(1));

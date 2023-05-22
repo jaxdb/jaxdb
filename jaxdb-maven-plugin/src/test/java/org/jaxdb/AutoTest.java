@@ -29,7 +29,7 @@ import java.time.temporal.ChronoUnit;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.auto;
+import org.jaxdb.jsql.Auto;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -59,15 +59,15 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testCharUuid(final auto auto, final Transaction transaction) throws IOException, SQLException {
-    final auto.CharUuid a = auto.new CharUuid();
+  public void testCharUuid(final Auto auto, final Transaction transaction) throws IOException, SQLException {
+    final Auto.CharUuid a = auto.new CharUuid();
 
     INSERT(a)
       .execute(transaction);
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.CharUuid> rows =
+    try (final RowIterator<Auto.CharUuid> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -81,8 +81,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testTinyintIncrement(final auto auto, final Transaction transaction) throws IOException, SQLException {
-    auto.TinyintIncrement a = auto.new TinyintIncrement();
+  public void testTinyintIncrement(final Auto auto, final Transaction transaction) throws IOException, SQLException {
+    Auto.TinyintIncrement a = auto.new TinyintIncrement();
 
     DELETE(a)
       .execute(transaction);
@@ -90,7 +90,7 @@ public abstract class AutoTest {
     INSERT(a)
       .execute(transaction);
 
-    try (final RowIterator<auto.TinyintIncrement> rows =
+    try (final RowIterator<Auto.TinyintIncrement> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -112,7 +112,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.TinyintIncrement> rows =
+      try (final RowIterator<Auto.TinyintIncrement> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -132,8 +132,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testSmallintIncrement(final auto auto, final Transaction transaction) throws IOException, SQLException {
-    auto.SmallintIncrement a = auto.new SmallintIncrement();
+  public void testSmallintIncrement(final Auto auto, final Transaction transaction) throws IOException, SQLException {
+    Auto.SmallintIncrement a = auto.new SmallintIncrement();
 
     DELETE(a)
       .execute(transaction);
@@ -141,7 +141,7 @@ public abstract class AutoTest {
     INSERT(a)
       .execute(transaction);
 
-    try (final RowIterator<auto.SmallintIncrement> rows =
+    try (final RowIterator<Auto.SmallintIncrement> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -163,7 +163,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.SmallintIncrement> rows =
+      try (final RowIterator<Auto.SmallintIncrement> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -183,8 +183,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testIntIncrement(final auto auto, final Transaction transaction) throws IOException, SQLException {
-    auto.IntIncrement a = auto.new IntIncrement();
+  public void testIntIncrement(final Auto auto, final Transaction transaction) throws IOException, SQLException {
+    Auto.IntIncrement a = auto.new IntIncrement();
 
     DELETE(a)
       .execute(transaction);
@@ -194,7 +194,7 @@ public abstract class AutoTest {
     INSERT(a)
       .execute(transaction);
 
-    try (final RowIterator<auto.IntIncrement> rows =
+    try (final RowIterator<Auto.IntIncrement> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -216,7 +216,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.IntIncrement> rows =
+      try (final RowIterator<Auto.IntIncrement> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -236,8 +236,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testIntTimestampMinutes(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.IntTimestampMinutes a = auto.new IntTimestampMinutes();
+  public void testIntTimestampMinutes(final Auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    Auto.IntTimestampMinutes a = auto.new IntTimestampMinutes();
 
     DELETE(a)
       .execute(transaction);
@@ -249,7 +249,7 @@ public abstract class AutoTest {
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.IntTimestampMinutes> rows =
+    try (final RowIterator<Auto.IntTimestampMinutes> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -275,7 +275,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.IntTimestampMinutes> rows =
+      try (final RowIterator<Auto.IntTimestampMinutes> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -294,8 +294,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testIntTimestampSeconds(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.IntTimestampSeconds a = auto.new IntTimestampSeconds();
+  public void testIntTimestampSeconds(final Auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    Auto.IntTimestampSeconds a = auto.new IntTimestampSeconds();
 
     DELETE(a)
       .execute(transaction);
@@ -307,7 +307,7 @@ public abstract class AutoTest {
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.IntTimestampSeconds> rows =
+    try (final RowIterator<Auto.IntTimestampSeconds> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -333,7 +333,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.IntTimestampSeconds> rows =
+      try (final RowIterator<Auto.IntTimestampSeconds> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -352,8 +352,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBigintIncrement(final auto auto, final Transaction transaction) throws IOException, SQLException {
-    auto.BigintIncrement a = auto.new BigintIncrement();
+  public void testBigintIncrement(final Auto auto, final Transaction transaction) throws IOException, SQLException {
+    Auto.BigintIncrement a = auto.new BigintIncrement();
 
     DELETE(a)
       .execute(transaction);
@@ -361,7 +361,7 @@ public abstract class AutoTest {
     INSERT(a)
       .execute(transaction);
 
-    try (final RowIterator<auto.BigintIncrement> rows =
+    try (final RowIterator<Auto.BigintIncrement> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -383,7 +383,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.BigintIncrement> rows =
+      try (final RowIterator<Auto.BigintIncrement> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -403,8 +403,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBigintTimestampMinutes(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.BigintTimestampMinutes a = auto.new BigintTimestampMinutes();
+  public void testBigintTimestampMinutes(final Auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    Auto.BigintTimestampMinutes a = auto.new BigintTimestampMinutes();
 
     DELETE(a)
       .execute(transaction);
@@ -416,7 +416,7 @@ public abstract class AutoTest {
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.BigintTimestampMinutes> rows =
+    try (final RowIterator<Auto.BigintTimestampMinutes> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -442,7 +442,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.BigintTimestampMinutes> rows =
+      try (final RowIterator<Auto.BigintTimestampMinutes> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -461,8 +461,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBigintTimestampSeconds(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.BigintTimestampSeconds a = auto.new BigintTimestampSeconds();
+  public void testBigintTimestampSeconds(final Auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    Auto.BigintTimestampSeconds a = auto.new BigintTimestampSeconds();
 
     DELETE(a)
       .execute(transaction);
@@ -474,7 +474,7 @@ public abstract class AutoTest {
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.BigintTimestampSeconds> rows =
+    try (final RowIterator<Auto.BigintTimestampSeconds> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -500,7 +500,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.BigintTimestampSeconds> rows =
+      try (final RowIterator<Auto.BigintTimestampSeconds> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -519,8 +519,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testBigintTimestampMilliseconds(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.BigintTimestampMilliseconds a = auto.new BigintTimestampMilliseconds();
+  public void testBigintTimestampMilliseconds(final Auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    Auto.BigintTimestampMilliseconds a = auto.new BigintTimestampMilliseconds();
 
     DELETE(a)
       .execute(transaction);
@@ -531,7 +531,7 @@ public abstract class AutoTest {
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.BigintTimestampMilliseconds> rows =
+    try (final RowIterator<Auto.BigintTimestampMilliseconds> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -557,7 +557,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.BigintTimestampMilliseconds> rows =
+      try (final RowIterator<Auto.BigintTimestampMilliseconds> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -576,8 +576,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testTimeTimestamp(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.TimeTimestamp a = auto.new TimeTimestamp();
+  public void testTimeTimestamp(final Auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    Auto.TimeTimestamp a = auto.new TimeTimestamp();
 
     DELETE(a)
       .execute(transaction);
@@ -588,7 +588,7 @@ public abstract class AutoTest {
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.TimeTimestamp> rows =
+    try (final RowIterator<Auto.TimeTimestamp> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -614,7 +614,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.TimeTimestamp> rows =
+      try (final RowIterator<Auto.TimeTimestamp> rows =
 
         SELECT(a).
         LIMIT(1)
@@ -633,8 +633,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testDateTimestamp(final auto auto, final Transaction transaction) throws IOException, SQLException {
-    auto.DateTimestamp a = auto.new DateTimestamp();
+  public void testDateTimestamp(final Auto auto, final Transaction transaction) throws IOException, SQLException {
+    Auto.DateTimestamp a = auto.new DateTimestamp();
 
     DELETE(a)
       .execute(transaction);
@@ -645,7 +645,7 @@ public abstract class AutoTest {
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.DateTimestamp> rows =
+    try (final RowIterator<Auto.DateTimestamp> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -666,7 +666,7 @@ public abstract class AutoTest {
     UPDATE(a)
       .execute(transaction);
 
-    try (final RowIterator<auto.DateTimestamp> rows =
+    try (final RowIterator<Auto.DateTimestamp> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -684,8 +684,8 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testDatetimeTimestamp(final auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    auto.DatetimeTimestamp a = auto.new DatetimeTimestamp();
+  public void testDatetimeTimestamp(final Auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    Auto.DatetimeTimestamp a = auto.new DatetimeTimestamp();
 
     DELETE(a)
       .execute(transaction);
@@ -696,7 +696,7 @@ public abstract class AutoTest {
 
     assertFalse(a.primary.isNull());
 
-    try (final RowIterator<auto.DatetimeTimestamp> rows =
+    try (final RowIterator<Auto.DatetimeTimestamp> rows =
 
       SELECT(a).
       LIMIT(1)
@@ -722,7 +722,7 @@ public abstract class AutoTest {
       UPDATE(a)
         .execute(transaction);
 
-      try (final RowIterator<auto.DatetimeTimestamp> rows =
+      try (final RowIterator<Auto.DatetimeTimestamp> rows =
 
         SELECT(a).
         LIMIT(1)

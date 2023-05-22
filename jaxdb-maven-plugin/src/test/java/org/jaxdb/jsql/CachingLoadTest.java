@@ -57,7 +57,7 @@ public abstract class CachingLoadTest extends NotificationTest {
   private static final int cardinality = 10;
   private static final int iterations = 100;
 
-  Integer[] insert(final caching caching, final Connector connector) {
+  Integer[] insert(final Caching caching, final Connector connector) {
     final AtomicInteger count = new AtomicInteger();
     final Integer[] ids = new Integer[cardinality];
     for (int c = 0; c < cardinality; ++c) { // [N]
@@ -70,7 +70,7 @@ public abstract class CachingLoadTest extends NotificationTest {
   }
 
   @Test
-  public void test(final caching caching, final Connector connector) throws Exception {
+  public void test(final Caching caching, final Connector connector) throws Exception {
     final ExecutorService executor = Executors.newFixedThreadPool(iterations, new ThreadFactoryBuilder()
       .withUncaughtExceptionHandler(uncaughtExceptionHandler)
       .build());
@@ -82,14 +82,14 @@ public abstract class CachingLoadTest extends NotificationTest {
       if (j == 0) {
         executor.execute(Throwing.rethrow(() -> {
           final AtomicInteger count = new AtomicInteger();
-          final caching.OneOneId oo = caching.new OneOneId();
+          final Caching.OneOneId oo = caching.new OneOneId();
           exec(() -> update(oo, IN(oo.oneId, ids), count), count, connector);
         }));
       }
       else if (j == 1) {
         executor.execute(Throwing.rethrow(() -> {
           for (final Integer id : ids) { // [RA]
-            final caching.OneOneId oo = caching.new OneOneId();
+            final Caching.OneOneId oo = caching.new OneOneId();
 
             final AtomicInteger count = new AtomicInteger();
             exec(() -> update(oo, EQ(oo.oneId, id), count), count, connector);
@@ -100,7 +100,7 @@ public abstract class CachingLoadTest extends NotificationTest {
         executor.execute(Throwing.rethrow(() -> {
           final AtomicInteger count = new AtomicInteger();
           exec(() -> {
-            final caching.OneOneId oo = caching.new OneOneId();
+            final Caching.OneOneId oo = caching.new OneOneId();
             final Batch batch = new Batch();
             for (final Integer id : ids) // [RA]
               batch.addStatement(update(oo, EQ(oo.oneId, id), count));
@@ -115,13 +115,13 @@ public abstract class CachingLoadTest extends NotificationTest {
     executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 
     for (int id = 0; id < cardinality; ++id) { // [RA]
-      final caching.One o = caching.One().idToOne(id);
+      final Caching.One o = caching.One().idToOne(id);
       assertEquals(id, 1 + iterations, o.id$OneOneId_oneId().version.getAsInt());
     }
   }
 
-  private static CONFLICT_ACTION_NOTIFY insertOne(final caching caching, final int id, final AtomicInteger count) {
-    final caching.One o = caching.new One();
+  private static CONFLICT_ACTION_NOTIFY insertOne(final Caching caching, final int id, final AtomicInteger count) {
+    final Caching.One o = caching.new One();
     o.id.set(id);
     o.idu.set(id);
     o.idx1.set(id);
@@ -129,8 +129,8 @@ public abstract class CachingLoadTest extends NotificationTest {
     return insert(o, count);
   }
 
-  private static CONFLICT_ACTION_NOTIFY insertOneOne(final caching caching, final int id, final AtomicInteger count) {
-    final caching.OneOneId oo = caching.new OneOneId();
+  private static CONFLICT_ACTION_NOTIFY insertOneOne(final Caching caching, final int id, final AtomicInteger count) {
+    final Caching.OneOneId oo = caching.new OneOneId();
     oo.oneId.set(id);
     return insert(oo, count);
   }
@@ -150,7 +150,7 @@ public abstract class CachingLoadTest extends NotificationTest {
         });
   }
 
-  private static UPDATE_NOTIFY update(final caching.OneOneId oo, final Condition<?> condition, final AtomicInteger count) {
+  private static UPDATE_NOTIFY update(final Caching.OneOneId oo, final Condition<?> condition, final AtomicInteger count) {
     return
       UPDATE(oo).
       SET(oo.version, ADD(oo.version, 1)).

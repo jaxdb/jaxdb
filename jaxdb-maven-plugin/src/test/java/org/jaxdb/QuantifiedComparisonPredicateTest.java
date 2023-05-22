@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -53,9 +53,9 @@ public abstract class QuantifiedComparisonPredicateTest {
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testAll(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testAll(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<data.BIGINT> rows =
 
@@ -76,9 +76,9 @@ public abstract class QuantifiedComparisonPredicateTest {
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testAny(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testAny(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<data.BIGINT> rows =
 
@@ -99,9 +99,9 @@ public abstract class QuantifiedComparisonPredicateTest {
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testSome(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testSome(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<data.BIGINT> rows =
 

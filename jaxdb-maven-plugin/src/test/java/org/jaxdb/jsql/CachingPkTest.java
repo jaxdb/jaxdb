@@ -50,9 +50,9 @@ public abstract class CachingPkTest extends CachingTest {
 
   @Test
   @TestSpec(order = 1)
-  public void testInsert(final caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+  public void testInsert(final Caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
     for (int i = 0; i < iterations; ++i) { // [N]
-      final caching.One o = caching.new One(i);
+      final Caching.One o = caching.new One(i);
       o.idu.set(i);
       o.idx1.set(i);
       o.idx2.set(i);
@@ -60,32 +60,32 @@ public abstract class CachingPkTest extends CachingTest {
       INSERT(transaction, o, i, j -> {}, j -> {});
       assertEquals(i, afterSleep, o, caching.One().idToOne(i));
 
-      final caching.OneOneId oo = caching.new OneOneId();
+      final Caching.OneOneId oo = caching.new OneOneId();
       oo.oneId.set(i);
       INSERT(transaction, oo, i, j -> {}, j -> {});
       assertEquals(i, afterSleep, oo, caching.OneOneId().oneIdToOneOneId(i));
 
-      final caching.One o1 = oo.oneId$One_id();
+      final Caching.One o1 = oo.oneId$One_id();
       assertEquals(i, afterSleep, o, o1);
 
-      final caching.OneOneId oo1 = o.id$OneOneId_oneId();
+      final Caching.OneOneId oo1 = o.id$OneOneId_oneId();
       assertEquals(i, afterSleep, oo, oo1);
 
       for (int j = 0; j < iterations; ++j) { // [N]
         final int oneManyId = i * iterations + j;
-        final caching.OneManyId om = caching.new OneManyId(oneManyId);
+        final Caching.OneManyId om = caching.new OneManyId(oneManyId);
         om.oneId.set(i);
         INSERT(transaction, om, i, k -> {}, k -> {});
         assertEquals(i, afterSleep, om, caching.OneManyId().idToOneManyId(oneManyId));
 
-        final Map<data.Key,caching.OneManyId> oms = caching.OneManyId().oneIdToOneManyId(i);
+        final Map<data.Key,Caching.OneManyId> oms = caching.OneManyId().oneIdToOneManyId(i);
         assertTrue(oms.containsValue(om));
         assertEquals(i, afterSleep, j + 1, oms.size());
 
-        final caching.One o2 = om.oneId$One_id();
+        final Caching.One o2 = om.oneId$One_id();
         assertEquals(i, afterSleep, o, o2);
 
-        final Map<data.Key,caching.OneManyId> oms0 = o.id$OneManyId_oneId();
+        final Map<data.Key,Caching.OneManyId> oms0 = o.id$OneManyId_oneId();
         assertEquals(i, afterSleep, j + 1, oms0.size());
         assertTrue(oms0.containsValue(om));
       }
@@ -95,7 +95,7 @@ public abstract class CachingPkTest extends CachingTest {
         final int a = k - 1;
         final int b = k;
 
-        final caching.ManyManyId mm = caching.new ManyManyId(manyManyId);
+        final Caching.ManyManyId mm = caching.new ManyManyId(manyManyId);
         mm.oneAId.set(a);
         mm.oneBId.set(b);
         INSERT(transaction, mm, i, j -> {}, j -> {});
@@ -103,10 +103,10 @@ public abstract class CachingPkTest extends CachingTest {
         assertEquals(i, afterSleep, caching.One().idToOne(a), mm.oneAId$One_id());
         assertEquals(i, afterSleep, caching.One().idToOne(b), mm.oneBId$One_id());
 
-        final Map<data.Key,caching.ManyManyId> mmas = caching.ManyManyId().oneAIdToManyManyId(a);
+        final Map<data.Key,Caching.ManyManyId> mmas = caching.ManyManyId().oneAIdToManyManyId(a);
         assertEquals(i, afterSleep, i + 1 - k, mmas.size());
 
-        final Map<data.Key,caching.ManyManyId> mmbs = caching.ManyManyId().oneBIdToManyManyId(b);
+        final Map<data.Key,Caching.ManyManyId> mmbs = caching.ManyManyId().oneBIdToManyManyId(b);
         assertEquals(i, afterSleep, i + 1 - k, mmbs.size());
       }
     }
@@ -114,10 +114,10 @@ public abstract class CachingPkTest extends CachingTest {
 
   @Test
   @TestSpec(order = 2)
-  public void testUpdatePrimaryKey(final caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    final ArrayList<caching.ManyManyId> list = new ArrayList<>(caching.ManyManyId().idToManyManyId().values());
+  public void testUpdatePrimaryKey(final Caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    final ArrayList<Caching.ManyManyId> list = new ArrayList<>(caching.ManyManyId().idToManyManyId().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
-      final caching.ManyManyId mm = list.get(i).clone();
+      final Caching.ManyManyId mm = list.get(i).clone();
 
       final int oldId = mm.id.get();
       final int newId = mm.id.get() + idOffset;
@@ -125,8 +125,8 @@ public abstract class CachingPkTest extends CachingTest {
       assertEquals(i, afterSleep, mm, caching.ManyManyId().idToManyManyId(oldId));
       assertNull(i, afterSleep, caching.ManyManyId().idToManyManyId(newId));
 
-      final caching.One oa = mm.oneAId$One_id();
-      final caching.One ob = mm.oneBId$One_id();
+      final Caching.One oa = mm.oneAId$One_id();
+      final Caching.One ob = mm.oneBId$One_id();
       assertTrue(oa.id$ManyManyId_oneAId().containsValue(mm));
       assertTrue(ob.id$ManyManyId_oneBId().containsValue(mm));
 
@@ -160,12 +160,12 @@ public abstract class CachingPkTest extends CachingTest {
     }
   }
 
-  private static void checkSync(final caching caching, final int i, final caching.One o, final int id1, final int id2, final caching.OneOneId oo, final Map<data.Key,caching.OneManyId> oms, final Map<data.Key,caching.ManyManyId> mmAs, final Map<data.Key,caching.ManyManyId> mmBs) throws IOException, SQLException {
+  private static void checkSync(final Caching caching, final int i, final Caching.One o, final int id1, final int id2, final Caching.OneOneId oo, final Map<data.Key,Caching.OneManyId> oms, final Map<data.Key,Caching.ManyManyId> mmAs, final Map<data.Key,Caching.ManyManyId> mmBs) throws IOException, SQLException {
     assertNull(i, false, caching.One().idToOne(id2));
     assertEquals(i, false, o, caching.One().idToOne(id1));
   }
 
-  private static void checkAsync(final caching caching, final int i, final boolean afterSleep, final caching.One o, final int id1, final int id2, final caching.OneOneId oo, final Map<data.Key,caching.OneManyId> oms, final Map<data.Key,caching.ManyManyId> mmAs, final Map<data.Key,caching.ManyManyId> mmBs) throws IOException, SQLException {
+  private static void checkAsync(final Caching caching, final int i, final boolean afterSleep, final Caching.One o, final int id1, final int id2, final Caching.OneOneId oo, final Map<data.Key,Caching.OneManyId> oms, final Map<data.Key,Caching.ManyManyId> mmAs, final Map<data.Key,Caching.ManyManyId> mmBs) throws IOException, SQLException {
     assertEquals(i, afterSleep, afterSleep ? oo : null, o.id$OneOneId_oneId()); // NOTE: CASCADE rule in DML ensures this is always true
     if (afterSleep)
       assertEquals(i, afterSleep, o.getKeyOld(), oo.oneId$One_id().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -173,7 +173,7 @@ public abstract class CachingPkTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? oms.size() : 0, caching.OneManyId().oneIdToOneManyId(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : oms.size(), caching.OneManyId().oneIdToOneManyId(id2).size());
 
-    for (final caching.OneManyId om : oms.values()) { // [C]
+    for (final Caching.OneManyId om : oms.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.id$OneManyId_oneId().containsValue(om)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), om.oneId$One_id().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -182,7 +182,7 @@ public abstract class CachingPkTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmAs.size() : 0, caching.ManyManyId().oneAIdToManyManyId(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmAs.size(), caching.ManyManyId().oneAIdToManyManyId(id2).size());
 
-    for (final caching.ManyManyId mm : mmAs.values()) { // [C]
+    for (final Caching.ManyManyId mm : mmAs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.id$ManyManyId_oneAId().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneAId$One_id().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -191,7 +191,7 @@ public abstract class CachingPkTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmBs.size() : 0, caching.ManyManyId().oneBIdToManyManyId(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmBs.size(), caching.ManyManyId().oneBIdToManyManyId(id2).size());
 
-    for (final caching.ManyManyId mm : mmBs.values()) { // [C]
+    for (final Caching.ManyManyId mm : mmBs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.id$ManyManyId_oneBId().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneBId$One_id().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -200,18 +200,18 @@ public abstract class CachingPkTest extends CachingTest {
 
   @Test
   @TestSpec(order = 3)
-  public void testUpdateForeignKey(final caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    final ArrayList<caching.One> list = new ArrayList<>(caching.One().idToOne().values());
+  public void testUpdateForeignKey(final Caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    final ArrayList<Caching.One> list = new ArrayList<>(caching.One().idToOne().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
-      final caching.One o = list.get(i).clone();
+      final Caching.One o = list.get(i).clone();
 
       final int oldId = o.id.get();
       final int newId = o.id.get() + idOffset;
 
-      final caching.OneOneId oo = o.id$OneOneId_oneId();
-      final Map<data.Key,caching.OneManyId> oms = new HashMap<>(caching.OneManyId().oneIdToOneManyId(oldId));
-      final Map<data.Key,caching.ManyManyId> mmAs = new HashMap<>(caching.ManyManyId().oneAIdToManyManyId(oldId));
-      final Map<data.Key,caching.ManyManyId> mmBs = new HashMap<>(caching.ManyManyId().oneBIdToManyManyId(oldId));
+      final Caching.OneOneId oo = o.id$OneOneId_oneId();
+      final Map<data.Key,Caching.OneManyId> oms = new HashMap<>(caching.OneManyId().oneIdToOneManyId(oldId));
+      final Map<data.Key,Caching.ManyManyId> mmAs = new HashMap<>(caching.ManyManyId().oneAIdToManyManyId(oldId));
+      final Map<data.Key,Caching.ManyManyId> mmBs = new HashMap<>(caching.ManyManyId().oneBIdToManyManyId(oldId));
       checkAsync(caching, i, true, o, oldId, newId, oo, oms, mmAs, mmBs);
 
       assertTrue(o.id.set(newId));
@@ -252,12 +252,12 @@ public abstract class CachingPkTest extends CachingTest {
 
   @Test
   @TestSpec(order = 4)
-  public void testDelete(final caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    final ArrayList<caching.ManyManyId> list = new ArrayList<>(caching.ManyManyId().idToManyManyId().values());
+  public void testDelete(final Caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
+    final ArrayList<Caching.ManyManyId> list = new ArrayList<>(caching.ManyManyId().idToManyManyId().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
-      final caching.ManyManyId mm = list.get(i);
-      final caching.One oa = mm.oneAId$One_id();
-      final caching.One ob = mm.oneBId$One_id();
+      final Caching.ManyManyId mm = list.get(i);
+      final Caching.One oa = mm.oneAId$One_id();
+      final Caching.One ob = mm.oneBId$One_id();
 
       assertTrue(oa.id$ManyManyId_oneAId().containsValue(mm));
       assertTrue(ob.id$ManyManyId_oneBId().containsValue(mm));

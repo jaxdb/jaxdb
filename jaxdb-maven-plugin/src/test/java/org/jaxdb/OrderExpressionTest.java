@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -52,9 +52,9 @@ public abstract class OrderExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testOrderExpressionError(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.new Product();
-    try (final RowIterator<classicmodels.Product> rows =
+  public void testOrderExpressionError(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.new Product();
+    try (final RowIterator<Classicmodels.Product> rows =
       SELECT(p).
       FROM(p).
       ORDER_BY(ASC(p.code))
@@ -69,8 +69,8 @@ public abstract class OrderExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testOrderExpression(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.new Product();
+  public void testOrderExpression(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.new Product();
     try (final RowIterator<data.DECIMAL> rows =
       SELECT(p.msrp, p.price).
       FROM(p).

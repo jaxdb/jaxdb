@@ -27,7 +27,7 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -53,11 +53,11 @@ public abstract class TestCommandTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testFailEntityOnlySelectTrue(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+  public void testFailEntityOnlySelectTrue(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
-      final classicmodels.Product p = classicmodels.Product();
+      final Classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
 
         SELECT(p.code).
@@ -73,11 +73,11 @@ public abstract class TestCommandTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFailEntityOnlySelectFalse(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+  public void testFailEntityOnlySelectFalse(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
-      final classicmodels.Product p = classicmodels.Product();
+      final Classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
 
         SELECT(p).
@@ -95,11 +95,11 @@ public abstract class TestCommandTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
-  public void testRowIteratorFullConsumeRequiredTrue(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+  public void testRowIteratorFullConsumeRequiredTrue(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
-      final classicmodels.Product p = classicmodels.Product();
+      final Classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
 
         SELECT(p).
@@ -117,11 +117,11 @@ public abstract class TestCommandTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testRowIteratorFullConsumeRequiredFalse(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+  public void testRowIteratorFullConsumeRequiredFalse(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
-      final classicmodels.Product p = classicmodels.Product();
+      final Classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
 
         SELECT(p).

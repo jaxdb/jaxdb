@@ -27,9 +27,9 @@ import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -56,8 +56,8 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testConcatStatic(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  public void testConcatStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -169,8 +169,8 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testConcatDynamic(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testConcatDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(0,
 
       SELECT(t).
@@ -180,7 +180,7 @@ public abstract class StringValueExpressionTest {
       IS.NOT.NULL(t.enumType)))
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.charType.set(CONCAT(t.enumType, t.enumType));
 
@@ -214,8 +214,8 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testChangeCaseStatic(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  public void testChangeCaseStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -236,8 +236,8 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
-  public void testChangeCaseDynamic(final types types, final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
+  public void testChangeCaseDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type();
     t = getNthRow(0,
 
       SELECT(t).
@@ -245,7 +245,7 @@ public abstract class StringValueExpressionTest {
       WHERE(IS.NOT.NULL(t.charType))
         .execute(transaction));
 
-    final types.Type clone = t.clone();
+    final Types.Type clone = t.clone();
 
     t.charType.set(LOWER(t.charType));
 
@@ -269,8 +269,8 @@ public abstract class StringValueExpressionTest {
   @Test
   @Ignore
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testLengthStatic(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  public void testLengthStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -295,8 +295,8 @@ public abstract class StringValueExpressionTest {
   @Test
   @Ignore
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testLengthDynamic(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  public void testLengthDynamic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.INT> rows =
 
       SELECT(LENGTH(CONCAT("-", o.country, "-", o.city, "-"))).
@@ -312,13 +312,13 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @Ignore
-  public void testSubstringStatic(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testSubstringStatic(final Types types, final Transaction transaction) throws IOException, SQLException {
     // TODO: Implement this
   }
 
   @Test
   @Ignore
-  public void testSubstringDynamic(final types types, final Transaction transaction) throws IOException, SQLException {
+  public void testSubstringDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
     // TODO: Implement this
   }
 }

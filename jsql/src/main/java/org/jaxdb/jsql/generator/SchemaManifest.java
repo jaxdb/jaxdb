@@ -60,7 +60,7 @@ class SchemaManifest {
   SchemaManifest(final String packageName, final String name, final BindingList<Table> tables) throws GeneratorExecutionException {
     this.packageName = packageName;
     this.name = name;
-    this.schemaClassSimpleName = Identifiers.toInstanceCase(name);
+    this.schemaClassSimpleName = Identifiers.toClassCase(name);
     this.schemaClassName = packageName + "." + schemaClassSimpleName;
 
     final int noTables = tables.size();

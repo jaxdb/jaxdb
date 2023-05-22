@@ -26,7 +26,7 @@ import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -53,8 +53,8 @@ public abstract class NullPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testPrimaryIs(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testPrimaryIs(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -73,8 +73,8 @@ public abstract class NullPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testPrimaryIsNot(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testPrimaryIsNot(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -99,8 +99,8 @@ public abstract class NullPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testNotPrimaryIs(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testNotPrimaryIs(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -125,8 +125,8 @@ public abstract class NullPredicateTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
-  public void testNotPrimaryIsNot(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  public void testNotPrimaryIsNot(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(

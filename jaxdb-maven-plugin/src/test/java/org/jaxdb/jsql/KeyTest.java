@@ -30,7 +30,7 @@ import java.time.LocalTime;
 import java.util.function.Supplier;
 
 import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.types.$AbstractType.EnumType;
+import org.jaxdb.jsql.Types.$AbstractType.EnumType;
 import org.junit.Test;
 import org.libj.lang.ObjectUtil;
 
@@ -327,10 +327,10 @@ public class KeyTest {
 
   @Test
   public void testENUM() {
-    final types.Type.EnumType v = types.Type.EnumType.EIGHT;
+    final Types.Type.EnumType v = Types.Type.EnumType.EIGHT;
     final data.Table t = new MockTable();
-    final data.ENUM<types.Type.EnumType> c = new data.ENUM<>(t, true, "test", data.BTREE, false, null, true, null, null, null, types.Type.EnumType.values(), types.Type.EnumType::valueOf);
-    test(t, c, v, () -> c.set(data.ENUM.NULL), () -> c.set((EnumType)null), () -> c.set((data.ENUM<types.Type.EnumType>)null), null, () -> c.set(v), null, () -> c.setIfNotEqual(v), () -> c.setIfNotNull(v), () -> c.setIfNotNullOrEqual(v));
+    final data.ENUM<Types.Type.EnumType> c = new data.ENUM<>(t, true, "test", data.BTREE, false, null, true, null, null, null, Types.Type.EnumType.values(), Types.Type.EnumType::valueOf);
+    test(t, c, v, () -> c.set(data.ENUM.NULL), () -> c.set((EnumType)null), () -> c.set((data.ENUM<Types.Type.EnumType>)null), null, () -> c.set(v), null, () -> c.setIfNotEqual(v), () -> c.setIfNotNull(v), () -> c.setIfNotNullOrEqual(v));
   }
 
   @Test

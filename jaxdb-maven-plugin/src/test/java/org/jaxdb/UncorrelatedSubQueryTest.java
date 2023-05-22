@@ -26,7 +26,7 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -52,8 +52,8 @@ public abstract class UncorrelatedSubQueryTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testAdd(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testAdd(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
       SELECT(

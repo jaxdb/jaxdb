@@ -27,7 +27,7 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -53,8 +53,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBooleanToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBooleanToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -69,8 +69,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBooleanToClob(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBooleanToClob(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CLOB> rows =
 
       SELECT(
@@ -85,8 +85,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToDouble(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testFloatToDouble(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
       SELECT(
@@ -101,8 +101,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToDecimal(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testFloatToDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(
@@ -117,8 +117,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToSmallInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testFloatToSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
       SELECT(
@@ -134,8 +134,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToMediumInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testFloatToMediumInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
       SELECT(
@@ -151,8 +151,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testFloatToInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -167,8 +167,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testFloatToBigInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testFloatToBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(
@@ -183,8 +183,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToFloat(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDoubleToFloat(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
       SELECT(
@@ -199,8 +199,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToDecimal(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDoubleToDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(
@@ -215,8 +215,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToSmallInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDoubleToSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
       SELECT(
@@ -232,8 +232,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToMediumInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDoubleToMediumInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
       SELECT(
@@ -249,8 +249,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDoubleToInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -265,8 +265,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDoubleToBigInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDoubleToBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(
@@ -281,8 +281,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToFloat(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDecimalToFloat(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
       SELECT(
@@ -297,8 +297,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToDouble(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDecimalToDouble(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
       SELECT(
@@ -313,8 +313,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToDecimal(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDecimalToDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(
@@ -329,8 +329,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToSmallInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDecimalToSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
       SELECT(
@@ -346,8 +346,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToMediumInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDecimalToMediumInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
       SELECT(
@@ -363,8 +363,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDecimalToInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -380,8 +380,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToBigInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDecimalToBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(
@@ -397,8 +397,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDecimalToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDecimalToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -413,8 +413,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToFloat(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSmallIntToFloat(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
       SELECT(
@@ -429,8 +429,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToDouble(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSmallIntToDouble(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
       SELECT(
@@ -445,8 +445,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToDecimal(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSmallIntToDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(
@@ -461,8 +461,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToSmallInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSmallIntToSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
       SELECT(
@@ -478,8 +478,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToMediumInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSmallIntToMediumInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
       SELECT(
@@ -495,8 +495,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSmallIntToInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -511,8 +511,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToBigInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSmallIntToBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(
@@ -527,8 +527,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testSmallIntToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testSmallIntToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -543,8 +543,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToFloat(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testMediumIntToFloat(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
       SELECT(
@@ -559,8 +559,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToDouble(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testMediumIntToDouble(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
       SELECT(
@@ -575,8 +575,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToDecimal(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testMediumIntToDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(
@@ -591,8 +591,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToSmallInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testMediumIntToSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
       SELECT(
@@ -608,8 +608,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToMediumInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testMediumIntToMediumInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
       SELECT(
@@ -625,8 +625,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testMediumIntToInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -641,8 +641,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToBigInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testMediumIntToBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(
@@ -657,8 +657,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testMediumIntToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testMediumIntToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -673,8 +673,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToFloat(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testIntToFloat(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
       SELECT(
@@ -689,8 +689,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToDouble(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testIntToDouble(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
       SELECT(
@@ -705,8 +705,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToDecimal(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testIntToDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(
@@ -721,8 +721,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToSmallInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testIntToSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
       SELECT(
@@ -738,8 +738,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToMediumInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testIntToMediumInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
       SELECT(
@@ -755,8 +755,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testIntToInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -771,8 +771,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToBigInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testIntToBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(
@@ -787,8 +787,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testIntToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testIntToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -803,8 +803,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToFloat(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBigIntToFloat(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.FLOAT> rows =
 
       SELECT(
@@ -819,8 +819,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToDouble(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBigIntToDouble(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DOUBLE> rows =
 
       SELECT(
@@ -835,8 +835,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToDecimal(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBigIntToDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(
@@ -855,8 +855,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToSmallInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBigIntToSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
       SELECT(
@@ -872,8 +872,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToMediumInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBigIntToMediumInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
       SELECT(
@@ -889,8 +889,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBigIntToInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -906,8 +906,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToBigInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBigIntToBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(
@@ -922,8 +922,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBigIntToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBigIntToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -938,8 +938,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToDecimal(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DECIMAL> rows =
 
       SELECT(
@@ -958,8 +958,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToSmallInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TINYINT> rows =
 
       SELECT(
@@ -975,8 +975,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToMediumInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToMediumInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.SMALLINT> rows =
 
       SELECT(
@@ -992,8 +992,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -1009,8 +1009,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToBigInt(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(
@@ -1026,8 +1026,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -1042,8 +1042,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToDate(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToDate(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DATE> rows =
 
       SELECT(
@@ -1059,8 +1059,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToTime(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToTime(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TIME> rows =
 
       SELECT(
@@ -1076,8 +1076,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToDateTime(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToDateTime(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DATETIME> rows =
 
       SELECT(
@@ -1093,8 +1093,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testCharToClob(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testCharToClob(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CLOB> rows =
 
       SELECT(
@@ -1109,8 +1109,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDateToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -1125,8 +1125,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testTimeToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testTimeToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -1141,8 +1141,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testTimeToTime(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testTimeToTime(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TIME> rows =
 
       SELECT(
@@ -1157,8 +1157,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTimeToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDateTimeToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -1173,8 +1173,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTimeToDate(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDateTimeToDate(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DATE> rows =
 
       SELECT(
@@ -1189,8 +1189,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTimeToTime(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDateTimeToTime(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.TIME> rows =
 
       SELECT(
@@ -1205,8 +1205,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testDateTimeToDateTime(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testDateTimeToDateTime(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.DATETIME> rows =
 
       SELECT(
@@ -1221,8 +1221,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testClobToChar(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testClobToChar(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -1237,8 +1237,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testClobToClob(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testClobToClob(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.CLOB> rows =
 
       SELECT(
@@ -1253,8 +1253,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBlobToBlob(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBlobToBlob(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BLOB> rows =
 
       SELECT(
@@ -1269,8 +1269,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBinaryToBlob(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBinaryToBlob(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BLOB> rows =
 
       SELECT(
@@ -1285,8 +1285,8 @@ public abstract class CastTest {
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
-  public void testBinaryToBinary(final types types, final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void testBinaryToBinary(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t = types.Type();
     try (final RowIterator<data.BINARY> rows =
 
       SELECT(
