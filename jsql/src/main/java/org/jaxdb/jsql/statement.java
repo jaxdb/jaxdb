@@ -293,24 +293,14 @@ public final class statement {
       return statement.execute(false, (Command.Modification<?,?,?>)this, null, null, assertNotNull(connection), isPrepared, null);
     }
 
-    default Result execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
-      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema(), dataSourceId)), null, false, isolation);
-    }
-
-    default Result execute(final String dataSourceId) throws IOException, SQLException {
-      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema(), dataSourceId)), null, false, null);
-    }
-
     default Result execute(final Transaction.Isolation isolation) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema(), null)), null, false, isolation);
+      return statement.execute(false, command, null, command.getSchema().getConnector(), null, false, isolation);
     }
 
     default Result execute() throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, assertNotNull(Database.getConnector(command.getSchema(), null)), null, false, null);
+      return statement.execute(false, command, null, command.getSchema().getConnector(), null, false, null);
     }
 
     public interface Delete extends Modification {
@@ -402,27 +392,15 @@ public final class statement {
     }
 
     @Override
-    default NotifiableResult execute(final String dataSourceId, final Transaction.Isolation isolation) throws IOException, SQLException {
-      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema(), dataSourceId)), null, false, isolation);
-    }
-
-    @Override
-    default NotifiableResult execute(final String dataSourceId) throws IOException, SQLException {
-      final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema(), dataSourceId)), null, false, null);
-    }
-
-    @Override
     default NotifiableResult execute(final Transaction.Isolation isolation) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema(), null)), null, false, isolation);
+      return (NotifiableResult)statement.execute(true, command, null, command.getSchema().getConnector(), null, false, isolation);
     }
 
     @Override
     default NotifiableResult execute() throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, assertNotNull(Database.getConnector(command.getSchema(), null)), null, false, null);
+      return (NotifiableResult)statement.execute(true, command, null, command.getSchema().getConnector(), null, false, null);
     }
 
     public interface Delete extends statement.Modification.Delete, NotifiableModification {
@@ -480,8 +458,6 @@ public final class statement {
   }
 
   public interface Query<D extends type.Entity> {
-    RowIterator<D> execute(String dataSourceId, Transaction.Isolation isolation) throws IOException, SQLException;
-    RowIterator<D> execute(String dataSourceId) throws IOException, SQLException;
     RowIterator<D> execute(Transaction.Isolation isolation) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector, Transaction.Isolation isolation) throws IOException, SQLException;
@@ -489,8 +465,6 @@ public final class statement {
     RowIterator<D> execute(Transaction transaction) throws IOException, SQLException;
     RowIterator<D> execute() throws IOException, SQLException;
 
-    RowIterator<D> execute(String dataSourceId, Transaction.Isolation isolation, QueryConfig config) throws IOException, SQLException;
-    RowIterator<D> execute(String dataSourceId, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Transaction.Isolation isolation, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector, Transaction.Isolation isolation, QueryConfig config) throws IOException, SQLException;

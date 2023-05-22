@@ -48,7 +48,6 @@ public class Transaction implements AutoCloseable {
   }
 
   private final Schema schema;
-  private final String dataSourceId;
   private final Isolation isolation;
   private DbVendor vendor;
   private boolean closed;
@@ -60,26 +59,17 @@ public class Transaction implements AutoCloseable {
 
   private Callbacks callbacks;
 
-  public Transaction(final Schema schema, final String dataSourceId, final Isolation isolation) {
+  public Transaction(final Schema schema, final Isolation isolation) {
     this.schema = assertNotNull(schema);
-    this.dataSourceId = dataSourceId;
     this.isolation = isolation;
   }
 
-  public Transaction(final Schema schema, final String dataSourceId) {
-    this(schema, dataSourceId, null);
-  }
-
-  public Transaction(final Schema schema, final Isolation isolation) {
-    this(schema, null, isolation);
-  }
-
   public Transaction(final Schema schema) {
-    this(schema, null, null);
+    this(schema, null);
   }
 
   public Transaction(final Connector connector, final Isolation isolation) {
-    this(connector.getSchema(), connector.getDataSourceId(), isolation);
+    this(connector.getSchema(), isolation);
     this.connector = connector;
   }
 
@@ -89,10 +79,6 @@ public class Transaction implements AutoCloseable {
 
   public Schema getSchema() {
     return schema;
-  }
-
-  public String getDataSourceId() {
-    return dataSourceId;
   }
 
   public DbVendor getVendor() throws IOException, SQLException {
@@ -118,7 +104,7 @@ public class Transaction implements AutoCloseable {
   }
 
   protected Connector getConnector() {
-    return connector == null ? connector = Database.getConnector(schema, dataSourceId) : connector;
+    return connector == null ? connector = schema.getConnector() : connector;
   }
 
   protected void addCallbacks(final Callbacks callbacks) {

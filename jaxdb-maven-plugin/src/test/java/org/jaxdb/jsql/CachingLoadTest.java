@@ -70,11 +70,12 @@ public abstract class CachingLoadTest extends NotificationTest {
   }
 
   @Test
-  public void test(final Caching caching, final Connector connector) throws Exception {
+  public void test(final Caching caching) throws Exception {
     final ExecutorService executor = Executors.newFixedThreadPool(iterations, new ThreadFactoryBuilder()
       .withUncaughtExceptionHandler(uncaughtExceptionHandler)
       .build());
 
+    final Connector connector = caching.getConnector();
     final Integer[] ids = insert(caching, connector);
 
     for (int i = 0; i < iterations; ++i) { // [N]

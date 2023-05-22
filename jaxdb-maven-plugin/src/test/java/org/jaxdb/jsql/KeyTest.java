@@ -29,8 +29,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.function.Supplier;
 
-import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.Types.$AbstractType.EnumType;
+import org.jaxdb.jsql.data.Column;
 import org.junit.Test;
 import org.libj.lang.ObjectUtil;
 

@@ -41,19 +41,18 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     return "<" + ObjectUtil.simpleIdentityString(entity) + ">\"" + entity.getName() + "\":" + entity;
   }
 
-  private final Connector connector;
-  private Schema schema;
+  private final Schema schema;
 
-  public DefaultCache(final Connector connector) {
-    this.connector = assertNotNull(connector);
+  public DefaultCache(final Schema schema) {
+    this.schema = assertNotNull(schema);
   }
 
   protected DefaultCache() {
-    this.connector = null;
+    this.schema = null;
   }
 
-  protected Connector getConnector() {
-    return connector;
+  protected Schema getSchema() {
+    return schema;
   }
 
   @SuppressWarnings("unchecked")
@@ -63,7 +62,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
 
   protected void onNotifyCallbacks(final String sessionId, final Exception e) {
     if (sessionId != null) {
-      final Schema schema = this.schema == null ? this.schema = getConnector().getSchema() : this.schema;
+      final Schema schema = getSchema();
       final OnNotifyCallbackList onNotifyCallbackList = schema.getSession(sessionId);
       if (onNotifyCallbackList != null)
         onNotifyCallbackList.accept(schema, e);
@@ -259,7 +258,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     try (
       final RowIterator<data.Table> rows =
         SELECT(row)
-          .execute(getConnector())) {
+          .execute(getSchema().getConnector())) {
 
         if (!rows.nextRow())
           throw new IllegalStateException("Expected a row");

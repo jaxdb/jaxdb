@@ -39,7 +39,6 @@ import org.jaxdb.jsql.keyword.Update.UPDATE_NOTIFY;
 import org.jaxdb.jsql.statement.NotifiableModification;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.runner.DBTestRunner.TestSpec;
-import org.jaxdb.runner.Vendor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -201,24 +200,20 @@ public abstract class CachingTest {
 
   @Test
   @TestSpec(order = 0)
-  public void setUp(final Caching caching, final Connector connector, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  public void setUp(final Caching caching) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.err.flush();
       System.exit(1);
     };
-
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
+
+    final Connector connector = caching.getConnector();
     try (final Connection connection = connector.getConnection(null)) {
       DDLxTest.recreateSchema(connection, "caching");
     }
 
-    caching.configCache(connector, new DefaultCache() {
-      @Override
-      protected Connector getConnector() {
-        return connector;
-      }
-
+    caching.configCache(new DefaultCache(caching) {
       @Override
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);

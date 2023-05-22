@@ -26,10 +26,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
+import org.jaxdb.jsql.Auto;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.Auto;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;

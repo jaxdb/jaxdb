@@ -140,7 +140,7 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     if (notifier == null)
       return;
 
-    final Connector cacheConnector = schema.getCacheConnector();
+    final Connector cacheConnector = schema.getConnector();
     try (final RowIterator<? extends data.Table> rows =
 
       SELECT(table).

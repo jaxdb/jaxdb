@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.ByteArrayInputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -84,7 +85,9 @@ final class EntitiesJaxSB {
       if (!iterator.hasNext())
         return new data.Table[0];
 
-      final Schema schema = (Schema)Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toClassCase(database.id())).getConstructor().newInstance();
+      final Constructor<?> constructor = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toClassCase(database.id())).getDeclaredConstructor();
+      constructor.setAccessible(true);
+      final Schema schema = (Schema)constructor.newInstance();
       final List<data.Table> entities = new ArrayList<>();
       while (iterator.hasNext())
         entities.add(toEntity(schema, iterator.next()));

@@ -18,6 +18,8 @@ package org.jaxdb.jsql.generator;
 
 import static org.jaxdb.jsql.generator.GeneratorUtil.*;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,11 +27,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.function.Consumer;
 
 import javax.annotation.Generated;
+import javax.sql.DataSource;
 
 import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.jsql.CacheConfig;
+import org.jaxdb.jsql.ConnectionFactory;
+import org.jaxdb.jsql.Notification;
+import org.jaxdb.jsql.Notification.DefaultListener;
 import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
@@ -172,7 +181,23 @@ class SchemaManifest {
     out.append("\n    return \"").append(name).append("\";");
     out.append("\n  }\n");
 
-    out.append("\n  public ").append(schemaClassSimpleName).append("() {");
+    out.append("\n  public ").append(schemaClassSimpleName).append("(final ").append(ConnectionFactory.class.getName()).append(" connectionFactory, final boolean isPrepared) {");
+    out.append("\n    super(connectionFactory, isPrepared);");
+    out.append("\n  }\n");
+
+    out.append("\n  public ").append(schemaClassSimpleName).append("(final ").append(DataSource.class.getName()).append(" dataSource, final boolean isPrepared) {");
+    out.append("\n    super(dataSource, isPrepared);");
+    out.append("\n  }\n");
+
+    out.append("\n  public ").append(schemaClassSimpleName).append("(final ").append(ConnectionFactory.class.getName()).append(" connectionFactory, final boolean isPrepared, final ").append(DefaultListener.class.getCanonicalName()).append('<').append(data.Table.class.getCanonicalName()).append("> notificationListener, final ").append(Queue.class.getName()).append('<').append(Notification.class.getName()).append('<').append(data.Table.class.getCanonicalName()).append(">> queue, final ").append(Consumer.class.getName()).append('<').append(CacheConfig.class.getName()).append("> cacheBuilder) throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {");
+    out.append("\n    super(connectionFactory, isPrepared, notificationListener, queue, cacheBuilder);");
+    out.append("\n  }\n");
+
+    out.append("\n  public ").append(schemaClassSimpleName).append("(final ").append(DataSource.class.getName()).append(" dataSource, final boolean isPrepared, final ").append(DefaultListener.class.getCanonicalName()).append('<').append(data.Table.class.getCanonicalName()).append("> notificationListener, final ").append(Queue.class.getName()).append('<').append(Notification.class.getName()).append('<').append(data.Table.class.getCanonicalName()).append(">> queue, final ").append(Consumer.class.getName()).append('<').append(CacheConfig.class.getName()).append("> cacheBuilder) throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {");
+    out.append("\n    super(dataSource, isPrepared, notificationListener, queue, cacheBuilder);");
+    out.append("\n  }\n");
+
+    out.append("\n  protected ").append(schemaClassSimpleName).append("() {");
     out.append("\n  }");
 
     out.append("\n}");

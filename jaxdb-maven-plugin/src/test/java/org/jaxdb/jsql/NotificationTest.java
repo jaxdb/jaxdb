@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.Notification.Action.*;
-
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.Connection;
@@ -34,7 +32,6 @@ import javax.xml.transform.TransformerException;
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.runner.DBTestRunner.TestSpec;
-import org.jaxdb.runner.Vendor;
 import org.junit.Test;
 import org.libj.sql.exception.SQLInternalErrorException;
 import org.libj.sql.exception.SQLOperatorInterventionException;
@@ -97,22 +94,19 @@ public abstract class NotificationTest {
 
   @Test
   @TestSpec(order = 0)
-  public void setUp(final Caching caching, final Connector connector, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  public void setUp(final Caching caching) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.exit(1);
     };
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
+
+    final Connector connector = caching.getConnector();
     try (final Connection connection = connector.getConnection(null)) {
       DDLxTest.recreateSchema(connection, "caching");
     }
 
-    caching.configCache(connector, new DefaultCache() {
-      @Override
-      protected Connector getConnector() {
-        return connector;
-      }
-
+    caching.configCache(new DefaultCache(caching) {
       @Override
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);

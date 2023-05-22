@@ -20,6 +20,7 @@ import static org.jaxdb.jsql.Notification.Action.*;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Queue;
@@ -27,19 +28,59 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import javax.sql.DataSource;
+
 import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.Notification.DefaultListener;
 import org.libj.lang.ObjectUtil;
+import org.libj.sql.AuditConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class Schema {
   private static final Logger logger = LoggerFactory.getLogger(Schema.class);
-  private static final ConcurrentHashMap<Class<? extends Schema>,Schema> instances = new ConcurrentHashMap<>();
+
+  private static ConnectionFactory toConnectionFactory(final DataSource dataSource) {
+    assertNotNull(dataSource, "dataSource is null");
+    return (final Transaction.Isolation isolation) -> {
+      final Connection connection = dataSource.getConnection();
+      if (isolation != null)
+        connection.setTransactionIsolation(isolation.getLevel());
+
+      return AuditConnection.wrapIfDebugEnabled(connection);
+    };
+  }
+
+  private final Connector connector;
+  private final boolean isPrepared;
+
+  public Schema(final ConnectionFactory connectionFactory, final boolean isPrepared) {
+    this.connector = new Connector(this, connectionFactory, isPrepared);
+    this.isPrepared = isPrepared;
+  }
+
+  public Schema(final DataSource dataSource, final boolean isPrepared) {
+    this(toConnectionFactory(dataSource), isPrepared);
+  }
+
+  public Schema(final ConnectionFactory connectionFactory, final boolean isPrepared, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
+    this.connector = new Connector(this, connectionFactory, isPrepared);
+    this.isPrepared = isPrepared;
+    configCache(notificationListener, queue, cacheBuilder);
+  }
+
+  public Schema(final DataSource dataSource, final boolean isPrepared, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
+    this(toConnectionFactory(dataSource), isPrepared, notificationListener, queue, cacheBuilder);
+  }
 
   Schema() {
-    instances.put(getClass(), this);
+    this.connector = null;
+    this.isPrepared = false;
+  }
+
+  public Connector getConnector() {
+    return connector;
   }
 
   public abstract String getName();
@@ -47,25 +88,8 @@ public abstract class Schema {
   public abstract data.Table[] getTables();
   public abstract void setDefaultQueryConfig(QueryConfig queryConfig);
 
-  static Schema get(final Class<? extends Schema> schemaClass) {
-    final Schema schema = instances.get(assertNotNull(schemaClass));
-    if (schema != null)
-      return schema;
-
-    try {
-      Class.forName(schemaClass.getName());
-    }
-    catch (final ClassNotFoundException e) {
-      return null;
-    }
-
-    return instances.get(schemaClass);
-  }
-
-  private Connector cacheConnector;
-
-  Connector getCacheConnector() {
-    return cacheConnector;
+  public boolean isPrepared() {
+    return isPrepared;
   }
 
   private Notifier<?> cacheNotifier;
@@ -74,8 +98,8 @@ public abstract class Schema {
     return cacheNotifier;
   }
 
-  void initCache(final Connector cacheConnector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Set<data.Table> tables, final ArrayList<OnConnectPreLoad> onConnectPreLoads) throws IOException, SQLException {
-    if (this.cacheConnector != null)
+  void initCache(final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Set<data.Table> tables, final ArrayList<OnConnectPreLoad> onConnectPreLoads) throws IOException, SQLException {
+    if (this.cacheNotifier != null)
       throw new IllegalStateException("Cache was already initialized");
 
     final int len = tables.size();
@@ -83,10 +107,8 @@ public abstract class Schema {
     for (int i = 0; i < len; ++i) // [RA]
       array[i]._initCache$();
 
-    cacheConnector.addNotificationListener(INSERT, UPGRADE, DELETE, notificationListener, queue, array);
-
-    this.cacheConnector = cacheConnector;
-    this.cacheNotifier = cacheConnector.getNotifier();
+    connector.addNotificationListener(INSERT, UPGRADE, DELETE, notificationListener, queue, array);
+    this.cacheNotifier = connector.getNotifier();
 
     for (int i = 0; i < len; ++i) {
       final OnConnectPreLoad onConnectPreLoad = onConnectPreLoads.get(i);
@@ -95,11 +117,11 @@ public abstract class Schema {
     }
   }
 
-  public void configCache(final Connector connector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
+  public void configCache(final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
     if (cacheNotifier != null)
       throw new IllegalStateException("Cache already configured");
 
-    final CacheConfig builder = new CacheConfig(this, connector, notificationListener, queue);
+    final CacheConfig builder = new CacheConfig(this, notificationListener, queue);
     cacheBuilder.accept(builder);
     builder.commit();
   }

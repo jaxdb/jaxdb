@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.jaxdb.jsql.Transaction.Isolation;
-
-public class TestConnector extends Connector {
+public abstract class TestConnectionFactory implements ConnectionFactory {
   private static ThreadLocal<Boolean> called = new ThreadLocal<Boolean>() {
     @Override
     protected Boolean initialValue() {
@@ -38,13 +36,11 @@ public class TestConnector extends Connector {
     return true;
   }
 
-  protected TestConnector(final Schema schema, final String dataSourceId, final ConnectionFactory connectionFactory, final boolean isPrepared) {
-    super(schema, dataSourceId, connectionFactory, isPrepared);
-  }
+  public abstract Connection getTestConnection(Transaction.Isolation isolation) throws IOException, SQLException;
 
   @Override
-  public Connection getConnection(final Isolation isolation) throws IOException, SQLException {
+  public final Connection getConnection(final Transaction.Isolation isolation) throws IOException, SQLException {
     called.set(true);
-    return super.getConnection(isolation);
+    return getTestConnection(isolation);
   }
 }

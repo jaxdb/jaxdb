@@ -16,17 +16,13 @@
 
 package org.jaxdb.jsql;
 
-
-
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
@@ -41,21 +37,14 @@ public class Connector implements ConnectionFactory {
 
   private final Schema schema;
   private final Class<? extends Schema> schemaClass;
-  private final String dataSourceId;
 
   private final ConnectionFactory connectionFactory;
   private final boolean isPrepared;
+  private volatile Notifier<?> notifier;
 
-  private final AtomicReference<Notifier<?>> notifier = new AtomicReference<>();
-
-  Notifier<?> getNotifier() {
-    return notifier.get();
-  }
-
-  protected Connector(final Schema schema, final String dataSourceId, final ConnectionFactory connectionFactory, final boolean isPrepared) {
+  protected Connector(final Schema schema, final ConnectionFactory connectionFactory, final boolean isPrepared) {
     this.schema = schema;
     this.schemaClass = schema.getClass();
-    this.dataSourceId = dataSourceId;
     this.connectionFactory = assertNotNull(connectionFactory);
     this.isPrepared = isPrepared;
   }
@@ -64,12 +53,12 @@ public class Connector implements ConnectionFactory {
     return schema;
   }
 
-  public String getDataSourceId() {
-    return dataSourceId;
-  }
-
   public boolean isPrepared() {
     return isPrepared;
+  }
+
+  Notifier<?> getNotifier() {
+    return notifier;
   }
 
   public <T extends data.Table>boolean hasNotificationListener(final INSERT insert, final T table) {
@@ -101,7 +90,7 @@ public class Connector implements ConnectionFactory {
   }
 
   private <T extends data.Table>boolean hasNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final T table) {
-    final Notifier<?> notifier = this.notifier.get();
+    final Notifier<?> notifier = this.notifier;
     return notifier != null && notifier.hasNotificationListener(insert, up, delete, table);
   }
 
@@ -142,15 +131,15 @@ public class Connector implements ConnectionFactory {
 
   @SuppressWarnings({"rawtypes", "resource", "unchecked"})
   <T extends data.Table>boolean addNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T[] tables) throws IOException, SQLException {
-    Notifier<?> notifier = this.notifier.get();
+    Notifier<?> notifier = this.notifier;
     if (notifier == null) {
-      synchronized (this.notifier) {
-        notifier = this.notifier.get();
+      synchronized (this) {
+        notifier = this.notifier;
         if (notifier == null) {
           final Connection connection = connectionFactory.getConnection(null);
           final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
           if (vendor == DbVendor.POSTGRE_SQL) {
-            this.notifier.set(notifier = new PostgreSQLNotifier(connection, this));
+            this.notifier = notifier = new PostgreSQLNotifier(connection, this);
           }
           else {
             connection.close();
@@ -196,7 +185,7 @@ public class Connector implements ConnectionFactory {
   }
 
   private <T extends data.Table>boolean removeNotificationListeners0(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
-    final Notifier<?> notifier = this.notifier.get();
+    final Notifier<?> notifier = this.notifier;
     return notifier != null && notifier.removeNotificationListeners(insert, up, delete);
   }
 
@@ -236,7 +225,7 @@ public class Connector implements ConnectionFactory {
   }
 
   private final <T extends data.Table>boolean removeNotificationListeners0(final INSERT insert, final UP up, final DELETE delete, final T[] tables) throws IOException, SQLException {
-    final Notifier<?> notifier = this.notifier.get();
+    final Notifier<?> notifier = this.notifier;
     return notifier != null && notifier.removeNotificationListeners(insert, up, delete, tables);
   }
 
@@ -276,12 +265,7 @@ public class Connector implements ConnectionFactory {
 
   @Override
   public int hashCode() {
-    int hashCode = 1;
-    hashCode = 31 * hashCode + schema.hashCode();
-    if (dataSourceId != null)
-      hashCode = 31 * hashCode + dataSourceId.hashCode();
-
-    return hashCode;
+    return 31 + schema.hashCode();
   }
 
   @Override
@@ -293,6 +277,6 @@ public class Connector implements ConnectionFactory {
       return false;
 
     final Connector that = (Connector)obj;
-    return schema.equals(that.schema) && Objects.equals(dataSourceId, that.dataSourceId);
+    return schema.equals(that.schema);
   }
 }

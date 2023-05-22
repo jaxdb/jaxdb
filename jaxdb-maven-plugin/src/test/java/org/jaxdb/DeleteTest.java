@@ -24,8 +24,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 import org.jaxdb.jsql.Batch;
-import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.Classicmodels;
+import org.jaxdb.jsql.Transaction;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;

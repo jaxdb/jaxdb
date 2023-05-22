@@ -25,13 +25,13 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import org.jaxdb.jsql.Batch;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.Classicmodels;
-import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.Types;
 import org.jaxdb.jsql.Types.$AbstractType.EnumType;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;

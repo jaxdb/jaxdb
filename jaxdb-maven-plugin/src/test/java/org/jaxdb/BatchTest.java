@@ -17,7 +17,6 @@
 package org.jaxdb;
 
 import static org.jaxdb.jsql.TestDML.*;
-import static org.jaxdb.jsql.Classicmodels.$Purchase.Status.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -25,9 +24,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 import org.jaxdb.jsql.Batch;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -76,14 +75,14 @@ public abstract class BatchTest {
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, ON_HOLD).
-      WHERE(EQ(p.status, DISPUTED))
+      SET(p.status, Classicmodels.Purchase.Status.ON_HOLD).
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.DISPUTED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 3)));
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, ON_HOLD).
-      WHERE(EQ(p.status, DISPUTED))
+      SET(p.status, Classicmodels.Purchase.Status.ON_HOLD).
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.DISPUTED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 0)));
 
     batch.addStatement(
@@ -98,17 +97,17 @@ public abstract class BatchTest {
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, CANCELED))
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.CANCELED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, RESOLVED))
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.RESOLVED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 4)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, IN_PROCESS))
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.IN_PROCESS))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
 
     final Classicmodels.Purchase p1 = classicmodels.new Purchase();
@@ -116,7 +115,7 @@ public abstract class BatchTest {
     p1.requiredDate.set(LocalDate.now());
     p1.customerNumber.set((short)114);
     p1.purchaseNumber.set(SELECT(ADD(MAX(p.purchaseNumber), 1)).FROM(p));
-    p1.status.set(IN_PROCESS);
+    p1.status.set(Classicmodels.Purchase.Status.IN_PROCESS);
 
     for (int i = 0; i < 5; ++i) { // [N]
       batch.addStatement(
@@ -126,13 +125,13 @@ public abstract class BatchTest {
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, CANCELED).
-      WHERE(EQ(p.status, IN_PROCESS))
+      SET(p.status, Classicmodels.Purchase.Status.CANCELED).
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.IN_PROCESS))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, CANCELED))
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.CANCELED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
 
     if (!isOracle)

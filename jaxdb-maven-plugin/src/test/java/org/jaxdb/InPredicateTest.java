@@ -22,11 +22,11 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;

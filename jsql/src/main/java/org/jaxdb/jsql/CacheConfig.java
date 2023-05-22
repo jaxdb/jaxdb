@@ -22,7 +22,7 @@ public class CacheConfig {
         throw new IllegalArgumentException("Table is mutable");
 
       final Schema schema = table.getSchema();
-      final Connector cacheConnector = schema.getCacheConnector();
+      final Connector cacheConnector = schema.getConnector();
       final Notifier<?> notifier = schema.getCacheNotifier();
       try (final RowIterator<data.Table> rows =
         SELECT(table).
@@ -37,15 +37,13 @@ public class CacheConfig {
   }
 
   private Schema schema;
-  private Connector connector;
   private DefaultListener<data.Table> notificationListener;
   private Queue<Notification<data.Table>> queue;
   private ArrayList<OnConnectPreLoad> onConnectPreLoads = new ArrayList<>();
   private LinkedHashSet<data.Table> tables = new LinkedHashSet<>();
 
-  CacheConfig(final Schema schema, final Connector connector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue) {
+  CacheConfig(final Schema schema, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue) {
     this.schema = schema;
-    this.connector = connector;
     this.notificationListener = notificationListener;
     this.queue = queue;
   }
@@ -99,10 +97,9 @@ public class CacheConfig {
   }
 
   void commit() throws IOException, SQLException {
-    schema.initCache(connector, notificationListener, queue, tables, onConnectPreLoads);
+    schema.initCache(notificationListener, queue, tables, onConnectPreLoads);
 
     schema = null;
-    connector = null;
     notificationListener = null;
     queue = null;
     onConnectPreLoads = null;
