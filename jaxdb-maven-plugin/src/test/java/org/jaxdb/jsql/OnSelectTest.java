@@ -45,7 +45,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.Vendor;
 import org.jaxdb.sqlx.SQLxTest;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -69,7 +68,7 @@ public abstract class OnSelectTest {
   @Test
   @TestSpec(order = 0)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void setUp(final classicmodels classicmodels, final Connector connector, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  public void setUp(final classicmodels classicmodels, final Connector connector) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.err.flush();
@@ -177,7 +176,7 @@ public abstract class OnSelectTest {
 
   @Test
   @TestSpec(order = 2)
-  public void testTreeRange(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+  public void testTreeRange(final classicmodels classicmodels) throws IOException, SQLException {
     final NavigableMap<data.Key,classicmodels.Office> map = classicmodels.Office()._officeCodeToOfficeMap$;
     assertEquals(0, map.size());
 
@@ -208,7 +207,7 @@ public abstract class OnSelectTest {
 
   @Test
   @TestSpec(order = 3)
-  public void testHashSingle(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+  public void testHashSingle(final classicmodels classicmodels) throws IOException, SQLException {
     final Map<data.Key,classicmodels.ProductLine> map = classicmodels.ProductLine()._productLineToProductLineMap$;
     assertEquals(0, map.size());
 
@@ -260,7 +259,7 @@ public abstract class OnSelectTest {
 
   @Test
   @TestSpec(order = 6)
-  public void testTreeTwoDimensions(final classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+  public void testTreeTwoDimensions(final classicmodels classicmodels) throws IOException, SQLException {
     try {
       classicmodels.PurchaseDetail().purchaseNumber$productCodeToPurchaseDetail(10100, 10114, "S10_1678", "S10_1950");
       fail("Expected UnsupportedOperationException");
@@ -296,7 +295,7 @@ public abstract class OnSelectTest {
   }
 
   @AfterClass
-  public static void recreateSchema(final classicmodels classicmodels, final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  public static void recreateSchema(final classicmodels classicmodels, final Transaction transaction) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(transaction.getConnection(), classicmodels.getName());
   }
 }

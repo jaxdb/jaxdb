@@ -858,7 +858,7 @@ class TableMeta {
 
         out.append("\n\n    @").append(Override.class.getName());
         out.append("\n    void _commitSelectAll$() {");
-        out.append("\n      if (!_cacheEnabled$)");
+        out.append("\n      if (!").append(classSimpleName).append("().").append("_cacheEnabled$)");
         out.append("\n        return;\n");
         out.append("\n      getCache().addKey(").append(data.Key.class.getCanonicalName()).append(".ALL);");
         if (allRelations.size() > 0) {
@@ -875,7 +875,7 @@ class TableMeta {
 
         out.append("\n\n    @").append(Override.class.getName());
         out.append("\n    void _commitInsert$() {");
-        out.append("\n      if (!_cacheEnabled$)");
+        out.append("\n      if (!").append(classSimpleName).append("().").append("_cacheEnabled$)");
         out.append("\n        return;\n");
         // out.append("\n super._commitInsert$();\n");
         if (allRelations.size() > 0) {
@@ -892,7 +892,7 @@ class TableMeta {
 
         out.append("\n    @").append(Override.class.getName());
         out.append("\n    void _commitDelete$() {");
-        out.append("\n      if (!_cacheEnabled$)");
+        out.append("\n      if (!").append(classSimpleName).append("().").append("_cacheEnabled$)");
         out.append("\n        return;\n");
 
         // FIXME: Remove the re-addition of all Relation(s) to ArrayList

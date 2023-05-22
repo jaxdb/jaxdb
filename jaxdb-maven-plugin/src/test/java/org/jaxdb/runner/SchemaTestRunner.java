@@ -24,9 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.jsql.Connector;
-import org.jaxdb.jsql.Database;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.TestCommand;
+import org.jaxdb.jsql.TestConnector;
+import org.jaxdb.jsql.TestDatabase;
 import org.jaxdb.jsql.Transaction;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -125,6 +126,8 @@ public class SchemaTestRunner extends DBTestRunner {
     if (transactionParam != -1)
       params[transactionParam] = transaction = newTransaction(schema, executor);
 
+    TestConnector.called();
+
     final Object result;
 
     try {
@@ -151,7 +154,7 @@ public class SchemaTestRunner extends DBTestRunner {
     final DB db = executor.getDB();
     Connector connector = schemaClassToConnector.get(db);
     if (connector == null)
-      schemaClassToConnector.put(db, connector = Database.get(schema, db.value().getSimpleName()).connect(i -> i != null ? executor.getConnection(i.getLevel()) : executor.getConnection()));
+      schemaClassToConnector.put(db, connector = TestDatabase.get(schema, db.value().getSimpleName()).connect(i -> i != null ? executor.getConnection(i.getLevel()) : executor.getConnection()));
 
     return connector;
   }
