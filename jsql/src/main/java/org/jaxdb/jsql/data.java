@@ -1980,6 +1980,11 @@ public final class data {
       update(Compiler.getCompiler(DbVendor.valueOf(rows.resultSet.getStatement().getConnection().getMetaData())), rows.resultSet, columnIndex);
     }
 
+    /**
+     * Returns {@code true} if this {@link Column}'s value was set, otherwise {@code false}.
+     *
+     * @return {@code true} if this {@link Column}'s value was set, otherwise {@code false}.
+     */
     public final boolean wasSet() {
       return setByCur != null;
     }

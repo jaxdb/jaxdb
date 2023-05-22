@@ -22,12 +22,12 @@ public class CacheConfig {
         throw new IllegalArgumentException("Table is mutable");
 
       final Schema schema = table.getSchema();
-      final Connector cacheConnector = schema.getConnector();
+      final Connector connector = schema.getConnector();
       final Notifier<?> notifier = schema.getCacheNotifier();
       try (final RowIterator<data.Table> rows =
         SELECT(table).
         FROM(table)
-          .execute(cacheConnector, withoutCacheSelectEntity)) {
+          .execute(connector, withoutCacheSelectEntity)) {
         while (rows.nextRow())
           notifier.onSelect(rows.nextEntity());
 

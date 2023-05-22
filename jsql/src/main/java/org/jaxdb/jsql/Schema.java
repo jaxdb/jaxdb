@@ -52,34 +52,25 @@ public abstract class Schema {
     };
   }
 
-  private final Connector connector;
-  private final boolean isPrepared;
+  private Connector connector;
+  private boolean isPrepared;
 
-  public Schema(final ConnectionFactory connectionFactory, final boolean isPrepared) {
-    this.connector = new Connector(this, connectionFactory, isPrepared);
+  public Connector connect(final ConnectionFactory connectionFactory, final boolean isPrepared) {
     this.isPrepared = isPrepared;
+    return this.connector = new Connector(this, connectionFactory, isPrepared);
   }
 
-  public Schema(final DataSource dataSource, final boolean isPrepared) {
-    this(toConnectionFactory(dataSource), isPrepared);
+  public Connector connect(final DataSource dataSource, final boolean isPrepared) {
+    return connect(toConnectionFactory(dataSource), isPrepared);
   }
 
-  public Schema(final ConnectionFactory connectionFactory, final boolean isPrepared, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
-    this.connector = new Connector(this, connectionFactory, isPrepared);
-    this.isPrepared = isPrepared;
-    configCache(notificationListener, queue, cacheBuilder);
-  }
-
-  public Schema(final DataSource dataSource, final boolean isPrepared, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
-    this(toConnectionFactory(dataSource), isPrepared, notificationListener, queue, cacheBuilder);
-  }
-
-  Schema() {
-    this.connector = null;
-    this.isPrepared = false;
+  protected Schema() {
   }
 
   public Connector getConnector() {
+    if (connector == null)
+      throw new IllegalStateException("Schema \"" + getName() + "\" is not connected");
+
     return connector;
   }
 

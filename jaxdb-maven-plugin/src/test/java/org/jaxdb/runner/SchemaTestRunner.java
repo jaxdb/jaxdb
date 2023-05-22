@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-import org.jaxdb.jsql.ConnectionFactory;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.TestCommand;
 import org.jaxdb.jsql.TestConnectionFactory;
@@ -79,12 +78,13 @@ public class SchemaTestRunner extends DBTestRunner {
     else if ((schema = dbToSchema.get(db)) != null)
       return schema;
 
-    dbToSchema.put(db, schema = ((Class<? extends Schema>)schemaClass).getConstructor(ConnectionFactory.class, boolean.class).newInstance(new TestConnectionFactory() {
+    dbToSchema.put(db, schema = ((Class<? extends Schema>)schemaClass).getConstructor().newInstance());
+    schema.connect(new TestConnectionFactory() {
       @Override
       public Connection getTestConnection(final Transaction.Isolation isolation) throws IOException, SQLException {
         return isolation != null ? executor.getConnection(isolation.getLevel()) : executor.getConnection();
       }
-    }, false));
+    }, false);
     return schema;
   }
 

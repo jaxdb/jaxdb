@@ -693,24 +693,25 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @SuppressWarnings("unchecked")
-        RowIterator<D> execute(final Schema schema, final Transaction transaction, final Connector connector, Connection connection, boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Schema schema, final Transaction transaction, Connector connector, Connection connection, boolean isPrepared, final Transaction.Isolation isolation, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
 
           Statement statement = null;
           try {
-            if (connector != null) {
+            if (transaction != null) {
+              isPrepared = transaction.isPrepared();
+              connection = transaction.getConnection();
+            }
+            else if (connection == null) {
+              if (connector == null)
+                connector = schema.getConnector();
+
               isPrepared = connector.isPrepared();
               connection = connector.getConnection(isolation);
               connection.setAutoCommit(true);
             }
-            else if (transaction != null) {
-              isPrepared = transaction.isPrepared();
-              connection = transaction.getConnection();
-            }
 
-            final Connection finalConnection = connection;
-
-            final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
+            final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
               final QueryConfig defaultQueryConfig = schema.defaultQueryConfig;
 
@@ -732,11 +733,13 @@ abstract class Command<E> extends Keyword implements Closeable {
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
 
-              final ResultSet resultSet = QueryConfig.executeQuery(contextQueryConfig, defaultQueryConfig, compilation, finalConnection);
+              final ResultSet resultSet = QueryConfig.executeQuery(contextQueryConfig, defaultQueryConfig, compilation, connection);
               if (callbacks != null)
                 callbacks.onExecute(Statement.SUCCESS_NO_INFO);
 
-              final Statement finalStatement = statement = resultSet.getStatement();
+              final Connector connectorFinal = connector;
+              final Connection connectionFinal = connection;
+              final Statement statementFinal = statement = resultSet.getStatement();
               final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
               return new RowIterator<D>(resultSet, contextQueryConfig, defaultQueryConfig) {
                 private final boolean isCacheableRowIteratorFullConsume = QueryConfig.getCacheableRowIteratorFullConsume(contextQueryConfig, defaultQueryConfig);
@@ -858,9 +861,9 @@ abstract class Command<E> extends Keyword implements Closeable {
                 @Override
                 public void close() throws SQLException {
                   SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
-                  e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
-                  if (connector != null)
-                    e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
+                  e = Throwables.addSuppressed(e, AuditStatement.close(statementFinal));
+                  if (connectorFinal != null)
+                    e = Throwables.addSuppressed(e, AuditConnection.close(connectionFinal));
 
                   prototypes = null;
                   cachedTables = null;
@@ -887,17 +890,17 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public final RowIterator<D> execute(final Transaction transaction) throws IOException, SQLException {
-          return execute(getSchema(), assertNotNull(transaction), null, null, false, null, null);
+          return execute(getSchema(), transaction, null, null, false, null, null);
         }
 
         @Override
         public final RowIterator<D> execute(final Connector connector, final Transaction.Isolation isolation) throws IOException, SQLException {
-          return execute(getSchema(), null, assertNotNull(connector), null, false, isolation, null);
+          return execute(getSchema(), null, connector, null, false, isolation, null);
         }
 
         @Override
         public final RowIterator<D> execute(final Connector connector) throws IOException, SQLException {
-          return execute(getSchema(), null, assertNotNull(connector), null, false, null, null);
+          return execute(getSchema(), null, connector, null, false, null, null);
         }
 
         @Override
@@ -908,28 +911,28 @@ abstract class Command<E> extends Keyword implements Closeable {
         @Override
         public final RowIterator<D> execute(final Transaction.Isolation isolation) throws IOException, SQLException {
           final Schema schema = getSchema();
-          return execute(schema, null, schema.getConnector(), null, false, isolation, null);
+          return execute(schema, null, null, null, false, isolation, null);
         }
 
         @Override
         public RowIterator<D> execute() throws IOException, SQLException {
           final Schema schema = getSchema();
-          return execute(schema, null, schema.getConnector(), null, false, null, null);
+          return execute(schema, null, null, null, false, null, null);
         }
 
         @Override
         public final RowIterator<D> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
-          return execute(getSchema(), assertNotNull(transaction), null, null, false, null, config);
+          return execute(getSchema(), transaction, null, null, false, null, config);
         }
 
         @Override
         public final RowIterator<D> execute(final Connector connector, final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
-          return execute(getSchema(), null, assertNotNull(connector), null, false, isolation, config);
+          return execute(getSchema(), null, connector, null, false, isolation, config);
         }
 
         @Override
         public final RowIterator<D> execute(final Connector connector, final QueryConfig config) throws IOException, SQLException {
-          return execute(getSchema(), null, assertNotNull(connector), null, false, null, config);
+          return execute(getSchema(), null, connector, null, false, null, config);
         }
 
         @Override
@@ -940,13 +943,13 @@ abstract class Command<E> extends Keyword implements Closeable {
         @Override
         public final RowIterator<D> execute(final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
           final Schema schema = getSchema();
-          return execute(schema, null, schema.getConnector(), null, false, isolation, config);
+          return execute(schema, null, null, null, false, isolation, config);
         }
 
         @Override
         public RowIterator<D> execute(final QueryConfig config) throws IOException, SQLException {
           final Schema schema = getSchema();
-          return execute(schema, null, schema.getConnector(), null, false, null, null);
+          return execute(schema, null, null, null, false, null, null);
         }
 
         @Override

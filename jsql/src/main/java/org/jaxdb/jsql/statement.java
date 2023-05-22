@@ -40,7 +40,7 @@ import org.libj.sql.exception.SQLExceptions;
 
 public final class statement {
   @SuppressWarnings({"null", "resource"})
-  private static <D extends type.Entity,E,C,R>Modification.Result execute(final boolean async, final Command.Modification<E,C,R> command, final Transaction transaction, final Connector connector, Connection connection, boolean isPrepared, final Transaction.Isolation isolation) throws IOException, SQLException {
+  private static <D extends type.Entity,E,C,R>Modification.Result execute(final boolean async, final Command.Modification<E,C,R> command, final Transaction transaction, Connector connector, Connection connection, boolean isPrepared, final Transaction.Isolation isolation) throws IOException, SQLException {
     command.assertNotClosed();
 
     Statement statement = null;
@@ -51,15 +51,18 @@ public final class statement {
     try {
       final Schema schema = command.getSchema();
       final String sessionId = command.sessionId;
-      if (connector != null) {
-        isPrepared = connector.isPrepared();
-        connection = connector.getConnection(isolation);
-        connection.setAutoCommit(true);
-      }
-      else if (transaction != null) {
+      if (transaction != null) {
         isPrepared = transaction.isPrepared();
         connection = transaction.getConnection();
         transaction.addCallbacks(command.callbacks);
+      }
+      else if (connection == null) {
+        if (connector == null)
+          connector = schema.getConnector();
+
+        isPrepared = connector.isPrepared();
+        connection = connector.getConnection(isolation);
+        connection.setAutoCommit(true);
       }
 
       final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
@@ -278,15 +281,15 @@ public final class statement {
     }
 
     default Result execute(final Transaction transaction) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?>)this, assertNotNull(transaction), null, null, false, null);
+      return statement.execute(false, (Command.Modification<?,?,?>)this, transaction, null, null, false, null);
     }
 
     default Result execute(final Connector connector, final Transaction.Isolation isolation) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?>)this, null, assertNotNull(connector), null, false, isolation);
+      return statement.execute(false, (Command.Modification<?,?,?>)this, null, connector, null, false, isolation);
     }
 
     default Result execute(final Connector connector) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?>)this, null, assertNotNull(connector), null, false, null);
+      return statement.execute(false, (Command.Modification<?,?,?>)this, null, connector, null, false, null);
     }
 
     default Result execute(final Connection connection, final boolean isPrepared) throws IOException, SQLException {
@@ -295,12 +298,12 @@ public final class statement {
 
     default Result execute(final Transaction.Isolation isolation) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, command.getSchema().getConnector(), null, false, isolation);
+      return statement.execute(false, command, null, null, null, false, isolation);
     }
 
     default Result execute() throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return statement.execute(false, command, null, command.getSchema().getConnector(), null, false, null);
+      return statement.execute(false, command, null, null, null, false, null);
     }
 
     public interface Delete extends Modification {
@@ -373,17 +376,17 @@ public final class statement {
 
     @Override
     default NotifiableResult execute(final Transaction transaction) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, assertNotNull(transaction), null, null, false, null);
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, transaction, null, null, false, null);
     }
 
     @Override
     default NotifiableResult execute(final Connector connector, final Transaction.Isolation isolation) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, assertNotNull(connector), null, false, isolation);
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, connector, null, false, isolation);
     }
 
     @Override
     default NotifiableResult execute(final Connector connector) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, assertNotNull(connector), null, false, null);
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, connector, null, false, null);
     }
 
     @Override
@@ -394,13 +397,13 @@ public final class statement {
     @Override
     default NotifiableResult execute(final Transaction.Isolation isolation) throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, command.getSchema().getConnector(), null, false, isolation);
+      return (NotifiableResult)statement.execute(true, command, null, null, null, false, isolation);
     }
 
     @Override
     default NotifiableResult execute() throws IOException, SQLException {
       final Command.Modification<?,?,?> command = (Command.Modification<?,?,?>)this;
-      return (NotifiableResult)statement.execute(true, command, null, command.getSchema().getConnector(), null, false, null);
+      return (NotifiableResult)statement.execute(true, command, null, null, null, false, null);
     }
 
     public interface Delete extends statement.Modification.Delete, NotifiableModification {
