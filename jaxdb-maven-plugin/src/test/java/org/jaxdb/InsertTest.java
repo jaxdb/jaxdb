@@ -258,7 +258,7 @@ public abstract class InsertTest {
     DELETE(b)
       .execute(transaction);
 
-    final Types.Type t = types.Type();
+    final Types.Type t = types.Type$;
 
     assertEquals(27,
       INSERT(b).
@@ -273,7 +273,7 @@ public abstract class InsertTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testInsertSelectIntoColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Backup b = types.Backup();
+    final Types.Backup b = types.Backup$;
     final Types.Type t1 = types.new Type();
     final Types.Type t2 = types.new Type();
     final Types.Type t3 = types.new Type();

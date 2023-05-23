@@ -4349,6 +4349,8 @@ public final class data {
       min = this;
       c = (o1, o2) -> o1.compareTo(o2);
 
+      if (columns == null && values.length > 0)
+        System.out.println();
       this.columns = columns;
       this.values = values;
     }

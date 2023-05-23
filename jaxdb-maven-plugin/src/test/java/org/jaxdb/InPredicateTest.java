@@ -54,7 +54,7 @@ public abstract class InPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testInList(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -80,7 +80,7 @@ public abstract class InPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testNotInList(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -106,7 +106,7 @@ public abstract class InPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testInSubQuery(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -132,7 +132,7 @@ public abstract class InPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testNotInSubQuery(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(

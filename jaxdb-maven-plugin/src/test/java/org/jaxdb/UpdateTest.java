@@ -61,7 +61,7 @@ public abstract class UpdateTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testSelectForUpdateEntity(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    Classicmodels.Product p = classicmodels.Product();
+    Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<Classicmodels.Product> rows =
 
       SELECT(p).
@@ -87,8 +87,8 @@ public abstract class UpdateTest {
   @DBTestRunner.Unsupported(Derby.class) // FIXME: ERROR 42Y90: FOR UPDATE is not permitted in this type of statement.
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testSelectForUpdateEntities(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    Classicmodels.Product p = classicmodels.Product();
-    Classicmodels.ProductLine pl = classicmodels.ProductLine();
+    Classicmodels.Product p = classicmodels.Product$;
+    Classicmodels.ProductLine pl = classicmodels.ProductLine$;
     try (final RowIterator<data.Table> rows =
 
       SELECT(p, pl).
@@ -114,7 +114,7 @@ public abstract class UpdateTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testUpdateEntities(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    Classicmodels.Product p = classicmodels.Product();
+    Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<Classicmodels.Product> rows1 =
 
       SELECT(p).
@@ -127,7 +127,7 @@ public abstract class UpdateTest {
       p = rows1.nextEntity();
       assertFalse(rows1.nextRow());
 
-      Classicmodels.ProductLine pl = classicmodels.ProductLine();
+      Classicmodels.ProductLine pl = classicmodels.ProductLine$;
       final RowIterator<Classicmodels.ProductLine> rows2 =
 
         SELECT(pl).
@@ -157,7 +157,7 @@ public abstract class UpdateTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testUpdateSetWhere(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     try (final RowIterator<Types.Type> rows =
 
       SELECT(t).
@@ -183,7 +183,7 @@ public abstract class UpdateTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testUpdateSet(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     try (final RowIterator<Types.Type> rows =
 
       SELECT(t).

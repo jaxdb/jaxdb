@@ -54,7 +54,7 @@ public abstract class CountFunctionTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testCount(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Office o = classicmodels.Office();
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(

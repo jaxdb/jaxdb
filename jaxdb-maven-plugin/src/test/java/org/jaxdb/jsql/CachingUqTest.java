@@ -58,13 +58,13 @@ public abstract class CachingUqTest extends CachingTest {
       o.idx2.set(i);
 
       INSERT(transaction, o, i, j -> {}, j -> {});
-      assertEquals(i, afterSleep, o, caching.One().idToOne(i));
+      assertEquals(i, afterSleep, o, caching.One$.idToOne(i));
 
       final Caching.OneOneIdu oo = caching.new OneOneIdu();
       oo.id.set(i + idOffset);
       oo.oneIdu.set(i);
       INSERT(transaction, oo, i, j -> {}, j -> {});
-      assertEquals(i, afterSleep, oo, caching.OneOneIdu().oneIduToOneOneIdu(i));
+      assertEquals(i, afterSleep, oo, caching.OneOneIdu$.oneIduToOneOneIdu(i));
 
       final Caching.One o1 = oo.oneIdu$One_idu();
       assertEquals(i, afterSleep, o, o1);
@@ -77,9 +77,9 @@ public abstract class CachingUqTest extends CachingTest {
         final Caching.OneManyIdu om = caching.new OneManyIdu(oneManyIdu);
         om.oneIdu.set(i);
         INSERT(transaction, om, i, k -> {}, k -> {});
-        assertEquals(i, afterSleep, om, caching.OneManyIdu().idToOneManyIdu(oneManyIdu));
+        assertEquals(i, afterSleep, om, caching.OneManyIdu$.idToOneManyIdu(oneManyIdu));
 
-        final Map<data.Key,Caching.OneManyIdu> oms = caching.OneManyIdu().oneIduToOneManyIdu(i);
+        final Map<data.Key,Caching.OneManyIdu> oms = caching.OneManyIdu$.oneIduToOneManyIdu(i);
         assertTrue(oms.containsValue(om));
         assertEquals(i, afterSleep, j + 1, oms.size());
 
@@ -100,14 +100,14 @@ public abstract class CachingUqTest extends CachingTest {
         mm.oneAIdu.set(a);
         mm.oneBIdu.set(b);
         INSERT(transaction, mm, i, j -> {}, j -> {});
-        assertEquals(i, afterSleep, mm, caching.ManyManyIdu().idToManyManyIdu(manyManyIdu));
-        assertEquals(i, afterSleep, caching.One().idToOne(a), mm.oneAIdu$One_idu());
-        assertEquals(i, afterSleep, caching.One().idToOne(b), mm.oneBIdu$One_idu());
+        assertEquals(i, afterSleep, mm, caching.ManyManyIdu$.idToManyManyIdu(manyManyIdu));
+        assertEquals(i, afterSleep, caching.One$.idToOne(a), mm.oneAIdu$One_idu());
+        assertEquals(i, afterSleep, caching.One$.idToOne(b), mm.oneBIdu$One_idu());
 
-        final Map<data.Key,Caching.ManyManyIdu> mmas = caching.ManyManyIdu().oneAIduToManyManyIdu(a);
+        final Map<data.Key,Caching.ManyManyIdu> mmas = caching.ManyManyIdu$.oneAIduToManyManyIdu(a);
         assertEquals(i, afterSleep, i + 1 - k, mmas.size());
 
-        final Map<data.Key,Caching.ManyManyIdu> mmbs = caching.ManyManyIdu().oneBIduToManyManyIdu(b);
+        final Map<data.Key,Caching.ManyManyIdu> mmbs = caching.ManyManyIdu$.oneBIduToManyManyIdu(b);
         assertEquals(i, afterSleep, i + 1 - k, mmbs.size());
       }
     }
@@ -116,15 +116,15 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @TestSpec(order = 2)
   public void testUpdatePrimaryKey(final Caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    final ArrayList<Caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu().idToManyManyIdu().values());
+    final ArrayList<Caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu$.idToManyManyIdu().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final Caching.ManyManyIdu mm = list.get(i).clone();
 
       final int oldIdu = mm.id.get();
       final int newIdu = mm.id.get() + idOffset;
 
-      assertEquals(i, afterSleep, mm, caching.ManyManyIdu().idToManyManyIdu(oldIdu));
-      assertNull(i, afterSleep, caching.ManyManyIdu().idToManyManyIdu(newIdu));
+      assertEquals(i, afterSleep, mm, caching.ManyManyIdu$.idToManyManyIdu(oldIdu));
+      assertNull(i, afterSleep, caching.ManyManyIdu$.idToManyManyIdu(newIdu));
 
       final Caching.One oa = mm.oneAIdu$One_idu();
       final Caching.One ob = mm.oneBIdu$One_idu();
@@ -133,7 +133,7 @@ public abstract class CachingUqTest extends CachingTest {
 
       assertTrue(mm.id.set(newIdu));
       // assertSame(mm, caching.ManyManyId.idToManyManyIdu(oldId));
-      assertNull(i, afterSleep, caching.ManyManyIdu().idToManyManyIdu(newIdu));
+      assertNull(i, afterSleep, caching.ManyManyIdu$.idToManyManyIdu(newIdu));
 
       assertFalse(mm.id.set(newIdu));
       mm.id.revert();
@@ -146,8 +146,8 @@ public abstract class CachingUqTest extends CachingTest {
 
       UPDATE(transaction, mm, i, false,
         j -> {
-          assertNull(j, afterSleep, caching.ManyManyIdu().idToManyManyIdu(oldIdu));
-          assertEquals(j, afterSleep, mm, caching.ManyManyIdu().idToManyManyIdu(newIdu));
+          assertNull(j, afterSleep, caching.ManyManyIdu$.idToManyManyIdu(oldIdu));
+          assertEquals(j, afterSleep, mm, caching.ManyManyIdu$.idToManyManyIdu(newIdu));
         },
         (j, as) -> {
           assertEquals(j, as, oa, mm.oneAIdu$One_idu());
@@ -163,8 +163,8 @@ public abstract class CachingUqTest extends CachingTest {
   }
 
   private static void checkSync(final Caching caching, final int i, final Caching.One o, final int id1, final int id2, final Caching.OneOneIdu oo, final Map<data.Key,Caching.OneManyIdu> oms, final Map<data.Key,Caching.ManyManyIdu> mmAs, final Map<data.Key,Caching.ManyManyIdu> mmBs) throws IOException, SQLException {
-    assertNull(i, false, caching.One().iduToOne(id2));
-    assertEquals(i, false, o, caching.One().iduToOne(id1));
+    assertNull(i, false, caching.One$.iduToOne(id2));
+    assertEquals(i, false, o, caching.One$.iduToOne(id1));
   }
 
   private static void checkAsync(final Caching caching, final int i, final boolean afterSleep, final Caching.One o, final int id1, final int id2, final Caching.OneOneIdu oo, final Map<data.Key,Caching.OneManyIdu> oms, final Map<data.Key,Caching.ManyManyIdu> mmAs, final Map<data.Key,Caching.ManyManyIdu> mmBs) throws IOException, SQLException {
@@ -172,8 +172,8 @@ public abstract class CachingUqTest extends CachingTest {
     if (afterSleep)
       assertEquals(i, afterSleep, o.getKeyOld(), oo.oneIdu$One_idu().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
 
-    assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? oms.size() : 0, caching.OneManyIdu().oneIduToOneManyIdu(id1).size());
-    assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : oms.size(), caching.OneManyIdu().oneIduToOneManyIdu(id2).size());
+    assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? oms.size() : 0, caching.OneManyIdu$.oneIduToOneManyIdu(id1).size());
+    assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : oms.size(), caching.OneManyIdu$.oneIduToOneManyIdu(id2).size());
 
     for (final Caching.OneManyIdu om : oms.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idu$OneManyIdu_oneIdu().containsValue(om)); // NOTE: CASCADE rule in DML ensures this is always true
@@ -181,8 +181,8 @@ public abstract class CachingUqTest extends CachingTest {
         assertEquals(i, afterSleep, o.getKeyOld(), om.oneIdu$One_idu().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
     }
 
-    assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmAs.size() : 0, caching.ManyManyIdu().oneAIduToManyManyIdu(id1).size());
-    assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmAs.size(), caching.ManyManyIdu().oneAIduToManyManyIdu(id2).size());
+    assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmAs.size() : 0, caching.ManyManyIdu$.oneAIduToManyManyIdu(id1).size());
+    assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmAs.size(), caching.ManyManyIdu$.oneAIduToManyManyIdu(id2).size());
 
     for (final Caching.ManyManyIdu mm : mmAs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idu$ManyManyIdu_oneAIdu().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
@@ -190,8 +190,8 @@ public abstract class CachingUqTest extends CachingTest {
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneAIdu$One_idu().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
     }
 
-    assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmBs.size() : 0, caching.ManyManyIdu().oneBIduToManyManyIdu(id1).size());
-    assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmBs.size(), caching.ManyManyIdu().oneBIduToManyManyIdu(id2).size());
+    assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmBs.size() : 0, caching.ManyManyIdu$.oneBIduToManyManyIdu(id1).size());
+    assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmBs.size(), caching.ManyManyIdu$.oneBIduToManyManyIdu(id2).size());
 
     for (final Caching.ManyManyIdu mm : mmBs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idu$ManyManyIdu_oneBIdu().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
@@ -203,7 +203,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @TestSpec(order = 3)
   public void testUpdateForeignKey(final Caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    final ArrayList<Caching.One> list = new ArrayList<>(caching.One().idToOne().values());
+    final ArrayList<Caching.One> list = new ArrayList<>(caching.One$.idToOne().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final Caching.One o = list.get(i).clone();
 
@@ -211,9 +211,9 @@ public abstract class CachingUqTest extends CachingTest {
       final int newIdu = o.idu.get() + idOffset;
 
       final Caching.OneOneIdu oo = o.idu$OneOneIdu_oneIdu();
-      final Map<data.Key,Caching.OneManyIdu> oms = new HashMap<>(caching.OneManyIdu().oneIduToOneManyIdu(oldIdu));
-      final Map<data.Key,Caching.ManyManyIdu> mmAs = new HashMap<>(caching.ManyManyIdu().oneAIduToManyManyIdu(oldIdu));
-      final Map<data.Key,Caching.ManyManyIdu> mmBs = new HashMap<>(caching.ManyManyIdu().oneBIduToManyManyIdu(oldIdu));
+      final Map<data.Key,Caching.OneManyIdu> oms = new HashMap<>(caching.OneManyIdu$.oneIduToOneManyIdu(oldIdu));
+      final Map<data.Key,Caching.ManyManyIdu> mmAs = new HashMap<>(caching.ManyManyIdu$.oneAIduToManyManyIdu(oldIdu));
+      final Map<data.Key,Caching.ManyManyIdu> mmBs = new HashMap<>(caching.ManyManyIdu$.oneBIduToManyManyIdu(oldIdu));
       checkAsync(caching, i, true, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
 
       assertTrue(o.idu.set(newIdu));
@@ -225,7 +225,7 @@ public abstract class CachingUqTest extends CachingTest {
       o.idu.revert();
 
       assertEquals(i, afterSleep, oldIdu, o.id.getAsInt());
-      assertEquals(i, true, o, caching.One().idToOne(oldIdu));
+      assertEquals(i, true, o, caching.One$.idToOne(oldIdu));
       checkAsync(caching, i, true, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
 
       o.idu.set(newIdu);
@@ -235,7 +235,7 @@ public abstract class CachingUqTest extends CachingTest {
           checkSync(caching, j, o, newIdu, oldIdu, oo, oms, mmAs, mmBs);
         },
         (j, as) -> {
-          assertEquals(j, as, as ? null : o, caching.One().iduToOne(as ? oldIdu : newIdu));
+          assertEquals(j, as, as ? null : o, caching.One$.iduToOne(as ? oldIdu : newIdu));
           checkAsync(caching, j, as, o, newIdu, oldIdu, oo, oms, mmAs, mmBs);
         });
 
@@ -246,7 +246,7 @@ public abstract class CachingUqTest extends CachingTest {
           checkSync(caching, j, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
         },
         (j, as) -> {
-          assertEquals(j, as, o, caching.One().iduToOne(oldIdu));
+          assertEquals(j, as, o, caching.One$.iduToOne(oldIdu));
           checkAsync(caching, j, as, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
         });
     }
@@ -255,7 +255,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @TestSpec(order = 4)
   public void testDelete(final Caching caching, final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    final ArrayList<Caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu().idToManyManyIdu().values());
+    final ArrayList<Caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu$.idToManyManyIdu().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final Caching.ManyManyIdu mm = list.get(i);
       final Caching.One oa = mm.oneAIdu$One_idu();
@@ -266,7 +266,7 @@ public abstract class CachingUqTest extends CachingTest {
 
       DELETE(transaction, mm, i, true,
         j -> {
-          assertFalse(caching.ManyManyIdu().idToManyManyIdu().containsValue(mm));
+          assertFalse(caching.ManyManyIdu$.idToManyManyIdu().containsValue(mm));
           assertFalse(oa.idu$ManyManyIdu_oneAIdu().containsValue(mm));
           assertFalse(ob.idu$ManyManyIdu_oneBIdu().containsValue(mm));
         },

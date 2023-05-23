@@ -161,7 +161,7 @@ public abstract class QueryExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testWhere(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Office o = classicmodels.Office();
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<? extends data.Column<?>> rows =
 
       SELECT(o.address1, o.latitude).

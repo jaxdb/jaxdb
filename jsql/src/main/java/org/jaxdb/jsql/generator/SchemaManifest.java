@@ -120,7 +120,7 @@ class SchemaManifest {
     }
 
     // Then, in proper inheritance order, the real entities
-    final ArrayList<Table> sortedTables = new ArrayList<>();
+    final ArrayList<TableMeta> sortedTables = new ArrayList<>();
 
     // First create the abstract entities
     if (tableMetas.size() > 0) {
@@ -130,22 +130,22 @@ class SchemaManifest {
 
       for (final TableMeta tableMeta : tableMetas) { // [C]
         if (!tableMeta.isAbstract) {
-          sortedTables.add(tableMeta.table);
+          sortedTables.add(tableMeta);
           out.append(tableMeta.makeTable()).append('\n');
         }
       }
     }
 
-    sortedTables.sort(Generator.namedComparator);
+    sortedTables.sort(Generator.tableMetaComparator);
     out.append("\n  private static final ").append(String.class.getName()).append("[] names = {");
     for (int i = 0, i$ = sortedTables.size(); i < i$; ++i) // [RA]
-      out.append('"').append(sortedTables.get(i).getName$().text()).append("\", ");
+      out.append('"').append(sortedTables.get(i).tableName).append("\", ");
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
     out.append("\n  private final ").append(data.Table.class.getCanonicalName()).append("[] tables = {");
     for (int i = 0, i$ = sortedTables.size(); i < i$; ++i) // [RA]
-      getClassNameOfTable(out, sortedTables.get(i)).append("(), ");
+      out.append(sortedTables.get(i).singletonInstanceName).append(", ");
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
@@ -188,9 +188,5 @@ class SchemaManifest {
         }
       }
     }
-  }
-
-  StringBuilder getClassNameOfTable(final StringBuilder out, final Table table) {
-    return out.append(Identifiers.toClassCase(table.getName$().text(), '$'));
   }
 }

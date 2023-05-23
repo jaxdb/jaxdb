@@ -57,7 +57,7 @@ public abstract class StringValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testConcatStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Office o = classicmodels.Office();
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -170,7 +170,7 @@ public abstract class StringValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testConcatDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(0,
 
       SELECT(t).
@@ -215,7 +215,7 @@ public abstract class StringValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testChangeCaseStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Office o = classicmodels.Office();
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.CHAR> rows =
 
       SELECT(
@@ -237,7 +237,7 @@ public abstract class StringValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testChangeCaseDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(0,
 
       SELECT(t).
@@ -270,7 +270,7 @@ public abstract class StringValueExpressionTest {
   @Ignore
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testLengthStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Office o = classicmodels.Office();
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.INT> rows =
 
       SELECT(
@@ -296,7 +296,7 @@ public abstract class StringValueExpressionTest {
   @Ignore
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testLengthDynamic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Office o = classicmodels.Office();
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.INT> rows =
 
       SELECT(LENGTH(CONCAT("-", o.country, "-", o.city, "-"))).

@@ -61,11 +61,11 @@ public abstract class DateTimeValueExpressionTest {
   }
 
   private static void testInterval(final Types types, final Transaction transaction, final Interval interval) throws IOException, SQLException {
-    testInterval(transaction, interval, types.Type(), null, null);
+    testInterval(transaction, interval, types.Type$, null, null);
   }
 
   private static void testInterval(final Types types, final Transaction transaction, final Interval interval, final Boolean testDate) throws IOException, SQLException {
-    testInterval(transaction, interval, types.Type(), null, testDate);
+    testInterval(transaction, interval, types.Type$, null, testDate);
   }
 
   private static void testInterval(final Transaction transaction, final Interval interval, final Types.Type p, final Condition<?> condition) throws IOException, SQLException {
@@ -219,35 +219,35 @@ public abstract class DateTimeValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testMonths(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Type p = types.Type();
+    final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(12, Unit.MONTHS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testQuarters(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Type p = types.Type();
+    final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(4, Unit.QUARTERS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testYears(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Type p = types.Type();
+    final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(2, Unit.YEARS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testDecades(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Type p = types.Type();
+    final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(2, Unit.DECADES), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testCenturies(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Type p = types.Type();
+    final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(2, Unit.CENTURIES), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
@@ -255,14 +255,14 @@ public abstract class DateTimeValueExpressionTest {
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported(PostgreSQL.class)
   public void testMillenia(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Type p = types.Type();
+    final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(1, Unit.MILLENNIA), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testInWhere(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).

@@ -54,7 +54,7 @@ public abstract class BatchTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
 
     final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;
     final Batch batch = new Batch();

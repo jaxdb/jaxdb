@@ -59,7 +59,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     final data.BIGINT b = new data.BIGINT();
     try (final RowIterator<data.BIGINT> rows =
 
@@ -101,7 +101,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testAdd(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(0,
 
       SELECT(t).
@@ -143,7 +143,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testSubtract(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(0,
 
       SELECT(t).
@@ -185,7 +185,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testMultiply(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(0,
 
       SELECT(t).
@@ -227,7 +227,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testDivide(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(0,
 
       SELECT(t).
@@ -269,7 +269,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testUpdateVersion(final World world, final Transaction transaction) throws IOException, SQLException {
-    World.City c = world.City();
+    World.City c = world.City$;
     try (final RowIterator<World.City> rows =
 
       SELECT(c).

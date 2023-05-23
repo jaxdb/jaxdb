@@ -183,7 +183,7 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
     DELETE(b)
       .execute(transaction);
 
-    final Types.Type t = types.Type();
+    final Types.Type t = types.Type$;
 
     assertEquals(10,
       INSERT(b).
@@ -205,7 +205,7 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
     DELETE(b)
       .execute(transaction);
 
-    final Types.Type t = types.Type();
+    final Types.Type t = types.Type$;
 
     assertEquals(1000,
       INSERT(b).
@@ -224,7 +224,7 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
   @Test
   @Ignore("Not sure if this is supported by MERGE")
   public void testInsertSelectIntoColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Backup b = types.Backup();
+    final Types.Backup b = types.Backup$;
     final Types.Type t1 = types.new Type();
     final Types.Type t2 = types.new Type();
     final Types.Type t3 = types.new Type();

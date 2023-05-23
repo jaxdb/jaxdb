@@ -54,7 +54,7 @@ public abstract class HavingClauseTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testPrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).
@@ -70,7 +70,7 @@ public abstract class HavingClauseTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testNotPrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BIGINT> rows =
 
       SELECT(COUNT(p)).

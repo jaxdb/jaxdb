@@ -168,18 +168,18 @@ public abstract class NotifierTest {
   public void testFast(final Types types, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast0", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast1", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast2", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast3", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast4", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast5", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast6", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast7", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast8", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast9", vendor), queue, types.Type());
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast0", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast1", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast2", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast3", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast4", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast5", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast6", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast7", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast8", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast9", vendor), queue, types.Type$);
 
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     final Types.Type[] inserts = new Types.Type[count];
     for (int id = 0; id < count; ++id) { // [N]
       inserts[id] = t = types.new Type();
@@ -219,7 +219,7 @@ public abstract class NotifierTest {
   public void testMulti(final Types types, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testMulti", vendor), queue, types.Type());
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testMulti", vendor), queue, types.Type$);
 
     final int id = NotifierTest.id + 2;
 
@@ -268,7 +268,7 @@ public abstract class NotifierTest {
   public void testInsert(final Types types) throws InterruptedException, IOException, SQLException {
     final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, new Handler<>("testInsert", null), queue, types.Type());
+    connector.addNotificationListener(INSERT, new Handler<>("testInsert", null), queue, types.Type$);
 
     final int id = NotifierTest.id + 3;
 
@@ -297,7 +297,7 @@ public abstract class NotifierTest {
   public void testUpdate(final Types types) throws InterruptedException, IOException, SQLException {
     final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, UPDATE, new Handler<>("testUpdate", null), queue, types.Type());
+    connector.addNotificationListener(INSERT, UPDATE, new Handler<>("testUpdate", null), queue, types.Type$);
 
     final int id = NotifierTest.id + 4;
 
@@ -336,7 +336,7 @@ public abstract class NotifierTest {
   public void testDelete(final Types types) throws InterruptedException, IOException, SQLException {
     final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, DELETE, new Handler<>("testDelete", null), queue, types.Type());
+    connector.addNotificationListener(INSERT, DELETE, new Handler<>("testDelete", null), queue, types.Type$);
 
     final int id = NotifierTest.id + 5;
 
@@ -415,7 +415,7 @@ public abstract class NotifierTest {
   public void testAddAgain(final Types types) throws InterruptedException, IOException, SQLException {
     final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, new Handler<>("testAddAgain", null), queue, types.Type());
+    connector.addNotificationListener(INSERT, new Handler<>("testAddAgain", null), queue, types.Type$);
 
     final int id = NotifierTest.id + 7;
 
@@ -443,7 +443,7 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void cleanUp(final Types types) throws IOException, SQLException {
     final Connector connector = types.getConnector();
-    final Types.Type t = types.Type();
+    final Types.Type t = types.Type$;
 
     DELETE(t).
     WHERE(BETWEEN(t.id, id, id + 200))

@@ -72,7 +72,7 @@ public abstract class NumericFunctionDynamicTest {
   private void testUpdateRoundN(final Types types, final Transaction transaction, final int n) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -116,7 +116,7 @@ public abstract class NumericFunctionDynamicTest {
   public void testSign(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -148,7 +148,7 @@ public abstract class NumericFunctionDynamicTest {
   public void testFloor(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -180,7 +180,7 @@ public abstract class NumericFunctionDynamicTest {
   public void testCeil(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -210,7 +210,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testSqrt(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -252,7 +252,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testDegrees(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -294,7 +294,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testRadians(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -338,7 +338,7 @@ public abstract class NumericFunctionDynamicTest {
   public void testSin(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -368,7 +368,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testAsin(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -389,7 +389,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.asin(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -410,7 +410,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.asin(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -431,7 +431,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.asin(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -452,7 +452,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.asin(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -473,7 +473,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.asin(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -494,7 +494,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.asin(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -521,7 +521,7 @@ public abstract class NumericFunctionDynamicTest {
   public void testCos(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -551,7 +551,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testAcos(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -572,7 +572,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : Byte.valueOf((byte)SafeMath.acos(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -593,7 +593,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : Short.valueOf((short)SafeMath.acos(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -614,7 +614,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : Integer.valueOf((int)SafeMath.acos(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -635,7 +635,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : Long.valueOf((long)SafeMath.acos(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -656,7 +656,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : Float.valueOf((float)SafeMath.acos(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -677,7 +677,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : Double.valueOf(SafeMath.acos(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -704,7 +704,7 @@ public abstract class NumericFunctionDynamicTest {
   public void testTan(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -736,7 +736,7 @@ public abstract class NumericFunctionDynamicTest {
   public void testAtan(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -766,7 +766,7 @@ public abstract class NumericFunctionDynamicTest {
   private void testMod(final Types types, final Transaction transaction, final int integer) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
 
-      SELECT(types.Type())
+      SELECT(types.Type$)
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -808,7 +808,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testModX(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -850,7 +850,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testExp(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -871,7 +871,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.exp(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -892,7 +892,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.exp(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -913,7 +913,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.exp(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -934,7 +934,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.exp(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -955,7 +955,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.exp(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -976,7 +976,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.exp(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -999,7 +999,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   private void testPow(final Types types, final Transaction transaction, final int integer) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1021,7 +1021,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsByte(), integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1043,7 +1043,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsShort(), integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1065,7 +1065,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsInt(), integer), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1087,7 +1087,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsLong(), integer), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1109,7 +1109,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsFloat(), integer), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1131,7 +1131,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsDouble(), integer), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1167,7 +1167,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   private void testPow2(final Types types, final Transaction transaction, final double value) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1189,7 +1189,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(value, clone.tinyintType.getAsByte()), Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1211,7 +1211,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(value, clone.smallintType.getAsShort()), Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1233,7 +1233,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(value, clone.intType.getAsInt()), Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1255,7 +1255,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(value, clone.bigintType.getAsLong()), Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1277,7 +1277,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(value, clone.floatType.getAsFloat()), Float.valueOf(t.floatType.getAsFloat()), 0.000001);
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1299,7 +1299,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(value, clone.doubleType.getAsDouble()), Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1331,7 +1331,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testPowXX(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1352,7 +1352,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsByte(), clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1373,7 +1373,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsShort(), clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1394,7 +1394,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsInt(), clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1415,7 +1415,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsLong(), clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1436,7 +1436,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsFloat(), clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1457,7 +1457,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsDouble(), clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1482,7 +1482,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testLogX3(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1503,7 +1503,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(clone.tinyintType.getAsByte(), 3), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1524,7 +1524,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(clone.smallintType.getAsShort(), 3), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1545,7 +1545,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(clone.intType.getAsInt(), 3), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1566,7 +1566,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(clone.bigintType.getAsLong(), 3), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1587,7 +1587,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(clone.floatType.getAsFloat(), 3), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1608,7 +1608,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(clone.doubleType.getAsDouble(), 3), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1633,7 +1633,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testLog3X(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1654,7 +1654,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(3, clone.tinyintType.getAsByte()), Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1675,7 +1675,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(3, clone.smallintType.getAsShort()), Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1696,7 +1696,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(3, clone.intType.getAsInt()), Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1717,7 +1717,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(3, clone.bigintType.getAsLong()), Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1738,7 +1738,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(3, clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1759,7 +1759,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(3, clone.doubleType.getAsDouble()), Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1784,7 +1784,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testLogXX(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1805,7 +1805,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsByte(), clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1826,7 +1826,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsShort(), clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1847,7 +1847,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsInt(), clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1868,7 +1868,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsLong(), clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1889,7 +1889,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsFloat(), clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1910,7 +1910,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Double.valueOf(SafeMath.log(clone.doubleType.getAsDouble(), clone.doubleType.getAsDouble())), Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1935,7 +1935,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testLn(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1956,7 +1956,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1977,7 +1977,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -1998,7 +1998,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2019,7 +2019,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2040,7 +2040,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2061,7 +2061,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(SafeMath.log(clone.doubleType.getAsDouble()), t.doubleType.getAsDouble(), 0.0000001);
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2086,7 +2086,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testLog2(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2107,7 +2107,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Byte.valueOf((byte)SafeMath.log2(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2128,7 +2128,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Short.valueOf((short)SafeMath.log2(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2149,7 +2149,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Integer.valueOf((int)SafeMath.log2(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2170,7 +2170,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Long.valueOf((long)SafeMath.log2(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2191,7 +2191,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Float.valueOf((float)SafeMath.log2(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2213,7 +2213,7 @@ public abstract class NumericFunctionDynamicTest {
     final double expected = SafeMath.log2(clone.doubleType.getAsDouble());
     assertEquals(expected, Double.valueOf(t.doubleType.getAsDouble()), 10 * Math.ulp(expected));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2238,7 +2238,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testLog10(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Types.Type t = types.Type();
+    Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2259,7 +2259,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Byte.valueOf((byte)SafeMath.log10(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2280,7 +2280,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Short.valueOf((short)SafeMath.log10(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2301,7 +2301,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Integer.valueOf((int)SafeMath.log10(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2322,7 +2322,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Long.valueOf((long)SafeMath.log10(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2343,7 +2343,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Float.valueOf((float)SafeMath.log10(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).
@@ -2364,7 +2364,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(Double.valueOf(SafeMath.log10(clone.doubleType.getAsDouble())), Double.valueOf(t.doubleType.getAsDouble()));
 
-    t = types.Type();
+    t = types.Type$;
     t = getNthRow(rowNum++,
 
       SELECT(t).

@@ -52,8 +52,8 @@ public abstract class UnionExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   public void testUnion(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
-    final Classicmodels.Customer c = classicmodels.Customer();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
 
     try (final RowIterator<?> rows =
       SELECT(p, c).

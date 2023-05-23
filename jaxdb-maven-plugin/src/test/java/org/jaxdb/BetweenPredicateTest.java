@@ -54,7 +54,7 @@ public abstract class BetweenPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
   public void testBetweenPrimary1(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Payment p = classicmodels.Payment();
+    final Classicmodels.Payment p = classicmodels.Payment$;
     try (final RowIterator<Classicmodels.Payment> rows =
 
       SELECT(p).
@@ -94,7 +94,7 @@ public abstract class BetweenPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testBetween1Wrapped(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(
@@ -111,7 +111,7 @@ public abstract class BetweenPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testBetween1(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
@@ -128,7 +128,7 @@ public abstract class BetweenPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testBetween2(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(BETWEEN(p.msrp, p.price, 100)).
@@ -148,7 +148,7 @@ public abstract class BetweenPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testBetween3(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(BETWEEN(p.scale, "a", "b")).
@@ -163,7 +163,7 @@ public abstract class BetweenPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testBetween4(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(BETWEEN(p.quantityInStock, 500, 1000)).

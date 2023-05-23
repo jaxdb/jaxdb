@@ -94,7 +94,7 @@ public abstract class DeleteTest {
 
   @Test
   public void testDeleteWhere(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
 
     assertEquals(1,
       DELETE(p).
@@ -105,7 +105,7 @@ public abstract class DeleteTest {
 
   @Test
   public void testDeleteAll(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
+    final Classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail$;
 
     assertTrue(2985 <
       DELETE(p)

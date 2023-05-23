@@ -53,7 +53,7 @@ public abstract class BooleanValueExpressionTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Product p = classicmodels.Product();
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(

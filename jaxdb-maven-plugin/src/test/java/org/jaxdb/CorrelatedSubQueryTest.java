@@ -112,7 +112,7 @@ public abstract class CorrelatedSubQueryTest {
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testSelect(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.new Purchase();
-    final Classicmodels.Customer c = classicmodels.Customer();
+    final Classicmodels.Customer c = classicmodels.Customer$;
     final data.INT n = new data.INT();
     try (final RowIterator<type.Entity> rows =
 
@@ -136,7 +136,7 @@ public abstract class CorrelatedSubQueryTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.new Customer();
 
     final data.BIGINT pd = new data.BIGINT();

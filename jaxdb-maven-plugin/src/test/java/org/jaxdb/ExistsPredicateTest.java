@@ -53,8 +53,8 @@ public abstract class ExistsPredicateTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testExistsPredicate(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
-    final Classicmodels.Customer c = classicmodels.Customer();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(EXISTS(

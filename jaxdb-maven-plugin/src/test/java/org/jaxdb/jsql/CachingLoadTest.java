@@ -116,7 +116,7 @@ public abstract class CachingLoadTest extends NotificationTest {
     executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 
     for (int id = 0; id < cardinality; ++id) { // [RA]
-      final Caching.One o = caching.One().idToOne(id);
+      final Caching.One o = caching.One$.idToOne(id);
       assertEquals(id, 1 + iterations, o.id$OneOneId_oneId().version.getAsInt());
     }
   }

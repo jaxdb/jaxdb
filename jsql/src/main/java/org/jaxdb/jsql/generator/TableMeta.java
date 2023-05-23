@@ -114,7 +114,6 @@ class TableMeta {
 
   private final String classSimpleName;
   final String className;
-  private final String instanceName;
   final String singletonInstanceName;
 
   TableMeta(final Table table, final SchemaManifest schemaManifest) throws GeneratorExecutionException {
@@ -145,8 +144,7 @@ class TableMeta {
 
     this.classSimpleName = Identifiers.toClassCase(tableName, '$');
     this.className = schemaManifest.schemaClassName + "." + classSimpleName;
-    this.instanceName = Identifiers.toInstanceCase(tableName);
-    this.singletonInstanceName = "$" + instanceName;
+    this.singletonInstanceName = classSimpleName + "$";
 
     final $Constraints constraints = table.getConstraints();
     final PrimaryKey primaryKey;
@@ -331,7 +329,7 @@ class TableMeta {
     if (column.getTemplate$() != null && column.getValues$() == null)
       return out.append(schemaManifest.schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text(), '$'));
 
-    return schemaManifest.getClassNameOfTable(out, table).append('.').append(Identifiers.toClassCase(column.getName$().text(), '$'));
+    return out.append(classCase).append('.').append(Identifiers.toClassCase(column.getName$().text(), '$'));
   }
 
   private ColumnMeta[] getColumnMetas(final TableMeta tableMeta, final Set<String> primaryKeyColumnNames, final int depth) throws GeneratorExecutionException {
@@ -775,7 +773,7 @@ class TableMeta {
       if (column.column instanceof $Enum) {
         final $Enum enumColumn = ($Enum)column.column;
         if (enumColumn.getTemplate$() == null || enumColumn.getValues$() != null)
-          out.append(Generator.declareEnumClass(schemaManifest.getClassNameOfTable(new StringBuilder(), table).toString(), enumColumn, 4));
+          out.append(Generator.declareEnumClass(classCase, enumColumn, 4));
       }
     }
 
@@ -785,8 +783,14 @@ class TableMeta {
 
     final String ext = superTable == null ? data.Table.class.getCanonicalName() : Identifiers.toClassCase(table.getExtends$().text(), '$');
 
+    final LinkedHashSet<String> keyClauseColumnAssignments = new LinkedHashSet<>();
+    final HashSet<String> declared = new HashSet<>();
     if (!isAbstract) {
-      out.append("\n  private final ").append(className).append(" ").append(singletonInstanceName).append(" = new ").append(className).append("(false, false) {");
+      out.append("\n  public final ").append(className).append("$ ").append(singletonInstanceName).append(" = new ").append(classSimpleName).append("$();\n");
+      out.append("\n  public final class ").append(classSimpleName).append("$ extends ").append(className).append(" {");
+      out.append("\n    private ").append(singletonInstanceName).append("() {");
+      out.append("\n      super(false, false);");
+      out.append("\n    }\n");
       out.append("\n    private boolean cacheSelectEntity;\n");
       out.append("\n    @").append(Override.class.getName());
       out.append("\n    final void setCacheSelectEntity(final boolean cacheSelectEntity) {");
@@ -799,11 +803,44 @@ class TableMeta {
       out.append("\n    @").append(Override.class.getName());
       out.append("\n    final ").append(getConcreteClass(className)).append(" getCache() {");
       out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : "_" + primaryKey.getInstanceNameForCache(classCase) + "Map$").append(';');
-      out.append("\n    }");
+      out.append("\n    }\n");
+
+      {
+        out.append("\n    // CACHE DECLARE");
+        if (allRelations.size() > 0)
+          for (final LinkedHashSet<Relation> relations : allRelations) // [C]
+            for (final Relation relation : relations) // [S]
+              write("\n", relation.writeCacheDeclare(keyClauseColumnAssignments), out, declared);
+
+        if (declared.size() > 0)
+          out.append('\n');
+      }
+
+      {
+        declared.clear();
+        out.append("\n    boolean _cacheEnabled$;\n");
+
+        out.append("\n    void _initCache$() {");
+        out.append("\n      if (_cacheEnabled$)");
+        out.append("\n        return;\n");
+        out.append("\n      super._initCache$();");
+        out.append("\n      _cacheEnabled$ = true;\n");
+
+        if (allRelations.size() > 0)
+          for (final LinkedHashSet<Relation> relations : allRelations) // [C]
+            for (final Relation relation : relations) // [S]
+              write("\n      ", relation.writeCacheInit(), out, declared);
+
+        if (keyClauseColumnAssignments.size() > 0) {
+          out.append('\n');
+          for (final String keyClauseColumnAssignment : keyClauseColumnAssignments) // [S]
+            out.append("\n      ").append(keyClauseColumnAssignment).append(';');
+        }
+
+        out.append("\n    }");
+      }
+
       out.append("\n  };\n");
-      out.append("\n  public ").append(className).append(' ').append(classSimpleName).append("() {");
-      out.append("\n    return $").append(instanceName).append(';');
-      out.append("\n  }\n");
     }
 
     out.append(getDoc(table, 1, '\0', '\n', "Table", tableName)); // FIXME: Add "\d foo" -like printout of column info into the table's javadoc
@@ -817,10 +854,8 @@ class TableMeta {
 
     out.append(" {");
 
-    final HashSet<String> declared = new HashSet<>();
     final StringBuilder dcl = new StringBuilder();
 
-    final LinkedHashSet<String> keyClauseColumnAssignments = new LinkedHashSet<>();
     if (!isAbstract) {
       {
         out.append("\n    // WRITE DECLARE");
@@ -845,20 +880,11 @@ class TableMeta {
       }
 
       {
-        out.append("\n    // CACHE DECLARE");
-        declared.clear();
-        if (allRelations.size() > 0)
-          for (final LinkedHashSet<Relation> relations : allRelations) // [C]
-            for (final Relation relation : relations) // [S]
-              write("\n", relation.writeCacheDeclare(keyClauseColumnAssignments), out, declared);
-      }
-
-      {
         declared.clear();
 
         out.append("\n\n    @").append(Override.class.getName());
         out.append("\n    void _commitSelectAll$() {");
-        out.append("\n      if (!").append(classSimpleName).append("().").append("_cacheEnabled$)");
+        out.append("\n      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
         out.append("\n        return;\n");
         out.append("\n      getCache().addKey(").append(data.Key.class.getCanonicalName()).append(".ALL);");
         if (allRelations.size() > 0) {
@@ -875,7 +901,7 @@ class TableMeta {
 
         out.append("\n\n    @").append(Override.class.getName());
         out.append("\n    void _commitInsert$() {");
-        out.append("\n      if (!").append(classSimpleName).append("().").append("_cacheEnabled$)");
+        out.append("\n      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
         out.append("\n        return;\n");
         // out.append("\n super._commitInsert$();\n");
         if (allRelations.size() > 0) {
@@ -892,7 +918,7 @@ class TableMeta {
 
         out.append("\n    @").append(Override.class.getName());
         out.append("\n    void _commitDelete$() {");
-        out.append("\n      if (!").append(classSimpleName).append("().").append("_cacheEnabled$)");
+        out.append("\n      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
         out.append("\n        return;\n");
 
         // FIXME: Remove the re-addition of all Relation(s) to ArrayList
@@ -1035,7 +1061,7 @@ class TableMeta {
 
         ocb.append("\n        new ").append(Consumer.class.getName()).append('<').append(className).append(">() {\n          @").append(Override.class.getName());
         ocb.append("\n          public void accept(final ").append(className).append(" self) {");
-        ocb.append("\n            if (!").append(classSimpleName).append("().").append("_cacheEnabled$)");
+        ocb.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
         ocb.append("\n              return;\n");
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
           final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
@@ -1297,27 +1323,6 @@ class TableMeta {
     out.append("    }\n");
 
     if (!isAbstract) {
-      out.append("\n    private boolean _cacheEnabled$;\n");
-
-      out.append("\n    void _initCache$() {");
-      out.append("\n      if (_cacheEnabled$)");
-      out.append("\n        return;\n");
-      out.append("\n      super._initCache$();");
-      out.append("\n      _cacheEnabled$ = true;\n");
-
-      if (allRelations.size() > 0)
-        for (final LinkedHashSet<Relation> relations : allRelations) // [C]
-          for (final Relation relation : relations) // [S]
-            write("\n      ", relation.writeCacheInit(), out, declared);
-
-      if (keyClauseColumnAssignments.size() > 0) {
-        out.append('\n');
-        for (final String keyClauseColumnAssignment : keyClauseColumnAssignments) // [S]
-          out.append("\n      ").append(keyClauseColumnAssignment).append(';');
-      }
-
-      out.append("\n    }\n");
-
       declared.clear();
 
       out.append("\n    @").append(Override.class.getName());

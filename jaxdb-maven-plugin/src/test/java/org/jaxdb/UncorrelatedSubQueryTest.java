@@ -53,7 +53,7 @@ public abstract class UncorrelatedSubQueryTest {
   @Test
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
   public void testAdd(final Types types, final Transaction transaction) throws IOException, SQLException {
-    final Types.Type t = types.Type();
+    final Types.Type t = types.Type$;
     try (final RowIterator<? extends data.Numeric<?>> rows =
 
       SELECT(

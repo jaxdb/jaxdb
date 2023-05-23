@@ -57,7 +57,7 @@ public abstract class TestCommandTest {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
-      final Classicmodels.Product p = classicmodels.Product();
+      final Classicmodels.Product p = classicmodels.Product$;
       try (final RowIterator<?> rows =
 
         SELECT(p.code).
@@ -77,7 +77,7 @@ public abstract class TestCommandTest {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
-      final Classicmodels.Product p = classicmodels.Product();
+      final Classicmodels.Product p = classicmodels.Product$;
       try (final RowIterator<?> rows =
 
         SELECT(p).
@@ -99,7 +99,7 @@ public abstract class TestCommandTest {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
-      final Classicmodels.Product p = classicmodels.Product();
+      final Classicmodels.Product p = classicmodels.Product$;
       try (final RowIterator<?> rows =
 
         SELECT(p).
@@ -121,7 +121,7 @@ public abstract class TestCommandTest {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
-      final Classicmodels.Product p = classicmodels.Product();
+      final Classicmodels.Product p = classicmodels.Product$;
       try (final RowIterator<?> rows =
 
         SELECT(p).

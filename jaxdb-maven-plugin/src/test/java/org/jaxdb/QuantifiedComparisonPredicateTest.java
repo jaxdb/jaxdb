@@ -54,8 +54,8 @@ public abstract class QuantifiedComparisonPredicateTest {
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testAll(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
-    final Classicmodels.Customer c = classicmodels.Customer();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
 
     try (final RowIterator<data.BIGINT> rows =
 
@@ -77,8 +77,8 @@ public abstract class QuantifiedComparisonPredicateTest {
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testAny(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
-    final Classicmodels.Customer c = classicmodels.Customer();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
 
     try (final RowIterator<data.BIGINT> rows =
 
@@ -100,8 +100,8 @@ public abstract class QuantifiedComparisonPredicateTest {
   @SchemaTestRunner.Unsupported(SQLite.class)
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testSome(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    final Classicmodels.Purchase p = classicmodels.Purchase();
-    final Classicmodels.Customer c = classicmodels.Customer();
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
 
     try (final RowIterator<data.BIGINT> rows =
 
