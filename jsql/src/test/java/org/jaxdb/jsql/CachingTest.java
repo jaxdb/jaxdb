@@ -28,6 +28,6 @@ import org.xml.sax.SAXException;
 public class CachingTest extends JSqlTest {
   @Test
   public void testCreate() throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
-    createEntities("caching");
+    createEntities("caching", "Caching");
   }
 }

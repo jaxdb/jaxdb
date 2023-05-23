@@ -28,6 +28,6 @@ import org.xml.sax.SAXException;
 public class ClassicModelsTest extends JSqlTest {
   @Test
   public void test() throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
-    createEntities("classicmodels");
+    createEntities("classicmodels", "Classicmodels");
   }
 }

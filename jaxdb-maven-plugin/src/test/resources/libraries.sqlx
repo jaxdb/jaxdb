@@ -19,7 +19,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="urn:jaxdb:sqlx:libraries ../../../target/generated-test-sources/jaxdb/libraries.xsd">
   
-  <library id="2a5324cc-6de9-498d-a36c-0a0d295c741b" address1="96 Euston Rd." city="London" country="GB" latitude="51.5306124" longitude="-0.1277617" email="boxoffice@bl.uk" open_time="09:30:00" close_time="20:00:00"/>
+  <library id="2a5324cc-6de9-498d-a36c-0a0d295c741b" address1="96 Euston RD." city="London" country="GB" latitude="51.5306124" longitude="-0.1277617" email="boxoffice@bl.uk" open_time="09:30:00" close_time="20:00:00"/>
   
   <book id="505908fa-1397-4709-8c1f-db49920c11dd" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="The House of the Spirits" author="Isabel Allende" genre="magical realism" publisher="Atria Books" publish_year="1982" aisle="12" shelf="3"/>
   <book id="6598920e-37e8-40e3-aba7-010100d0527e" library_id="2a5324cc-6de9-498d-a36c-0a0d295c741b" title="The Handmaid's Tale" author="Margaret Atwood" genre="science fiction" publisher="McClelland and Stewart Houghton Mifflin Harcourt" publish_year="1985" aisle="6" shelf="2"/>

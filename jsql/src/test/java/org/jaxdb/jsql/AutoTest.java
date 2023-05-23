@@ -28,6 +28,6 @@ import org.xml.sax.SAXException;
 public class AutoTest extends JSqlTest {
   @Test
   public void test() throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
-    createEntities("auto");
+    createEntities("auto", "Auto");
   }
 }

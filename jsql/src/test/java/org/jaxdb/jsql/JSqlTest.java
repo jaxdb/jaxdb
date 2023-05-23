@@ -44,10 +44,10 @@ import org.libj.jci.InMemoryCompiler;
 import org.xml.sax.SAXException;
 
 public abstract class JSqlTest {
-  static void createEntities(final String name) throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
+  static void createEntities(final String name, final String className) throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
     final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
-    Generator.generate(url, name, destDir);
+    Generator.generate(url, className, destDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(destDir.toPath())
       .filter(p -> p.getFileName().toString().endsWith(".java"))
@@ -56,7 +56,7 @@ public abstract class JSqlTest {
     compiler.compile(destDir, "-g");
   }
 
-  static Result loadEntitiesJaxSB(final Connection connection, final String name) throws IOException, SAXException, SQLException, TransformerException {
+  static Result loadEntitiesJaxSB(final Connection connection, final String name, final String className) throws IOException, SAXException, SQLException, TransformerException {
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
     final $Database database = ($Database)Bindings.parse(sqlx);
@@ -66,7 +66,7 @@ public abstract class JSqlTest {
     Schemas.truncate(connection, ddlx.getMergedSchema().getTable());
     final Batch batch = new Batch();
     final int expectedCount = DbVendor.valueOf(connection.getMetaData()) == DbVendor.ORACLE ? 0 : 1;
-    for (final data.Table table : Entities.toEntities(database)) // [A]
+    for (final data.Table table : Entities.toEntities(database, className)) // [A]
       batch.addStatement(
         INSERT(table)
           .onExecute(c -> assertEquals(expectedCount, c)));

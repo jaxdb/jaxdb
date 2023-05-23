@@ -40,13 +40,14 @@ import org.xml.sax.SAXException;
 @RunWith(DBTestRunner.class)
 public abstract class WorldTest extends JSqlTest {
   private static final String name = "world";
+  private static final String className = "World";
 
   public static class Test extends JSqlTest {
     @org.junit.Test
     public void testCreate() throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
       // Keep this order! Otherwise, #createEntities() will fail due to ClassCastException
       // caused by collision of different binding builds for ddlx, sqlx, jsql schemas
-      createEntities(name);
+      createEntities(name, className);
       SQLxTest.createXSDs(name);
     }
   }
@@ -67,6 +68,6 @@ public abstract class WorldTest extends JSqlTest {
   @org.junit.Test
   public void testReloadJaxSB(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(connection, name);
-    JSqlTest.loadEntitiesJaxSB(connection, name);
+    JSqlTest.loadEntitiesJaxSB(connection, name, className);
   }
 }

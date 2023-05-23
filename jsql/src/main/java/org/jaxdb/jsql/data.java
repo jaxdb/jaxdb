@@ -1984,8 +1984,9 @@ public final class data {
      * Returns {@code true} if this {@link Column}'s value was set, otherwise {@code false}.
      *
      * @return {@code true} if this {@link Column}'s value was set, otherwise {@code false}.
+     * @implNote A {@link Column}'s value may be set by either the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system}.
      */
-    public final boolean wasSet() {
+    public final boolean set() {
       return setByCur != null;
     }
   }
@@ -5465,9 +5466,9 @@ public final class data {
       return s.toString();
     }
 
-    public final boolean wasSet() {
+    public final boolean set() {
       for (final Column<?> column : _column$)
-        if (column.wasSet())
+        if (column.set())
           return true;
 
       return false;

@@ -54,7 +54,11 @@ public class Generator {
   }
 
   public static void generate(final URL url, final String name, final File destDir) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
-    new Generator(url, name, destDir).generate();
+    new Generator(new DDLx(url), name, destDir).generate();
+  }
+
+  public static void generate(final DDLx ddlx, final String name, final File destDir) throws GeneratorExecutionException, IOException {
+    new Generator(ddlx, name, destDir).generate();
   }
 
   private final DDLx ddlx;
@@ -64,8 +68,8 @@ public class Generator {
   private final String packageName;
   private final SchemaManifest schemaManifest;
 
-  private Generator(final URL url, final String name, final File destDir) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
-    this.ddlx = new DDLx(url);
+  private Generator(final DDLx ddlx, final String name, final File destDir) throws GeneratorExecutionException {
+    this.ddlx = ddlx;
     this.name = name;
     this.destDir = destDir;
 

@@ -16,7 +16,9 @@
 
 package org.jaxdb;
 
-abstract class SQLxProduce extends Produce<JaxDbMojo<?>.Configuration> {
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
+
+abstract class SQLxProduce extends Produce<JaxDbMojo<?>.Configuration,SQLxProduce,$Database> {
   private static int index;
   static final SQLxProduce[] values = new SQLxProduce[1];
 
@@ -26,7 +28,7 @@ abstract class SQLxProduce extends Produce<JaxDbMojo<?>.Configuration> {
 
   static final SQLxProduce SQL = new SQLxProduce("sql") {
     @Override
-    void execute(final JaxDbMojo<?>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws Exception {
+    void execute(final JaxDbMojo<?>.Configuration configuration, final SqlMojo<SQLxProduce,$Database> sqlMojo) throws Exception {
       sqlMojo.executeStaged(configuration);
     }
   };

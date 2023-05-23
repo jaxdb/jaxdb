@@ -79,7 +79,7 @@ final class EntitiesJaxSB {
     return table;
   }
 
-  public static data.Table[] toEntities(final $Database database) {
+  public static data.Table[] toEntities(final $Database database, final String className) {
     try {
       final Iterator<$Row> iterator = SQL.newRowIterator(database);
       if (!iterator.hasNext())

@@ -28,6 +28,6 @@ import org.xml.sax.SAXException;
 public class AssertTest extends JSqlTest {
   @Test
   public void test() throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
-    createEntities("assert");
+    createEntities("assert", "Assert");
   }
 }

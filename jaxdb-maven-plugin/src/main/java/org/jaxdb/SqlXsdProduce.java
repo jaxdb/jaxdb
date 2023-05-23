@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.jaxdb.sqlx.SQL;
 
-abstract class SqlXsdProduce extends Produce<SqlXsdMojo.Configuration> {
+abstract class SqlXsdProduce extends Produce<SqlXsdMojo.Configuration,SqlXsdProduce,Void> {
   private static int index;
   static final SqlXsdProduce[] values = new SqlXsdProduce[2];
 
@@ -30,7 +30,7 @@ abstract class SqlXsdProduce extends Produce<SqlXsdMojo.Configuration> {
 
   static final SqlXsdProduce JAXSB = new SqlXsdProduce("jaxsb") {
     @Override
-    void execute(final SqlXsdMojo.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws IOException {
+    void execute(final SqlXsdMojo.Configuration configuration, final SqlMojo<SqlXsdProduce,Void> sqlMojo) throws IOException {
       SQL.xsd2jaxsb(configuration.getDestDir(), configuration.getXsds());
     }
   };

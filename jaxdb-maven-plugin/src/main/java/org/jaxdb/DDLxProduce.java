@@ -23,12 +23,14 @@ import java.util.LinkedHashSet;
 
 import javax.xml.transform.TransformerException;
 
+import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.generator.Generator;
 import org.libj.net.URLs;
+import org.libj.util.StringPaths;
 import org.xml.sax.SAXException;
 
-abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration> {
+abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration,DDLxProduce,DDLx> {
   private static int index;
   static final DDLxProduce[] values = new DDLxProduce[5];
 
@@ -38,24 +40,27 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration>
 
   static final DDLxProduce JSQL = new DDLxProduce("jsql") {
     @Override
-    void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
+    void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<DDLxProduce,DDLx> sqlMojo) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
       final LinkedHashSet<URL> schemas = configuration.getSchemas();
-      if (schemas.size() > 0)
-        for (final URL schema : schemas) // [S]
-          Generator.generate(schema, URLs.getSimpleName(schema), configuration.getDestDir());
+      if (schemas.size() > 0) {
+        for (final URL schema : schemas) { // [S]
+          final Reserve<DDLx> reserve = sqlMojo.getReserve(schema);
+          Generator.generate(reserve.obj, StringPaths.getSimpleName(reserve.get(schema, sqlMojo.rename)), configuration.getDestDir());
+        }
+      }
     }
   };
 
   static final DDLxProduce SQL = new DDLxProduce("sql") {
     @Override
-    void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws Exception {
+    void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<DDLxProduce,DDLx> sqlMojo) throws Exception {
       sqlMojo.executeStaged(configuration);
     }
   };
 
   static final DDLxProduce SQL_XSD = new DDLxProduce("sqlxsd") {
     @Override
-    void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws GeneratorExecutionException, IOException, TransformerException {
+    void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<DDLxProduce,DDLx> sqlMojo) throws GeneratorExecutionException, IOException, TransformerException {
       final LinkedHashSet<URL> schemas = configuration.getSchemas();
       if (schemas.size() > 0)
         for (final URL schema : schemas) // [S]
@@ -65,7 +70,7 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration>
 
   static final DDLxProduce JAXSB = new DDLxProduce("jaxsb") {
     @Override
-    void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws Exception {
+    void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<DDLxProduce,DDLx> sqlMojo) throws Exception {
       SQL_XSD.execute(configuration, sqlMojo);
       SqlXsdProduce.JAXSB.execute(new SqlXsdMojo().configure(configuration), null);
     }
