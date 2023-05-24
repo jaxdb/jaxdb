@@ -37,6 +37,7 @@ import org.jaxdb.jsql.CacheMap;
 import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
 import org.jaxdb.jsql.generator.Relation.CurOld;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
@@ -787,7 +788,7 @@ class TableMeta {
     final HashSet<String> declared = new HashSet<>();
     if (!isAbstract) {
       out.append("\n  public final ").append(className).append("$ ").append(singletonInstanceName).append(" = new ").append(classSimpleName).append("$();\n");
-      out.append("\n  public final class ").append(classSimpleName).append("$ extends ").append(className).append(" {");
+      out.append("\n  public final class ").append(classSimpleName).append("$ extends ").append(className).append(" implements ").append(type.Table$.class.getCanonicalName()).append(" {");
       out.append("\n    private ").append(singletonInstanceName).append("() {");
       out.append("\n      super(false, false);");
       out.append("\n    }\n");

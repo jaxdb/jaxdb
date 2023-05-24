@@ -37,10 +37,10 @@ public class CacheConfig {
   }
 
   private Schema schema;
-  private DefaultListener<data.Table> notificationListener;
-  private Queue<Notification<data.Table>> queue;
+  private DefaultListener notificationListener;
+  private Queue queue;
   private ArrayList<OnConnectPreLoad> onConnectPreLoads = new ArrayList<>();
-  private LinkedHashSet<data.Table> tables = new LinkedHashSet<>();
+  private LinkedHashSet tables = new LinkedHashSet<>();
 
   CacheConfig(final Schema schema, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue) {
     this.schema = schema;
@@ -48,9 +48,10 @@ public class CacheConfig {
     this.queue = queue;
   }
 
-  public CacheConfig with(final data.Table ... tables) {
+  @SuppressWarnings("unchecked")
+  public <T extends type.Table$>CacheConfig with(final T ... tables) {
     for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table table = tables[i];
+      final data.Table table = (data.Table)tables[i];
       onConnectPreLoads.add(null);
       table.setCacheSelectEntity(true);
       if (!this.tables.add(table))
@@ -60,9 +61,10 @@ public class CacheConfig {
     return this;
   }
 
-  public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final data.Table ... tables) {
+  @SuppressWarnings("unchecked")
+  public <T extends type.Table$>CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final T ... tables) {
     for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table table = tables[i];
+      final data.Table table = (data.Table)tables[i];
       onConnectPreLoads.add(onConnectPreLoad);
       table.setCacheSelectEntity(true);
       if (!this.tables.add(table))
@@ -72,9 +74,10 @@ public class CacheConfig {
     return this;
   }
 
-  public CacheConfig with(final boolean cacheSelectEntity, final data.Table ... tables) {
+  @SuppressWarnings("unchecked")
+  public <T extends type.Table$>CacheConfig with(final boolean cacheSelectEntity, final T ... tables) {
     for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table table = tables[i];
+      final data.Table table = (data.Table)tables[i];
       onConnectPreLoads.add(OnConnectPreLoad.ALL);
       table.setCacheSelectEntity(cacheSelectEntity);
       if (!this.tables.add(table))
@@ -84,9 +87,10 @@ public class CacheConfig {
     return this;
   }
 
-  public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final boolean cacheSelectEntity, final data.Table ... tables) {
+  @SuppressWarnings("unchecked")
+  public <T extends type.Table$>CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final boolean cacheSelectEntity, final T ... tables) {
     for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table table = tables[i];
+      final data.Table table = (data.Table)tables[i];
       onConnectPreLoads.add(onConnectPreLoad);
       table.setCacheSelectEntity(cacheSelectEntity);
       if (!this.tables.add(table))

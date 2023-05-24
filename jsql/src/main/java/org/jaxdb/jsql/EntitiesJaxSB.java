@@ -41,7 +41,7 @@ final class EntitiesJaxSB {
   private static data.Table toEntity(final Schema schema, final $Row row) throws IllegalAccessException, InvocationTargetException {
     final String rowId = row.id();
     final String tableName = rowId.substring(0, rowId.lastIndexOf('-'));
-    final data.Table table = schema.getTable(tableName).newInstance();
+    final data.Table table = ((data.Table)schema.getTable(tableName)).newInstance();
 
     for (final Method method : Classes.getDeclaredMethodsDeep(row.getClass())) { // [A]
       final Class<?> returnType = method.getReturnType();

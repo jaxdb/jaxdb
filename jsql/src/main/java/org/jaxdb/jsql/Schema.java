@@ -75,8 +75,8 @@ public abstract class Schema {
   }
 
   public abstract String getName();
-  public abstract data.Table getTable(String name);
-  public abstract data.Table[] getTables();
+  public abstract type.Table$ getTable(String name);
+  public abstract type.Table$[] getTables();
   public abstract void setDefaultQueryConfig(QueryConfig queryConfig);
 
   public boolean isPrepared() {
@@ -89,12 +89,12 @@ public abstract class Schema {
     return cacheNotifier;
   }
 
-  void initCache(final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Set<data.Table> tables, final ArrayList<OnConnectPreLoad> onConnectPreLoads) throws IOException, SQLException {
+  <T extends data.Table & type.Table$,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>>void initCache(final L notificationListener, final Queue<Notification<T>> queue, final Set<T> tables, final ArrayList<OnConnectPreLoad> onConnectPreLoads) throws IOException, SQLException {
     if (this.cacheNotifier != null)
       throw new IllegalStateException("Cache was already initialized");
 
     final int len = tables.size();
-    final data.Table[] array = tables.toArray(new data.Table[len]);
+    final T[] array = (T[])tables.toArray(new data.Table[len]);
     for (int i = 0; i < len; ++i) // [RA]
       array[i]._initCache$();
 

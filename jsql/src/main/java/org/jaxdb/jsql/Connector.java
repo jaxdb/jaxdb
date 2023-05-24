@@ -61,76 +61,76 @@ public class Connector implements ConnectionFactory {
     return notifier;
   }
 
-  public <T extends data.Table>boolean hasNotificationListener(final INSERT insert, final T table) {
+  public boolean hasNotificationListener(final INSERT insert, final type.Table$ table) {
     return hasNotificationListener0(assertNotNull(insert), null, null, table);
   }
 
-  public <T extends data.Table>boolean hasNotificationListener(final UP up, final T table) {
+  public boolean hasNotificationListener(final UP up, final type.Table$ table) {
     return hasNotificationListener0(null, assertNotNull(up), null, table);
   }
 
-  public <T extends data.Table>boolean hasNotificationListener(final DELETE delete, final T table) {
+  public boolean hasNotificationListener(final DELETE delete, final type.Table$ table) {
     return hasNotificationListener0(null, null, assertNotNull(delete), table);
   }
 
-  public <T extends data.Table>boolean hasNotificationListener(final INSERT insert, final UP up, final T table) {
+  public boolean hasNotificationListener(final INSERT insert, final UP up, final type.Table$ table) {
     return hasNotificationListener0(assertNotNull(insert), assertNotNull(up), null, table);
   }
 
-  public <T extends data.Table>boolean hasNotificationListener(final UP up, final DELETE delete, final T table) {
+  public boolean hasNotificationListener(final UP up, final DELETE delete, final type.Table$ table) {
     return hasNotificationListener0(null, assertNotNull(up), assertNotNull(delete), table);
   }
 
-  public <T extends data.Table>boolean hasNotificationListener(final INSERT insert, final DELETE delete, final T table) {
+  public boolean hasNotificationListener(final INSERT insert, final DELETE delete, final type.Table$ table) {
     return hasNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), table);
   }
 
-  public <T extends data.Table>boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final T table) {
+  public boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final type.Table$ table) {
     return hasNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), table);
   }
 
-  private <T extends data.Table>boolean hasNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final T table) {
+  private boolean hasNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final type.Table$ table) {
     final Notifier<?> notifier = this.notifier;
-    return notifier != null && notifier.hasNotificationListener(insert, up, delete, table);
+    return notifier != null && notifier.hasNotificationListener(insert, up, delete, (data.Table)table);
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean addNotificationListener(final INSERT insert, final Notification.InsertListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table & type.Table$>boolean addNotificationListener(final INSERT insert, final Notification.InsertListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     return addNotificationListener0(assertNotNull(insert), null, null, assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean addNotificationListener(final UP up, final Notification.UpdateListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table & type.Table$>boolean addNotificationListener(final UP up, final Notification.UpdateListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     return addNotificationListener0(null, assertNotNull(up), null, assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean addNotificationListener(final DELETE delete, final Notification.DeleteListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table & type.Table$>boolean addNotificationListener(final DELETE delete, final Notification.DeleteListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     return addNotificationListener0(null, null, assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table,L extends Notification.InsertListener<T> & Notification.UpdateListener<T>>boolean addNotificationListener(final INSERT insert, final UP up, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table & type.Table$,L extends Notification.InsertListener<T> & Notification.UpdateListener<T>>boolean addNotificationListener(final INSERT insert, final UP up, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     return addNotificationListener0(assertNotNull(insert), assertNotNull(up), null, assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table,L extends Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table & type.Table$,L extends Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     return addNotificationListener0(null, assertNotNull(up), assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table,L extends Notification.InsertListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final INSERT insert, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table & type.Table$,L extends Notification.InsertListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final INSERT insert, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     return addNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table & type.Table$,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     return addNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings({"rawtypes", "resource", "unchecked"})
-  <T extends data.Table>boolean addNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T[] tables) throws IOException, SQLException {
+  <T extends data.Table & type.Table$>boolean addNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T[] tables) throws IOException, SQLException {
     Notifier<?> notifier = this.notifier;
     if (notifier == null) {
       synchronized (this) {
@@ -190,43 +190,43 @@ public class Connector implements ConnectionFactory {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean removeNotificationListeners(final INSERT insert, final T ... tables) throws IOException, SQLException {
+  public <T extends type.Table$>boolean removeNotificationListeners(final INSERT insert, final T ... tables) throws IOException, SQLException {
     return removeNotificationListeners0(assertNotNull(insert), null, null, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean removeNotificationListeners(final UP up, final T ... tables) throws IOException, SQLException {
+  public <T extends type.Table$>boolean removeNotificationListeners(final UP up, final T ... tables) throws IOException, SQLException {
     return removeNotificationListeners0(null, assertNotNull(up), null, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean removeNotificationListeners(final DELETE delete, final T ... tables) throws IOException, SQLException {
+  public <T extends type.Table$>boolean removeNotificationListeners(final DELETE delete, final T ... tables) throws IOException, SQLException {
     return removeNotificationListeners0(null, null, assertNotNull(delete), assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean removeNotificationListeners(final INSERT insert, final UP up, final T ... tables) throws IOException, SQLException {
+  public <T extends type.Table$>boolean removeNotificationListeners(final INSERT insert, final UP up, final T ... tables) throws IOException, SQLException {
     return removeNotificationListeners0(assertNotNull(insert), assertNotNull(up), null, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean removeNotificationListeners(final INSERT insert, final DELETE delete, final T ... tables) throws IOException, SQLException {
+  public <T extends type.Table$>boolean removeNotificationListeners(final INSERT insert, final DELETE delete, final T ... tables) throws IOException, SQLException {
     return removeNotificationListeners0(assertNotNull(insert), null, assertNotNull(delete), assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean removeNotificationListeners(final UP up, final DELETE delete, final T ... tables) throws IOException, SQLException {
+  public <T extends type.Table$>boolean removeNotificationListeners(final UP up, final DELETE delete, final T ... tables) throws IOException, SQLException {
     return removeNotificationListeners0(null, assertNotNull(up), assertNotNull(delete), assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table>boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final T ... tables) throws IOException, SQLException {
+  public <T extends type.Table$>boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final T ... tables) throws IOException, SQLException {
     return removeNotificationListeners0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), assertNotEmpty(tables));
   }
 
-  private final <T extends data.Table>boolean removeNotificationListeners0(final INSERT insert, final UP up, final DELETE delete, final T[] tables) throws IOException, SQLException {
+  private final <T extends type.Table$>boolean removeNotificationListeners0(final INSERT insert, final UP up, final DELETE delete, final T[] tables) throws IOException, SQLException {
     final Notifier<?> notifier = this.notifier;
-    return notifier != null && notifier.removeNotificationListeners(insert, up, delete, tables);
+    return notifier != null && notifier.removeNotificationListeners(insert, up, delete, (data.Table[])tables);
   }
 
   @Override

@@ -167,10 +167,10 @@ public final class Notification<T extends data.Table> {
 
   public interface Listener<T extends data.Table> {
     /**
-     * Called when a new {@link Connection} is established for the context of a {@link data.Table}.
+     * Called when a new {@link Connection} is established for the context of a {@link type.Table$}.
      *
      * @param connection The {@link Connection}.
-     * @param table The {@link data.Table}.
+     * @param table The {@link type.Table$}.
      * @throws IOException If an I/O error has occurred.
      * @throws SQLException If a SQL error has occurred.
      */
@@ -182,7 +182,7 @@ public final class Notification<T extends data.Table> {
      *
      * @param sessionId The session ID.
      * @param timestamp The timestamp (in microseconds) of the NOTIFY invocation.
-     * @param table The {@link data.Table}.
+     * @param table The {@link type.Table$}.
      * @param e The unhandled {@link Exception}.
      */
     default void onFailure(String sessionId, long timestamp, T table, Exception e) {

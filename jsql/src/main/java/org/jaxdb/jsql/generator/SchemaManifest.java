@@ -33,6 +33,7 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.type;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema.Table;
@@ -143,7 +144,7 @@ class SchemaManifest {
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
-    out.append("\n  private final ").append(data.Table.class.getCanonicalName()).append("[] tables = {");
+    out.append("\n  private final ").append(type.Table$.class.getCanonicalName()).append("[] tables = {");
     for (int i = 0, i$ = sortedTables.size(); i < i$; ++i) // [RA]
       out.append(sortedTables.get(i).singletonInstanceName).append(", ");
 
@@ -152,12 +153,12 @@ class SchemaManifest {
     out.append('\n');
 
     out.append("\n  @").append(Override.class.getName());
-    out.append("\n  public ").append(data.Table.class.getCanonicalName()).append("[] getTables() {");
+    out.append("\n  public ").append(type.Table$.class.getCanonicalName()).append("[] getTables() {");
     out.append("\n    return tables;");
     out.append("\n  }\n");
 
     out.append("\n  @").append(Override.class.getName());
-    out.append("\n  public ").append(data.Table.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) {");
+    out.append("\n  public ").append(type.Table$.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) {");
     out.append("\n    final int index = ").append(Arrays.class.getName()).append(".binarySearch(names, name);");
     out.append("\n    return index < 0 ? null : tables[index];");
     out.append("\n  }\n");

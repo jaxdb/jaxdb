@@ -25,6 +25,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
+
 public interface type {
   abstract static interface Key extends Serializable {
     Object value(int i);
@@ -74,7 +77,7 @@ public interface type {
   public interface ENUM<V extends EntityEnum> extends Textual<V> {
   }
 
-  public interface Table extends Entity {
+  public interface Entity {
   }
 
   public interface ExactNumeric<V extends Number> extends Numeric<V> {
@@ -98,10 +101,19 @@ public interface type {
   public interface Primitive<V> extends Column<V> {
   }
 
+  public interface Singleton {
+  }
+
   public interface SMALLINT extends ExactNumeric<Short> {
   }
 
-  public interface Entity {
+  public interface Table extends Entity {
+  }
+
+  public interface Table$ extends Table, Singleton {
+    String getName();
+    data.Column<?>[] getColumns();
+    data.Column<?> getColumn(String name);
   }
 
   public interface Temporal<V extends java.time.temporal.Temporal> extends Objective<V> {
