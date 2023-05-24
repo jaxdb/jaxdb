@@ -102,12 +102,12 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    *           the result set type} is {@link Type#FORWARD_ONLY}.
    * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
-  public boolean previousRow() throws SQLException {
+  public boolean previousRow() throws SQLException, SQLFeatureNotSupportedException {
     throw new UnsupportedOperationException();
   }
 
   /**
-   * Updates the underlying database with the new contents of the current row of this {@link RowIterator} object. This method cannot
+   * Updates the connected database with the new contents of the current row of this {@link RowIterator} object. This method cannot
    * be called when the cursor is on the insert row.
    *
    * @throws SQLException If a database access error occurs; the {@linkplain #getConcurrency() result set concurrency} is
@@ -115,7 +115,7 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    *           cursor is on the insert row.
    * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
-  public final void updateRow() throws SQLException {
+  public final void updateRow() throws SQLException, SQLFeatureNotSupportedException {
     try {
       resultSet.updateRow();
     }

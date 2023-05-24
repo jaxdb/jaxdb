@@ -821,6 +821,7 @@ class TableMeta {
         declared.clear();
         out.append("\n    boolean _cacheEnabled$;\n");
 
+        out.append("\n    @").append(Override.class.getName());
         out.append("\n    void _initCache$() {");
         out.append("\n      if (_cacheEnabled$)");
         out.append("\n        return;\n");
@@ -833,12 +834,13 @@ class TableMeta {
               write("\n      ", relation.writeCacheInit(), out, declared);
 
         if (keyClauseColumnAssignments.size() > 0) {
-          out.append('\n');
           for (final String keyClauseColumnAssignment : keyClauseColumnAssignments) // [S]
             out.append("\n      ").append(keyClauseColumnAssignment).append(';');
+
+          out.append('\n');
         }
 
-        out.append("\n    }");
+        out.append("    }");
       }
 
       out.append("\n  };\n");
@@ -883,7 +885,7 @@ class TableMeta {
       {
         declared.clear();
 
-        out.append("\n\n    @").append(Override.class.getName());
+        out.append("\n    @").append(Override.class.getName());
         out.append("\n    void _commitSelectAll$() {");
         out.append("\n      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
         out.append("\n        return;\n");
@@ -897,30 +899,34 @@ class TableMeta {
         }
 
         out.append("\n    }\n");
+      }
 
+      {
         declared.clear();
 
-        out.append("\n\n    @").append(Override.class.getName());
-        out.append("\n    void _commitInsert$() {");
-        out.append("\n      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
-        out.append("\n        return;\n");
-        // out.append("\n super._commitInsert$();\n");
+        out.append("\n    @").append(Override.class.getName());
+        out.append("\n    void _commitInsert$() {\n");
         if (allRelations.size() > 0) {
+          out.append("      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          out.append("\n        return;\n");
           for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
               write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur), out, declared);
             }
           }
+
+          if (declared.size() > 0)
+            out.append('\n');
         }
 
-        out.append("\n    }\n");
+        out.append("    }\n");
+      }
 
+      {
         declared.clear();
 
         out.append("\n    @").append(Override.class.getName());
-        out.append("\n    void _commitDelete$() {");
-        out.append("\n      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
-        out.append("\n        return;\n");
+        out.append("\n    void _commitDelete$() {\n");
 
         // FIXME: Remove the re-addition of all Relation(s) to ArrayList
         final ArrayList<Relation> onChangeRelations = new ArrayList<>(1);
@@ -929,6 +935,9 @@ class TableMeta {
             onChangeRelations.addAll(entry.getValue());
 
         if (onChangeRelations.size() > 0) {
+          out.append("      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          out.append("\n        return;\n");
+
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
             if (onChangeRelation instanceof ForeignRelation) {
@@ -950,8 +959,12 @@ class TableMeta {
             final Relation onChangeRelation = onChangeRelations.get(i);
             write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause(), CurOld.Cur), out, declared);
           }
+
+          if (declared.size() > 0)
+            out.append('\n');
         }
-        out.append("\n    }\n");
+
+        out.append("    }\n");
       }
     }
 
@@ -1374,7 +1387,7 @@ class TableMeta {
       out.append("\n    }\n");
 
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(className).append(" singleton() {");
+      out.append("\n    ").append(singletonInstanceName).append(" singleton() {");
       out.append("\n      return ").append(singletonInstanceName).append(';');
       out.append("\n    }\n");
     }

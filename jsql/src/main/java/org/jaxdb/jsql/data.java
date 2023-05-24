@@ -5322,7 +5322,7 @@ public final class data {
     }
 
     void setCacheSelectEntity(final boolean cacheSelectEntity) {
-      singleton().setCacheSelectEntity(cacheSelectEntity);
+      throw new UnsupportedOperationException();
     }
 
     @Override
