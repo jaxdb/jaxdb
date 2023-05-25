@@ -68,6 +68,7 @@
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
+        <!-- Copy *.sqlx to "jaxdb" subdir to be 1 dir deeper... [see below] -->
         <excludes>
           <exclude>**/*.sqlx</exclude>
         </excludes>

@@ -46,13 +46,7 @@ public abstract class SQLxTest {
   private static final Logger logger = LoggerFactory.getLogger(SQLxTest.class);
   private static final File sourcesJaxSbDestDir = new File("target/generated-test-sources/jaxsb");
   static final File resourcesDestDir = new File("target/generated-test-resources/jaxdb");
-  static final File testClassesDir = new File("target/test-classes");
-//  private static final File[] classpath;
-
-  static {
-//    final File[] testClassPath = ClassLoaders.getTestClassPath();
-//    classpath = testClassPath != null ? ArrayUtil.concat(ClassLoaders.getClassPath(), testClassPath) : ClassLoaders.getClassPath();
-  }
+  public static final File testClassesDir = new File("target/test-classes");
 
   private static $Database to$Database(final URL sqlxFile) throws IOException, SAXException {
     try {

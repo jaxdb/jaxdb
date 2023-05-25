@@ -32,7 +32,6 @@ import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.Schema;
-import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.type;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;

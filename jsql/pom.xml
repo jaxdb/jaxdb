@@ -28,7 +28,7 @@
   <name>JAX-DB jSQL</name>
   <description>
     jSQL is an extension to DDLx, offering a lightweight ORM (Object Relational Mapping) solution
-    that runs on the JDBC v4.1 API. The jSQL framework provides strongly-typed semantics for the
+    that runs on the JDBC v4.3 API. The jSQL framework provides strongly-typed semantics for the
     SQL language, as well as a cohesive binding to user data models. jSQL uses a SQL schema defined
     in a DDLx file to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
   </description>
@@ -36,9 +36,6 @@
     <testResources>
       <testResource>
         <directory>${project.build.directory}/generated-test-resources/jaxdb</directory>
-      </testResource>
-      <testResource>
-        <directory>${project.build.directory}/generated-test-sources/jaxdb</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>

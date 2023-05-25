@@ -36,6 +36,7 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.statement.Modification.Result;
 import org.jaxdb.jsql.generator.Generator;
+import org.jaxdb.sqlx.SQLxTest;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
@@ -46,14 +47,14 @@ import org.xml.sax.SAXException;
 public abstract class JSqlTest {
   static void createEntities(final String name, final String className) throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
     final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
-    final File destDir = new File("target/generated-test-sources/jaxdb");
-    Generator.generate(url, className, destDir);
+    final File srcDir = new File("target/generated-test-sources/jaxdb");
+    Generator.generate(url, className, srcDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();
-    Files.walk(destDir.toPath())
+    Files.walk(srcDir.toPath())
       .filter(p -> p.getFileName().toString().endsWith(".java"))
       .forEach(rethrow((Path p) -> compiler.addSource(new String(Files.readAllBytes(p)))));
 
-    compiler.compile(destDir, "-g");
+    compiler.compile(SQLxTest.testClassesDir, "-g");
   }
 
   static Result loadEntitiesJaxSB(final Connection connection, final String name, final String className) throws IOException, SAXException, SQLException, TransformerException {

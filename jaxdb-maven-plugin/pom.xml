@@ -28,7 +28,7 @@
   <packaging>maven-plugin</packaging>
   <name>JAX-DB Maven Plugin</name>
   <description>
-    The jaxdb-maven-plugin plugin is used to execute database-related generators, which are currently the JAX-DB framework.
+    The jaxdb-maven-plugin plugin exposes common build tasks in the JAX-DB framework to Maven.
   </description>
   <properties>
     <maven.version>3.0</maven.version>

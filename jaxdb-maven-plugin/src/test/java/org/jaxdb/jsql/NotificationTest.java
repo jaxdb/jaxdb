@@ -57,24 +57,25 @@ public abstract class NotificationTest {
   public static boolean sql(final Exception e) {
     // 1. Retry these exceptions by default, and log with level=DEBUG.
     // FIXME: Replace with SQL State codes...
-    if (e.getMessage() != null && (
-        e instanceof SQLTransactionRollbackException && e.getMessage().contains("could not serialize access") ||
-        e instanceof SQLInternalErrorException && e.getMessage().endsWith("tuple concurrently updated") ||
-        e instanceof SQLFeatureNotSupportedException && e.getMessage().endsWith("cached plan must not change result type") ||
-        e instanceof SQLNonTransientConnectionException && e.getMessage().startsWith("Connection Error"))) {
-      if (logger.isDebugEnabled()) logger.debug(e.getMessage());
+    final String message = e.getMessage();
+    if (message != null && (
+        e instanceof SQLTransactionRollbackException && message.contains("could not serialize access") ||
+        e instanceof SQLInternalErrorException && message.endsWith("tuple concurrently updated") ||
+        e instanceof SQLFeatureNotSupportedException && message.endsWith("cached plan must not change result type") ||
+        e instanceof SQLNonTransientConnectionException && message.startsWith("Connection Error"))) {
+      if (logger.isDebugEnabled()) logger.debug(message);
       return true;
     }
 
     // 2. All other SQLTransactionRollbackException(s) and SQLTransientException(s) with level=WARNING.
     if (e instanceof SQLTransactionRollbackException || e instanceof SQLTransientException || e instanceof SQLNonTransientConnectionException || e instanceof SQLOperatorInterventionException) {
-      if (logger.isWarnEnabled()) logger.warn(e.getMessage(), e);
+      if (logger.isWarnEnabled()) logger.warn(message, e);
       return true;
     }
 
     // 3. IOException with level=INFO
     if (e instanceof IOException) {
-      if (logger.isInfoEnabled()) logger.info(e.getMessage(), e);
+      if (logger.isInfoEnabled()) logger.info(message, e);
       return true;
     }
 
