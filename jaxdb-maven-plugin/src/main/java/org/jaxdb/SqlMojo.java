@@ -31,8 +31,9 @@ import javax.xml.transform.TransformerException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jaxdb.vendor.DbVendor;
+import org.libj.lang.Strings;
 import org.libj.net.URLs;
-import org.openjax.maven.mojo.MojoUtil;
+import org.libj.util.StringPaths;
 import org.xml.sax.SAXException;
 
 abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
@@ -70,7 +71,7 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
         }
 
         if (sqlFile == null) {
-          sqlFile = new File(configuration.getDestDir(), rename == null ? URLs.getSimpleName(schema) + ".sql" : MojoUtil.getRenamedFileName(schema.toString(), rename)).getAbsoluteFile();
+          sqlFile = new File(configuration.getDestDir(), rename == null ? URLs.getSimpleName(schema) + ".sql" : Strings.searchReplace(StringPaths.getName(schema.toString()), rename)).getAbsoluteFile();
           makeSql(reserve, dbVendor, sqlFile);
           reserve.renameToFile.put(rename, sqlFile);
         }
