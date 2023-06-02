@@ -85,7 +85,7 @@ public abstract class TypesTest extends SQLxTest {
       final String blobType = new Hexadecimal(Strings.getRandomAlphaNumeric(255).getBytes()).toString().toUpperCase();
       final String booleanType = String.valueOf(Math.random() < .5);
       final String clobType = Strings.getRandomAlphaNumeric((int)(Math.random() * 255));
-      final String decimalType = BigDecimal.valueOf(((Math.random() - .5) * StrictMath.pow(2, (int)(Math.random() * 64) - 1))).setScale(10, RoundingMode.FLOOR).toString();
+      final String decimalType = BigDecimal.valueOf(((Math.random() - .5) * (1 << (int)(Math.random() * 64) - 1))).setScale(10, RoundingMode.FLOOR).toString();
       final String dateType = LocalDate.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28)).format(DateTimeFormatter.ISO_DATE);
       final String datetimeType = LocalDateTime.of(2010 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28), (int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
       final String timeType = LocalTime.of((int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ISO_LOCAL_TIME);
