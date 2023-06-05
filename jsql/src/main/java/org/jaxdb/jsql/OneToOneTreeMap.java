@@ -21,19 +21,19 @@ import java.util.TreeMap;
 
 public class OneToOneTreeMap<V extends data.Table> extends TreeCacheMap<V> implements OneToOneMap<V> {
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static final OneToOneTreeMap EMPTY = new OneToOneTreeMap(null, null, null, new TreeMap<>());
+  static final OneToOneTreeMap EMPTY = new OneToOneTreeMap(null, null, new TreeMap<>());
 
-  OneToOneTreeMap(final data.Table table, final String name) {
-    super(table, name);
+  OneToOneTreeMap(final data.Table table) {
+    super(table);
   }
 
-  private OneToOneTreeMap(final data.Table table, final Schema schema, final String name, final NavigableMap<data.Key,V> map) {
-    super(table, schema, name, map);
+  private OneToOneTreeMap(final data.Table table, final Schema schema, final NavigableMap<data.Key,V> map) {
+    super(table, schema, map);
   }
 
   @Override
-  TreeCacheMap<V> newInstance(final data.Table table, final String name, final NavigableMap<data.Key,V> map) {
-    return new OneToOneTreeMap<>(table, table.getSchema(), name, map);
+  TreeCacheMap<V> newInstance(final data.Table table, final NavigableMap<data.Key,V> map) {
+    return new OneToOneTreeMap<>(table, table.getSchema(), map);
   }
 
   @Override

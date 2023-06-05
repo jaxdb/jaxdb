@@ -19,17 +19,17 @@ package org.jaxdb.jsql;
 import java.util.NavigableMap;
 
 public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
-  OneToManyTreeMap(final data.Table table, final String name) {
-    super(table, name);
+  OneToManyTreeMap(final data.Table table) {
+    super(table);
   }
 
-  private OneToManyTreeMap(final data.Table table, final String name, final NavigableMap<data.Key,NavigableMap<data.Key,V>> map) {
-    super(table, table.getSchema(), name, map);
+  private OneToManyTreeMap(final data.Table table, final NavigableMap<data.Key,NavigableMap<data.Key,V>> map) {
+    super(table, table.getSchema(), map);
   }
 
   @Override
-  TreeCacheMap<NavigableMap<data.Key,V>> newInstance(final data.Table table, final String name, final NavigableMap<data.Key,NavigableMap<data.Key,V>> map) {
-    return new OneToManyTreeMap<>(table, name, map);
+  TreeCacheMap<NavigableMap<data.Key,V>> newInstance(final data.Table table, final NavigableMap<data.Key,NavigableMap<data.Key,V>> map) {
+    return new OneToManyTreeMap<>(table, map);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<Navigab
 
     OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)map.get(key);
     if (v == null)
-      map.put(key, v = new OneToOneTreeMap<>(table, name + ":" + key));
+      map.put(key, v = new OneToOneTreeMap<>(table));
 
     v.superPut(value.getKey(), value);
   }

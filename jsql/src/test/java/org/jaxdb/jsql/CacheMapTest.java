@@ -16,109 +16,174 @@
 
 package org.jaxdb.jsql;
 
+import static org.junit.Assert.*;
+
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 
-public class MapDbTest {
-  static void fail(final String message) {
-    System.err.println(message);
-    System.err.flush();
-    System.exit(-1);
+public class CacheMapTest {
+  static {
+    Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(final Thread t, final Throwable e) {
+        exception.put(t, e);
+        synchronized (exception) {
+          exception.notify();
+        }
+      }
+    });
   }
 
-  @Test
-  @SuppressWarnings("unchecked")
-  public void testNoConcurrentModificationException() throws InterruptedException {
-    final DB db = DBMaker.heapDB().make();
-    final Map<Integer,Integer> map = (Map<Integer,Integer>)db.treeMap("map").counterEnable().create();
-    final ExecutorService executor = Executors.newFixedThreadPool(4);
-    final AtomicBoolean finished = new AtomicBoolean();
-    executor.execute(() -> {
-      for (int i = 0; i < 100; ++i) { // [N]
-        map.put(i, i);
-        try {
-          Thread.sleep(10);
-        }
-        catch (final InterruptedException e) {
-          fail(e.getMessage());
-        }
-      }
+  private static final ConcurrentHashMap<Thread,Throwable> exception = new ConcurrentHashMap<>();
 
-      finished.set(true);
+  private static void sleep(final long millis) {
+    if (millis < 0)
+      return;
+
+    try {
+      Thread.sleep(millis);
+    }
+    catch (final InterruptedException e) {
+      System.err.println(e.getMessage());
+      System.err.flush();
+      System.exit(-1);
+    }
+  }
+
+  private static void testNoConcurrentModificationException(final Map<Integer,Integer> map) throws Throwable {
+    final ExecutorService executor = Executors.newFixedThreadPool(4);
+    final AtomicInteger count = new AtomicInteger(3);
+    executor.execute(() -> {
+      int i = 0;
+      do {
+        map.put(++i, i);
+        sleep(4);
+      }
+      while (count.get() > 0);
+
+      synchronized (exception) {
+        exception.notify();
+      }
     });
 
+    final ArrayList<Thread> threads = new ArrayList<>();
+    sleep(50);
+
     executor.execute(() -> {
-      do {
-        int last = -1;
+      threads.add(Thread.currentThread());
+      long time;
+      for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
+        size = map.size();
+        time = System.currentTimeMillis();
         for (final Map.Entry<Integer,Integer> entry : map.entrySet()) { // [S]
           final Integer key = entry.getKey();
-          if (key < last)
-            fail(key + " < " + last);
+          if (key < prev)
+            fail("next (" + key + ")" + " < " + "prev (" + prev + ")");
 
-          last = key;
+          sleep(5 + time - System.currentTimeMillis());
+          prev = key;
         }
 
-        try {
-          last = -1;
-          Thread.sleep(10);
-        }
-        catch (final InterruptedException e) {
-          fail(e.getMessage());
-        }
+        assertTrue(map.size() > size);
+        sleep(10);
       }
-      while (!finished.get());
+
+      count.getAndDecrement();
     });
 
     executor.execute(() -> {
-      do {
-        int last = -1;
+      threads.add(Thread.currentThread());
+      long time;
+      for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
+        size = map.size();
+        time = System.currentTimeMillis();
         for (final Integer key : map.keySet()) { // [S]
-          if (key < last)
-            fail(key + " < " + last);
+          if (key < prev)
+            fail("next (" + key + ")" + " < " + "prev (" + prev + ")");
 
-          last = key;
+          sleep(5 + time - System.currentTimeMillis());
+          prev = key;
         }
 
-        try {
-          last = -1;
-          Thread.sleep(10);
-        }
-        catch (final InterruptedException e) {
-          fail(e.getMessage());
-        }
+        assertTrue(map.size() > size);
+        sleep(10);
       }
-      while (!finished.get());
+
+      count.getAndDecrement();
     });
 
     executor.execute(() -> {
-      do {
-        int last = -1;
+      threads.add(Thread.currentThread());
+      long time;
+      for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
+        size = map.size();
+        time = System.currentTimeMillis();
         for (final Integer value : map.values()) { // [C]
-          if (value < last)
-            fail(value + " < " + last);
+          if (value < prev)
+            fail(value + " < " + prev);
 
-          last = value;
+          sleep(5 + time - System.currentTimeMillis());
+          prev = value;
         }
 
-        try {
-          last = -1;
-          Thread.sleep(10);
-        }
-        catch (final InterruptedException e) {
-          fail(e.getMessage());
-        }
+        assertTrue(map.size() > size);
+        sleep(10);
       }
-      while (!finished.get());
+
+      count.getAndDecrement();
     });
 
     executor.shutdown();
-    executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+    synchronized (exception) {
+      exception.wait();
+      for (final Thread thread : threads) {
+        if (thread != null) {
+          final Throwable t = exception.get(thread);
+          if (t != null)
+            throw t;
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testNoConcurrentModificationExceptionHashMap() throws Throwable {
+    try {
+      testNoConcurrentModificationException(new HashMap<>());
+      fail("Expected ConcurrentModificationException");
+    }
+    catch (final ConcurrentModificationException e) {
+    }
+  }
+
+  @Test
+  public void testNoConcurrentModificationExceptionTreeMap() throws Throwable {
+    try {
+      testNoConcurrentModificationException(new TreeMap<>());
+      fail("Expected ConcurrentModificationException");
+    }
+    catch (final ConcurrentModificationException e) {
+    }
+  }
+
+  @Test
+  public void testNoConcurrentModificationExceptionConcurrentHashMap() throws Throwable {
+    testNoConcurrentModificationException(new ConcurrentHashMap<>());
+  }
+
+  @Test
+  public void testNoConcurrentModificationExceptionConcurrentSkipListMap() throws Throwable {
+    testNoConcurrentModificationException(new ConcurrentSkipListMap<>());
   }
 }

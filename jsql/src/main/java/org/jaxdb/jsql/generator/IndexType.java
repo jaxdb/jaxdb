@@ -157,7 +157,10 @@ abstract class IndexType {
   abstract boolean isSameStrategy(IndexType indexType);
 
   final IndexType merge(final IndexType indexType) {
-    if (assertNotNull(indexType) instanceof UNDEFINED || isSameStrategy(indexType))
+    if (indexType == null)
+      return this;
+
+    if (indexType instanceof UNDEFINED || isSameStrategy(indexType))
       return isUnique ? getUnique() : this;
 
     return isUnique ? HASH_BTREE_UNIQUE : HASH_BTREE;

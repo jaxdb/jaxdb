@@ -4368,8 +4368,6 @@ public final class data {
 
       final Key key = (Key)o;
       final int i$ = length();
-      if (key == null)
-        System.out.println();
       if (i$ != key.length())
         throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + key.length() + ")");
 

@@ -102,7 +102,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -130,7 +130,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -158,7 +158,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -186,7 +186,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -214,7 +214,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -242,7 +242,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -270,7 +270,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -298,7 +298,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -326,7 +326,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -354,7 +354,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -382,7 +382,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -410,7 +410,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -438,7 +438,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -466,7 +466,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -494,7 +494,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -522,7 +522,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -550,7 +550,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -578,7 +578,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -606,7 +606,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -634,7 +634,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -662,7 +662,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -690,7 +690,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -718,7 +718,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);
@@ -746,7 +746,7 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression, final boolean cacheSelectEntity) throws IOException, SQLException {
-          final boolean doAssert = compilation.toString().isEmpty();
+          final boolean doAssert = compilation.toString().length() == 0;
           super.compile(compilation, isExpression, cacheSelectEntity);
           if (doAssert)
             assertCompile(isEntityOnlySelect);

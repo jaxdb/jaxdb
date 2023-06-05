@@ -483,7 +483,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       recreateTrigger(connection, tables, actionSets);
     }
 
-    if (tableNameToNotifier.isEmpty()) {
+    if (tableNameToNotifier.size() == 0) {
       setState(Notifier.State.STOPPED);
       stop();
       if (connection != null)

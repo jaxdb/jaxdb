@@ -17,19 +17,18 @@
 package org.jaxdb.jsql;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.mapdb.HTreeMap;
+import org.libj.util.ConcurrentHashSet;
+import org.libj.util.Interval;
 
 public abstract class HashCacheMap<V> extends CacheMap<V> {
-  final String name;
-  final Map<data.Key,V> map;
-  final HashSet<data.Key> mask = new HashSet<data.Key>() {
+  final static class KeyConcurrentHashSet extends ConcurrentHashSet<data.Key> {
     private boolean all;
 
     @Override
@@ -37,24 +36,35 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
       return e == data.Key.ALL ? all = true : super.add(e);
     }
 
+    void addAll(final data.Key[] keys) {
+      for (final data.Key key : keys) // [A]
+        add(key);
+    }
+
+    void addAll(final Interval<data.Key>[] keys) {
+      for (final Interval<data.Key> key : keys) // [A]
+        add((data.Key)key);
+    }
+
     @Override
     public boolean contains(final Object o) {
       return all || super.contains(o);
     }
-  };
-
-  @SuppressWarnings("unchecked")
-  HashCacheMap(final data.Table table, final String name) {
-    this(table, table.getSchema(), name, (HTreeMap<data.Key,V>)db.hashMap(name).counterEnable().create());
   }
 
-  HashCacheMap(final data.Table table, final Schema schema, final String name, final Map<data.Key,V> map) {
+  final KeyConcurrentHashSet mask = new KeyConcurrentHashSet();
+  final Map<data.Key,V> map;
+
+  HashCacheMap(final data.Table table) {
+    this(table, table.getSchema(), new ConcurrentHashMap<>());
+  }
+
+  HashCacheMap(final data.Table table, final Schema schema, final Map<data.Key,V> map) {
     super(table, schema);
-    this.name = name;
     this.map = map;
   }
 
-  abstract HashCacheMap<V> newInstance(data.Table table, String name, Map<data.Key,V> map);
+  abstract HashCacheMap<V> newInstance(data.Table table, Map<data.Key,V> map);
 
   @Override
   final void addKey(final data.Key key) {
@@ -63,8 +73,7 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
 
   @Override
   final void addKey(final data.Key[] keys) {
-    for (final data.Key key : keys)
-      mask.add(key);
+    mask.addAll(keys);
   }
 
   @Override
@@ -117,6 +126,7 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
 
   @Override
   public final Set<Map.Entry<data.Key,V>> entrySet() {
+    // FIXME: Must disallow Map.Entry.setValue()
     return map.entrySet();
   }
 
@@ -132,7 +142,7 @@ public abstract class HashCacheMap<V> extends CacheMap<V> {
 
   @Override
   public final boolean isEmpty() {
-    return map.isEmpty();
+    return map.size() == 0;
   }
 
   @Override

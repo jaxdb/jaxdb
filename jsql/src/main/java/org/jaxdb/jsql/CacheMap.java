@@ -26,12 +26,8 @@ import java.util.function.BiFunction;
 
 import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.libj.util.Interval;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 
 public abstract class CacheMap<V> implements Map<data.Key,V> {
-  static final DB db = DBMaker.heapDB().make();
-
   final data.Table table;
   private final Schema schema;
 

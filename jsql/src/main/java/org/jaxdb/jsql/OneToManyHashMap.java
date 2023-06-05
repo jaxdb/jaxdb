@@ -19,17 +19,17 @@ package org.jaxdb.jsql;
 import java.util.Map;
 
 public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
-  OneToManyHashMap(final data.Table table, final String name) {
-    super(table, name);
+  OneToManyHashMap(final data.Table table) {
+    super(table);
   }
 
-  private OneToManyHashMap(final data.Table table, final String name, final Map<data.Key,Map<data.Key,V>> map) {
-    super(table, table.getSchema(), name, map);
+  private OneToManyHashMap(final data.Table table, final Map<data.Key,Map<data.Key,V>> map) {
+    super(table, table.getSchema(), map);
   }
 
   @Override
-  HashCacheMap<Map<data.Key,V>> newInstance(final data.Table table, final String name, final Map<data.Key,Map<data.Key,V>> map) {
-    return new OneToManyHashMap<>(table, name, map);
+  HashCacheMap<Map<data.Key,V>> newInstance(final data.Table table, final Map<data.Key,Map<data.Key,V>> map) {
+    return new OneToManyHashMap<>(table, map);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class OneToManyHashMap<V extends data.Table> extends HashCacheMap<Map<dat
 
     OneToOneHashMap<V> v = (OneToOneHashMap<V>)map.get(key);
     if (v == null)
-      map.put(key, v = new OneToOneHashMap<>(table, name + ":" + key));
+      map.put(key, v = new OneToOneHashMap<>(table));
 
     v.superPut(value.getKey(), value);
   }

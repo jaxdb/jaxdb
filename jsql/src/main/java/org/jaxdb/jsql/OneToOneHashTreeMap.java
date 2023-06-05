@@ -16,8 +16,30 @@
 
 package org.jaxdb.jsql;
 
-public class OneToOneHashTreeMap<V extends data.Table> extends OneToOneTreeMap<V> {
-  OneToOneHashTreeMap(final data.Table table, final String name) {
-    super(table, name);
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+
+public class OneToOneHashTreeMap<V extends data.Table> extends HashTreeCacheMap<V> implements OneToOneMap<V> {
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  static final OneToOneHashTreeMap EMPTY = new OneToOneHashTreeMap(null, null, new HashMap<>(), new TreeMap<>());
+
+  OneToOneHashTreeMap(final data.Table table) {
+    super(table);
+  }
+
+  private OneToOneHashTreeMap(final data.Table table, final Schema schema, final Map<data.Key,V> hashMap, final NavigableMap<data.Key,V> treeMap) {
+    super(table, schema, hashMap, treeMap);
+  }
+
+  @Override
+  OneToOneHashTreeMap<V> newInstance(final data.Table table, final Map<data.Key,V> hashMap, final NavigableMap<data.Key,V> treeMap) {
+    return new OneToOneHashTreeMap<>(table, table.getSchema(), hashMap, treeMap);
+  }
+
+  @Override
+  public V get(final Object key) {
+    return hashMap.get(key);
   }
 }

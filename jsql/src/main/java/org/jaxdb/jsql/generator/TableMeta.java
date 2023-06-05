@@ -253,6 +253,9 @@ class TableMeta {
           for (int j = 0; j < noColumns; ++j) // [RA]
             indexColumnMetas.add(assertNotNull(columnNameToColumnMeta.get(columns.get(j).getName$().text())));
 
+          if ("incident_camera".equals(tableName) && noColumns == 1 && indexColumnMetas.iterator().next().column.getName$().text().equals("incident_id"))
+            System.out.println();
+
           final boolean isUnique = indexColumn.getUnique$() != null && indexColumn.getUnique$().text();
           this.columnsToIndexType.put(indexColumnMetas, IndexType.of(indexColumn.getType$(), isUnique));
           this.indexes.add(indexColumnMetas);
@@ -1134,7 +1137,7 @@ class TableMeta {
     }
 
     final StringBuilder init = new StringBuilder();
-    newColumnArray(init, noColumnsTotal, primaryKeyColumnNames.isEmpty() && keyForUpdateColumnNames.isEmpty() ? null : i -> {
+    newColumnArray(init, noColumnsTotal, primaryKeyColumnNames.size() == 0 && keyForUpdateColumnNames.size() == 0 ? null : i -> {
       if (primaryKeyColumnNames.contains(columns[i].name))
         return data.class.getCanonicalName() + "." + (primaryKeyIndexType instanceof IndexType.HASH ? "HASH" : "BTREE");
 
