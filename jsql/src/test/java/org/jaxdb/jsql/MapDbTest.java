@@ -17,14 +17,13 @@
 package org.jaxdb.jsql;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Test;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 
 public class MapDbTest {
   static void fail(final String message) {
@@ -34,10 +33,8 @@ public class MapDbTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void testNoConcurrentModificationException() throws InterruptedException {
-    final DB db = DBMaker.heapDB().make();
-    final Map<Integer,Integer> map = (Map<Integer,Integer>)db.treeMap("map").counterEnable().create();
+    final Map<Integer,Integer> map = new ConcurrentSkipListMap<>();
     final ExecutorService executor = Executors.newFixedThreadPool(4);
     final AtomicBoolean finished = new AtomicBoolean();
     executor.execute(() -> {
