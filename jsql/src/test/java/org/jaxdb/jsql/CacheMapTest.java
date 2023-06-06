@@ -18,35 +18,20 @@ package org.jaxdb.jsql;
 
 import static org.junit.Assert.*;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
+import org.libj.test.TestExecutorService;
 
 public class CacheMapTest {
-  static {
-    Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-      @Override
-      public void uncaughtException(final Thread t, final Throwable e) {
-        exception.put(t, e);
-        synchronized (exception) {
-          exception.notify();
-        }
-      }
-    });
-  }
-
-  private static final ConcurrentHashMap<Thread,Throwable> exception = new ConcurrentHashMap<>();
-
   private static void sleep(final long millis) {
     if (millis < 0)
       return;
@@ -62,103 +47,95 @@ public class CacheMapTest {
   }
 
   private static void testNoConcurrentModificationException(final Map<Integer,Integer> map) throws Throwable {
-    final ExecutorService executor = Executors.newFixedThreadPool(4);
+    final TestExecutorService executor = new TestExecutorService(Executors.newFixedThreadPool(4));
     final AtomicInteger count = new AtomicInteger(3);
     executor.execute(() -> {
       int i = 0;
       do {
         map.put(++i, i);
-        sleep(4);
+        sleep(2);
       }
       while (count.get() > 0);
-
-      synchronized (exception) {
-        exception.notify();
-      }
     });
 
-    final ArrayList<Thread> threads = new ArrayList<>();
     sleep(50);
 
     executor.execute(() -> {
-      threads.add(Thread.currentThread());
-      long time;
-      for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
-        size = map.size();
-        time = System.currentTimeMillis();
-        for (final Map.Entry<Integer,Integer> entry : map.entrySet()) { // [S]
-          final Integer key = entry.getKey();
-          if (key < prev)
-            fail("next (" + key + ")" + " < " + "prev (" + prev + ")");
+      try {
+        long time;
+        for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
+          size = map.size();
+          time = System.currentTimeMillis();
+          for (final Map.Entry<Integer,Integer> entry : map.entrySet()) { // [S]
+            final Integer key = entry.getKey();
+            if (key < prev)
+              fail("next (" + key + ")" + " < " + "prev (" + prev + ")");
 
-          sleep(5 + time - System.currentTimeMillis());
-          prev = key;
+            sleep(5 + time - System.currentTimeMillis());
+            prev = key;
+          }
+
+          assertTrue(map.size() > size);
+          sleep(10);
         }
-
-        assertTrue(map.size() > size);
-        sleep(10);
       }
-
-      count.getAndDecrement();
+      finally {
+        count.getAndDecrement();
+      }
     });
 
     executor.execute(() -> {
-      threads.add(Thread.currentThread());
-      long time;
-      for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
-        size = map.size();
-        time = System.currentTimeMillis();
-        for (final Integer key : map.keySet()) { // [S]
-          if (key < prev)
-            fail("next (" + key + ")" + " < " + "prev (" + prev + ")");
+      try {
+        long time;
+        for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
+          size = map.size();
+          time = System.currentTimeMillis();
+          for (final Integer key : map.keySet()) { // [S]
+            if (key < prev)
+              fail("next (" + key + ")" + " < " + "prev (" + prev + ")");
 
-          sleep(5 + time - System.currentTimeMillis());
-          prev = key;
+            sleep(5 + time - System.currentTimeMillis());
+            prev = key;
+          }
+
+          assertTrue(map.size() > size);
+          sleep(10);
         }
-
-        assertTrue(map.size() > size);
-        sleep(10);
       }
-
-      count.getAndDecrement();
+      finally {
+        count.getAndDecrement();
+      }
     });
 
     executor.execute(() -> {
-      threads.add(Thread.currentThread());
-      long time;
-      for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
-        size = map.size();
-        time = System.currentTimeMillis();
-        for (final Integer value : map.values()) { // [C]
-          if (value < prev)
-            fail(value + " < " + prev);
+      try {
+        long time;
+        for (int i = 0, prev = -1, size; i < 100; ++i, prev = -1) { // [N]
+          size = map.size();
+          time = System.currentTimeMillis();
+          for (final Integer value : map.values()) { // [C]
+            if (value < prev)
+              fail(value + " < " + prev);
 
-          sleep(5 + time - System.currentTimeMillis());
-          prev = value;
+            sleep(10 + time - System.currentTimeMillis());
+            prev = value;
+          }
+
+          assertTrue(map.size() > size);
+          sleep(10);
         }
-
-        assertTrue(map.size() > size);
-        sleep(10);
       }
-
-      count.getAndDecrement();
+      finally {
+        count.getAndDecrement();
+      }
     });
 
     executor.shutdown();
-    synchronized (exception) {
-      exception.wait();
-      for (final Thread thread : threads) {
-        if (thread != null) {
-          final Throwable t = exception.get(thread);
-          if (t != null)
-            throw t;
-        }
-      }
-    }
+    executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
   }
 
   @Test
-  public void testNoConcurrentModificationExceptionHashMap() throws Throwable {
+  public void testConcurrentModificationExceptionHashMap() throws Throwable {
     try {
       testNoConcurrentModificationException(new HashMap<>());
       fail("Expected ConcurrentModificationException");
@@ -168,7 +145,7 @@ public class CacheMapTest {
   }
 
   @Test
-  public void testNoConcurrentModificationExceptionTreeMap() throws Throwable {
+  public void testConcurrentModificationExceptionTreeMap() throws Throwable {
     try {
       testNoConcurrentModificationException(new TreeMap<>());
       fail("Expected ConcurrentModificationException");
