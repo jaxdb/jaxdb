@@ -59,7 +59,7 @@ public final class Generator {
 
   private static void trapPrintUsage() {
     final String vendors = ArrayUtil.toString(DbVendor.values(), "|");
-    System.err.println("Usage: Generator <-d DEST_DIR> <-v VENDOR> <DDLx_FILE>");
+    System.err.println("Usage: Generator <-d DEST_DIR> <-v VENDOR> <SCHEMA.ddlx>");
     System.err.println();
     System.err.println("Mandatory arguments:");
     System.err.println("  -v <VENDOR>        One of: <" + vendors + ">");
