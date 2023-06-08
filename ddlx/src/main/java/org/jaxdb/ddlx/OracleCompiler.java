@@ -202,7 +202,7 @@ final class OracleCompiler extends Compiler {
 
     b.append("INDEX ");
     q(b, indexName).append(" ON ");
-    q(b, tableName).append(" (").append(SQLDataTypes.csvNames(getDialect(), columns)).append(')');;
+    q(b, tableName).append(" (").append(SQLDataTypes.csvNames(getDialect(), columns)).append(')');
     return new CreateStatement(b.toString());
   }
 

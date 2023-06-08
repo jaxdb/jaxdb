@@ -36,7 +36,7 @@ class Relation {
     this.sourceTable = sourceTable;
     this.tableMeta = tableMeta;
     this.columns = columns;
-    this.indexType = indexType;;
+    this.indexType = indexType;
 
     this.columnName = columns.getInstanceNameForKey();
 
