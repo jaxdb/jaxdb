@@ -141,7 +141,7 @@ public final class Callbacks implements Closeable {
       final int count = this.count.get();
       if (index > count) {
         // FIXME: This has happened!!!
-        throw new IllegalStateException("index (" + index + ") > count (" + count + ")");
+        throw new IllegalStateException("index (" + index + ") > count (" + count + ") for sessionId = " + sessionId);
       }
 
       try {

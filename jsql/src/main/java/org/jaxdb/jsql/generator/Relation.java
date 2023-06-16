@@ -58,8 +58,6 @@ class Relation {
   final String rangeArgs;
 
   Relation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final IndexType indexType) {
-    if ("incident_camera".equals(tableMeta.tableName) && !indexType.isBTree())
-      System.out.println();
     this.cacheMethodName = columns.getInstanceNameForCache(tableMeta.classCase);
     this.cacheMapFieldName = "_" + cacheMethodName + "Map$";
     this.cacheIndexFieldName = "_" + cacheMethodName + "Index$";

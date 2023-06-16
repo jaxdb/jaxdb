@@ -4349,8 +4349,6 @@ public final class data {
       min = this;
       c = (o1, o2) -> o1.compareTo(o2);
 
-      if (columns == null && values.length > 0)
-        System.out.println();
       this.columns = columns;
       this.values = values;
     }
@@ -4368,6 +4366,8 @@ public final class data {
 
       final Key key = (Key)o;
       final int i$ = length();
+      if (key == null)
+        System.out.println();
       if (i$ != key.length())
         throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + key.length() + ")");
 

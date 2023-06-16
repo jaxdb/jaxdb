@@ -253,9 +253,6 @@ class TableMeta {
           for (int j = 0; j < noColumns; ++j) // [RA]
             indexColumnMetas.add(assertNotNull(columnNameToColumnMeta.get(columns.get(j).getName$().text())));
 
-          if ("incident_camera".equals(tableName) && noColumns == 1 && indexColumnMetas.iterator().next().column.getName$().text().equals("incident_id"))
-            System.out.println();
-
           final boolean isUnique = indexColumn.getUnique$() != null && indexColumn.getUnique$().text();
           this.columnsToIndexType.put(indexColumnMetas, IndexType.of(indexColumn.getType$(), isUnique));
           this.indexes.add(indexColumnMetas);
