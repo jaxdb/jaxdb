@@ -51,38 +51,38 @@ public class DMLxGeneratorTest {
   private enum Returning {
     FIRST {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, 0, null, catalogs);
       }
     },
     SECOND {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, 1, null, catalogs);
       }
     },
     BOTH {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, -1, null, catalogs);
       }
     },
     SECOND_APPROX {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, 1, approxTypes, catalogs);
       }
     },
     BOTH_APPROX {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, -1, approxTypes, catalogs);
       }
     };
 
-    abstract Class<?> getReturnType(Class<?>[] parameters, Class<?>[] ... catalogs);
+    abstract Class<?> getReturnType(Class<?>[] parameters, Class<?>[][] catalogs);
 
-    private static Class<?> getReturnType(final Class<?>[] parameters, final int x, final Class<?>[] approx, final Class<?>[] ... catalogs) {
+    private static Class<?> getReturnType(final Class<?>[] parameters, final int x, final Class<?>[] approx, final Class<?>[][] catalogs) {
       int j = 0;
       int z = -1;
       for (int k = 0; k < catalogs.length && z == -1; ++k) // [A]
@@ -277,24 +277,24 @@ public class DMLxGeneratorTest {
 
     // -- 1 param --
     final Class<?> function1 = function.Function1.class;
-    compose1(dml, "ABS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n'); // FIXME: !!!! ABS((byte)-127) = -127
-    compose1(dml, "ACOS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "ASIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "ATAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "CEIL", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "COS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "DEGREES", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "EXP", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "FLOOR", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "LN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "LOG10", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "LOG2", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "RADIANS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "ROUND", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "SIGN", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "SIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "SQRT", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "TAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "ABS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n'); // FIXME: !!!! ABS((byte)-127) = -127
+    compose1(dml, "ACOS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "ASIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "ATAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "CEIL", Returning.BOTH, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "COS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "DEGREES", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "EXP", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "FLOOR", Returning.BOTH, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "LN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "LOG10", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "LOG2", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "RADIANS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "ROUND", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "SIGN", Returning.BOTH, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "SIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "SQRT", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "TAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
 
     // -- 2 param --
     final Class<?> function2 = function.Function2.class;

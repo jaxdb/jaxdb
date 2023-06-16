@@ -1279,10 +1279,10 @@ public final class DML {
   public static exp.FLOAT ABS(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ABS, a); }
   public static exp.FLOAT ABS(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ABS, a); }
   public static exp.FLOAT ABS(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ABS, a); }
-  public static exp.FLOAT ABS(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ABS, a); }
-  public static exp.FLOAT ABS(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ABS, a); }
+  public static exp.DOUBLE ABS(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ABS, a); }
+  public static exp.DECIMAL ABS(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.ABS, a); }
   public static exp.FLOAT ABS(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ABS, a); }
-  public static exp.FLOAT ABS(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ABS, a); }
+  public static exp.DOUBLE ABS(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ABS, a); }
 
   public static exp.FLOAT ACOS(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
   public static exp.FLOAT ACOS(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
@@ -1294,10 +1294,10 @@ public final class DML {
   public static exp.FLOAT ACOS(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
   public static exp.FLOAT ACOS(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
   public static exp.FLOAT ACOS(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
-  public static exp.FLOAT ACOS(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
-  public static exp.FLOAT ACOS(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
+  public static exp.DOUBLE ACOS(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ACOS, a); }
+  public static exp.DECIMAL ACOS(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.ACOS, a); }
   public static exp.FLOAT ACOS(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
-  public static exp.FLOAT ACOS(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ACOS, a); }
+  public static exp.DOUBLE ACOS(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ACOS, a); }
 
   public static exp.FLOAT ASIN(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
   public static exp.FLOAT ASIN(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
@@ -1309,10 +1309,10 @@ public final class DML {
   public static exp.FLOAT ASIN(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
   public static exp.FLOAT ASIN(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
   public static exp.FLOAT ASIN(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
-  public static exp.FLOAT ASIN(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
-  public static exp.FLOAT ASIN(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
+  public static exp.DOUBLE ASIN(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ASIN, a); }
+  public static exp.DECIMAL ASIN(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.ASIN, a); }
   public static exp.FLOAT ASIN(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
-  public static exp.FLOAT ASIN(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ASIN, a); }
+  public static exp.DOUBLE ASIN(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ASIN, a); }
 
   public static exp.FLOAT ATAN(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
   public static exp.FLOAT ATAN(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
@@ -1324,10 +1324,10 @@ public final class DML {
   public static exp.FLOAT ATAN(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
   public static exp.FLOAT ATAN(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
   public static exp.FLOAT ATAN(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
-  public static exp.FLOAT ATAN(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
-  public static exp.FLOAT ATAN(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
+  public static exp.DOUBLE ATAN(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ATAN, a); }
+  public static exp.DECIMAL ATAN(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.ATAN, a); }
   public static exp.FLOAT ATAN(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
-  public static exp.FLOAT ATAN(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ATAN, a); }
+  public static exp.DOUBLE ATAN(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ATAN, a); }
 
   public static exp.TINYINT CEIL(final type.TINYINT a) { return new OperationImpl.Operation1.TINYINT(function.Function1.CEIL, a); }
   public static exp.SMALLINT CEIL(final type.SMALLINT a) { return new OperationImpl.Operation1.SMALLINT(function.Function1.CEIL, a); }
@@ -1337,12 +1337,12 @@ public final class DML {
   public static exp.FLOAT CEIL(final type.FLOAT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.CEIL, a); }
   public static exp.DOUBLE CEIL(final type.DOUBLE a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.CEIL, a); }
   public static exp.TINYINT CEIL(final byte a) { return new OperationImpl.Operation1.TINYINT(function.Function1.CEIL, a); }
-  public static exp.TINYINT CEIL(final short a) { return new OperationImpl.Operation1.TINYINT(function.Function1.CEIL, a); }
-  public static exp.TINYINT CEIL(final int a) { return new OperationImpl.Operation1.TINYINT(function.Function1.CEIL, a); }
-  public static exp.TINYINT CEIL(final long a) { return new OperationImpl.Operation1.TINYINT(function.Function1.CEIL, a); }
-  public static exp.TINYINT CEIL(final BigDecimal a) { return new OperationImpl.Operation1.TINYINT(function.Function1.CEIL, a); }
-  public static exp.TINYINT CEIL(final float a) { return new OperationImpl.Operation1.TINYINT(function.Function1.CEIL, a); }
-  public static exp.TINYINT CEIL(final double a) { return new OperationImpl.Operation1.TINYINT(function.Function1.CEIL, a); }
+  public static exp.SMALLINT CEIL(final short a) { return new OperationImpl.Operation1.SMALLINT(function.Function1.CEIL, a); }
+  public static exp.INT CEIL(final int a) { return new OperationImpl.Operation1.INT(function.Function1.CEIL, a); }
+  public static exp.BIGINT CEIL(final long a) { return new OperationImpl.Operation1.BIGINT(function.Function1.CEIL, a); }
+  public static exp.DECIMAL CEIL(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.CEIL, a); }
+  public static exp.FLOAT CEIL(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.CEIL, a); }
+  public static exp.DOUBLE CEIL(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.CEIL, a); }
 
   public static exp.FLOAT COS(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
   public static exp.FLOAT COS(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
@@ -1354,10 +1354,10 @@ public final class DML {
   public static exp.FLOAT COS(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
   public static exp.FLOAT COS(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
   public static exp.FLOAT COS(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
-  public static exp.FLOAT COS(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
-  public static exp.FLOAT COS(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
+  public static exp.DOUBLE COS(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.COS, a); }
+  public static exp.DECIMAL COS(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.COS, a); }
   public static exp.FLOAT COS(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
-  public static exp.FLOAT COS(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.COS, a); }
+  public static exp.DOUBLE COS(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.COS, a); }
 
   public static exp.FLOAT DEGREES(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
   public static exp.FLOAT DEGREES(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
@@ -1369,10 +1369,10 @@ public final class DML {
   public static exp.FLOAT DEGREES(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
   public static exp.FLOAT DEGREES(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
   public static exp.FLOAT DEGREES(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
-  public static exp.FLOAT DEGREES(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
-  public static exp.FLOAT DEGREES(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
+  public static exp.DOUBLE DEGREES(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.DEGREES, a); }
+  public static exp.DECIMAL DEGREES(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.DEGREES, a); }
   public static exp.FLOAT DEGREES(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
-  public static exp.FLOAT DEGREES(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.DEGREES, a); }
+  public static exp.DOUBLE DEGREES(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.DEGREES, a); }
 
   public static exp.FLOAT EXP(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
   public static exp.FLOAT EXP(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
@@ -1384,10 +1384,10 @@ public final class DML {
   public static exp.FLOAT EXP(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
   public static exp.FLOAT EXP(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
   public static exp.FLOAT EXP(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
-  public static exp.FLOAT EXP(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
-  public static exp.FLOAT EXP(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
+  public static exp.DOUBLE EXP(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.EXP, a); }
+  public static exp.DECIMAL EXP(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.EXP, a); }
   public static exp.FLOAT EXP(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
-  public static exp.FLOAT EXP(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.EXP, a); }
+  public static exp.DOUBLE EXP(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.EXP, a); }
 
   public static exp.TINYINT FLOOR(final type.TINYINT a) { return new OperationImpl.Operation1.TINYINT(function.Function1.FLOOR, a); }
   public static exp.SMALLINT FLOOR(final type.SMALLINT a) { return new OperationImpl.Operation1.SMALLINT(function.Function1.FLOOR, a); }
@@ -1397,12 +1397,12 @@ public final class DML {
   public static exp.FLOAT FLOOR(final type.FLOAT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.FLOOR, a); }
   public static exp.DOUBLE FLOOR(final type.DOUBLE a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.FLOOR, a); }
   public static exp.TINYINT FLOOR(final byte a) { return new OperationImpl.Operation1.TINYINT(function.Function1.FLOOR, a); }
-  public static exp.TINYINT FLOOR(final short a) { return new OperationImpl.Operation1.TINYINT(function.Function1.FLOOR, a); }
-  public static exp.TINYINT FLOOR(final int a) { return new OperationImpl.Operation1.TINYINT(function.Function1.FLOOR, a); }
-  public static exp.TINYINT FLOOR(final long a) { return new OperationImpl.Operation1.TINYINT(function.Function1.FLOOR, a); }
-  public static exp.TINYINT FLOOR(final BigDecimal a) { return new OperationImpl.Operation1.TINYINT(function.Function1.FLOOR, a); }
-  public static exp.TINYINT FLOOR(final float a) { return new OperationImpl.Operation1.TINYINT(function.Function1.FLOOR, a); }
-  public static exp.TINYINT FLOOR(final double a) { return new OperationImpl.Operation1.TINYINT(function.Function1.FLOOR, a); }
+  public static exp.SMALLINT FLOOR(final short a) { return new OperationImpl.Operation1.SMALLINT(function.Function1.FLOOR, a); }
+  public static exp.INT FLOOR(final int a) { return new OperationImpl.Operation1.INT(function.Function1.FLOOR, a); }
+  public static exp.BIGINT FLOOR(final long a) { return new OperationImpl.Operation1.BIGINT(function.Function1.FLOOR, a); }
+  public static exp.DECIMAL FLOOR(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.FLOOR, a); }
+  public static exp.FLOAT FLOOR(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.FLOOR, a); }
+  public static exp.DOUBLE FLOOR(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.FLOOR, a); }
 
   public static exp.FLOAT LN(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
   public static exp.FLOAT LN(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
@@ -1414,10 +1414,10 @@ public final class DML {
   public static exp.FLOAT LN(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
   public static exp.FLOAT LN(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
   public static exp.FLOAT LN(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
-  public static exp.FLOAT LN(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
-  public static exp.FLOAT LN(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
+  public static exp.DOUBLE LN(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.LN, a); }
+  public static exp.DECIMAL LN(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.LN, a); }
   public static exp.FLOAT LN(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
-  public static exp.FLOAT LN(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LN, a); }
+  public static exp.DOUBLE LN(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.LN, a); }
 
   public static exp.FLOAT LOG10(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
   public static exp.FLOAT LOG10(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
@@ -1429,10 +1429,10 @@ public final class DML {
   public static exp.FLOAT LOG10(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
   public static exp.FLOAT LOG10(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
   public static exp.FLOAT LOG10(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
-  public static exp.FLOAT LOG10(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
-  public static exp.FLOAT LOG10(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
+  public static exp.DOUBLE LOG10(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.LOG10, a); }
+  public static exp.DECIMAL LOG10(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.LOG10, a); }
   public static exp.FLOAT LOG10(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
-  public static exp.FLOAT LOG10(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG10, a); }
+  public static exp.DOUBLE LOG10(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.LOG10, a); }
 
   public static exp.FLOAT LOG2(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
   public static exp.FLOAT LOG2(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
@@ -1444,10 +1444,10 @@ public final class DML {
   public static exp.FLOAT LOG2(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
   public static exp.FLOAT LOG2(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
   public static exp.FLOAT LOG2(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
-  public static exp.FLOAT LOG2(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
-  public static exp.FLOAT LOG2(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
+  public static exp.DOUBLE LOG2(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.LOG2, a); }
+  public static exp.DECIMAL LOG2(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.LOG2, a); }
   public static exp.FLOAT LOG2(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
-  public static exp.FLOAT LOG2(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.LOG2, a); }
+  public static exp.DOUBLE LOG2(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.LOG2, a); }
 
   public static exp.FLOAT RADIANS(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
   public static exp.FLOAT RADIANS(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
@@ -1459,10 +1459,10 @@ public final class DML {
   public static exp.FLOAT RADIANS(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
   public static exp.FLOAT RADIANS(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
   public static exp.FLOAT RADIANS(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
-  public static exp.FLOAT RADIANS(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
-  public static exp.FLOAT RADIANS(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
+  public static exp.DOUBLE RADIANS(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.RADIANS, a); }
+  public static exp.DECIMAL RADIANS(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.RADIANS, a); }
   public static exp.FLOAT RADIANS(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
-  public static exp.FLOAT RADIANS(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.RADIANS, a); }
+  public static exp.DOUBLE RADIANS(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.RADIANS, a); }
 
   public static exp.FLOAT ROUND(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
   public static exp.FLOAT ROUND(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
@@ -1474,10 +1474,10 @@ public final class DML {
   public static exp.FLOAT ROUND(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
   public static exp.FLOAT ROUND(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
   public static exp.FLOAT ROUND(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
-  public static exp.FLOAT ROUND(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
-  public static exp.FLOAT ROUND(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
+  public static exp.DOUBLE ROUND(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ROUND, a); }
+  public static exp.DECIMAL ROUND(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.ROUND, a); }
   public static exp.FLOAT ROUND(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
-  public static exp.FLOAT ROUND(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.ROUND, a); }
+  public static exp.DOUBLE ROUND(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.ROUND, a); }
 
   public static exp.TINYINT SIGN(final type.TINYINT a) { return new OperationImpl.Operation1.TINYINT(function.Function1.SIGN, a); }
   public static exp.SMALLINT SIGN(final type.SMALLINT a) { return new OperationImpl.Operation1.SMALLINT(function.Function1.SIGN, a); }
@@ -1487,12 +1487,12 @@ public final class DML {
   public static exp.FLOAT SIGN(final type.FLOAT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIGN, a); }
   public static exp.DOUBLE SIGN(final type.DOUBLE a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.SIGN, a); }
   public static exp.TINYINT SIGN(final byte a) { return new OperationImpl.Operation1.TINYINT(function.Function1.SIGN, a); }
-  public static exp.TINYINT SIGN(final short a) { return new OperationImpl.Operation1.TINYINT(function.Function1.SIGN, a); }
-  public static exp.TINYINT SIGN(final int a) { return new OperationImpl.Operation1.TINYINT(function.Function1.SIGN, a); }
-  public static exp.TINYINT SIGN(final long a) { return new OperationImpl.Operation1.TINYINT(function.Function1.SIGN, a); }
-  public static exp.TINYINT SIGN(final BigDecimal a) { return new OperationImpl.Operation1.TINYINT(function.Function1.SIGN, a); }
-  public static exp.TINYINT SIGN(final float a) { return new OperationImpl.Operation1.TINYINT(function.Function1.SIGN, a); }
-  public static exp.TINYINT SIGN(final double a) { return new OperationImpl.Operation1.TINYINT(function.Function1.SIGN, a); }
+  public static exp.SMALLINT SIGN(final short a) { return new OperationImpl.Operation1.SMALLINT(function.Function1.SIGN, a); }
+  public static exp.INT SIGN(final int a) { return new OperationImpl.Operation1.INT(function.Function1.SIGN, a); }
+  public static exp.BIGINT SIGN(final long a) { return new OperationImpl.Operation1.BIGINT(function.Function1.SIGN, a); }
+  public static exp.DECIMAL SIGN(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.SIGN, a); }
+  public static exp.FLOAT SIGN(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIGN, a); }
+  public static exp.DOUBLE SIGN(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.SIGN, a); }
 
   public static exp.FLOAT SIN(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
   public static exp.FLOAT SIN(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
@@ -1504,10 +1504,10 @@ public final class DML {
   public static exp.FLOAT SIN(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
   public static exp.FLOAT SIN(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
   public static exp.FLOAT SIN(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
-  public static exp.FLOAT SIN(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
-  public static exp.FLOAT SIN(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
+  public static exp.DOUBLE SIN(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.SIN, a); }
+  public static exp.DECIMAL SIN(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.SIN, a); }
   public static exp.FLOAT SIN(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
-  public static exp.FLOAT SIN(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SIN, a); }
+  public static exp.DOUBLE SIN(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.SIN, a); }
 
   public static exp.FLOAT SQRT(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
   public static exp.FLOAT SQRT(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
@@ -1519,10 +1519,10 @@ public final class DML {
   public static exp.FLOAT SQRT(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
   public static exp.FLOAT SQRT(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
   public static exp.FLOAT SQRT(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
-  public static exp.FLOAT SQRT(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
-  public static exp.FLOAT SQRT(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
+  public static exp.DOUBLE SQRT(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.SQRT, a); }
+  public static exp.DECIMAL SQRT(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.SQRT, a); }
   public static exp.FLOAT SQRT(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
-  public static exp.FLOAT SQRT(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.SQRT, a); }
+  public static exp.DOUBLE SQRT(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.SQRT, a); }
 
   public static exp.FLOAT TAN(final type.TINYINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
   public static exp.FLOAT TAN(final type.SMALLINT a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
@@ -1534,10 +1534,10 @@ public final class DML {
   public static exp.FLOAT TAN(final byte a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
   public static exp.FLOAT TAN(final short a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
   public static exp.FLOAT TAN(final int a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
-  public static exp.FLOAT TAN(final long a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
-  public static exp.FLOAT TAN(final BigDecimal a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
+  public static exp.DOUBLE TAN(final long a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.TAN, a); }
+  public static exp.DECIMAL TAN(final BigDecimal a) { return new OperationImpl.Operation1.DECIMAL(function.Function1.TAN, a); }
   public static exp.FLOAT TAN(final float a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
-  public static exp.FLOAT TAN(final double a) { return new OperationImpl.Operation1.FLOAT(function.Function1.TAN, a); }
+  public static exp.DOUBLE TAN(final double a) { return new OperationImpl.Operation1.DOUBLE(function.Function1.TAN, a); }
 
   public static exp.FLOAT ATAN2(final type.TINYINT y, final type.TINYINT x) { return new OperationImpl.Operation2.FLOAT(function.Function2.ATAN2, y, x); }
   public static exp.FLOAT ATAN2(final type.TINYINT y, final type.SMALLINT x) { return new OperationImpl.Operation2.FLOAT(function.Function2.ATAN2, y, x); }

@@ -178,7 +178,7 @@ final class SQLiteCompiler extends Compiler {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(");
     toSubject(a).compile(compilation, true);
-    sql.append(')');
+    sql.append(") / 0.4342944819032518");
   }
 
   @Override
@@ -196,7 +196,7 @@ final class SQLiteCompiler extends Compiler {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(");
     toSubject(a).compile(compilation, true);
-    sql.append(") / 0.6931471805599453");
+    sql.append(") / 0.3010299956639811");
   }
 
   @Override

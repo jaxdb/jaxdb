@@ -95,7 +95,7 @@ public abstract class NumericFunctionStaticTest {
         final Classicmodels.Customer c = (Classicmodels.Customer)rows.nextEntity();
         assertEquals("Mini Wheels Co.", c.companyName.get());
         final data.DOUBLE d = (data.DOUBLE)rows.nextEntity();
-        assertEquals(2.22069, d.get().doubleValue(), 0.00001);
+        assertEquals(2.22069, d.getAsDouble(), 0.00001);
       }
     }
   }
@@ -189,7 +189,7 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      assertEquals(Math.signum(a.get().doubleValue()), b.get().intValue(), 0);
+      assertEquals(Math.signum(a.getAsDouble()), b.get().intValue(), 0);
       assertFalse(rows.nextRow());
     }
   }
@@ -213,8 +213,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = Math.floor(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = Math.floor(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -238,8 +238,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = Math.ceil(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = Math.ceil(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -263,8 +263,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = Math.sqrt(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = Math.sqrt(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -288,8 +288,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = SafeMath.toDegrees(a.get().doubleValue());
-      assertEquals(a.get().toString(), expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = SafeMath.toDegrees(a.getAsDouble());
+      assertEquals(a.get().toString(), expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -313,8 +313,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = SafeMath.toRadians(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = SafeMath.toRadians(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -338,8 +338,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.sin(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.sin(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -363,8 +363,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.asin(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.asin(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -388,8 +388,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.cos(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.cos(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -413,8 +413,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.acos(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.acos(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -438,8 +438,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.tan(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.tan(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -463,8 +463,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.atan(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.atan(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -564,8 +564,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = a.get().doubleValue() % 1.2;
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 1000);
+      final double expected = a.getAsDouble() % 1.2;
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 1000);
       assertFalse(rows.nextRow());
     }
   }
@@ -590,8 +590,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = a.get().doubleValue() % -1.2;
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 1000);
+      final double expected = a.getAsDouble() % -1.2;
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 1000);
       assertFalse(rows.nextRow());
     }
   }
@@ -624,8 +624,8 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       assertSame(c, rows.nextEntity());
       // FIXME: Is there something wrong with DMOD() for Derby?
-      final double expected = a.get().doubleValue() % b.get().floatValue();
-      final double actual = c.get().doubleValue();
+      final double expected = a.getAsDouble() % b.get().floatValue();
+      final double actual = c.getAsDouble();
       if (Math.abs(expected - actual) > 0.000001 && logger.isWarnEnabled()) logger.warn("Math.abs(expected - actual) > 0.000001: " + Math.abs(expected - actual));
       assertEquals(expected, actual, 0.003);
       assertFalse(rows.nextRow());
@@ -653,8 +653,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.exp(-a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.exp(-a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -678,8 +678,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.pow(a.get().doubleValue(), 3);
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.pow(a.getAsDouble(), 3);
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -703,8 +703,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.pow(3, -a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.pow(3, -a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -731,8 +731,8 @@ public abstract class NumericFunctionStaticTest {
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
       assertSame(c, rows.nextEntity());
-      final double expected = StrictMath.pow(a.get().doubleValue(), b.get().doubleValue());
-      assertEquals(expected, c.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.pow(a.getAsDouble(), b.getAsDouble());
+      assertEquals(expected, c.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -756,8 +756,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = SafeMath.log(3, a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = SafeMath.log(3, a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -781,8 +781,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = SafeMath.log(a.get().doubleValue(), 3);
-      assertEquals(expected, b.get().doubleValue(), 0.00001);
+      final double expected = SafeMath.log(a.getAsDouble(), 3);
+      assertEquals(expected, b.getAsFloat(), 0.00001);
       assertFalse(rows.nextRow());
     }
   }
@@ -809,8 +809,8 @@ public abstract class NumericFunctionStaticTest {
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
       assertSame(c, rows.nextEntity());
-      final double expected = StrictMath.log(a.get().doubleValue()) / StrictMath.log(b.get().intValue());
-      assertEquals(expected, c.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.log(a.getAsDouble()) / StrictMath.log(b.get().intValue());
+      assertEquals(expected, c.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -834,8 +834,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.log(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.log(a.getAsDouble());
+      assertEquals("" + a.get(), expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -859,8 +859,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = SafeMath.log2(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = SafeMath.log2(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
@@ -884,8 +884,8 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      final double expected = StrictMath.log10(a.get().doubleValue());
-      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      final double expected = StrictMath.log10(a.getAsDouble());
+      assertEquals(expected, b.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }
   }
