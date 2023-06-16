@@ -75,6 +75,7 @@ public class CacheMapTest {
             prev = key;
           }
 
+          sleep(2);
           assertTrue(map.size() > size);
           sleep(10);
         }
@@ -98,6 +99,7 @@ public class CacheMapTest {
             prev = key;
           }
 
+          sleep(2);
           assertTrue(map.size() > size);
           sleep(10);
         }
@@ -121,6 +123,7 @@ public class CacheMapTest {
             prev = value;
           }
 
+          sleep(2);
           assertTrue(map.size() > size);
           sleep(10);
         }
