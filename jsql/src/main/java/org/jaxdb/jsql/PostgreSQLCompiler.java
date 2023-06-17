@@ -421,15 +421,18 @@ final class PostgreSQLCompiler extends Compiler {
       compileInsert(columns, false, compilation);
 
     final StringBuilder sql = compilation.sql;
-    sql.append(" ON CONFLICT (");
-    for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
-      if (i > 0)
-        sql.append(", ");
+    sql.append(" ON CONFLICT ");
+    if (onConflict != null) {
+      sql.append('(');
+      for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
+        if (i > 0)
+          sql.append(", ");
 
-      onConflict[i].compile(compilation, false);
+        onConflict[i].compile(compilation, false);
+      }
+      sql.append(')');
     }
 
-    sql.append(')');
     if (doUpdate) {
       sql.append(" DO UPDATE SET ");
 

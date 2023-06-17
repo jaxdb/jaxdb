@@ -93,7 +93,7 @@ public final class Callbacks implements Closeable {
 
   static class OnNotifyCallbackList extends DelegateCollection<OnNotifyCallback> implements BiConsumer<Schema,Exception> {
     final String sessionId;
-    final AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger(-1);
     private final AtomicInteger indexIn = new AtomicInteger();
     private final AtomicInteger indexOut = new AtomicInteger();
     private final AtomicReference<OnNotifyCallback> root = new AtomicReference<>();
@@ -101,6 +101,13 @@ public final class Callbacks implements Closeable {
 
     OnNotifyCallbackList(final String sessionId) {
       this.sessionId = sessionId;
+    }
+
+    void setCount(final int count) {
+      synchronized (this.count) {
+        this.count.set(count);
+        this.count.notify();
+      }
     }
 
     boolean await(final long timeout) throws InterruptedException {
@@ -138,11 +145,23 @@ public final class Callbacks implements Closeable {
     @Override
     public void accept(final Schema schema, final Exception e) {
       final int index = this.indexIn.incrementAndGet();
-      final int count = this.count.get();
-      if (index > count) {
-        // FIXME: This has happened!!!
-        throw new IllegalStateException("index (" + index + ") > count (" + count + ") for sessionId = " + sessionId);
+      int count = this.count.get();
+      if (count == -1) {
+        synchronized (this.count) {
+          count = this.count.get();
+          if (count == -1) {
+            try {
+              this.count.wait();
+            }
+            catch (final InterruptedException ie) {
+              throw new IllegalStateException(ie);
+            }
+          }
+        }
       }
+
+      if (index > count)
+        throw new IllegalStateException("index (" + index + ") > count (" + count + ") for sessionId = " + sessionId, e);
 
       try {
         OnNotifyCallback prev = null;

@@ -133,7 +133,7 @@ public final class statement {
           try {
             count = preparedStatement.executeUpdate();
             if (onNotifyCallbackList != null)
-              onNotifyCallbackList.count.set(count);
+              onNotifyCallbackList.setCount(count);
 
             if (sessionId != null)
               compiler.setSessionId(sessionStatement, null);
@@ -177,7 +177,7 @@ public final class statement {
           if (autos == null) {
             count = statement.executeUpdate(compilation.toString());
             if (onNotifyCallbackList != null)
-              onNotifyCallbackList.count.set(count);
+              onNotifyCallbackList.setCount(count);
 
             if (sessionId != null)
               compiler.setSessionId(statement, null);

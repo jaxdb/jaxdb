@@ -133,7 +133,8 @@ abstract class Command<E> extends Keyword implements Closeable {
     private data.Column<?>[] primaries;
     final data.Column<?>[] autos;
     private keyword.Select.untyped.SELECT<?> select;
-    private data.Column<?>[] onConflict;
+    private boolean isOnConflict;
+    private data.Column<?>[] onConflictColumns;
     private boolean doUpdate;
 
     Insert(final data.Table entity) {
@@ -180,25 +181,24 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     @Override
     public keyword.Insert.ON_CONFLICT ON_CONFLICT() {
+      isOnConflict = true;
       if (entity != null)
-        this.onConflict = entity._primary$;
+        onConflictColumns = entity._primary$;
       else if (primaries != null)
-        this.onConflict = primaries;
-      else
-        throw new IllegalArgumentException("ON CONFLICT requires primary columns in the INSERT clause");
+        onConflictColumns = primaries;
 
       return this;
     }
 
     @Override
     public keyword.Insert.CONFLICT_ACTION DO_UPDATE() {
-      this.doUpdate = true;
+      doUpdate = true;
       return this;
     }
 
     @Override
     public keyword.Insert.CONFLICT_ACTION DO_NOTHING() {
-      this.doUpdate = false;
+      doUpdate = false;
       return this;
     }
 
@@ -222,8 +222,8 @@ abstract class Command<E> extends Keyword implements Closeable {
     void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final data.Column<?>[] columns = this.columns != null ? this.columns : entity._column$;
       final Compiler compiler = compilation.compiler;
-      if (onConflict != null)
-        compiler.compileInsertOnConflict(columns, select, onConflict, doUpdate, compilation);
+      if (isOnConflict)
+        compiler.compileInsertOnConflict(columns, select, onConflictColumns, doUpdate, compilation);
       else if (select != null)
         compiler.compileInsertSelect(columns, select, false, compilation);
       else

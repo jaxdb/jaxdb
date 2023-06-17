@@ -112,6 +112,32 @@ public class Batch implements statement.NotifiableModification.Delete, statement
   }
 
   private static int aggregate(final Compiler compiler, final OnNotifyCallbackList onNotifyCallbackList, final int[] counts, final Statement statement, final Command.Insert<?>[] generatedKeys, final int index, int total) throws SQLException {
+    if (total != Statement.EXECUTE_FAILED) {
+      boolean hasInfo = total != Statement.SUCCESS_NO_INFO;
+      if (!hasInfo)
+        total = 0;
+
+      int aggregate = 0;
+      for (int i = 0, i$ = counts.length; i < i$; ++i) { // [A]
+        final int count = counts[i];
+        if (count == Statement.EXECUTE_FAILED)
+          return Statement.EXECUTE_FAILED;
+
+        if (count != Statement.SUCCESS_NO_INFO) {
+          hasInfo = true;
+          aggregate += count;
+        }
+        else {
+          counts[i] = 0;
+        }
+      }
+
+      if (onNotifyCallbackList != null)
+        onNotifyCallbackList.setCount(aggregate);
+
+      total = hasInfo ? total + aggregate : Statement.SUCCESS_NO_INFO;
+    }
+
     ResultSet resultSet = null;
     for (int i = index, i$ = index + counts.length; i < i$; ++i) { // [A]
       if (generatedKeys[i] != null) {
@@ -126,32 +152,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       }
     }
 
-    if (total == Statement.EXECUTE_FAILED)
-      return Statement.EXECUTE_FAILED;
-
-    boolean hasInfo = total != Statement.SUCCESS_NO_INFO;
-    if (!hasInfo)
-      total = 0;
-
-    int aggregate = 0;
-    for (int i = 0, i$ = counts.length; i < i$; ++i) { // [A]
-      final int count = counts[i];
-      if (count == Statement.EXECUTE_FAILED)
-        return Statement.EXECUTE_FAILED;
-
-      if (count != Statement.SUCCESS_NO_INFO) {
-        hasInfo = true;
-        aggregate += count;
-      }
-      else {
-        counts[i] = 0;
-      }
-    }
-
-    if (onNotifyCallbackList != null)
-      onNotifyCallbackList.count.set(aggregate);
-
-    return hasInfo ? total + aggregate : Statement.SUCCESS_NO_INFO;
+    return total;
   }
 
   private void onExecute(final int start, final int end, final int[] counts) {
