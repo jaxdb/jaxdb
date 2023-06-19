@@ -274,11 +274,16 @@ public abstract class HashTreeCacheMap<V> extends CacheMap<V> implements Navigab
     if (fromKey.length() > 1)
       throw new UnsupportedOperationException("Composite keys are not yet supported");
 
-    final Interval<data.Key>[] diff = diffKeys(fromKey, toKey);
+    Interval<data.Key>[] diff = diffKeys(fromKey, toKey);
     if (diff.length > 0) {
-      select(where(diff));
-      hashMask.addAll(diff);
-      treeMask.addAll(diff);
+      synchronized (this) {
+        diff = diffKeys(fromKey, toKey);
+        if (diff.length > 0) {
+          select(where(diff));
+          hashMask.addAll(diff);
+          treeMask.addAll(diff);
+        }
+      }
     }
 
     return subMap(fromKey, toKey);

@@ -41,6 +41,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -4345,9 +4346,11 @@ public final class data {
     private final Object[] values;
     private final Column[] columns;
 
+    private static final Comparator<Key> comparator = (o1, o2) -> o1.compareTo(o2);
+
     private Key(final Column<?>[] columns, final Object ... values) {
       min = this;
-      c = (o1, o2) -> o1.compareTo(o2);
+      c = comparator;
 
       this.columns = columns;
       this.values = values;
@@ -4366,8 +4369,6 @@ public final class data {
 
       final Key key = (Key)o;
       final int i$ = length();
-      if (key == null)
-        System.out.println();
       if (i$ != key.length())
         throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + key.length() + ")");
 

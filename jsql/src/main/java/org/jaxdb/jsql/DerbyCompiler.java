@@ -277,6 +277,9 @@ final class DerbyCompiler extends Compiler {
     final Condition<?> matchRefinement;
     boolean modified = false;
     if (select == null) {
+      if (onConflict == null)
+        throw new IllegalArgumentException("Derby requires primary columns for INSERT table ON CONFLICT clause");
+
       translateTypes = null;
       selectColumnNames = null;
       matchRefinement = null;

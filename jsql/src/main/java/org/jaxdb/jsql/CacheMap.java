@@ -156,8 +156,12 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
 
   V select(final data.Key key) throws IOException, SQLException {
     if (!containsKey(key)) {
-      select(andEq(key));
-      addKey(key);
+      synchronized (this) {
+        if (!containsKey(key)) {
+          select(andEq(key));
+          addKey(key);
+        }
+      }
     }
 
     return get(key);
@@ -165,8 +169,12 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
 
   final V superSelect(final data.Key key) throws IOException, SQLException {
     if (!containsKey(key)) {
-      select(andEq(key));
-      addKey(key);
+      synchronized (this) {
+        if (!containsKey(key)) {
+          select(andEq(key));
+          addKey(key);
+        }
+      }
     }
 
     return superGet(key);

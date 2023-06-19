@@ -259,10 +259,15 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
     if (fromKey.length() > 1)
       throw new UnsupportedOperationException("Composite keys are not yet supported");
 
-    final Interval<data.Key>[] diff = diffKeys(fromKey, toKey);
+    Interval<data.Key>[] diff = diffKeys(fromKey, toKey);
     if (diff.length > 0) {
-      select(where(diff));
-      mask.addAll(diff);
+      synchronized (this) {
+        diff = diffKeys(fromKey, toKey);
+        if (diff.length > 0) {
+          select(where(diff));
+          mask.addAll(diff);
+        }
+      }
     }
 
     return subMap(fromKey, toKey);
