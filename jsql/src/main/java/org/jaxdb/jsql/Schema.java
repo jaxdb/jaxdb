@@ -101,7 +101,7 @@ public abstract class Schema {
     connector.addNotificationListener(INSERT, UPGRADE, DELETE, notificationListener, queue, array);
     this.cacheNotifier = connector.getNotifier();
 
-    for (int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) { // [RA]
       final OnConnectPreLoad onConnectPreLoad = onConnectPreLoads.get(i);
       if (onConnectPreLoad != null)
         onConnectPreLoad.accept(array[i]);

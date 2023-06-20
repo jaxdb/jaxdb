@@ -39,7 +39,7 @@ final class GeneratorUtil {
   static final Object COMMIT_UPDATE = new Object();
 
   private static StringBuilder indent(final StringBuilder b, final int depth) {
-    for (int i = 0, i$ = depth * 2; i < i$; ++i)
+    for (int i = 0, i$ = depth * 2; i < i$; ++i) // [N]
       b.append(' ');
 
     return b;
@@ -52,7 +52,7 @@ final class GeneratorUtil {
     indent(b, depth).append(" * <blockquote>\n");
     indent(b, depth).append(" * <table>\n");
     indent(b, depth).append(" * <caption>").append(type).append(" \"").append(name).append("\"</caption>\n");
-    for (int i = 0, i$ = args.length; i < i$;) {
+    for (int i = 0, i$ = args.length; i < i$;) { // [A]
       final Object property = args[i++];
       final Object value = args[i++];
       indent(b, depth).append(" * <tr><td><code>").append(property).append("</code></td><td><code>").append(value).append("</code></td></tr>\n");

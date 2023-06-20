@@ -535,7 +535,7 @@ public class QueryConfig implements Serializable {
     final ArrayList<data.Column<?>> parameters = compilation.getParameters();
     if (parameters != null) {
       final Compiler compiler = compilation.compiler;
-      for (int i = 0, i$ = parameters.size(); i < i$;)
+      for (int i = 0, i$ = parameters.size(); i < i$;) // [RA]
         parameters.get(i++).write(compiler, statement, false, i);
     }
 

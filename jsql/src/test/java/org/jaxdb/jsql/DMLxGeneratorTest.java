@@ -244,7 +244,7 @@ public class DMLxGeneratorTest {
 
           if (!isTypeClass) {
             boolean hasOneTypeClass = false;
-            for (final Class<?> parameter : parameters)
+            for (final Class<?> parameter : parameters) // [A]
               if (hasOneTypeClass = (parameter.getDeclaringClass() == type.class))
                 break;
 

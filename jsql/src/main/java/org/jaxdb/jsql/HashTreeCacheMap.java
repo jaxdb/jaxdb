@@ -40,7 +40,7 @@ import org.openjax.binarytree.ConcurrentIntervalTreeSet;
 public abstract class HashTreeCacheMap<V> extends CacheMap<V> implements NavigableMap<data.Key,V> {
   private static data.BOOLEAN where(final Interval<data.Key>[] intervals) {
     data.BOOLEAN or = andRange(intervals[0]);
-    for (int i = 1, i$ = intervals.length; i < i$; ++i)
+    for (int i = 1, i$ = intervals.length; i < i$; ++i) // [A]
       or = OR(or, andRange(intervals[i]));
 
     return or;

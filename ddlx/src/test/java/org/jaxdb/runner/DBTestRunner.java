@@ -199,7 +199,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   }
 
   private static boolean matches(final DB db, final String[] testDBs) {
-    for (final String testDB : testDBs)
+    for (final String testDB : testDBs) // [A]
       if (testDB.equals(db.value().getSimpleName().toLowerCase()))
         return true;
 
@@ -224,7 +224,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       return null;
 
     final String[] testDBs = Strings.split(property, ',');
-    for (int i = 0, i$ = testDBs.length; i < i$; ++i)
+    for (int i = 0, i$ = testDBs.length; i < i$; ++i) // [A]
       testDBs[i] = testDBs[i].toLowerCase();
 
     return testDBs;
@@ -248,7 +248,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       final DB[] dbs = dbs$.value();
       if (testDBs == null) {
         final Executor[] executors = new Executor[dbs.length];
-        for (int i = 0, i$ = executors.length; i < i$; ++i)
+        for (int i = 0, i$ = executors.length; i < i$; ++i) // [A]
           executors[i] = vendorToExecutor.get(dbs[i]);
 
         return executors;

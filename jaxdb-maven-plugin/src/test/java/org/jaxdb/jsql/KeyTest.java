@@ -169,7 +169,7 @@ public class KeyTest {
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 10; ++i) { // [N]
       final boolean isFirst = i == 0;
       test(t, c, v, isFirst, set1);
       test(t, c, v, isFirst, set2);
@@ -216,7 +216,7 @@ public class KeyTest {
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 10; ++i) { // [N]
       set.run();
       assertFalse(c.isNull());
 

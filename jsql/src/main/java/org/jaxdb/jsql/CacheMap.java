@@ -52,7 +52,7 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     final data.Key min = i.getMin();
     final data.Key max = i.getMax();
     data.BOOLEAN and = andRange(min.column(0), min.value(0), max.value(0));
-    for (int j = 1, i$ = min.length(); j < i$; ++j)
+    for (int j = 1, i$ = min.length(); j < i$; ++j) // [A]
       and = AND(and, andRange(min.column(j), min.value(j), max.value(j)));
 
     return and;
@@ -65,7 +65,7 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
   static data.BOOLEAN andEq(final Interval<data.Key> i) {
     final data.Key min = i.getMin();
     data.BOOLEAN and = eq(min.column(0), min.value(0));
-    for (int j = 1, i$ = min.length(); j < i$; ++j)
+    for (int j = 1, i$ = min.length(); j < i$; ++j) // [A]
       and = AND(and, eq(min.column(j), min.value(j)));
 
     return and;

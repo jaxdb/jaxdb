@@ -4452,7 +4452,7 @@ public final class data {
         public Object[] nextValue(final Object[] key) {
           final Object[] next = key.clone();
           Object k, p;
-          for (int i = key.length - 1; i >= 0; --i) {
+          for (int i = key.length - 1; i >= 0; --i) { // [A]
             k = key[i];
             p = next[i] = columns[i].getDiscreteTopology().nextValue(k);
             if (p == k)
@@ -4466,7 +4466,7 @@ public final class data {
         public Object[] prevValue(final Object[] key) {
           final Object[] prev = key.clone();
           Object k, p;
-          for (int i = key.length - 1; i >= 0; --i) {
+          for (int i = key.length - 1; i >= 0; --i) { // [A]
             k = key[i];
             p = prev[i] = columns[i].getDiscreteTopology().prevValue(k);
             if (p == null || p == k)
@@ -5468,7 +5468,7 @@ public final class data {
     }
 
     public final boolean set() {
-      for (final Column<?> column : _column$)
+      for (final Column<?> column : _column$) // [A]
         if (column.set())
           return true;
 

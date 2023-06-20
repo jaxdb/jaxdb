@@ -231,7 +231,7 @@ public abstract class OnSelectTest {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().getAsLong(), classicmodels.Product$.codeToProduct().size());
 
-      for (final Classicmodels.Product pr : classicmodels.Product$.codeToProduct().values())
+      for (final Classicmodels.Product pr : classicmodels.Product$.codeToProduct().values()) // [C]
         assertNotNull(pr.productLine$ProductLine_productLine());
     }
   }
@@ -249,7 +249,7 @@ public abstract class OnSelectTest {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().getAsLong(), classicmodels.Employee$.employeeNumberToEmployee().size());
 
-      for (final Classicmodels.Employee em : classicmodels.Employee$.employeeNumberToEmployee().values())
+      for (final Classicmodels.Employee em : classicmodels.Employee$.employeeNumberToEmployee().values()) // [C]
         assertNotNull(em.officeCode$Office_officeCode());
     }
   }
@@ -282,7 +282,7 @@ public abstract class OnSelectTest {
     p.purchaseNumber$PurchaseDetail_purchaseNumber();
     assertFalse(TestConnectionFactory.called());
 
-    for (final Classicmodels.PurchaseDetail pd1 : map.values()) {
+    for (final Classicmodels.PurchaseDetail pd1 : map.values()) { // [C]
       assertSame(p, pd1.purchaseNumber$Purchase_purchaseNumber());
       assertFalse(TestConnectionFactory.called());
     }
