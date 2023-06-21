@@ -296,9 +296,17 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         if (logger.isTraceEnabled()) logger.trace("JAXDB-Notify Thread.flushQueues()");
 
         final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
-        if (tableNotifiers.size() > 0)
-          for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
-            for (Notification<?> notification; (notification = tableNotifier.queue.poll()) != null; notification.invoke()); // [C]
+        if (tableNotifiers.size() > 0) {
+          Notification<?> notification = null;
+          try {
+            for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
+              while ((notification = tableNotifier.queue.poll()) != null)
+                notification.invoke();
+          }
+          catch (final Exception e) {
+            if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.flushQueues(): " + notification, e);
+          }
+        }
       }
 
       @Override
@@ -326,7 +334,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
             }
           }
           catch (final Throwable t) {
-            if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.flushQueues()", t);
+            if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.run()", t);
 
             setState(Notifier.State.FAILED);
             if (!(t instanceof Exception))

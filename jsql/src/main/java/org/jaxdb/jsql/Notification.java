@@ -22,6 +22,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.libj.lang.ObjectUtil;
+import org.openjax.json.JSON;
+
 public final class Notification<T extends data.Table> {
   public abstract static class Action implements Comparable<Action>, Serializable {
     abstract <T extends data.Table>void action(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
@@ -207,5 +210,10 @@ public final class Notification<T extends data.Table> {
 
   void invoke() {
     action.invoke(sessionId, timestamp, listener, keyForUpdate, row);
+  }
+
+  @Override
+  public String toString() {
+    return "{sessionId:\"" + sessionId + "\",timestamp:" + timestamp + ",listener:\"" + ObjectUtil.simpleIdentityString(listener) + "\",action:\"" + action + "\",keyForUpdate:\"" + JSON.toString(keyForUpdate) + "\",row:" + row + "}";
   }
 }

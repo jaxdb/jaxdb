@@ -4407,7 +4407,22 @@ public final class data {
     }
 
     final Key next() {
-      return new Key(columns, topology().nextValue(values));
+      try {
+        return new Key(columns, topology().nextValue(values));
+      }
+      catch (final Exception e) {
+        // FIXME: For debugging
+        final StringBuilder b = new StringBuilder();
+        for (int i = 0; i < columns.length; ++i) {
+          if (i > 0)
+            b.append(',');
+
+          b.append(columns[i]).append("=").append(values[i]);
+        }
+
+        e.addSuppressed(new Exception(b.toString()));
+        throw e;
+      }
     }
 
     final DiscreteTopology<Object[]> topology() {
