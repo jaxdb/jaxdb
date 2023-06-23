@@ -36,6 +36,7 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.statement.Modification.Result;
 import org.jaxdb.jsql.generator.Generator;
+import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.sqlx.SQLxTest;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
@@ -72,6 +73,6 @@ public abstract class JSqlTest {
         INSERT(table)
           .onExecute(c -> assertEquals(expectedCount, c)));
 
-    return batch.execute(connection, false);
+    return batch.execute(connection, DBTestRunner.isPrepared());
   }
 }

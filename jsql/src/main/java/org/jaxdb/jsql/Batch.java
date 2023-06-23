@@ -232,6 +232,9 @@ public class Batch implements statement.NotifiableModification.Delete, statement
         isPrepared = false;
       }
 
+      if (!isPrepared)
+        statement = connection.createStatement();
+
       try {
         int listenerIndex = 0;
         for (int statementIndex = 0; statementIndex < noCommands; ++statementIndex, sqlPrev = sql, sessionIdPrev = sessionId, onNotifyCallbackListPrev = onNotifyCallbackList) { // [RA]
@@ -320,27 +323,23 @@ public class Batch implements statement.NotifiableModification.Delete, statement
             preparedStatement.addBatch();
           }
           else {
-            if (sessionIdPrev != null || !sql.equals(sqlPrev)) {
-              if (statement != null) {
-                try {
-                  if (sessionIdPrev != null)
-                    compiler.setSessionId(statement, sessionIdPrev);
+            if (sessionIdPrev != null) {
+              try {
+                compiler.setSessionId(statement, sessionIdPrev);
 
-                  final int[] counts = statement.executeBatch();
-                  total = aggregate(compiler, onNotifyCallbackListPrev, counts, statement, insertsWithGeneratedKeys, index, total);
+                final int[] counts = statement.executeBatch();
+                total = aggregate(compiler, onNotifyCallbackListPrev, counts, statement, insertsWithGeneratedKeys, index, total);
 
-                  if (sessionId != null)
-                    compiler.setSessionId(statement, null);
+                compiler.setSessionId(statement, null);
 
-                  index += counts.length;
-                  afterExecute(compilations, listenerIndex, statementIndex);
-                  onExecute(listenerIndex, statementIndex, counts);
-                  onCommit(transaction, listenerIndex, statementIndex, counts);
-                  listenerIndex = statementIndex;
-                }
-                finally {
-                  suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
-                }
+                index += counts.length;
+                afterExecute(compilations, listenerIndex, statementIndex);
+                onExecute(listenerIndex, statementIndex, counts);
+                onCommit(transaction, listenerIndex, statementIndex, counts);
+                listenerIndex = statementIndex;
+              }
+              finally {
+                suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
               }
 
               statement = connection.createStatement();

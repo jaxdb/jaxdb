@@ -54,14 +54,14 @@ public abstract class WorldTest extends JSqlTest {
 
   @DB(Derby.class)
   @DB(SQLite.class)
-  @Config(sync = true)
+  @Config(sync = true, prepared = true)
   public static class IntegrationTest extends WorldTest {
   }
 
   @DB(MySQL.class)
   @DB(PostgreSQL.class)
   @DB(Oracle.class)
-  @Config(sync = true)
+  @Config(sync = true, prepared = true)
   public static class RegressionTest extends WorldTest {
   }
 

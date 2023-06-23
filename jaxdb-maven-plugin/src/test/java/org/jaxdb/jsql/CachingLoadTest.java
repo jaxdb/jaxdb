@@ -40,7 +40,7 @@ import org.libj.util.concurrent.ThreadFactoryBuilder;
 import org.libj.util.function.Throwing;
 
 @RunWith(SchemaTestRunner.class)
-@Config(sync = true, deferLog = false, failFast = true, prepared = true)
+@Config(sync = true, deferLog = false, failFast = true, prepared = false)
 public abstract class CachingLoadTest extends NotificationTest {
   //@DB(Derby.class)
   //@DB(SQLite.class)

@@ -67,6 +67,8 @@ import org.slf4j.event.Level;
 
 public class DBTestRunner extends BlockJUnit4ClassRunner {
   static final Logger logger = LoggerFactory.getLogger(DBTestRunner.class);
+  private static final String propertyName = "jaxdb.jsql.test.dbs";
+  private static final InheritableThreadLocal<Boolean> prepared = new InheritableThreadLocal<>();
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
@@ -103,6 +105,10 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Unsupported {
     Class<? extends Vendor>[] value();
+  }
+
+  public static boolean isPrepared() {
+    return prepared.get();
   }
 
   private static final Comparator<FrameworkMethod> orderComparator = (o1, o2) -> {
@@ -231,8 +237,6 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     return testDBs;
   }
 
-  private static final String propertyName = "jaxdb.jsql.test.dbs";
-
   static Executor[] getExecutors(final Class<?> testClass) {
     final DBs dbs$ = Classes.getAnnotationDeep(testClass, DBs.class);
     final String property = System.getProperty(propertyName);
@@ -283,7 +287,6 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   private final boolean sync;
   private final boolean failFast;
   final boolean cache;
-  final boolean prepared;
 
   public DBTestRunner(final Class<?> cls) throws InitializationError {
     super(cls);
@@ -294,14 +297,14 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       this.sync = config.sync();
       this.failFast = config.failFast();
       this.cache = config.cache();
-      this.prepared = config.prepared();
+      DBTestRunner.prepared.set(config.prepared());
       deferLog = config.deferLog();
     }
     else {
       this.sync = false;
       this.failFast = false;
       this.cache = false;
-      this.prepared = false;
+      DBTestRunner.prepared.set(Boolean.FALSE);
       deferLog = true;
     }
 
