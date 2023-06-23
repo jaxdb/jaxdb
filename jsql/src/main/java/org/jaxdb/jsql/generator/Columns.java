@@ -43,7 +43,7 @@ class Columns extends LinkedHashSet<ColumnMeta> {
     final StringBuilder columnName = new StringBuilder();
     if (size() > 0)
       for (final ColumnMeta columnMeta : this) // [S]
-        columnName.append(columnMeta.camelCase).append('$');
+        columnName.append(columnMeta.camelCase).append('_');
 
     if (columnName.length() > 0)
       columnName.setLength(columnName.length() - 1);
@@ -56,6 +56,6 @@ class Columns extends LinkedHashSet<ColumnMeta> {
   }
 
   static String getInstanceNameForCache(final String instanceNameForKey, final String classCase) {
-    return instanceNameForKey + "To" + classCase;
+    return instanceNameForKey + "_TO_" + classCase;
   }
 }

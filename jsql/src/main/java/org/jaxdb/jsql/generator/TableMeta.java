@@ -938,26 +938,10 @@ class TableMeta {
           out.append("      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
           out.append("\n        return;\n");
 
-          for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
-            final Relation onChangeRelation = onChangeRelations.get(i);
-            if (onChangeRelation instanceof ForeignRelation) {
-              final ForeignRelation relation = (ForeignRelation)onChangeRelation;
-              boolean added = false;
-              final LinkedHashSet<ForeignRelation> reverses = relation.reverses;
-              for (final ForeignRelation reverse : reverses) // [S]
-                added |= write("      ", reverse.writeOnChangeReverse(relation.fieldName), out, declared);
-
-              if (added)
-                out.append('\n');
-
-              write("\n      ", relation.writeOnChangeForward(), out, declared);
-            }
-          }
-
           declared.clear();
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
-            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause(), CurOld.Cur), out, declared);
+            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClauseNotNullCheck, onChangeRelation.keyClause(), CurOld.Cur), out, declared);
           }
 
           if (declared.size() > 0)
@@ -1088,14 +1072,12 @@ class TableMeta {
 
             if (added)
               ocb.append('\n');
-
-            write("\n            ", relation.writeOnChangeForward(), ocb, declared2);
           }
         }
 
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
           final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause(), CurOld.Old), ocb, declared2);
+          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClauseNotNullCheck, onChangeRelation.keyClause(), CurOld.Old), ocb, declared2);
         }
 
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
@@ -1111,7 +1093,7 @@ class TableMeta {
                 final ForeignRelation foreign = (ForeignRelation)relation;
 
                 if (entry.getKey().contains(columnMeta) || relation instanceof ManyToManyRelation) {
-                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClause(), CurOld.Old), ocb, declared2);
+                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClauseNotNullCheck, foreign.keyClause(), CurOld.Old), ocb, declared2);
                   write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
                 }
 

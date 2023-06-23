@@ -211,7 +211,8 @@ public class Batch implements statement.NotifiableModification.Delete, statement
         connection.setAutoCommit(true);
       }
 
-      String last = null;
+      String sql;
+      String sqlPrev = null;
       Statement statement = null;
       PreparedStatement preparedStatement = null;
       SQLException suppressed = null;
@@ -219,9 +220,10 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       int index = 0;
 
       ArrayList<OnNotifyCallbackList> onNotifyCallbackLists = null;
-      ArrayList<String> sessionIds = null;
       Compilation compilation = null;
-      String sessionId = null;
+      String sessionId;
+      String sessionIdPrev = null;
+      OnNotifyCallbackList onNotifyCallbackListPrev = null;
       OnNotifyCallbackList onNotifyCallbackList = null;
       final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
       final Compiler compiler = Compiler.getCompiler(vendor);
@@ -232,7 +234,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
 
       try {
         int listenerIndex = 0;
-        for (int statementIndex = 0; statementIndex < noCommands; ++statementIndex) { // [RA]
+        for (int statementIndex = 0; statementIndex < noCommands; ++statementIndex, sqlPrev = sql, sessionIdPrev = sessionId, onNotifyCallbackListPrev = onNotifyCallbackList) { // [RA]
           final Command.Modification<?,?,?> command = commands.get(statementIndex);
 
           if (schemaClass != command.getSchema().getClass())
@@ -257,11 +259,6 @@ public class Batch implements statement.NotifiableModification.Delete, statement
 
           sessionId = command.sessionId;
           if (sessionId != null) {
-            if (sessionIds == null)
-              sessionIds = new ArrayList<>();
-
-            sessionIds.add(sessionId);
-
             onNotifyCallbackList = command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
             if (onNotifyCallbackList != null) {
               schema.awaitNotify(sessionId, onNotifyCallbackList);
@@ -282,21 +279,21 @@ public class Batch implements statement.NotifiableModification.Delete, statement
           compilation = compilations[statementIndex] = new Compilation(command, vendor, compiler, isPrepared);
           command.compile(compilation, false);
 
-          final String sql = compilation.toString();
+          sql = compilation.toString();
 
           if (isPrepared) {
-            if (!sql.equals(last)) {
+            if (sessionIdPrev != null || !sql.equals(sqlPrev)) {
               if (preparedStatement != null) {
                 try {
                   Statement sessionStatement = null;
-                  if (sessionId != null)
-                    compilation.compiler.setSessionId(sessionStatement = connection.createStatement(), sessionId);
+                  if (sessionIdPrev != null)
+                    compiler.setSessionId(sessionStatement = connection.createStatement(), sessionIdPrev);
 
                   final int[] counts = preparedStatement.executeBatch();
-                  total = aggregate(compiler, onNotifyCallbackList, counts, preparedStatement, insertsWithGeneratedKeys, index, total);
+                  total = aggregate(compiler, onNotifyCallbackListPrev, counts, preparedStatement, insertsWithGeneratedKeys, index, total);
 
-                  if (sessionId != null)
-                    compilation.compiler.setSessionId(sessionStatement, null);
+                  if (sessionIdPrev != null)
+                    compiler.setSessionId(sessionStatement, null);
 
                   index += counts.length;
                   afterExecute(compilations, listenerIndex, statementIndex);
@@ -310,7 +307,6 @@ public class Batch implements statement.NotifiableModification.Delete, statement
               }
 
               preparedStatement = returnGeneratedKeys ? connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : connection.prepareStatement(sql);
-              last = sql;
             }
 
             final ArrayList<data.Column<?>> parameters = compilation.getParameters();
@@ -324,8 +320,31 @@ public class Batch implements statement.NotifiableModification.Delete, statement
             preparedStatement.addBatch();
           }
           else {
-            if (statement == null)
+            if (sessionIdPrev != null || !sql.equals(sqlPrev)) {
+              if (statement != null) {
+                try {
+                  if (sessionIdPrev != null)
+                    compiler.setSessionId(statement, sessionIdPrev);
+
+                  final int[] counts = statement.executeBatch();
+                  total = aggregate(compiler, onNotifyCallbackListPrev, counts, statement, insertsWithGeneratedKeys, index, total);
+
+                  if (sessionId != null)
+                    compiler.setSessionId(statement, null);
+
+                  index += counts.length;
+                  afterExecute(compilations, listenerIndex, statementIndex);
+                  onExecute(listenerIndex, statementIndex, counts);
+                  onCommit(transaction, listenerIndex, statementIndex, counts);
+                  listenerIndex = statementIndex;
+                }
+                finally {
+                  suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
+                }
+              }
+
               statement = connection.createStatement();
+            }
 
             command.close();
             statement.addBatch(sql);
@@ -333,17 +352,21 @@ public class Batch implements statement.NotifiableModification.Delete, statement
         }
 
         Statement sessionStatement = null;
-        if (sessionId != null)
-          compilation.compiler.setSessionId(sessionStatement = isPrepared ? connection.createStatement() : statement, sessionId);
+        if (isPrepared) {
+          if (sessionIdPrev != null)
+            compiler.setSessionId(sessionStatement = connection.createStatement(), sessionIdPrev);
 
-        if (isPrepared)
           statement = preparedStatement;
+        }
+        else if (sessionIdPrev != null) {
+          compiler.setSessionId(sessionStatement = statement, sessionIdPrev);
+        }
 
         final int[] counts = statement.executeBatch();
-        total = aggregate(compilation.compiler, onNotifyCallbackList, counts, statement, insertsWithGeneratedKeys, index, total);
+        total = aggregate(compiler, onNotifyCallbackListPrev, counts, statement, insertsWithGeneratedKeys, index, total);
 
-        if (sessionId != null)
-          compilation.compiler.setSessionId(sessionStatement, null);
+        if (sessionIdPrev != null)
+          compiler.setSessionId(sessionStatement, null);
 
         index += counts.length;
         afterExecute(compilations, listenerIndex, noCommands);

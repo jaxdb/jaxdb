@@ -84,7 +84,7 @@ public class SchemaTestRunner extends DBTestRunner {
       public Connection getTestConnection(final Transaction.Isolation isolation) throws IOException, SQLException {
         return isolation != null ? executor.getConnection(isolation.getLevel()) : executor.getConnection();
       }
-    }, false);
+    }, prepared);
     return schema;
   }
 

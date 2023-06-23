@@ -286,9 +286,9 @@ public abstract class StringValueExpressionTest {
       assertTrue(rows.nextRow());
 
       // Char/Enum
-      assertEquals(Integer.valueOf(13), rows.nextEntity().get());
-      assertEquals(Integer.valueOf(2), rows.nextEntity().get());
-      assertEquals(Integer.valueOf(5), rows.nextEntity().get());
+      assertEquals(13, rows.nextEntity().getAsInt());
+      assertEquals(2, rows.nextEntity().getAsInt());
+      assertEquals(5, rows.nextEntity().getAsInt());
     }
   }
 
@@ -306,7 +306,7 @@ public abstract class StringValueExpressionTest {
       assertTrue(rows.nextRow());
 
       // Char/Enum
-      assertEquals(Integer.valueOf(18), rows.nextEntity().get());
+      assertEquals(18, rows.nextEntity().getAsInt());
     }
   }
 

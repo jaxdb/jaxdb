@@ -488,7 +488,7 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      assertEquals(a.get().intValue() % 3, b.get().intValue());
+      assertEquals(a.getAsInt() % 3, b.getAsInt());
       assertFalse(rows.nextRow());
     }
   }
@@ -512,7 +512,7 @@ public abstract class NumericFunctionStaticTest {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
-      assertEquals(a.get().intValue() % -3, b.get().intValue());
+      assertEquals(a.getAsInt() % -3, b.getAsInt());
       assertFalse(rows.nextRow());
     }
   }
@@ -539,7 +539,7 @@ public abstract class NumericFunctionStaticTest {
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
       assertSame(c, rows.nextEntity());
-      assertEquals(a.get().intValue() % b.get().intValue(), c.get().intValue());
+      assertEquals(a.get().intValue() % b.getAsInt(), c.get().intValue());
       assertFalse(rows.nextRow());
     }
   }
@@ -809,7 +809,7 @@ public abstract class NumericFunctionStaticTest {
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
       assertSame(c, rows.nextEntity());
-      final double expected = StrictMath.log(a.getAsDouble()) / StrictMath.log(b.get().intValue());
+      final double expected = StrictMath.log(a.getAsDouble()) / StrictMath.log(b.getAsInt());
       assertEquals(expected, c.getAsDouble(), Math.ulp(expected) * 100);
       assertFalse(rows.nextRow());
     }

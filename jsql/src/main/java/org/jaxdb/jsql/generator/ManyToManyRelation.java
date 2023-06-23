@@ -24,19 +24,13 @@ class ManyToManyRelation extends ForeignRelation {
   @Override
   String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
     final String method = indexType.isUnique ? "superPut" : "superAdd";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
+    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
   }
 
   @Override
-  String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {
+  String writeOnChangeClearCache(final String classSimpleName, final String keyClauseNotNullCheck, final String keyClause, final CurOld curOld) {
     final String member = indexType.isUnique ? "" : ", " + classSimpleName + ".this";
-    return tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + member + ");";
-  }
-
-  @Override
-  String writeOnChangeReverse(final String fieldName) {
-//    return "if (" + fieldName + " != null) for (final " + declarationName + " member : " + fieldName + ") member." + this.fieldName + " = null;"; // [?]
-    return null;
+    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + member + ");";
   }
 
   @Override

@@ -448,7 +448,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(919, ((data.INT)rows.nextEntity()).get().intValue());
+      assertEquals(919, ((data.INT)rows.nextEntity()).getAsInt());
     }
   }
 

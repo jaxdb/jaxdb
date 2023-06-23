@@ -75,6 +75,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     boolean deferLog() default false;
     boolean failFast() default false;
     boolean cache() default false;
+    boolean prepared() default false;
   }
 
   @Target(ElementType.METHOD)
@@ -282,6 +283,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   private final boolean sync;
   private final boolean failFast;
   final boolean cache;
+  final boolean prepared;
 
   public DBTestRunner(final Class<?> cls) throws InitializationError {
     super(cls);
@@ -292,12 +294,14 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       this.sync = config.sync();
       this.failFast = config.failFast();
       this.cache = config.cache();
+      this.prepared = config.prepared();
       deferLog = config.deferLog();
     }
     else {
       this.sync = false;
       this.failFast = false;
       this.cache = false;
+      this.prepared = false;
       deferLog = true;
     }
 

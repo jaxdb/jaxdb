@@ -33,6 +33,7 @@ import javax.sql.DataSource;
 import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.Notification.DefaultListener;
+import org.jaxdb.jsql.keyword.Select.untyped.SELECT;
 import org.libj.lang.ObjectUtil;
 import org.libj.sql.AuditConnection;
 import org.slf4j.Logger;
@@ -102,9 +103,17 @@ public abstract class Schema {
     this.cacheNotifier = connector.getNotifier();
 
     for (int i = 0; i < len; ++i) { // [RA]
-      final OnConnectPreLoad onConnectPreLoad = onConnectPreLoads.get(i);
-      if (onConnectPreLoad != null)
-        onConnectPreLoad.accept(array[i]);
+      final OnConnectPreLoad<T> onConnectPreLoad = onConnectPreLoads.get(i);
+      if (onConnectPreLoad != null) {
+        final T table = array[i];
+        final SELECT<T> select = onConnectPreLoad.apply(table);
+        if (select != null) {
+          final Connector connector = table.getSchema().getConnector();
+          try (final RowIterator<T> rows = select.execute(connector)) {
+            while (rows.nextRow());
+          }
+        }
+      }
     }
   }
 

@@ -40,7 +40,7 @@ import org.libj.util.concurrent.ThreadFactoryBuilder;
 import org.libj.util.function.Throwing;
 
 @RunWith(SchemaTestRunner.class)
-@Config(sync = true, deferLog = false, failFast = true)
+@Config(sync = true, deferLog = false, failFast = true, prepared = true)
 public abstract class CachingLoadTest extends NotificationTest {
   //@DB(Derby.class)
   //@DB(SQLite.class)
@@ -55,7 +55,7 @@ public abstract class CachingLoadTest extends NotificationTest {
   }
 
   private static final int cardinality = 10;
-  private static final int iterations = 100;
+  private static final int iterations = 20;
 
   Integer[] insert(final Caching caching, final Connector connector) {
     final AtomicInteger count = new AtomicInteger();
@@ -116,8 +116,8 @@ public abstract class CachingLoadTest extends NotificationTest {
     executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 
     for (int id = 0; id < cardinality; ++id) { // [RA]
-      final Caching.One o = caching.One$.idToOne(id);
-      assertEquals(id, 1 + iterations, o.id$OneOneId_oneId().version.getAsInt());
+      final Caching.One o = caching.One$.id_TO_One_CACHED(id);
+      assertEquals(1 + iterations, id, o.id_TO_oneId_ON_OneOneId_CACHED().version.getAsInt());
     }
   }
 

@@ -151,7 +151,7 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
 
   void selectAll() throws IOException, SQLException {
     if (!containsKey(data.Key.ALL))
-      OnConnectPreLoad.ALL.accept(table);
+      OnConnectPreLoad.ALL.apply(table);
   }
 
   V select(final data.Key key) throws IOException, SQLException {

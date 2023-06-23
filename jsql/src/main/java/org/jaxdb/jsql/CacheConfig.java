@@ -9,15 +9,16 @@ import java.util.LinkedHashSet;
 import java.util.Queue;
 
 import org.jaxdb.jsql.Notification.DefaultListener;
+import org.jaxdb.jsql.keyword.Select.Entity.SELECT;
 
 public class CacheConfig {
   static final QueryConfig withoutCacheSelectEntity = new QueryConfig.Builder().withCacheSelectEntity(false).build();
 
   @FunctionalInterface
-  public static interface OnConnectPreLoad {
-    void accept(data.Table t) throws IOException, SQLException;
+  public static interface OnConnectPreLoad<T extends data.Table> {
+    SELECT<T> apply(T t) throws IOException, SQLException;
 
-    public static final OnConnectPreLoad ALL = (final data.Table table) -> {
+    public static final OnConnectPreLoad<data.Table> ALL = (final data.Table table) -> {
       if (table._mutable$)
         throw new IllegalArgumentException("Table is mutable");
 
@@ -33,6 +34,8 @@ public class CacheConfig {
 
         table._commitSelectAll$();
       }
+
+      return null;
     };
   }
 
@@ -49,54 +52,102 @@ public class CacheConfig {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends type.Table$>CacheConfig with(final T ... tables) {
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table table = (data.Table)tables[i];
-      onConnectPreLoads.add(null);
-      table.setCacheSelectEntity(true);
-      if (!this.tables.add(table))
-        throw new IllegalArgumentException("Table \"" + table.getName() + "\" is specified multiple times");
-    }
+  public <T extends type.Table$>CacheConfig with(final T table) {
+    final data.Table t = (data.Table)table;
+    onConnectPreLoads.add(null);
+    t.setCacheSelectEntity(true);
+    if (!this.tables.add(t))
+      throw new IllegalArgumentException("Table \"" + t.getName() + "\" is specified multiple times");
 
     return this;
   }
 
-  @SuppressWarnings("unchecked")
-  public <T extends type.Table$>CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final T ... tables) {
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table table = (data.Table)tables[i];
-      onConnectPreLoads.add(onConnectPreLoad);
-      table.setCacheSelectEntity(true);
-      if (!this.tables.add(table))
-        throw new IllegalArgumentException("Table \"" + table.getName() + "\" is specified multiple times");
-    }
+  public CacheConfig with(final type.Table$[] tables) {
+    for (int i = 0, i$ = tables.length; i < i$; ++i) // [A]
+      with(tables[i]);
 
     return this;
   }
 
-  @SuppressWarnings("unchecked")
-  public <T extends type.Table$>CacheConfig with(final boolean cacheSelectEntity, final T ... tables) {
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table table = (data.Table)tables[i];
-      onConnectPreLoads.add(OnConnectPreLoad.ALL);
-      table.setCacheSelectEntity(cacheSelectEntity);
-      if (!this.tables.add(table))
-        throw new IllegalArgumentException("Table \"" + table.getName() + "\" is specified multiple times");
-    }
-
+  public CacheConfig with(final type.Table$ table, final type.Table$ ... tables) {
+    with(table);
+    with(tables);
     return this;
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends type.Table$>CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final boolean cacheSelectEntity, final T ... tables) {
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table table = (data.Table)tables[i];
-      onConnectPreLoads.add(onConnectPreLoad);
-      table.setCacheSelectEntity(cacheSelectEntity);
-      if (!this.tables.add(table))
-        throw new IllegalArgumentException("Table \"" + table.getName() + "\" is specified multiple times");
-    }
+  public <T extends type.Table$>CacheConfig with(final OnConnectPreLoad<? super T> onConnectPreLoad, final T table) {
+    final data.Table t = (data.Table)table;
+    onConnectPreLoads.add(onConnectPreLoad);
+    t.setCacheSelectEntity(true);
+    if (!this.tables.add(t))
+      throw new IllegalArgumentException("Table \"" + t.getName() + "\" is specified multiple times");
 
+    return this;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final type.Table$[] tables) {
+    for (int i = 0, i$ = tables.length; i < i$; ++i) // [A]
+      with(onConnectPreLoad, tables[i]);
+
+    return this;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final type.Table$ table, final type.Table$ ... tables) {
+    with(onConnectPreLoad, table);
+    with(onConnectPreLoad, tables);
+    return this;
+  }
+
+  @SuppressWarnings("unchecked")
+  public CacheConfig with(final boolean cacheSelectEntity, final type.Table$ table) {
+    final data.Table t = (data.Table)table;
+    onConnectPreLoads.add(OnConnectPreLoad.ALL);
+    t.setCacheSelectEntity(cacheSelectEntity);
+    if (!this.tables.add(t))
+      throw new IllegalArgumentException("Table \"" + t.getName() + "\" is specified multiple times");
+
+    return this;
+  }
+
+  public CacheConfig with(final boolean cacheSelectEntity, final type.Table$[] tables) {
+    for (int i = 0, i$ = tables.length; i < i$; ++i) // [A]
+      with(cacheSelectEntity, tables[i]);
+
+    return this;
+  }
+
+  public CacheConfig with(final boolean cacheSelectEntity, final type.Table$ table, final type.Table$ ... tables) {
+    with(cacheSelectEntity, table);
+    with(cacheSelectEntity, tables);
+    return this;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends type.Table$>CacheConfig with(final OnConnectPreLoad<? super T> onConnectPreLoad, final boolean cacheSelectEntity, final T table) {
+    final data.Table t = (data.Table)table;
+    onConnectPreLoads.add(onConnectPreLoad);
+    t.setCacheSelectEntity(cacheSelectEntity);
+    if (!this.tables.add(t))
+      throw new IllegalArgumentException("Table \"" + t.getName() + "\" is specified multiple times");
+
+    return this;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final boolean cacheSelectEntity, final type.Table$[] tables) {
+    for (int i = 0, i$ = tables.length; i < i$; ++i) // [A]
+      with(onConnectPreLoad, cacheSelectEntity, tables[i]);
+
+    return this;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final boolean cacheSelectEntity, final type.Table$ table, final type.Table$ ... tables) {
+    with(onConnectPreLoad, cacheSelectEntity, table);
+    with(onConnectPreLoad, cacheSelectEntity, tables);
     return this;
   }
 
