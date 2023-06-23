@@ -78,24 +78,24 @@ public abstract class TreeCacheMap<V> extends CacheMap<V> implements NavigableMa
   }
 
   @Override
-  final V superGet(final data.Key key) {
+  final V get$(final data.Key key) {
     return map.get(key);
   }
 
   @Override
-  final V superPut(final data.Key key, final V value) {
+  final V put$(final data.Key key, final V value) {
     mask.add(key);
     return map.put(key, value);
   }
 
   @Override
-  final V superRemove(final data.Key key) {
+  final V remove$(final data.Key key) {
     mask.remove(key);
     return map.remove(key);
   }
 
   @Override
-  final V superRemoveOld(final data.Key key) {
+  final V remove$Old(final data.Key key) {
     return map.remove(key);
   }
 

@@ -45,7 +45,7 @@ class Relation {
   final String cacheMapFieldName;
   final String declarationName;
 
-  final Columns columns;
+  final ColumnModels columns;
   final TableModel sourceTable;
   final TableModel tableModel;
   final IndexType indexType;
@@ -57,7 +57,7 @@ class Relation {
   final String keyArgs;
   final String rangeArgs;
 
-  Relation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final Columns columns, final IndexType indexType) {
+  Relation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final IndexType indexType) {
     this.cacheMethodName = columns.getInstanceNameForCache(tableModel.classCase);
     this.cacheMapFieldName = "_" + cacheMethodName + "Map$";
     this.cacheIndexFieldName = "_" + cacheMethodName + "Index$";
@@ -110,7 +110,7 @@ class Relation {
     this.rangeArgs = data.Key.class.getCanonicalName() + ".with(" + cacheIndexFieldName + ", " + fromArgs + "), " + data.Key.class.getCanonicalName() + ".with(" + cacheIndexFieldName + ", " + toArgs + ")";
   }
 
-  private final String writeGetRangeMethod(final String returnType) {
+  private String writeGetRangeMethod(final String returnType) {
     if (!indexType.isBTree())
       return "";
 
@@ -123,15 +123,15 @@ class Relation {
       "\n    }\n";
   }
 
-  String keyClause() {
+  final String keyClause() {
     return keyClause(tableModel.singletonInstanceName + "." + cacheIndexFieldName);
   }
 
-  String keyClause(final String cacheColumnsName) {
+  final String keyClause(final String cacheColumnsName) {
     return data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + keyClauseValues + ")";
   }
 
-  void keyClauseColumnAssignments(final LinkedHashSet<String> keyClauseColumnAssignments) {
+  final void keyClauseColumnAssignments(final LinkedHashSet<String> keyClauseColumnAssignments) {
     if (columns.size() == 0)
       return;
 
@@ -176,17 +176,21 @@ class Relation {
     return cacheMapFieldName + " = new " + indexType.getConcreteClass(null) + "<>(this);";
   }
 
-  String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
-    final String method = indexType.isUnique ? "superPut" : "superAdd";
-    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause().replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
+  final String writeNullCheckClause(final String classSimpleName, final CurOld curOld) {
+    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") ";
   }
 
-  String writeCacheSelectAll() {
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
+    final String method = indexType.isUnique ? "put$" : "add$";
+    return writeNullCheckClause(classSimpleName, curOld) + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause().replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
+  }
+
+  final String writeCacheSelectAll() {
     return tableModel.singletonInstanceName + "." + cacheMapFieldName + ".addKey(" + data.Key.class.getCanonicalName() + ".ALL);";
   }
 
-  String writeOnChangeClearCache(final String classSimpleName, final String keyClauseNotNullCheck, final String keyClause, final CurOld curOld) {
-    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
+  final String writeOnChangeClearCache(final String classSimpleName, final CurOld curOld) {
+    return writeNullCheckClause(classSimpleName, curOld) + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".remove$" + curOld + "(" + keyClause().replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
   }
 
   @Override

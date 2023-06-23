@@ -39,39 +39,39 @@ public class OneToManyHashTreeMap<V extends data.Table> extends HashTreeCacheMap
     return v != null ? v : OneToOneTreeMap.EMPTY;
   }
 
-  final void superAdd(final data.Key key, final V value) {
+  final void add$(final data.Key key, final V value) {
     // mask.add(key); Do not add key, because this is only 1 value being added of many
 
     OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)hashMap.get(key);
     if (v == null)
       hashMap.put(key, v = new OneToOneTreeMap<>(table));
 
-    v.superPut(value.getKey(), value);
+    v.put$(value.getKey(), value);
 
     v = (OneToOneTreeMap<V>)treeMap.get(key);
     if (v == null)
       treeMap.put(key, v = new OneToOneTreeMap<>(table));
 
-    v.superPut(value.getKey(), value);
+    v.put$(value.getKey(), value);
   }
 
-  final void superRemove(final data.Key key, final V value) {
+  final void remove$(final data.Key key, final V value) {
     OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)hashMap.get(key);
     if (v != null)
-      v.superRemove(value.getKey());
+      v.remove$(value.getKey());
 
     v = (OneToOneTreeMap<V>)treeMap.get(key);
     if (v != null)
-      v.superRemove(value.getKey());
+      v.remove$(value.getKey());
   }
 
-  final void superRemoveOld(final data.Key key, final V value) {
+  final void remove$Old(final data.Key key, final V value) {
     OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)hashMap.get(key);
     if (v != null)
-      v.superRemove(value.getKeyOld());
+      v.remove$(value.getKeyOld());
 
     v = (OneToOneTreeMap<V>)treeMap.get(key);
     if (v != null)
-      v.superRemove(value.getKeyOld());
+      v.remove$(value.getKeyOld());
   }
 }

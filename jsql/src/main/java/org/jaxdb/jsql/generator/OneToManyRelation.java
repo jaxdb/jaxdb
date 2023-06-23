@@ -16,13 +16,8 @@
 
 package org.jaxdb.jsql.generator;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
-import org.jaxdb.jsql.CacheMap;
-
 class OneToManyRelation extends ForeignRelation {
-  OneToManyRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final Columns columns, final TableModel referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+  OneToManyRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     super(schemaClassName, sourceTable, tableModel, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
   }
 
@@ -30,17 +25,7 @@ class OneToManyRelation extends ForeignRelation {
   String writeDeclaration(final String classSimpleName) {
     final String typeName = indexTypeForeign.isUnique ? declarationNameForeign : getType();
     final String declaredName = indexTypeForeign.isUnique ? declarationNameForeign : getDeclaredName();
-
-    final StringBuilder out = new StringBuilder();
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_CACHED() {");
-    out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.get(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
-    out.append("\n    }\n");
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_SELECT() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" {");
-    out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.select(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
-    out.append("\n    }");
-    return out.toString();
+    return writeDeclaration(classSimpleName, typeName, declaredName, "$");
   }
 
   @Override

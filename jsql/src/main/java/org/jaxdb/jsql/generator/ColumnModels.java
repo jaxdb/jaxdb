@@ -20,21 +20,21 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-class Columns extends LinkedHashSet<ColumnModel> {
-  static final Columns EMPTY_SET = new Columns(null, 0);
+class ColumnModels extends LinkedHashSet<ColumnModel> {
+  static final ColumnModels EMPTY_SET = new ColumnModels(null, 0);
   final TableModel table;
 
-  Columns(final TableModel table, final Collection<? extends ColumnModel> c) {
+  ColumnModels(final TableModel table, final Collection<? extends ColumnModel> c) {
     super(c);
     this.table = table;
   }
 
-  Columns(final TableModel table, final int initialCapacity) {
+  ColumnModels(final TableModel table, final int initialCapacity) {
     super(initialCapacity);
     this.table = table;
   }
 
-  Columns(final TableModel table, final ColumnModel columnModel) {
+  ColumnModels(final TableModel table, final ColumnModel columnModel) {
     super(1);
     this.table = table;
     add(columnModel);

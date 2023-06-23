@@ -39,7 +39,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema.Table;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Identifiers;
 
-class SchemaManifest {
+class SchemaModel {
   private static final String GENERATED = "(value=\"" + Generator.class.getName() + "\", date=\"" + LocalDateTime.now().toString() + "\")";
   private static final String HEADER_COMMENT;
 
@@ -56,7 +56,7 @@ class SchemaManifest {
   final String schemaClassName;
   final Map<String,TableModel> tableNameToTableModel;
 
-  SchemaManifest(final String packageName, final String name, final BindingList<Table> tables) throws GeneratorExecutionException {
+  SchemaModel(final String packageName, final String name, final BindingList<Table> tables) throws GeneratorExecutionException {
     this.packageName = packageName;
     this.name = name;
     this.schemaClassSimpleName = Identifiers.toIdentifier(name);

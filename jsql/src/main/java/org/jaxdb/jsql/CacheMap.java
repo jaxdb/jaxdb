@@ -39,10 +39,10 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
   abstract void addKey(data.Key key);
   abstract void addKey(data.Key[] keys);
   public abstract boolean containsKey(data.Key key);
-  abstract V superRemove(data.Key key);
-  abstract V superRemoveOld(data.Key key);
-  abstract V superGet(data.Key key);
-  abstract V superPut(data.Key key, V value);
+  abstract V remove$(data.Key key);
+  abstract V remove$Old(data.Key key);
+  abstract V get$(data.Key key);
+  abstract V put$(data.Key key, V value);
 
   private static data.BOOLEAN andRange(final type.Column<?> c, final Object min, final Object max) {
     return AND(new ComparisonPredicate.Gte<>(c, min), new ComparisonPredicate.Lt<>(c, max));
@@ -167,7 +167,7 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
     return get(key);
   }
 
-  final V superSelect(final data.Key key) throws IOException, SQLException {
+  final V select$(final data.Key key) throws IOException, SQLException {
     if (!containsKey(key)) {
       synchronized (this) {
         if (!containsKey(key)) {
@@ -177,6 +177,6 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
       }
     }
 
-    return superGet(key);
+    return get$(key);
   }
 }

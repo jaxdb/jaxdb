@@ -153,9 +153,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
           return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false));
       }
       else {
-        entity = cache.superRemove(keyOld);
+        entity = cache.remove$(keyOld);
         if (entity != null) {
-          cache.superPut(key, entity);
+          cache.put$(key, entity);
         }
         else {
           entity = cache.get(key);
@@ -194,7 +194,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     if (logger.isTraceEnabled()) logger.trace("onDelete(" + log(sessionId, timestamp) + "," + log(row) + ")");
     Exception exception = null;
     try {
-      final data.Table entity = row.getCache().superRemove(row.getKey());
+      final data.Table entity = row.getCache().remove$(row.getKey());
       if (entity == null)
         return null;
 
@@ -215,7 +215,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     if (logger.isTraceEnabled()) logger.trace("delete(" + log(row) + ")");
     final CacheMap<? extends data.Table> cache = row.getCache();
     final data.Key key = row.getKey();
-    cache.superRemove(key);
+    cache.remove$(key);
   }
 
   /**
@@ -238,7 +238,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     final data.Key key = row.getKey();
     T entity = cache.get(key);
     if (entity == null) {
-      cache.superPut(key, entity = (T)row.clone(false));
+      cache.put$(key, entity = (T)row.clone(false));
       entity._commitInsert$();
     }
     else {

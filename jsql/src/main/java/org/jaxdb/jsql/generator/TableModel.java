@@ -83,14 +83,14 @@ class TableModel {
   private final IndexType primaryKeyIndexType;
   private final Set<String> keyForUpdateColumnNames;
 
-  private final LinkedHashSet<Columns> uniques;
-  private final LinkedHashSet<Columns> indexes;
-  final Columns primaryKey;
+  private final LinkedHashSet<ColumnModels> uniques;
+  private final LinkedHashSet<ColumnModels> indexes;
+  final ColumnModels primaryKey;
   private final ForeignKeys foreignKeys;
 
-  private final LinkedHashMap<Columns,IndexType> columnsToIndexType = new LinkedHashMap<Columns,IndexType>() {
+  private final LinkedHashMap<ColumnModels,IndexType> columnsToIndexType = new LinkedHashMap<ColumnModels,IndexType>() {
     @Override
-    public IndexType put(final Columns key, IndexType value) {
+    public IndexType put(final ColumnModels key, IndexType value) {
       final IndexType existing = super.get(key);
       if (existing != null)
         value = existing.merge(value);
@@ -98,9 +98,9 @@ class TableModel {
       return super.put(key, value);
     }
   };
-  private final MultiLinkedHashMap<Columns,Relation,Relations<Relation>> columnsToRelations = new MultiLinkedHashMap<>(Relations::new);
+  private final MultiLinkedHashMap<ColumnModels,Relation,Relations<Relation>> columnsToRelations = new MultiLinkedHashMap<>(Relations::new);
 
-  final SchemaManifest schemaManifest;
+  final SchemaModel schemaModel;
   final ArrayList<TableModel> ancestors = new ArrayList<>();
   final boolean isAbstract;
   final TableModel superTable;
@@ -117,7 +117,7 @@ class TableModel {
   final String className;
   final String singletonInstanceName;
 
-  TableModel(final Table table, final SchemaManifest schemaManifest) throws GeneratorExecutionException {
+  TableModel(final Table table, final SchemaModel schemaModel) throws GeneratorExecutionException {
     this.isAbstract = table.getAbstract$() != null && table.getAbstract$().text();
     if (table.getExtends$() == null) {
       this.superTable = null;
@@ -126,7 +126,7 @@ class TableModel {
       this.foreignKeys = new ForeignKeys(1);
     }
     else {
-      this.superTable = assertNotNull(schemaManifest.tableNameToTableModel.get(table.getExtends$().text()));
+      this.superTable = assertNotNull(schemaModel.tableNameToTableModel.get(table.getExtends$().text()));
       if (!superTable.isAbstract)
         throw new GeneratorExecutionException("Cannot extend non-abstract table");
 
@@ -139,12 +139,12 @@ class TableModel {
     }
 
     this.table = table;
-    this.schemaManifest = schemaManifest;
+    this.schemaModel = schemaModel;
     this.tableName = table.getName$().text();
     this.classCase = Identifiers.toClassCase(tableName, '$');
 
     this.classSimpleName = Identifiers.toClassCase(tableName, '$');
-    this.className = schemaManifest.schemaClassName + "." + classSimpleName;
+    this.className = schemaModel.schemaClassName + "." + classSimpleName;
     this.singletonInstanceName = classSimpleName + "$";
 
     final $Constraints constraints = table.getConstraints();
@@ -194,7 +194,7 @@ class TableModel {
         for (int i = 0, i$ = uniqueColumns.size(); i < i$; ++i) { // [RA]
           final BindingList<? extends $Named> columns = uniqueColumns.get(i).getColumn();
           final int noColumns = columns.size();
-          final Columns uniqueColumnModels = new Columns(this, noColumns);
+          final ColumnModels uniqueColumnModels = new ColumnModels(this, noColumns);
           for (int j = 0; j < noColumns; ++j) // [RA]
             uniqueColumnModels.add(assertNotNull(columnNameToColumnModel.get(columns.get(j).getName$().text())));
 
@@ -207,9 +207,9 @@ class TableModel {
       if (foreignKeyComposites != null) {
         for (int i = 0, i$ = foreignKeyComposites.size(); i < i$; ++i) { // [RA]
           final $ForeignKeyComposite foreignKeyComposite = foreignKeyComposites.get(i);
-          final TableModel referenceTable = schemaManifest.tableNameToTableModel.get(foreignKeyComposite.getReferences$().text());
-          final Columns columns = new Columns(this, 2);
-          final Columns referenceColumns = new Columns(this, 2);
+          final TableModel referenceTable = schemaModel.tableNameToTableModel.get(foreignKeyComposite.getReferences$().text());
+          final ColumnModels columns = new ColumnModels(this, 2);
+          final ColumnModels referenceColumns = new ColumnModels(this, 2);
           final BindingList<Column> foreignKeyColumns = foreignKeyComposite.getColumn();
           final int j$ = foreignKeyColumns.size();
           for (int j = 0; j < j$; ++j) { // [RA]
@@ -229,14 +229,14 @@ class TableModel {
     else {
       final int noPrimaryColumns = primaryKeyColumnNames.size();
       if (noPrimaryColumns > 0) {
-        this.primaryKey = new Columns(this, noPrimaryColumns);
+        this.primaryKey = new ColumnModels(this, noPrimaryColumns);
         for (final String primaryKeyColumnName : primaryKeyColumnNames) // [S]
           this.primaryKey.add(assertNotNull(columnNameToColumnModel.get(primaryKeyColumnName)));
 
         columnsToIndexType.put(this.primaryKey, primaryKeyIndexType);
       }
       else {
-        this.primaryKey = Columns.EMPTY_SET;
+        this.primaryKey = ColumnModels.EMPTY_SET;
       }
     }
 
@@ -249,7 +249,7 @@ class TableModel {
           final $Indexes.Index indexColumn = indexColumns.get(i);
           final BindingList<? extends $Named> columns = indexColumn.getColumn();
           final int noColumns = columns.size();
-          final Columns indexColumnModels = new Columns(this, 1);
+          final ColumnModels indexColumnModels = new ColumnModels(this, 1);
           for (int j = 0; j < noColumns; ++j) // [RA]
             indexColumnModels.add(assertNotNull(columnNameToColumnModel.get(columns.get(j).getName$().text())));
 
@@ -267,7 +267,7 @@ class TableModel {
     for (final ColumnModel column : columns) { // [A]
       final $Column.Index index = column.column.getIndex();
       if (index != null) {
-        final Columns indexColumnModels = new Columns(column.tableModel, column);
+        final ColumnModels indexColumnModels = new ColumnModels(column.tableModel, column);
         this.indexes.add(indexColumnModels);
         columnsToIndexType.put(indexColumnModels, IndexType.of(index.getType$(), index.getUnique$().text()));
         if (index.getUnique$() != null && index.getUnique$().text())
@@ -276,14 +276,14 @@ class TableModel {
 
       final $ForeignKeyUnary foreignKey = column.column.getForeignKey();
       if (foreignKey != null) {
-        final TableModel referenceTable = assertNotNull(schemaManifest.tableNameToTableModel.get(foreignKey.getReferences$().text()));
+        final TableModel referenceTable = assertNotNull(schemaModel.tableNameToTableModel.get(foreignKey.getReferences$().text()));
         final ColumnModel referenceColumn = assertNotNull(referenceTable.columnNameToColumnModel.get(foreignKey.getColumn$().text()));
-        foreignKeys.add(new ForeignKey(column.tableModel, new Columns(column.tableModel, column), referenceTable, new Columns(referenceColumn.tableModel, referenceColumn)));
+        foreignKeys.add(new ForeignKey(column.tableModel, new ColumnModels(column.tableModel, column), referenceTable, new ColumnModels(referenceColumn.tableModel, referenceColumn)));
       }
     }
 
     if (columnsToIndexType.size() > 0) {
-      for (final Map.Entry<Columns,IndexType> entry : columnsToIndexType.entrySet()) { // [S]
+      for (final Map.Entry<ColumnModels,IndexType> entry : columnsToIndexType.entrySet()) { // [S]
         if (entry.getValue() instanceof UNDEFINED) {
           if (logger.isWarnEnabled()) logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
           entry.setValue(entry.getValue().isUnique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
@@ -296,12 +296,12 @@ class TableModel {
       makeIndexes(primaryKey);
 
     if (uniques.size() > 0)
-      for (final Columns unique : uniques) // [S]
+      for (final ColumnModels unique : uniques) // [S]
         makeIndexes(unique);
 
     // FIXME: Should <index> be CACHED?
     if (indexes.size() > 0)
-      for (final Columns index : indexes) // [S]
+      for (final ColumnModels index : indexes) // [S]
         makeIndexes(index);
 
     if (foreignKeys.size() > 0)
@@ -328,7 +328,7 @@ class TableModel {
   StringBuilder getClassNameOfEnum(final $Enum column) {
     final StringBuilder out = new StringBuilder();
     if (column.getTemplate$() != null && column.getValues$() == null)
-      return out.append(schemaManifest.schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text(), '$'));
+      return out.append(schemaModel.schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text(), '$'));
 
     return out.append(classCase).append('.').append(Identifiers.toClassCase(column.getName$().text(), '$'));
   }
@@ -660,11 +660,11 @@ class TableModel {
     throw new IllegalArgumentException("Unknown class: " + cls);
   }
 
-  private boolean isPrimaryKey(final Columns columns) {
+  private boolean isPrimaryKey(final ColumnModels columns) {
     return primaryKey.equals(columns);
   }
 
-  private boolean isUnique(final Columns columns) {
+  private boolean isUnique(final ColumnModels columns) {
     return uniques.contains(columns);
   }
 
@@ -726,7 +726,7 @@ class TableModel {
     s.append("  \"primaryKey\": ").append(primaryKey).append(",\n");
     s.append("  \"unique\": [");
     if (uniques.size() > 0) {
-      for (final Columns unique : uniques) { // [S]
+      for (final ColumnModels unique : uniques) { // [S]
         s.append("\n    [");
         if (unique.size() > 0)
           for (final ColumnModel columnModel : unique) // [S]
@@ -742,7 +742,7 @@ class TableModel {
 
     s.append("  \"foreignKey\": [");
     if (columnsToRelations.size() > 0) {
-      for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
+      for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
         s.append("\n    ").append(entry.getKey()).append(" -> ").append(entry.getValue());
 
       s.append("\n  ");
@@ -931,7 +931,7 @@ class TableModel {
         // FIXME: Remove the re-addition of all Relation(s) to ArrayList
         final ArrayList<Relation> onChangeRelations = new ArrayList<>(1);
         if (columnsToRelations.size() > 0)
-          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
+          for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
             onChangeRelations.addAll(entry.getValue());
 
         if (onChangeRelations.size() > 0) {
@@ -941,7 +941,7 @@ class TableModel {
           declared.clear();
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
-            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClauseNotNullCheck, onChangeRelation.keyClause(), CurOld.Cur), out, declared);
+            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Cur), out, declared);
           }
 
           if (declared.size() > 0)
@@ -1046,7 +1046,7 @@ class TableModel {
 
         final ArrayList<Relation> onChangeRelationsForColumn = new ArrayList<>(1);
         if (columnsToRelations.size() > 0)
-          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
+          for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
             if (entry.getKey().contains(columnModel))
               onChangeRelationsForColumn.addAll(entry.getValue());
 
@@ -1063,7 +1063,7 @@ class TableModel {
         ocb.append("\n              return;\n");
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
           final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClauseNotNullCheck, onChangeRelation.keyClause(), CurOld.Old), ocb, declared2);
+          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Old), ocb, declared2);
         }
 
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
@@ -1072,14 +1072,14 @@ class TableModel {
         }
 
         if (primaryKeyColumnNames.contains(columnModel.name) && columnsToRelations.size() > 0) {
-          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
+          for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
             final LinkedHashSet<Relation> relations = entry.getValue();
             for (final Relation relation : relations) { // [S]
               if (relation instanceof ForeignRelation) {
                 final ForeignRelation foreign = (ForeignRelation)relation;
 
                 if (entry.getKey().contains(columnModel) || relation instanceof ManyToManyRelation) {
-                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClauseNotNullCheck, foreign.keyClause(), CurOld.Old), ocb, declared2);
+                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, CurOld.Old), ocb, declared2);
                   write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
                 }
 
@@ -1363,7 +1363,7 @@ class TableModel {
     if (superTable == null) {
       out.append("\n    @").append(Override.class.getName());
       out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() {");
-      out.append("\n      return ").append(schemaManifest.schemaClassSimpleName).append(".this;");
+      out.append("\n      return ").append(schemaModel.schemaClassSimpleName).append(".this;");
       out.append("\n    }\n");
     }
 
@@ -1372,28 +1372,28 @@ class TableModel {
     return out.toString();
   }
 
-  void makeIndexes(final Columns columns) {
+  void makeIndexes(final ColumnModels columns) {
     for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
       final TableModel ancestor = ancestors.get(i);
       if (!ancestor.isAbstract) {
-        ancestor.columnsToRelations.getOrNew(columns).add(new Relation(schemaManifest.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns))));
+        ancestor.columnsToRelations.getOrNew(columns).add(new Relation(schemaModel.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns))));
       }
     }
   }
 
-  private ForeignRelation makeForeignRelation(final TableModel sourceTable, final TableModel table, final Columns columns, final TableModel referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+  private ForeignRelation makeForeignRelation(final TableModel sourceTable, final TableModel table, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     final boolean isPrimary = table.isPrimaryKey(columns);
     final boolean isUnique = isPrimary || table.isUnique(columns);
     final boolean isReferencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);
 
     if (isUnique && isReferencesUnique)
-      return new OneToOneRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+      return new OneToOneRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     if (isUnique && !isReferencesUnique)
-      return new OneToManyRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+      return new OneToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     if (!isUnique && isReferencesUnique)
-      return new ManyToManyRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+      return new ManyToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     throw new UnsupportedOperationException("Is this even possible?");
   }

@@ -67,7 +67,7 @@ public class Generator {
   private final File destDir;
 
   private final String packageName;
-  private final SchemaManifest schemaManifest;
+  private final SchemaModel schemaModel;
 
   private Generator(final DDLx ddlx, final String name, final File destDir) throws GeneratorExecutionException {
     this.ddlx = ddlx;
@@ -75,7 +75,7 @@ public class Generator {
     this.destDir = destDir;
 
     this.packageName = data.class.getPackage().getName();
-    this.schemaManifest = new SchemaManifest(packageName, name, ddlx.getNormalizedSchema().getTable());
+    this.schemaModel = new SchemaModel(packageName, name, ddlx.getNormalizedSchema().getTable());
   }
 
   private void generate() throws GeneratorExecutionException, IOException {
@@ -85,8 +85,8 @@ public class Generator {
     if (!dir.exists() && !dir.mkdirs())
       throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
 
-    final String code = schemaManifest.generate(ddlx);
-    final File javaFile = new File(dir, schemaManifest.schemaClassSimpleName + ".java");
+    final String code = schemaModel.generate(ddlx);
+    final File javaFile = new File(dir, schemaModel.schemaClassSimpleName + ".java");
     Files.write(javaFile.toPath(), code.getBytes());
   }
 

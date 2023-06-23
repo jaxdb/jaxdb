@@ -38,25 +38,25 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeCacheMap<Navigab
     return v != null ? v : OneToOneTreeMap.EMPTY;
   }
 
-  final void superAdd(final data.Key key, final V value) {
+  final void add$(final data.Key key, final V value) {
     // mask.add(key); Do not add key, because this is only 1 value being added of many
 
     OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)map.get(key);
     if (v == null)
       map.put(key, v = new OneToOneTreeMap<>(table));
 
-    v.superPut(value.getKey(), value);
+    v.put$(value.getKey(), value);
   }
 
-  final void superRemove(final data.Key key, final V value) {
+  final void remove$(final data.Key key, final V value) {
     final OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)map.get(key);
     if (v != null)
-      v.superRemove(value.getKey());
+      v.remove$(value.getKey());
   }
 
-  final void superRemoveOld(final data.Key key, final V value) {
+  final void remove$Old(final data.Key key, final V value) {
     final OneToOneTreeMap<V> v = (OneToOneTreeMap<V>)map.get(key);
     if (v != null)
-      v.superRemove(value.getKeyOld());
+      v.remove$(value.getKeyOld());
   }
 }

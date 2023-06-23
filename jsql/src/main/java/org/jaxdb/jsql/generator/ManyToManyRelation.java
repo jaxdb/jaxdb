@@ -17,34 +17,18 @@
 package org.jaxdb.jsql.generator;
 
 class ManyToManyRelation extends ForeignRelation {
-  ManyToManyRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final Columns columns, final TableModel referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+  ManyToManyRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     super(schemaClassName, sourceTable, tableModel, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
   }
 
   @Override
   String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
-    final String method = indexType.isUnique ? "superPut" : "superAdd";
-    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
-  }
-
-  @Override
-  String writeOnChangeClearCache(final String classSimpleName, final String keyClauseNotNullCheck, final String keyClause, final CurOld curOld) {
-    final String member = indexType.isUnique ? "" : ", " + classSimpleName + ".this";
-    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + member + ");";
-  }
-
-  @Override
-  String getDeclaredName() {
-    return declarationNameForeign;
-  }
-
-  @Override
-  String getType() {
-    return declarationNameForeign;
+    final String method = indexType.isUnique ? "put$" : "add$";
+    return writeNullCheckClause(classSimpleName, curOld) + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
   }
 
   @Override
   String getSymbol() {
-    return "*:1";
+    return "*:*";
   }
 }

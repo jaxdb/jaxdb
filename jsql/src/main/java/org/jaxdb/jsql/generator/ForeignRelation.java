@@ -23,7 +23,7 @@ import org.jaxdb.jsql.CacheMap;
 
 abstract class ForeignRelation extends Relation {
   final IndexType indexTypeForeign;
-  private final Columns referenceColumns;
+  private final ColumnModels referenceColumns;
 
   final Relations<ForeignRelation> reverses = new Relations<>();
   final TableModel referenceTable;
@@ -33,7 +33,7 @@ abstract class ForeignRelation extends Relation {
   final String cacheMapFieldNameForeign;
   final String declarationNameForeign;
 
-  ForeignRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final Columns columns, final TableModel referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+  ForeignRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     super(schemaClassName, sourceTable, tableModel, columns, indexType);
     this.indexTypeForeign = indexTypeForeign;
     this.referenceTable = referenceTable;
@@ -42,28 +42,37 @@ abstract class ForeignRelation extends Relation {
     final String foreignName = referenceColumns.getInstanceNameForKey();
     this.fieldName = columnName + "_TO_" + foreignName + "_ON_" + referenceTable.classCase;
 
-    final String cacheMethodNameForeign = Columns.getInstanceNameForCache(foreignName, referenceTable.classCase);
+    final String cacheMethodNameForeign = ColumnModels.getInstanceNameForCache(foreignName, referenceTable.classCase);
     this.cacheMapFieldNameForeign = "_" + cacheMethodNameForeign + "Map$";
     this.cacheIndexFieldNameForeign = referenceTable.singletonInstanceName + "._" + cacheMethodNameForeign + "Index$";
     this.declarationNameForeign = schemaClassName + "." + referenceTable.classCase;
   }
 
-  abstract String getType();
-  abstract String getDeclaredName();
   abstract String getSymbol();
+
+  String getDeclaredName() {
+    return declarationNameForeign;
+  }
+
+  String getType() {
+    return declarationNameForeign;
+  }
 
   String writeDeclaration(final String classSimpleName) {
     final String typeName = getType();
     final String declaredName = getDeclaredName();
+    return writeDeclaration(classSimpleName, typeName, declaredName, "");
+  }
 
+  final String writeDeclaration(final String classSimpleName, final String typeName, final String declaredName, final String suffix) {
     final StringBuilder out = new StringBuilder();
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_CACHED() {");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.superGet(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
+    out.append("\n      return cache == null ? null : cache.get").append(suffix).append("(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
     out.append("\n    }\n");
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_SELECT() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" {");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.superSelect(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
+    out.append("\n      return cache == null ? null : cache.select").append(suffix).append("(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
     out.append("\n    }");
     return out.toString();
   }

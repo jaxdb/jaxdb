@@ -85,12 +85,12 @@ public abstract class HashTreeCacheMap<V> extends CacheMap<V> implements Navigab
   }
 
   @Override
-  final V superGet(final data.Key key) {
+  final V get$(final data.Key key) {
     return hashMap.get(key);
   }
 
   @Override
-  final V superPut(final data.Key key, final V value) {
+  final V put$(final data.Key key, final V value) {
     hashMask.add(key);
     treeMask.add(key);
     hashMap.put(key, value);
@@ -98,7 +98,7 @@ public abstract class HashTreeCacheMap<V> extends CacheMap<V> implements Navigab
   }
 
   @Override
-  final V superRemove(final data.Key key) {
+  final V remove$(final data.Key key) {
     hashMask.remove(key);
     treeMask.remove(key);
     hashMap.remove(key);
@@ -106,7 +106,7 @@ public abstract class HashTreeCacheMap<V> extends CacheMap<V> implements Navigab
   }
 
   @Override
-  final V superRemoveOld(final data.Key key) {
+  final V remove$Old(final data.Key key) {
     hashMap.remove(key);
     return treeMap.remove(key);
   }
