@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql.generator;
 
-import static org.libj.lang.Assertions.*;
-
 import java.util.Map;
 import java.util.NavigableMap;
 
@@ -43,7 +41,7 @@ abstract class IndexType {
 
   static class UNDEFINED extends IndexType {
     UNDEFINED(final boolean isUnique) {
-      super(isUnique, null, false, null, false);
+      super(isUnique, null, null, false);
     }
 
     @Override
@@ -69,7 +67,7 @@ abstract class IndexType {
 
   static class BTREE extends IndexType {
     BTREE(final boolean isUnique, final Class<? extends Map> cls) {
-      super(isUnique, cls, true, NavigableMap.class, true);
+      super(isUnique, cls, NavigableMap.class, true);
     }
 
     @Override
@@ -95,7 +93,7 @@ abstract class IndexType {
 
   static class HASH extends IndexType {
     HASH(final boolean isUnique, final Class<? extends Map> cls) {
-      super(isUnique, cls, true, Map.class, true);
+      super(isUnique, cls, Map.class, true);
     }
 
     @Override
@@ -121,7 +119,7 @@ abstract class IndexType {
 
   static class HASH_BTREE extends IndexType {
     HASH_BTREE(final boolean isUnique, final Class<? extends Map> cls) {
-      super(isUnique, cls, true, NavigableMap.class, true);
+      super(isUnique, cls, NavigableMap.class, true);
     }
 
     @Override
@@ -180,10 +178,9 @@ abstract class IndexType {
     return iface.getName() + "<" + (iFaceKey ? data.Key.class.getCanonicalName() + "," : "") + declarationName + ">";
   }
 
-  IndexType(final boolean isUnique, final Class<? extends Map> cls, final boolean clsKey, final Class<? extends Map> iface, final boolean iFaceKey) {
+  IndexType(final boolean isUnique, final Class<? extends Map> cls, final Class<? extends Map> iface, final boolean iFaceKey) {
     this.isUnique = isUnique;
     this.cls = cls;
-//    this.clsKey = clsKey;
     this.iface = iface;
     this.iFaceKey = iFaceKey;
   }

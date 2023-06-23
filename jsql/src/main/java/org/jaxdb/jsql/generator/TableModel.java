@@ -77,8 +77,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.www._2001.XMLSchema.yAA;
 
-class TableMeta {
-  private static final Logger logger = LoggerFactory.getLogger(TableMeta.class);
+class TableModel {
+  private static final Logger logger = LoggerFactory.getLogger(TableModel.class);
   private final Set<String> primaryKeyColumnNames;
   private final IndexType primaryKeyIndexType;
   private final Set<String> keyForUpdateColumnNames;
@@ -101,14 +101,14 @@ class TableMeta {
   private final MultiLinkedHashMap<Columns,Relation,Relations<Relation>> columnsToRelations = new MultiLinkedHashMap<>(Relations::new);
 
   final SchemaManifest schemaManifest;
-  final ArrayList<TableMeta> ancestors = new ArrayList<>();
+  final ArrayList<TableModel> ancestors = new ArrayList<>();
   final boolean isAbstract;
-  final TableMeta superTable;
+  final TableModel superTable;
   final String tableName;
   final String classCase;
   final Table table;
-  private final ColumnMeta[] columns;
-  private final LinkedHashMap<String,ColumnMeta> columnNameToColumnMeta;
+  private final ColumnModel[] columns;
+  private final LinkedHashMap<String,ColumnModel> columnNameToColumnModel;
 
   private int totalAutoCount = 0;
   private int totalAutoOffset = 0;
@@ -117,7 +117,7 @@ class TableMeta {
   final String className;
   final String singletonInstanceName;
 
-  TableMeta(final Table table, final SchemaManifest schemaManifest) throws GeneratorExecutionException {
+  TableModel(final Table table, final SchemaManifest schemaManifest) throws GeneratorExecutionException {
     this.isAbstract = table.getAbstract$() != null && table.getAbstract$().text();
     if (table.getExtends$() == null) {
       this.superTable = null;
@@ -126,7 +126,7 @@ class TableMeta {
       this.foreignKeys = new ForeignKeys(1);
     }
     else {
-      this.superTable = assertNotNull(schemaManifest.tableNameToTableMeta.get(table.getExtends$().text()));
+      this.superTable = assertNotNull(schemaManifest.tableNameToTableModel.get(table.getExtends$().text()));
       if (!superTable.isAbstract)
         throw new GeneratorExecutionException("Cannot extend non-abstract table");
 
@@ -182,11 +182,11 @@ class TableMeta {
       keyForUpdateColumnNames = Collections.EMPTY_SET;
     }
 
-    this.columns = getColumnMetas(this, primaryKeyColumnNames, 0);
+    this.columns = getColumnModels(this, primaryKeyColumnNames, 0);
 
-    this.columnNameToColumnMeta = new LinkedHashMap<>(columns.length);
-    for (final ColumnMeta column : columns) // [A]
-      columnNameToColumnMeta.put(column.name, column);
+    this.columnNameToColumnModel = new LinkedHashMap<>(columns.length);
+    for (final ColumnModel column : columns) // [A]
+      columnNameToColumnModel.put(column.name, column);
 
     if (constraints != null) {
       final BindingList<$Columns> uniqueColumns = constraints.getUnique();
@@ -194,12 +194,12 @@ class TableMeta {
         for (int i = 0, i$ = uniqueColumns.size(); i < i$; ++i) { // [RA]
           final BindingList<? extends $Named> columns = uniqueColumns.get(i).getColumn();
           final int noColumns = columns.size();
-          final Columns uniqueColumnMetas = new Columns(this, noColumns);
+          final Columns uniqueColumnModels = new Columns(this, noColumns);
           for (int j = 0; j < noColumns; ++j) // [RA]
-            uniqueColumnMetas.add(assertNotNull(columnNameToColumnMeta.get(columns.get(j).getName$().text())));
+            uniqueColumnModels.add(assertNotNull(columnNameToColumnModel.get(columns.get(j).getName$().text())));
 
-          uniques.add(uniqueColumnMetas);
-          columnsToIndexType.put(uniqueColumnMetas, IndexType.of((String)null, true));
+          uniques.add(uniqueColumnModels);
+          columnsToIndexType.put(uniqueColumnModels, IndexType.of((String)null, true));
         }
       }
 
@@ -207,15 +207,15 @@ class TableMeta {
       if (foreignKeyComposites != null) {
         for (int i = 0, i$ = foreignKeyComposites.size(); i < i$; ++i) { // [RA]
           final $ForeignKeyComposite foreignKeyComposite = foreignKeyComposites.get(i);
-          final TableMeta referenceTable = schemaManifest.tableNameToTableMeta.get(foreignKeyComposite.getReferences$().text());
+          final TableModel referenceTable = schemaManifest.tableNameToTableModel.get(foreignKeyComposite.getReferences$().text());
           final Columns columns = new Columns(this, 2);
           final Columns referenceColumns = new Columns(this, 2);
           final BindingList<Column> foreignKeyColumns = foreignKeyComposite.getColumn();
           final int j$ = foreignKeyColumns.size();
           for (int j = 0; j < j$; ++j) { // [RA]
             final $ForeignKeyComposite.Column foreignKeyColumn = foreignKeyColumns.get(j);
-            columns.add(assertNotNull(columnNameToColumnMeta.get(foreignKeyColumn.getName$().text())));
-            referenceColumns.add(assertNotNull(referenceTable.columnNameToColumnMeta.get(foreignKeyColumn.getReferences$().text())));
+            columns.add(assertNotNull(columnNameToColumnModel.get(foreignKeyColumn.getName$().text())));
+            referenceColumns.add(assertNotNull(referenceTable.columnNameToColumnModel.get(foreignKeyColumn.getReferences$().text())));
           }
 
           foreignKeys.add(new ForeignKey(this, columns, referenceTable, referenceColumns));
@@ -231,7 +231,7 @@ class TableMeta {
       if (noPrimaryColumns > 0) {
         this.primaryKey = new Columns(this, noPrimaryColumns);
         for (final String primaryKeyColumnName : primaryKeyColumnNames) // [S]
-          this.primaryKey.add(assertNotNull(columnNameToColumnMeta.get(primaryKeyColumnName)));
+          this.primaryKey.add(assertNotNull(columnNameToColumnModel.get(primaryKeyColumnName)));
 
         columnsToIndexType.put(this.primaryKey, primaryKeyIndexType);
       }
@@ -249,36 +249,36 @@ class TableMeta {
           final $Indexes.Index indexColumn = indexColumns.get(i);
           final BindingList<? extends $Named> columns = indexColumn.getColumn();
           final int noColumns = columns.size();
-          final Columns indexColumnMetas = new Columns(this, 1);
+          final Columns indexColumnModels = new Columns(this, 1);
           for (int j = 0; j < noColumns; ++j) // [RA]
-            indexColumnMetas.add(assertNotNull(columnNameToColumnMeta.get(columns.get(j).getName$().text())));
+            indexColumnModels.add(assertNotNull(columnNameToColumnModel.get(columns.get(j).getName$().text())));
 
           final boolean isUnique = indexColumn.getUnique$() != null && indexColumn.getUnique$().text();
-          this.columnsToIndexType.put(indexColumnMetas, IndexType.of(indexColumn.getType$(), isUnique));
-          this.indexes.add(indexColumnMetas);
+          this.columnsToIndexType.put(indexColumnModels, IndexType.of(indexColumn.getType$(), isUnique));
+          this.indexes.add(indexColumnModels);
           if (isUnique)
-            this.uniques.add(indexColumnMetas);
+            this.uniques.add(indexColumnModels);
         }
       }
     }
   }
 
   void init() throws GeneratorExecutionException {
-    for (final ColumnMeta column : columns) { // [A]
+    for (final ColumnModel column : columns) { // [A]
       final $Column.Index index = column.column.getIndex();
       if (index != null) {
-        final Columns indexColumnMetas = new Columns(column.tableMeta, column);
-        this.indexes.add(indexColumnMetas);
-        columnsToIndexType.put(indexColumnMetas, IndexType.of(index.getType$(), index.getUnique$().text()));
+        final Columns indexColumnModels = new Columns(column.tableModel, column);
+        this.indexes.add(indexColumnModels);
+        columnsToIndexType.put(indexColumnModels, IndexType.of(index.getType$(), index.getUnique$().text()));
         if (index.getUnique$() != null && index.getUnique$().text())
-          uniques.add(indexColumnMetas);
+          uniques.add(indexColumnModels);
       }
 
       final $ForeignKeyUnary foreignKey = column.column.getForeignKey();
       if (foreignKey != null) {
-        final TableMeta referenceTable = assertNotNull(schemaManifest.tableNameToTableMeta.get(foreignKey.getReferences$().text()));
-        final ColumnMeta referenceColumn = assertNotNull(referenceTable.columnNameToColumnMeta.get(foreignKey.getColumn$().text()));
-        foreignKeys.add(new ForeignKey(column.tableMeta, new Columns(column.tableMeta, column), referenceTable, new Columns(referenceColumn.tableMeta, referenceColumn)));
+        final TableModel referenceTable = assertNotNull(schemaManifest.tableNameToTableModel.get(foreignKey.getReferences$().text()));
+        final ColumnModel referenceColumn = assertNotNull(referenceTable.columnNameToColumnModel.get(foreignKey.getColumn$().text()));
+        foreignKeys.add(new ForeignKey(column.tableModel, new Columns(column.tableModel, column), referenceTable, new Columns(referenceColumn.tableModel, referenceColumn)));
       }
     }
 
@@ -333,19 +333,19 @@ class TableMeta {
     return out.append(classCase).append('.').append(Identifiers.toClassCase(column.getName$().text(), '$'));
   }
 
-  private ColumnMeta[] getColumnMetas(final TableMeta tableMeta, final Set<String> primaryKeyColumnNames, final int depth) throws GeneratorExecutionException {
-    final Table table = tableMeta.table;
+  private ColumnModel[] getColumnModels(final TableModel tableModel, final Set<String> primaryKeyColumnNames, final int depth) throws GeneratorExecutionException {
+    final Table table = tableModel.table;
     final List<$Column> columns = table.getColumn();
     final int size = columns == null ? 0 : columns.size();
-    final ColumnMeta[] columnMetas = tableMeta.superTable == null ? new ColumnMeta[depth + size] : getColumnMetas(tableMeta.superTable, primaryKeyColumnNames, depth + size);
+    final ColumnModel[] columnModels = tableModel.superTable == null ? new ColumnModel[depth + size] : getColumnModels(tableModel.superTable, primaryKeyColumnNames, depth + size);
     if (columns != null) {
       final boolean isSuperTable = depth != 0;
 
       for (int c = 1; c <= size; ++c) { // [RA]
         final int i = size - c;
         final $Column column = columns.get(i);
-        final int index = columnMetas.length - depth - c;
-        columnMetas[index] = getColumnMeta(index, tableMeta, column, primaryKeyColumnNames);
+        final int index = columnModels.length - depth - c;
+        columnModels[index] = getColumnModel(index, tableModel, column, primaryKeyColumnNames);
         if (org.jaxdb.ddlx.Generator.isAuto(column)) {
           ++totalAutoCount;
           if (isSuperTable)
@@ -354,17 +354,17 @@ class TableMeta {
       }
     }
 
-    return columnMetas;
+    return columnModels;
   }
 
-  private static ColumnMeta getColumnMeta(final int index, final TableMeta tableMeta, final $Column column, final Set<String> primaryKeyColumnNames) throws GeneratorExecutionException {
+  private static ColumnModel getColumnModel(final int index, final TableModel tableModel, final $Column column, final Set<String> primaryKeyColumnNames) throws GeneratorExecutionException {
     final String columnName = column.getName$().text();
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
 
     final boolean isPrimary = primaryKeyColumnNames.contains(columnName);
-    final boolean isKeyForUpdate = tableMeta.keyForUpdateColumnNames.contains(columnName);
+    final boolean isKeyForUpdate = tableModel.keyForUpdateColumnNames.contains(columnName);
     final Object[] commonParams = {THIS, MUTABLE, "\"" + column.getName$().text() + "\"", PRIMARY_KEY, KEY_FOR_UPDATE, COMMIT_UPDATE, isNull(column)};
     if (column instanceof $Char) {
       final $Char col = ($Char)column;
@@ -380,22 +380,22 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.CHAR.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.CHAR.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
     }
 
     if (column instanceof $Clob) {
       final $Clob col = ($Clob)column;
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
     }
 
     if (column instanceof $Binary) {
       final $Binary col = ($Binary)column;
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.BINARY.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.BINARY.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
     }
 
     if (column instanceof $Blob) {
       final $Blob col = ($Blob)column;
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
     }
 
     if (column instanceof $Integer) {
@@ -414,7 +414,7 @@ class TableMeta {
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Tinyint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
             if (isPrimary)
-              throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
+              throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
 
             generateOnUpdate = GenerateOn.INCREMENT;
           }
@@ -423,7 +423,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Smallint) {
@@ -431,7 +431,7 @@ class TableMeta {
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Smallint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
             if (isPrimary)
-              throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
+              throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
 
             generateOnUpdate = GenerateOn.INCREMENT;
           }
@@ -440,7 +440,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Int) {
@@ -468,7 +468,7 @@ class TableMeta {
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
+            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
 
           if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
             generateOnUpdate = GenerateOn.INCREMENT;
@@ -490,7 +490,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Bigint) {
@@ -524,7 +524,7 @@ class TableMeta {
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
+            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
 
           if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
             generateOnUpdate = GenerateOn.INCREMENT;
@@ -552,7 +552,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
     }
 
@@ -560,19 +560,19 @@ class TableMeta {
       final $Float col = ($Float)column;
       final Number min = col.getMin$() != null ? col.getMin$().text() : null;
       final Number max = col.getMax$() != null ? col.getMax$().text() : null;
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.FLOAT.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.FLOAT.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
     }
 
     if (column instanceof $Double) {
       final $Double col = ($Double)column;
       final Number min = col.getMin$() != null ? col.getMin$().text() : null;
       final Number max = col.getMax$() != null ? col.getMax$().text() : null;
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.DOUBLE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.DOUBLE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
     }
 
     if (column instanceof $Decimal) {
       final $Decimal col = ($Decimal)column;
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.DECIMAL.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue(), col.getScale$() == null ? 0 : col.getScale$().text().intValue(), col.getMin$() == null ? null : col.getMin$().text(), col.getMax$() == null ? null : col.getMax$().text());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.DECIMAL.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue(), col.getScale$() == null ? 0 : col.getScale$().text().intValue(), col.getMin$() == null ? null : col.getMin$().text(), col.getMax$() == null ? null : col.getMax$().text());
     }
 
     if (column instanceof $Date) {
@@ -587,7 +587,7 @@ class TableMeta {
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Date.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
           if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
+            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
@@ -596,7 +596,7 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.DATE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.DATE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
     }
 
     if (column instanceof $Time) {
@@ -611,7 +611,7 @@ class TableMeta {
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Time.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
           if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
+            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
@@ -620,7 +620,7 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.TIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.TIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
     }
 
     if (column instanceof $Datetime) {
@@ -635,7 +635,7 @@ class TableMeta {
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Datetime.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
           if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
+            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
@@ -644,17 +644,17 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.DATETIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.DATETIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
     }
 
     if (column instanceof $Boolean) {
       final $Boolean col = ($Boolean)column;
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.BOOLEAN.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.BOOLEAN.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
     }
 
     if (column instanceof $Enum) {
       final $Enum col = ($Enum)column;
-      return new ColumnMeta(tableMeta, index, column, isPrimary, isKeyForUpdate, data.ENUM.class, commonParams, col.getDefault$() == null ? null : tableMeta.getClassNameOfEnum(col).append('.').append(Generator.enumStringToEnum(col.getDefault$().text())), generateOnInsert, generateOnUpdate);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.ENUM.class, commonParams, col.getDefault$() == null ? null : tableModel.getClassNameOfEnum(col).append('.').append(Generator.enumStringToEnum(col.getDefault$().text())), generateOnInsert, generateOnUpdate);
     }
 
     throw new IllegalArgumentException("Unknown class: " + cls);
@@ -670,7 +670,7 @@ class TableMeta {
 
   private void makeForeignRelations(final ForeignKey foreignKey) throws GeneratorExecutionException {
     for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
-      final TableMeta ancestor = ancestors.get(i);
+      final TableModel ancestor = ancestors.get(i);
       final IndexType indexTypeForeign = foreignKey.referenceTable.columnsToIndexType.get(foreignKey.referenceColumns);
       if (indexTypeForeign == null)
         throw new GeneratorExecutionException(tableName + ":{" + foreignKey.columns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} is referencing privateKey " + foreignKey.referenceTable.tableName + ":{" + foreignKey.referenceColumns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} which does not have an PRIMARY KEY, UNIQUE, or INDEX definition.");
@@ -688,8 +688,8 @@ class TableMeta {
     }
   }
 
-  boolean isRelated(TableMeta thatTable) {
-    TableMeta thisTable;
+  boolean isRelated(TableModel thatTable) {
+    TableModel thisTable;
     do {
       thisTable = this;
       do {
@@ -708,10 +708,10 @@ class TableMeta {
     if (obj == this)
       return true;
 
-    if (!(obj instanceof TableMeta))
+    if (!(obj instanceof TableModel))
       return false;
 
-    final TableMeta that = (TableMeta)obj;
+    final TableModel that = (TableModel)obj;
     return tableName.equals(that.tableName);
   }
 
@@ -729,8 +729,8 @@ class TableMeta {
       for (final Columns unique : uniques) { // [S]
         s.append("\n    [");
         if (unique.size() > 0)
-          for (final ColumnMeta columnMeta : unique) // [S]
-            s.append(columnMeta.name).append(',');
+          for (final ColumnModel columnModel : unique) // [S]
+            s.append(columnModel.name).append(',');
 
         s.setCharAt(s.length() - 1, ']');
       }
@@ -770,7 +770,7 @@ class TableMeta {
     out.append("\n  public interface $").append(classSimpleName).append(" {");
 
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta column = columns[i];
+      final ColumnModel column = columns[i];
       if (column.column instanceof $Enum) {
         final $Enum enumColumn = ($Enum)column.column;
         if (enumColumn.getTemplate$() == null || enumColumn.getValues$() != null)
@@ -955,7 +955,7 @@ class TableMeta {
     dcl.setLength(0);
 
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta column = columns[i];
+      final ColumnModel column = columns[i];
       out.append(getDoc(column.column, 2, '\n', '\0', "Column", column.column.getName$().text(), "Primary", column.isPrimary, "KeyForUpdate", column.isKeyForUpdate, "NULL", column.column.getNull$() == null || column.column.getNull$().text())); // FIXME: Add DEFAULT
       out.append("\n    public final ").append(column.declareColumn()).append(";\n");
     }
@@ -972,10 +972,10 @@ class TableMeta {
         out.append("\n    /** Creates a new {@link ").append(className).append("} with the specified primary key. */");
         out.append("\n    public ").append(classSimpleName).append('(');
         final StringBuilder params = new StringBuilder();
-        for (final ColumnMeta columnMeta : columns) { // [A]
-          if (columnMeta.isPrimary) {
-            params.append("final ").append(columnMeta.rawType).append(' ').append(columnMeta.camelCase).append(", ");
-            final String fieldName = Identifiers.toCamelCase(columnMeta.name, '_');
+        for (final ColumnModel columnModel : columns) { // [A]
+          if (columnModel.isPrimary) {
+            params.append("final ").append(columnModel.rawType).append(' ').append(columnModel.camelCase).append(", ");
+            final String fieldName = Identifiers.toCamelCase(columnModel.name, '_');
             set.append("      this.").append(fieldName).append(".set(").append(fieldName).append(");\n");
           }
         }
@@ -1015,12 +1015,12 @@ class TableMeta {
       commitUpdates = new String[columns.length];
       final StringBuilder ocb = new StringBuilder();
       for (int i = 0; i < columns.length; ++i) { // [A]
-        final ColumnMeta columnMeta = columns[i];
+        final ColumnModel columnModel = columns[i];
           // This section executed onChanged() for each column to clear the foreign Key
   //      Map<String,String> foreignKeyColumns = tableToForeignKeyColumns.get(table);
   //      if (foreignKeyColumns == null) {
   //        tableToForeignKeyColumns.put(table, foreignKeyColumns = new HashMap<>());
-  //        for (final ColumnMeta t : columns) { // [?]
+  //        for (final columnModel t : columns) { // [?]
   //          if (t.column.getForeignKey() != null) {
   //            final String privateKeyName = "_foreignKey$" + t.instanceCase;
   //            foreignKeyColumns.put(t.name, privateKeyName);
@@ -1047,7 +1047,7 @@ class TableMeta {
         final ArrayList<Relation> onChangeRelationsForColumn = new ArrayList<>(1);
         if (columnsToRelations.size() > 0)
           for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
-            if (entry.getKey().contains(columnMeta))
+            if (entry.getKey().contains(columnModel))
               onChangeRelationsForColumn.addAll(entry.getValue());
 
         if (onChangeRelationsForColumn.size() == 0) {
@@ -1063,20 +1063,6 @@ class TableMeta {
         ocb.append("\n              return;\n");
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
           final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          if (onChangeRelation instanceof ForeignRelation) {
-            final ForeignRelation relation = (ForeignRelation)onChangeRelation;
-            boolean added = false;
-            final LinkedHashSet<ForeignRelation> reverses = relation.reverses;
-            for (final ForeignRelation reverse : reverses) // [S]
-              added |= write("\n            ", reverse.writeOnChangeClearCacheForeign(classSimpleName, onChangeRelation.keyClause(), CurOld.Old, CurOld.Cur), ocb, declared2);
-
-            if (added)
-              ocb.append('\n');
-          }
-        }
-
-        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
           write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClauseNotNullCheck, onChangeRelation.keyClause(), CurOld.Old), ocb, declared2);
         }
 
@@ -1085,20 +1071,20 @@ class TableMeta {
           write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
         }
 
-        if (primaryKeyColumnNames.contains(columnMeta.name) && columnsToRelations.size() > 0) {
+        if (primaryKeyColumnNames.contains(columnModel.name) && columnsToRelations.size() > 0) {
           for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
             final LinkedHashSet<Relation> relations = entry.getValue();
             for (final Relation relation : relations) { // [S]
               if (relation instanceof ForeignRelation) {
                 final ForeignRelation foreign = (ForeignRelation)relation;
 
-                if (entry.getKey().contains(columnMeta) || relation instanceof ManyToManyRelation) {
+                if (entry.getKey().contains(columnModel) || relation instanceof ManyToManyRelation) {
                   write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClauseNotNullCheck, foreign.keyClause(), CurOld.Old), ocb, declared2);
                   write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
                 }
 
   //                    for (final Foreign reverse : relation.reverses) { // [?]
-  //                      if (reverse.referencesColumns.contains(columnMeta))
+  //                      if (reverse.referencesColumns.contains(columnModel))
   //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, CurOld.Old), "\n", ocb, declared);
   //                    }
               }
@@ -1133,8 +1119,8 @@ class TableMeta {
 
     final StringBuilder parameters = new StringBuilder();
     for (int i = 0; i < columns.length; ++i) { // [A]
-      final ColumnMeta column = columns[i];
-      parameters.append(", final ").append(Consumer.class.getName()).append("<? extends ").append(column.tableMeta.className).append("> ").append(column.instanceCase);
+      final ColumnModel column = columns[i];
+      parameters.append(", final ").append(Consumer.class.getName()).append("<? extends ").append(column.tableModel.className).append("> ").append(column.instanceCase);
       init.append(", (").append(Consumer.class.getName()).append(")null");
     }
 
@@ -1174,16 +1160,16 @@ class TableMeta {
         if (i > s)
           out.append('\n');
 
-        final ColumnMeta columnMeta = columns[i];
+        final ColumnModel columnModel = columns[i];
 
         final StringBuilder dec = new StringBuilder();
-        if (primaryKeyColumnNames.contains(columnMeta.name))
+        if (primaryKeyColumnNames.contains(columnModel.name))
           dec.append("_primary$[").append(primaryIndex++).append("] = ");
 
-        if (keyForUpdateColumnNames.contains(columnMeta.name))
+        if (keyForUpdateColumnNames.contains(columnModel.name))
           dec.append("_keyForUpdate$[").append(keyForUpdateIndex++).append("] = ");
 
-        if (org.jaxdb.ddlx.Generator.isAuto(columnMeta.column))
+        if (org.jaxdb.ddlx.Generator.isAuto(columnModel.column))
           dec.append("_auto$[").append(autoIndex++).append("] = ");
 
         if (i >= s || dec.length() > 0) {
@@ -1199,9 +1185,9 @@ class TableMeta {
           out.append(" = this.");
 
           if (x == 0)
-            columnMeta.assignConstructor(out, i, commitUpdates == null ? null : commitUpdates[i]);
+            columnModel.assignConstructor(out, i, commitUpdates == null ? null : commitUpdates[i]);
           else
-            columnMeta.assignCopyConstructor(out);
+            columnModel.assignCopyConstructor(out);
 
           out.append(';');
         }
@@ -1212,11 +1198,11 @@ class TableMeta {
 
     final StringBuilder buf = new StringBuilder();
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta columnMeta = columns[i];
+      final ColumnModel columnModel = columns[i];
       if (buf.length() > 0)
         buf.append('\n');
 
-      final String fieldName = Identifiers.toCamelCase(columnMeta.name, '_');
+      final String fieldName = Identifiers.toCamelCase(columnModel.name, '_');
       buf.append("      if (t.").append(fieldName).append(".setByCur != null)\n");
       buf.append("        ").append(fieldName).append(".copy(t.").append(fieldName).append(");\n");
     }
@@ -1254,8 +1240,8 @@ class TableMeta {
 
     buf.setLength(0);
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta columnMeta = columns[i];
-      buf.append("\n      if (this.").append(columnMeta.instanceCase).append(".isNull() ? !that.").append(columnMeta.instanceCase).append(".isNull() : !").append(columnMeta.getEqualsClause()).append(')');
+      final ColumnModel columnModel = columns[i];
+      buf.append("\n      if (this.").append(columnModel.instanceCase).append(".isNull() ? !that.").append(columnModel.instanceCase).append(".isNull() : !").append(columnModel.getEqualsClause()).append(')');
       buf.append("\n        return false;\n");
     }
 
@@ -1279,9 +1265,9 @@ class TableMeta {
 
     buf.setLength(0);
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta columnMeta = columns[i];
-      buf.append("\n      if (!this.").append(columnMeta.instanceCase).append(".isNull())");
-      buf.append("\n        hashCode = 31 * hashCode + this.").append(columnMeta.instanceCase).append(".get().hashCode();\n");
+      final ColumnModel columnModel = columns[i];
+      buf.append("\n      if (!this.").append(columnModel.instanceCase).append(".isNull())");
+      buf.append("\n        hashCode = 31 * hashCode + this.").append(columnModel.instanceCase).append(".get().hashCode();\n");
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
@@ -1300,12 +1286,12 @@ class TableMeta {
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
       if (ifClause)
         buf.append('\n');
-      final ColumnMeta columnMeta = columns[i];
-      ifClause = !columnMeta.isPrimary && !columnMeta.isKeyForUpdate;
+      final ColumnModel columnModel = columns[i];
+      ifClause = !columnModel.isPrimary && !columnModel.isKeyForUpdate;
       if (ifClause)
-        buf.append("      if (!wasSetOnly || this.").append(columnMeta.instanceCase).append(".setByCur != null)\n  ");
+        buf.append("      if (!wasSetOnly || this.").append(columnModel.instanceCase).append(".setByCur != null)\n  ");
 
-      buf.append("      this.").append(columnMeta.instanceCase).append(".toJson(s.append(\",\\\"").append(columnMeta.name).append("\\\":\"));\n");
+      buf.append("      this.").append(columnModel.instanceCase).append(".toJson(s.append(\",\\\"").append(columnModel.name).append("\\\":\"));\n");
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
@@ -1331,8 +1317,8 @@ class TableMeta {
         columns[i].column.text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
 
       final ArrayList<$Column> sortedColumns = new ArrayList<>();
-      for (final ColumnMeta columnMeta : columns) // [A]
-        sortedColumns.add(columnMeta.column);
+      for (final ColumnModel columnModel : columns) // [A]
+        sortedColumns.add(columnModel.column);
       sortedColumns.sort(Generator.namedComparator);
 
       for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) { // [RA]
@@ -1388,14 +1374,14 @@ class TableMeta {
 
   void makeIndexes(final Columns columns) {
     for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
-      final TableMeta ancestor = ancestors.get(i);
+      final TableModel ancestor = ancestors.get(i);
       if (!ancestor.isAbstract) {
         ancestor.columnsToRelations.getOrNew(columns).add(new Relation(schemaManifest.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns))));
       }
     }
   }
 
-  private ForeignRelation makeForeignRelation(final TableMeta sourceTable, final TableMeta table, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+  private ForeignRelation makeForeignRelation(final TableModel sourceTable, final TableModel table, final Columns columns, final TableModel referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     final boolean isPrimary = table.isPrimaryKey(columns);
     final boolean isUnique = isPrimary || table.isUnique(columns);
     final boolean isReferencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);

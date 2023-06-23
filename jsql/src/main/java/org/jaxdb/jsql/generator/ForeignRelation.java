@@ -26,15 +26,15 @@ abstract class ForeignRelation extends Relation {
   private final Columns referenceColumns;
 
   final Relations<ForeignRelation> reverses = new Relations<>();
-  final TableMeta referenceTable;
+  final TableModel referenceTable;
   final String fieldName;
 
   final String cacheIndexFieldNameForeign;
   final String cacheMapFieldNameForeign;
   final String declarationNameForeign;
 
-  ForeignRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
-    super(schemaClassName, sourceTable, tableMeta, columns, indexType);
+  ForeignRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final Columns columns, final TableModel referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+    super(schemaClassName, sourceTable, tableModel, columns, indexType);
     this.indexTypeForeign = indexTypeForeign;
     this.referenceTable = referenceTable;
     this.referenceColumns = referenceColumns;
@@ -78,7 +78,7 @@ abstract class ForeignRelation extends Relation {
     if (obj == this)
       return true;
 
-    if (!(obj instanceof Relation) || !super.equals(obj))
+    if (!(obj instanceof ForeignRelation) || !super.equals(obj))
       return false;
 
     final ForeignRelation that = (ForeignRelation)obj;

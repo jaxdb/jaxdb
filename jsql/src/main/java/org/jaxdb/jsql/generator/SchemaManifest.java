@@ -54,7 +54,7 @@ class SchemaManifest {
   final String name;
   final String schemaClassSimpleName;
   final String schemaClassName;
-  final Map<String,TableMeta> tableNameToTableMeta;
+  final Map<String,TableModel> tableNameToTableModel;
 
   SchemaManifest(final String packageName, final String name, final BindingList<Table> tables) throws GeneratorExecutionException {
     this.packageName = packageName;
@@ -64,22 +64,22 @@ class SchemaManifest {
 
     final int noTables = tables.size();
     if (noTables == 0) {
-      this.tableNameToTableMeta = Collections.EMPTY_MAP;
+      this.tableNameToTableModel = Collections.EMPTY_MAP;
     }
     else {
-      this.tableNameToTableMeta = new LinkedHashMap<>(noTables);
+      this.tableNameToTableModel = new LinkedHashMap<>(noTables);
 
       for (int i = 0; i < noTables; ++i) { // [RA]
         final Table table = tables.get(i);
-        tableNameToTableMeta.put(table.getName$().text(), new TableMeta(table, this));
+        tableNameToTableModel.put(table.getName$().text(), new TableModel(table, this));
       }
 
-      final Collection<TableMeta> tableMetas = tableNameToTableMeta.values();
-      for (final TableMeta tableMeta : tableMetas) { // [C]
-        final ArrayList<TableMeta> ancestors = new ArrayList<>();
-        ancestors.add(tableMeta);
-        addAncestors(tableMetas, ancestors, tableMeta);
-        tableMeta.ancestors.addAll(ancestors);
+      final Collection<TableModel> tableModels = tableNameToTableModel.values();
+      for (final TableModel tableModel : tableModels) { // [C]
+        final ArrayList<TableModel> ancestors = new ArrayList<>();
+        ancestors.add(tableModel);
+        addAncestors(tableModels, ancestors, tableModel);
+        tableModel.ancestors.addAll(ancestors);
       }
     }
   }
@@ -94,13 +94,13 @@ class SchemaManifest {
     out.append("public class ").append(schemaClassSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {");
 
     final StringBuilder cachedTables = new StringBuilder();
-    final Collection<TableMeta> tableMetas = tableNameToTableMeta.values();
-    final int noTables = tableMetas.size();
+    final Collection<TableModel> tableModels = tableNameToTableModel.values();
+    final int noTables = tableModels.size();
     if (noTables > 0) {
-      for (final TableMeta tableMeta : tableMetas) { // [C]
-        tableMeta.init();
-        if (!tableMeta.isAbstract)
-          cachedTables.append(tableMeta.classCase).append("(), ");
+      for (final TableModel tableModel : tableModels) { // [C]
+        tableModel.init();
+        if (!tableModel.isAbstract)
+          cachedTables.append(tableModel.classCase).append("(), ");
       }
     }
 
@@ -121,23 +121,23 @@ class SchemaManifest {
     }
 
     // Then, in proper inheritance order, the real entities
-    final ArrayList<TableMeta> sortedTables = new ArrayList<>();
+    final ArrayList<TableModel> sortedTables = new ArrayList<>();
 
     // First create the abstract entities
     if (noTables > 0) {
-      for (final TableMeta tableMeta : tableMetas) // [C]
-        if (tableMeta.isAbstract)
-          out.append(tableMeta.makeTable()).append('\n');
+      for (final TableModel tableModel : tableModels) // [C]
+        if (tableModel.isAbstract)
+          out.append(tableModel.makeTable()).append('\n');
 
-      for (final TableMeta tableMeta : tableMetas) { // [C]
-        if (!tableMeta.isAbstract) {
-          sortedTables.add(tableMeta);
-          out.append(tableMeta.makeTable()).append('\n');
+      for (final TableModel tableModel : tableModels) { // [C]
+        if (!tableModel.isAbstract) {
+          sortedTables.add(tableModel);
+          out.append(tableModel.makeTable()).append('\n');
         }
       }
     }
 
-    sortedTables.sort(Generator.tableMetaComparator);
+    sortedTables.sort(Generator.tableModelComparator);
     final int noSortedTables = sortedTables.size();
 
     out.append("\n  private static final ").append(String.class.getName()).append("[] names = {");
@@ -182,9 +182,9 @@ class SchemaManifest {
     return out.toString();
   }
 
-  private void addAncestors(final Collection<TableMeta> allTables, final ArrayList<TableMeta> ancestors, final TableMeta table) {
+  private void addAncestors(final Collection<TableModel> allTables, final ArrayList<TableModel> ancestors, final TableModel table) {
     if (allTables.size() > 0) {
-      for (final TableMeta ancestor : allTables) { // [C]
+      for (final TableModel ancestor : allTables) { // [C]
         if (ancestor.superTable != null && table.tableName.equals(ancestor.superTable.tableName)) {
           ancestors.add(ancestor);
           addAncestors(allTables, ancestors, ancestor);

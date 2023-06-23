@@ -17,38 +17,43 @@
 package org.jaxdb.jsql.generator;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-class Columns extends LinkedHashSet<ColumnMeta> {
+class Columns extends LinkedHashSet<ColumnModel> {
   static final Columns EMPTY_SET = new Columns(null, 0);
-  final TableMeta table;
+  final TableModel table;
 
-  Columns(final TableMeta table, final Collection<? extends ColumnMeta> c) {
+  Columns(final TableModel table, final Collection<? extends ColumnModel> c) {
     super(c);
     this.table = table;
   }
 
-  Columns(final TableMeta table, final int initialCapacity) {
+  Columns(final TableModel table, final int initialCapacity) {
     super(initialCapacity);
     this.table = table;
   }
 
-  Columns(final TableMeta table, final ColumnMeta columnMeta) {
+  Columns(final TableModel table, final ColumnModel columnModel) {
     super(1);
     this.table = table;
-    add(columnMeta);
+    add(columnModel);
   }
 
   String getInstanceNameForKey() {
-    final StringBuilder columnName = new StringBuilder();
-    if (size() > 0)
-      for (final ColumnMeta columnMeta : this) // [S]
-        columnName.append(columnMeta.camelCase).append('_');
+    if (size() == 0)
+      return "";
 
-    if (columnName.length() > 0)
-      columnName.setLength(columnName.length() - 1);
+    final StringBuilder b = new StringBuilder();
+    final Iterator<ColumnModel> iterator = iterator();
+    for (int i = 0; iterator.hasNext(); ++i) { // [S]
+      if (i > 0)
+        b.append('_');
 
-    return columnName.toString();
+      b.append(iterator.next().camelCase);
+    }
+
+    return b.toString();
   }
 
   String getInstanceNameForCache(final String classCase) {

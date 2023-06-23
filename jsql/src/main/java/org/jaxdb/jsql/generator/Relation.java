@@ -46,8 +46,8 @@ class Relation {
   final String declarationName;
 
   final Columns columns;
-  final TableMeta sourceTable;
-  final TableMeta tableMeta;
+  final TableModel sourceTable;
+  final TableModel tableModel;
   final IndexType indexType;
   final String columnName;
   final String keyClauseNotNullCheck;
@@ -57,14 +57,14 @@ class Relation {
   final String keyArgs;
   final String rangeArgs;
 
-  Relation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final IndexType indexType) {
-    this.cacheMethodName = columns.getInstanceNameForCache(tableMeta.classCase);
+  Relation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final Columns columns, final IndexType indexType) {
+    this.cacheMethodName = columns.getInstanceNameForCache(tableModel.classCase);
     this.cacheMapFieldName = "_" + cacheMethodName + "Map$";
     this.cacheIndexFieldName = "_" + cacheMethodName + "Index$";
-    this.declarationName = schemaClassName + "." + tableMeta.classCase;
+    this.declarationName = schemaClassName + "." + tableModel.classCase;
 
     this.sourceTable = sourceTable;
-    this.tableMeta = tableMeta;
+    this.tableModel = tableModel;
     this.columns = columns;
     this.indexType = indexType;
 
@@ -79,7 +79,7 @@ class Relation {
     final StringBuilder toArgs = new StringBuilder();
 
     if (columns.size() > 0) {
-      for (final ColumnMeta column : columns) { // [S]
+      for (final ColumnModel column : columns) { // [S]
         keyClauseValues.append("{1}.this.").append(column.camelCase).append(".get{2}(), ");
         keyClauseNotNullCheck.append("!{1}.this.").append(column.camelCase).append(".isNull{2}() && ");
         keyParams.append("final ").append(column.rawType).append(' ').append(column.instanceCase).append(", ");
@@ -116,15 +116,15 @@ class Relation {
 
     return
       "\n    public " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "_CACHED(" + rangeParams + ") {" +
-      "\n      return " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".subMap(" + rangeArgs + ");" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".subMap(" + rangeArgs + ");" +
       "\n    }\n" +
       "\n    public " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "_SELECT(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      return " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".select(" + rangeArgs + ");" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".select(" + rangeArgs + ");" +
       "\n    }\n";
   }
 
   String keyClause() {
-    return keyClause(tableMeta.singletonInstanceName + "." + cacheIndexFieldName);
+    return keyClause(tableModel.singletonInstanceName + "." + cacheIndexFieldName);
   }
 
   String keyClause(final String cacheColumnsName) {
@@ -136,14 +136,14 @@ class Relation {
       return;
 
     final StringBuilder keyClauseColumnAssignment = new StringBuilder();
-    final boolean isPrimary = columns.equals(tableMeta.primaryKey);
+    final boolean isPrimary = columns.equals(tableModel.primaryKey);
     if (isPrimary) {
-      keyClauseColumnAssignment.append(tableMeta.singletonInstanceName).append("._primary$");
+      keyClauseColumnAssignment.append(tableModel.singletonInstanceName).append("._primary$");
       keyClauseColumnAssignments.add(cacheIndexFieldName + " = " + keyClauseColumnAssignment);
     }
     else {
-      for (final ColumnMeta column : columns) // [S]
-        keyClauseColumnAssignment.append(tableMeta.singletonInstanceName).append("._column$[").append(column.index).append("], ");
+      for (final ColumnModel column : columns) // [S]
+        keyClauseColumnAssignment.append(tableModel.singletonInstanceName).append("._column$[").append(column.index).append("], ");
 
       keyClauseColumnAssignment.setLength(keyClauseColumnAssignment.length() - 2);
       keyClauseColumnAssignments.add(cacheIndexFieldName + " = new " + data.Column.class.getCanonicalName() + "<?>[] {" + keyClauseColumnAssignment + "}");
@@ -157,18 +157,18 @@ class Relation {
       "\n    private " + data.Column.class.getCanonicalName() + "<?>[] " + cacheIndexFieldName + ";" +
       "\n    " + indexType.getConcreteClass(declarationName) + " " + cacheMapFieldName + ";\n" +
       "\n    public " + returnType + " " + cacheMethodName + "_CACHED(" + keyParams + ") {" +
-      "\n      return " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".get(" + keyArgs + ");" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".get(" + keyArgs + ");" +
       "\n    }\n" +
       "\n    public " + returnType + " " + cacheMethodName + "_SELECT(" + keyParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      return " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".select(" + keyArgs + ");" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".select(" + keyArgs + ");" +
       "\n    }\n" +
       writeGetRangeMethod(returnType) +
       "\n    public " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "_CACHED() {" +
-      "\n      return " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ";" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ";" +
       "\n    }\n" +
       "\n    public " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "_SELECT() throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".selectAll();" +
-      "\n      return " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ";" +
+      "\n      " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".selectAll();" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ";" +
       "\n    }";
   }
 
@@ -178,20 +178,15 @@ class Relation {
 
   String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
     final String method = indexType.isUnique ? "superPut" : "superAdd";
-    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause().replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
+    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause().replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
   }
 
   String writeCacheSelectAll() {
-    return tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".addKey(" + data.Key.class.getCanonicalName() + ".ALL);";
+    return tableModel.singletonInstanceName + "." + cacheMapFieldName + ".addKey(" + data.Key.class.getCanonicalName() + ".ALL);";
   }
 
   String writeOnChangeClearCache(final String classSimpleName, final String keyClauseNotNullCheck, final String keyClause, final CurOld curOld) {
-    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableMeta.singletonInstanceName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
-  }
-
-  String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final CurOld curOld, final CurOld curOld2) {
-//    return tableMeta.singletonInstanceName + "." + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ");";
-    return null;
+    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".superRemove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
   }
 
   @Override
@@ -203,12 +198,12 @@ class Relation {
       return false;
 
     final Relation that = (Relation)obj;
-    return tableMeta.equals(that.tableMeta) && columns.equals(that.columns);
+    return tableModel.equals(that.tableModel) && columns.equals(that.columns);
   }
 
   @Override
   public int hashCode() {
-    return tableMeta.hashCode() ^ columns.hashCode();
+    return tableModel.hashCode() ^ columns.hashCode();
   }
 
   @Override
