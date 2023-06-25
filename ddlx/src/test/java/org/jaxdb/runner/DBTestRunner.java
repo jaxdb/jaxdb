@@ -404,12 +404,12 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     if (method.getParameterTypes().length == 1) {
       try (final Connection connection = executor.getConnection()) {
         if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
-        return frameworkMethod.invokeExplosivelySuper(target, connection);
+        return frameworkMethod.invokeExplosively$(target, connection);
       }
     }
 
     if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
-    return frameworkMethod.invokeExplosivelySuper(target);
+    return frameworkMethod.invokeExplosively$(target);
   }
 
   protected class VendorFrameworkMethod extends FrameworkMethod {
@@ -458,7 +458,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       return DBTestRunner.this.invokeExplosively(this, target, params);
     }
 
-    final Object invokeExplosivelySuper(final Object target, final Object ... params) throws Throwable {
+    final Object invokeExplosively$(final Object target, final Object ... params) throws Throwable {
       try {
         executor.sempaphore.acquire();
         return super.invokeExplosively(target, params);

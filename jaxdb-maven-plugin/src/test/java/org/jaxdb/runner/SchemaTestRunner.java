@@ -96,7 +96,7 @@ public class SchemaTestRunner extends DBTestRunner {
     TestCommand.Select.beforeInvokeExplosively(method);
 
     if (parameterTypes.length == 0)
-      return frameworkMethod.invokeExplosivelySuper(target);
+      return frameworkMethod.invokeExplosively$(target);
 
     final DBTestRunner.Executor executor = frameworkMethod.getExecutor();
     params = new Object[parameterTypes.length];
@@ -124,7 +124,7 @@ public class SchemaTestRunner extends DBTestRunner {
     final Object result;
 
     try {
-      result = frameworkMethod.invokeExplosivelySuper(target, params);
+      result = frameworkMethod.invokeExplosively$(target, params);
     }
     catch (final Throwable t) {
       if (transaction != null) {

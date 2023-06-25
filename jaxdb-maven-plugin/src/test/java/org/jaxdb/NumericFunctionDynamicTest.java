@@ -55,7 +55,10 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   public static void assertBigDecimalEquals(final BigDecimal expected, final BigDecimal actual) {
-    assertEquals(0, expected.compareTo(actual));
+    if (expected == null)
+      assertNull(actual);
+    else
+      assertEquals(0, expected.compareTo(actual));
   }
 
   private static final MathContext mc = new MathContext(65, RoundingMode.DOWN);

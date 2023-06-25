@@ -66,11 +66,11 @@ abstract class ForeignRelation extends Relation {
 
   final String writeDeclaration(final String classSimpleName, final String typeName, final String declaredName, final String suffix) {
     final StringBuilder out = new StringBuilder();
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_CACHED() {");
+    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_CACHED() { // ForeignRelation.writeDeclaration(String,String,String,String)");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
     out.append("\n      return cache == null ? null : cache.get").append(suffix).append("(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
     out.append("\n    }\n");
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_SELECT() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" {");
+    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_SELECT() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" { // ForeignRelation.writeDeclaration(String,String,String,String)");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
     out.append("\n      return cache == null ? null : cache.select").append(suffix).append("(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
     out.append("\n    }");
