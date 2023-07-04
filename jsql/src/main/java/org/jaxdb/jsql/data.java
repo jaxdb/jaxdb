@@ -4411,17 +4411,12 @@ public final class data {
         return new Key(columns, topology().nextValue(values));
       }
       catch (final Exception e) {
-        // FIXME: For debugging
         final StringBuilder b = new StringBuilder();
-        for (int i = 0; i < columns.length; ++i) {
-          if (i > 0)
-            b.append(',');
+        for (int i = 0, i$ = columns.length; i < i$; ++i) // [A]
+          b.append(columns[i].getName()).append('=').append(values[i]);
 
-          b.append(columns[i]).append("=").append(values[i]);
-        }
-
-        e.addSuppressed(new Exception(b.toString()));
-        throw e;
+        b.append(')').setCharAt(0, '(');
+        throw new JSQLException(b.toString(), e);
       }
     }
 

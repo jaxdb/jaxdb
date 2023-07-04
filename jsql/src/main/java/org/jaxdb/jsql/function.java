@@ -1337,10 +1337,10 @@ final class function {
           return evaluate(a.doubleValue(), b.doubleValue());
 
         final BigDecimal bigDecimal;
-        if (b instanceof BigInt)
-          bigDecimal = new BigDecimal(((BigInt)b).toString()); // FIXME: Bad performance
-        else if (b instanceof BigDecimal)
+        if (b instanceof BigDecimal)
           bigDecimal = (BigDecimal)b;
+        else if (b instanceof BigInt)
+          bigDecimal = ((BigInt)b).toBigDecimal();
         else
           throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
 
@@ -1352,10 +1352,10 @@ final class function {
           return evaluate(a.doubleValue(), b.doubleValue());
 
         final BigDecimal bigDecimal;
-        if (b instanceof BigInt)
-          bigDecimal = new BigDecimal(((BigInt)b).toString()); // FIXME: Bad performance
-        else if (b instanceof BigDecimal)
+        if (b instanceof BigDecimal)
           bigDecimal = (BigDecimal)b;
+        else if (b instanceof BigInt)
+          bigDecimal = ((BigInt)b).toBigDecimal();
         else
           throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
 

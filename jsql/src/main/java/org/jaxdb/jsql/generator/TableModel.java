@@ -1104,7 +1104,7 @@ class TableModel {
     final StringBuilder init = new StringBuilder();
     newColumnArray(init, noColumnsTotal, primaryKeyColumnNames.size() == 0 && keyForUpdateColumnNames.size() == 0 ? null : i -> {
       if (primaryKeyColumnNames.contains(columns[i].name))
-        return data.class.getCanonicalName() + "." + (primaryKeyIndexType instanceof IndexType.HASH ? "HASH" : "BTREE");
+        return data.class.getCanonicalName() + (primaryKeyIndexType instanceof IndexType.HASH ? ".HASH" : ".BTREE");
 
       if (keyForUpdateColumnNames.contains(columns[i].name))
         return data.class.getCanonicalName() + ".KEY_FOR_UPDATE";

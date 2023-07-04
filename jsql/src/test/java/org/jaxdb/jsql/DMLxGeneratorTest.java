@@ -277,7 +277,7 @@ public class DMLxGeneratorTest {
 
     // -- 1 param --
     final Class<?> function1 = function.Function1.class;
-    compose1(dml, "ABS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n'); // FIXME: !!!! ABS((byte)-127) = -127
+    compose1(dml, "ABS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
     compose1(dml, "ACOS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
     compose1(dml, "ASIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
     compose1(dml, "ATAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
