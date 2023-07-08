@@ -3175,10 +3175,11 @@ public final class data {
         throw new RuntimeException(e);
       }
       catch (final InvocationTargetException e) {
-        if (e.getCause() instanceof RuntimeException)
-          throw (RuntimeException)e.getCause();
+        final Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException)
+          throw (RuntimeException)cause;
 
-        throw new RuntimeException(e.getCause());
+        throw new RuntimeException(cause);
       }
     }
 
@@ -3258,10 +3259,11 @@ public final class data {
           throw new RuntimeException(e);
         }
         catch (final InvocationTargetException e) {
-          if (e.getCause() instanceof RuntimeException)
-            throw (RuntimeException)e.getCause();
+          final Throwable cause = e.getCause();
+          if (cause instanceof RuntimeException)
+            throw (RuntimeException)cause;
 
-          throw new RuntimeException(e.getCause());
+          throw new RuntimeException(cause);
         }
       };
     }
@@ -6231,11 +6233,12 @@ public final class data {
     }
     catch (final IllegalAccessException | InstantiationException | InvocationTargetException e) {
       if (e instanceof InvocationTargetException) {
-        if (e.getCause() instanceof RuntimeException)
-          throw (RuntimeException)e.getCause();
+        final Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException)
+          throw (RuntimeException)cause;
 
-        if (e.getCause() instanceof IOException)
-          Throwing.rethrow(e.getCause());
+        if (cause instanceof IOException)
+          Throwing.rethrow(cause);
       }
 
       throw new RuntimeException(e);
