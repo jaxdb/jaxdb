@@ -24,27 +24,26 @@ import org.jaxdb.jsql.CacheMap;
 abstract class ForeignRelation extends Relation {
   final IndexType indexTypeForeign;
   private final ColumnModels referenceColumns;
+  final String foreignName;
 
   final Relations<ForeignRelation> reverses = new Relations<>();
   final TableModel referenceTable;
   final String fieldName;
 
-  final String cacheIndexFieldNameForeign;
   final String cacheMapFieldNameForeign;
   final String declarationNameForeign;
 
-  ForeignRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
-    super(schemaClassName, sourceTable, tableModel, columns, indexType);
+  ForeignRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign, final KeyModels keyModels) {
+    super(schemaClassName, sourceTable, tableModel, columns, indexType, keyModels);
     this.indexTypeForeign = indexTypeForeign;
     this.referenceTable = referenceTable;
     this.referenceColumns = referenceColumns;
 
-    final String foreignName = referenceColumns.getInstanceNameForKey();
+    this.foreignName = referenceColumns.getInstanceNameForKey();
     this.fieldName = columnName + "_TO_" + foreignName + "_ON_" + referenceTable.classCase;
 
     final String cacheMethodNameForeign = ColumnModels.getInstanceNameForCache(foreignName, referenceTable.classCase);
     this.cacheMapFieldNameForeign = "_" + cacheMethodNameForeign + "Map$";
-    this.cacheIndexFieldNameForeign = referenceTable.singletonInstanceName + "._" + cacheMethodNameForeign + "Index$";
     this.declarationNameForeign = schemaClassName + "." + referenceTable.classCase;
   }
 
@@ -68,11 +67,11 @@ abstract class ForeignRelation extends Relation {
     final StringBuilder out = new StringBuilder();
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_CACHED() { // ForeignRelation.writeDeclaration(String,String,String,String)");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.get").append(suffix).append("(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
+    out.append("\n      return cache == null ? null : cache.get").append(suffix).append("(").append(keyModel.keyClause(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, "Old")).append(");");
     out.append("\n    }\n");
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_SELECT() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" { // ForeignRelation.writeDeclaration(String,String,String,String)");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.select").append(suffix).append("(").append(keyClause(cacheIndexFieldNameForeign).replace("{1}", classSimpleName).replace("{2}", "Old")).append(");");
+    out.append("\n      return cache == null ? null : cache.select").append(suffix).append("(").append(keyModel.keyClause(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, "Old")).append(");");
     out.append("\n    }");
     return out.toString();
   }

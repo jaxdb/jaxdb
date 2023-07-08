@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 class ColumnModels extends LinkedHashSet<ColumnModel> {
   static final ColumnModels EMPTY_SET = new ColumnModels(null, 0);
   final TableModel table;
+  private String instanceNameForKey;
 
   ColumnModels(final TableModel table, final Collection<? extends ColumnModel> c) {
     super(c);
@@ -40,9 +41,20 @@ class ColumnModels extends LinkedHashSet<ColumnModel> {
     add(columnModel);
   }
 
+  @Override
+  public boolean add(final ColumnModel e) {
+    if (instanceNameForKey != null)
+      throw new IllegalStateException();
+
+    return super.add(e);
+  }
+
   String getInstanceNameForKey() {
+    if (instanceNameForKey != null)
+      return instanceNameForKey;
+
     if (size() == 0)
-      return "";
+      return instanceNameForKey = "";
 
     final StringBuilder b = new StringBuilder();
     final Iterator<ColumnModel> iterator = iterator();
@@ -53,7 +65,7 @@ class ColumnModels extends LinkedHashSet<ColumnModel> {
       b.append(iterator.next().camelCase);
     }
 
-    return b.toString();
+    return instanceNameForKey = b.toString();
   }
 
   String getInstanceNameForCache(final String classCase) {

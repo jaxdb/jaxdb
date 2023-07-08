@@ -109,6 +109,7 @@ class TableModel {
   final Table table;
   private final ColumnModel[] columns;
   private final LinkedHashMap<String,ColumnModel> columnNameToColumnModel;
+  private final KeyModels keyModels;
 
   private int totalAutoCount = 0;
   private int totalAutoOffset = 0;
@@ -159,12 +160,7 @@ class TableModel {
     }
     else {
       primaryKeyIndexType = null;
-      if (superTable != null) {
-        primaryKeyColumnNames = superTable.primaryKeyColumnNames;
-      }
-      else {
-        primaryKeyColumnNames = Collections.EMPTY_SET;
-      }
+      primaryKeyColumnNames = superTable != null ? superTable.primaryKeyColumnNames : Collections.EMPTY_SET;
     }
 
     final KeyForUpdate keyForUpdate = table.getJsqlKeyForUpdate();
@@ -175,16 +171,14 @@ class TableModel {
       for (int i = 0; i < noColumns; ++i) // [RA]
         keyForUpdateColumnNames.add(columns.get(i).getName$().text());
     }
-    else if (superTable != null) {
-      keyForUpdateColumnNames = superTable.keyForUpdateColumnNames;
-    }
     else {
-      keyForUpdateColumnNames = Collections.EMPTY_SET;
+      keyForUpdateColumnNames = superTable != null ? superTable.keyForUpdateColumnNames : Collections.EMPTY_SET;
     }
 
     this.columns = getColumnModels(this, primaryKeyColumnNames, 0);
 
     this.columnNameToColumnModel = new LinkedHashMap<>(columns.length);
+    this.keyModels = new KeyModels(columns.length);
     for (final ColumnModel column : columns) // [A]
       columnNameToColumnModel.put(column.name, column);
 
@@ -1207,6 +1201,8 @@ class TableModel {
       buf.append("        ").append(fieldName).append(".copy(t.").append(fieldName).append(");\n");
     }
 
+    keyModels.writeDeclare(out);
+
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table) { // TableModel.makeTable()\n");
     if (superTable != null)
@@ -1377,7 +1373,7 @@ class TableModel {
     for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
       final TableModel ancestor = ancestors.get(i);
       if (!ancestor.isAbstract) {
-        ancestor.columnsToRelations.getOrNew(columns).add(new Relation(schemaModel.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns))));
+        ancestor.columnsToRelations.getOrNew(columns).add(new Relation(schemaModel.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns)), keyModels));
       }
     }
   }
@@ -1388,13 +1384,13 @@ class TableModel {
     final boolean isReferencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);
 
     if (isUnique && isReferencesUnique)
-      return new OneToOneRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+      return new OneToOneRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign, keyModels);
 
     if (isUnique && !isReferencesUnique)
-      return new OneToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+      return new OneToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign, keyModels);
 
     if (!isUnique && isReferencesUnique)
-      return new ManyToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+      return new ManyToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign, keyModels);
 
     throw new UnsupportedOperationException("Is this even possible?");
   }
