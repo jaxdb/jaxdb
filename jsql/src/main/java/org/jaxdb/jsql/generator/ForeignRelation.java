@@ -18,6 +18,7 @@ package org.jaxdb.jsql.generator;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashSet;
 
 import org.jaxdb.jsql.CacheMap;
 
@@ -57,21 +58,25 @@ abstract class ForeignRelation extends Relation {
     return declarationNameForeign;
   }
 
-  String writeDeclaration(final String classSimpleName) {
+  String writeDeclaration(final String classSimpleName, final HashSet<String> declared, final String comment) {
     final String typeName = getType();
     final String declaredName = getDeclaredName();
-    return writeDeclaration(classSimpleName, typeName, declaredName, "");
+    return writeDeclaration(classSimpleName, typeName, declaredName, "", declared, comment);
   }
 
-  final String writeDeclaration(final String classSimpleName, final String typeName, final String declaredName, final String suffix) {
+  final String writeDeclaration(final String classSimpleName, final String typeName, final String declaredName, final String suffix, final HashSet<String> declared, final String comment) {
+    final String keyClause = keyModel.keyClause(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, CurOld.Old, false, declared, comment);
+    if (keyClause == null)
+      return null;
+
     final StringBuilder out = new StringBuilder();
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_CACHED() { // ForeignRelation.writeDeclaration(String,String,String,String)");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.get").append(suffix).append("(").append(keyModel.keyClause(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, "Old")).append(");");
+    out.append("\n      return cache == null ? null : cache.get").append(suffix).append("(").append(keyClause).append(");");
     out.append("\n    }\n");
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_SELECT() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" { // ForeignRelation.writeDeclaration(String,String,String,String)");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.select").append(suffix).append("(").append(keyModel.keyClause(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, "Old")).append(");");
+    out.append("\n      return cache == null ? null : cache.select").append(suffix).append("(").append(keyClause).append(");");
     out.append("\n    }");
     return out.toString();
   }

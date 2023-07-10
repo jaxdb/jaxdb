@@ -94,11 +94,11 @@ public abstract class OnSelectTest {
     assertTrue(TestConnectionFactory.called());
   }
 
-  private static void testTreeSingle(final Classicmodels classicmodels, final NavigableMap<data.Key,Classicmodels.Customer> map, final ArrayList<Short> customerNumbers, final boolean selectCalled) {
+  private static void testTreeSingle(final Classicmodels classicmodels, final NavigableMap<data.Key,Classicmodels.Customer> map, final ArrayList<Short> customerNumbers, final boolean selectCalled) throws IOException, SQLException {
     for (int i = 0, i$ = customerNumbers.size(); i < i$;) { // [RA]
       assertFalse(TestConnectionFactory.called());
       final short customerNumber = customerNumbers.get(i);
-      final Classicmodels.Customer c = classicmodels.Customer$.customerNumber_TO_Customer_CACHED(customerNumber);
+      final Classicmodels.Customer c = classicmodels.Customer$.customerNumber_TO_Customer_SELECT(customerNumber);
       assertEquals(selectCalled, TestConnectionFactory.called());
       ++i;
       assertEquals(selectCalled ? i : i$, map.size());
@@ -125,7 +125,7 @@ public abstract class OnSelectTest {
     final NavigableMap<data.Key,Classicmodels.Customer> map = classicmodels.Customer$._customerNumber_TO_CustomerMap$;
     assertEquals(0, map.size());
 
-    c = classicmodels.Customer$.customerNumber_TO_Customer_CACHED((short)0);
+    c = classicmodels.Customer$.customerNumber_TO_Customer_SELECT((short)0);
 
     assertTrue(TestConnectionFactory.called());
     assertEquals(0, map.size());
@@ -135,16 +135,16 @@ public abstract class OnSelectTest {
     testTreeSingle(classicmodels, map, customerNumbers, false);
   }
 
-  private static void testTreeRange(final Classicmodels classicmodels, final NavigableMap<data.Key,Classicmodels.Office> map, final boolean selectCalled) {
+  private static void testTreeRange(final Classicmodels classicmodels, final NavigableMap<data.Key,Classicmodels.Office> map, final boolean selectCalled) throws IOException, SQLException {
     assertFalse(TestConnectionFactory.called());
-    SortedMap<data.Key,Classicmodels.Office> sub = classicmodels.Office$.officeCode_TO_Office_CACHED(-3, 2);
+    SortedMap<data.Key,Classicmodels.Office> sub = classicmodels.Office$.officeCode_TO_Office_SELECT(-3, 2);
     assertEquals(selectCalled, TestConnectionFactory.called());
     assertEquals(selectCalled ? 1 : 7, map.size());
     assertEquals(1, sub.size());
     assertEquals(1, sub.values().iterator().next().officeCode.getAsInt());
 
     assertFalse(TestConnectionFactory.called());
-    sub = classicmodels.Office$.officeCode_TO_Office_CACHED(1, 4);
+    sub = classicmodels.Office$.officeCode_TO_Office_SELECT(1, 4);
     assertEquals(selectCalled, TestConnectionFactory.called());;
     assertEquals(selectCalled ? 3 : 7, map.size());
     assertEquals(3, sub.size());
@@ -153,7 +153,7 @@ public abstract class OnSelectTest {
       assertEquals(i, iterator.next().officeCode.getAsInt());
 
     assertFalse(TestConnectionFactory.called());
-    sub = classicmodels.Office$.officeCode_TO_Office_CACHED(5, 9);
+    sub = classicmodels.Office$.officeCode_TO_Office_SELECT(5, 9);
     assertEquals(selectCalled, TestConnectionFactory.called());;
     assertEquals(selectCalled ? 6 : 7, map.size());
     assertEquals(3, sub.size());
@@ -162,7 +162,7 @@ public abstract class OnSelectTest {
       assertEquals(i, iterator.next().officeCode.getAsInt());
 
     assertFalse(TestConnectionFactory.called());
-    sub = classicmodels.Office$.officeCode_TO_Office_CACHED(0, 20);
+    sub = classicmodels.Office$.officeCode_TO_Office_SELECT(0, 20);
     assertEquals(selectCalled, TestConnectionFactory.called());;
     assertEquals(7, map.size());
     assertEquals(7, sub.size());
@@ -173,11 +173,11 @@ public abstract class OnSelectTest {
 
   @Test
   @TestSpec(order = 2)
-  public void testTreeRange(final Classicmodels classicmodels) {
+  public void testTreeRange(final Classicmodels classicmodels) throws IOException, SQLException {
     final NavigableMap<data.Key,Classicmodels.Office> map = classicmodels.Office$._officeCode_TO_OfficeMap$;
     assertEquals(0, map.size());
 
-    final SortedMap<data.Key,Classicmodels.Office> sub = classicmodels.Office$.officeCode_TO_Office_CACHED(-5, 1);
+    final SortedMap<data.Key,Classicmodels.Office> sub = classicmodels.Office$.officeCode_TO_Office_SELECT(-5, 1);
 
     assertTrue(TestConnectionFactory.called());
     assertEquals(0, map.size());
@@ -190,11 +190,11 @@ public abstract class OnSelectTest {
   private static final String[] productLines = {"Classic Cars", "Motorcycles", "Planes", "Ships", "Trains", "Trucks and Buses", "Vintage Cars"};
   private static final int noProductLines = productLines.length;
 
-  private static void testHashSingle(final Classicmodels classicmodels, final Map<data.Key,Classicmodels.ProductLine> map, final boolean selectCalled) {
+  private static void testHashSingle(final Classicmodels classicmodels, final Map<data.Key,Classicmodels.ProductLine> map, final boolean selectCalled) throws IOException, SQLException {
     for (int i = 0; i < noProductLines;) { // [N]
       assertFalse(TestConnectionFactory.called());
       final String productLine = productLines[i];
-      final Classicmodels.ProductLine pl = classicmodels.ProductLine$.productLine_TO_ProductLine_CACHED(productLine);
+      final Classicmodels.ProductLine pl = classicmodels.ProductLine$.productLine_TO_ProductLine_SELECT(productLine);
       assertEquals(selectCalled, TestConnectionFactory.called());
       ++i;
       assertEquals(selectCalled ? i : noProductLines, map.size());
@@ -204,11 +204,11 @@ public abstract class OnSelectTest {
 
   @Test
   @TestSpec(order = 3)
-  public void testHashSingle(final Classicmodels classicmodels) {
+  public void testHashSingle(final Classicmodels classicmodels) throws IOException, SQLException {
     final Map<data.Key,Classicmodels.ProductLine> map = classicmodels.ProductLine$._productLine_TO_ProductLineMap$;
     assertEquals(0, map.size());
 
-    final Classicmodels.ProductLine pl = classicmodels.ProductLine$.productLine_TO_ProductLine_CACHED("foo");
+    final Classicmodels.ProductLine pl = classicmodels.ProductLine$.productLine_TO_ProductLine_SELECT("foo");
 
     assertTrue(TestConnectionFactory.called());
     assertEquals(0, map.size());
@@ -229,10 +229,10 @@ public abstract class OnSelectTest {
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(rows.nextEntity().getAsLong(), classicmodels.Product$.code_TO_Product_CACHED().size());
+      assertEquals(rows.nextEntity().getAsLong(), classicmodels.Product$.code_TO_Product_SELECT().size());
 
-      for (final Classicmodels.Product pr : classicmodels.Product$.code_TO_Product_CACHED().values()) // [C]
-        assertNotNull(pr.productLine_TO_productLine_ON_ProductLine_CACHED());
+      for (final Classicmodels.Product pr : classicmodels.Product$.code_TO_Product_SELECT().values()) // [C]
+        assertNotNull(pr.productLine_TO_productLine_ON_ProductLine_SELECT());
     }
   }
 
@@ -247,47 +247,47 @@ public abstract class OnSelectTest {
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(rows.nextEntity().getAsLong(), classicmodels.Employee$.employeeNumber_TO_Employee_CACHED().size());
+      assertEquals(rows.nextEntity().getAsLong(), classicmodels.Employee$.employeeNumber_TO_Employee_SELECT().size());
 
-      for (final Classicmodels.Employee em : classicmodels.Employee$.employeeNumber_TO_Employee_CACHED().values()) // [C]
-        assertNotNull(em.officeCode_TO_officeCode_ON_Office_CACHED());
+      for (final Classicmodels.Employee em : classicmodels.Employee$.employeeNumber_TO_Employee_SELECT().values()) // [C]
+        assertNotNull(em.officeCode_TO_officeCode_ON_Office_SELECT());
     }
   }
 
   @Test
   @TestSpec(order = 6)
-  public void testTreeTwoDimensions(final Classicmodels classicmodels) {
+  public void testTreeTwoDimensions(final Classicmodels classicmodels) throws IOException, SQLException {
     try {
-      classicmodels.PurchaseDetail$.purchaseNumber_productCode_TO_PurchaseDetail_CACHED(10100, 10114, "S10_1678", "S10_1950");
+      classicmodels.PurchaseDetail$.purchaseNumber_productCode_TO_PurchaseDetail_SELECT(10100, 10114, "S10_1678", "S10_1950");
       fail("Expected UnsupportedOperationException");
     }
     catch (final UnsupportedOperationException e) {
     }
 
     assertFalse(TestConnectionFactory.called());
-    classicmodels.PurchaseDetail$.purchaseNumber_productCode_TO_PurchaseDetail_CACHED(10110, "S24_3969");
+    classicmodels.PurchaseDetail$.purchaseNumber_productCode_TO_PurchaseDetail_SELECT(10110, "S24_3969");
     assertTrue(TestConnectionFactory.called());
-    final Classicmodels.PurchaseDetail pd0 = classicmodels.PurchaseDetail$.purchaseNumber_productCode_TO_PurchaseDetail_CACHED(10110, "S24_3969");
+    final Classicmodels.PurchaseDetail pd0 = classicmodels.PurchaseDetail$.purchaseNumber_productCode_TO_PurchaseDetail_SELECT(10110, "S24_3969");
     assertFalse(TestConnectionFactory.called());
-    assertNotNull(pd0.productCode_TO_code_ON_Product_CACHED());
+    assertNotNull(pd0.productCode_TO_code_ON_Product_SELECT());
     assertFalse(TestConnectionFactory.called());
-    Classicmodels.Purchase p = pd0.purchaseNumber_TO_purchaseNumber_ON_Purchase_CACHED();
+    Classicmodels.Purchase p = pd0.purchaseNumber_TO_purchaseNumber_ON_Purchase_SELECT();
     assertNotNull(p);
     assertTrue(TestConnectionFactory.called());
 
     assertFalse(TestConnectionFactory.called());
-    final Map<data.Key,Classicmodels.PurchaseDetail> map = p.purchaseNumber_TO_purchaseNumber_ON_PurchaseDetail_CACHED();
+    final Map<data.Key,Classicmodels.PurchaseDetail> map = p.purchaseNumber_TO_purchaseNumber_ON_PurchaseDetail_SELECT();
     assertTrue(TestConnectionFactory.called());
     assertEquals(16, map.size());
-    p.purchaseNumber_TO_purchaseNumber_ON_PurchaseDetail_CACHED();
+    p.purchaseNumber_TO_purchaseNumber_ON_PurchaseDetail_SELECT();
     assertFalse(TestConnectionFactory.called());
 
     for (final Classicmodels.PurchaseDetail pd1 : map.values()) { // [C]
-      assertSame(p, pd1.purchaseNumber_TO_purchaseNumber_ON_Purchase_CACHED());
+      assertSame(p, pd1.purchaseNumber_TO_purchaseNumber_ON_Purchase_SELECT());
       assertFalse(TestConnectionFactory.called());
     }
 
-    assertNotNull(p.customerNumber_TO_customerNumber_ON_Customer_CACHED());
+    assertNotNull(p.customerNumber_TO_customerNumber_ON_Customer_SELECT());
     assertFalse(TestConnectionFactory.called());
   }
 

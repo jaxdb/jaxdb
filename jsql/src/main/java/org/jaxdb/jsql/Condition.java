@@ -21,7 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 import org.jaxdb.vendor.DbVendor;
 import org.libj.util.DiscreteTopology;
@@ -192,7 +191,7 @@ public abstract class Condition<V> extends data.Primitive<V> {
     super(owner, mutable, copy);
   }
 
-  Condition(final data.Table owner, final boolean mutable, final String name, final data.IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends data.Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+  Condition(final data.Table owner, final boolean mutable, final String name, final data.IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends data.Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
     super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
   }
 

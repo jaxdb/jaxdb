@@ -16,16 +16,18 @@
 
 package org.jaxdb.jsql.generator;
 
+import java.util.HashSet;
+
 class OneToManyRelation extends ForeignRelation {
   OneToManyRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign, final KeyModels keyModels) {
     super(schemaClassName, sourceTable, tableModel, columns, referenceTable, referenceColumns, indexType, indexTypeForeign, keyModels);
   }
 
   @Override
-  String writeDeclaration(final String classSimpleName) {
+  String writeDeclaration(final String classSimpleName, final HashSet<String> declared, final String comment) {
     final String typeName = indexTypeForeign.isUnique ? declarationNameForeign : getType();
     final String declaredName = indexTypeForeign.isUnique ? declarationNameForeign : getDeclaredName();
-    return writeDeclaration(classSimpleName, typeName, declaredName, "");
+    return writeDeclaration(classSimpleName, typeName, declaredName, "", declared, comment);
   }
 
   @Override

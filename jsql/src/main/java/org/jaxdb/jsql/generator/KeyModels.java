@@ -16,9 +16,13 @@
 
 package org.jaxdb.jsql.generator;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.generator.Relation.CurOld;
 
 class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
   class KeyModel {
@@ -83,16 +87,85 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
       }
     }
 
-    private void include(final String fieldName, final String name, final String args) {
-      declare.add("    private " + data.Key.class.getCanonicalName() + " " + name + ";\n\n    " + data.Key.class.getCanonicalName() + " " + name + "() {\n      return " + name + " == null ? " + name + " = " + data.Key.class.getCanonicalName() + ".with(" + fieldName + ", " + args + ") : " + name + ";\n    }\n");
-      clear.add(name + " = null;");
+    private final String[] declare = new String[2];
+    private final boolean[] declareCalled = new boolean[2];
+
+    private final String[] reset = new String[2];
+    private final boolean[] resetCalled = new boolean[2];
+
+    String getReset(final CurOld curlOld) {
+      if ("self._accountIdBy_TO_accountIdBy_ON_EmailOld_Key$ = null;".equals(reset[curlOld.ordinal()]))
+        System.err.println();
+      final String reset = this.reset[curlOld.ordinal()];
+      if (reset == null)
+        return null;
+
+      resetCalled[curlOld.ordinal()] = true;
+      return reset;
     }
 
-    String keyArgs() {
+    void audit() {
+//      if (this.declare[0] != null && !this.declareCalled[0])
+//        throw new IllegalStateException();
+
+//      if (this.declare[1] != null && !this.declareCalled[1])
+//        throw new IllegalStateException();
+
+      if (this.reset[0] != null && !this.resetCalled[0])
+        throw new IllegalStateException();
+
+//      if (this.reset[1] != null && !this.resetCalled[1])
+//        throw new IllegalStateException();
+    }
+
+    private String include(final String fieldName, final String name, final String args, final CurOld curlOld) {
+      final String declare = "    private " + data.Key.class.getCanonicalName() + " " + name + ";\n\n    " + data.Key.class.getCanonicalName() + " " + name + "() {\n      return " + name + " == null ? " + name + " = " + data.Key.class.getCanonicalName() + ".with(" + fieldName + ", " + args + ") : " + name + ";\n    }\n";
+      if (declare.contains("CameraType$._make_model_TO_CameraTypeIndex$, make, model"))
+        System.err.println();
+      if (declare.contains("Ec$._cameraTypeMake_cameraTypeModel_TO_EcIndex$, cameraTypeMake, cameraTypeModel"))
+        System.err.println();
+      if (curlOld == null) { // Means that resetting the key is not supported (i.e. it is a MutableKey)
+        declarations.put(declare, () -> {});
+      }
+      else {
+        if (this.declare[curlOld.ordinal()] == null) {
+          this.declare[curlOld.ordinal()] = declare;
+          if (this.declareCalled[curlOld.ordinal()])
+            throw new IllegalStateException();
+
+          declarations.put(declare, () -> declareCalled[curlOld.ordinal()] = true);
+        }
+        else if (!this.declare[curlOld.ordinal()].equals(declare)) {
+//          throw new IllegalStateException(this.declare[curlOld.ordinal()] + "\n" + declare);
+        }
+
+        final String reset = "self." + name + " = null;";
+        if (this.reset[curlOld.ordinal()] == null) {
+          this.reset[curlOld.ordinal()] = reset;
+          if (reset.equals("self._accountIdBy_TO_accountIdBy_ON_EmailOld_Key$ = null;"))
+            System.err.println();
+          if (this.resetCalled[curlOld.ordinal()])
+            throw new IllegalStateException();
+        }
+        else if (!this.reset[curlOld.ordinal()].equals(reset)) {
+//          throw new IllegalStateException(this.reset[curlOld.ordinal()] + "\n" + reset);
+        }
+      }
+
+      return name + "()";
+    }
+
+    String keyArgs(final HashSet<String> declared) {
       if (keyArgs == null)
         return null;
 
-      return data.Key.class.getCanonicalName() + ".with(" + indexFieldName + ", " + keyArgs + ")";
+      if (!declared.add(indexFieldName))
+        return null;
+
+//      if (isForeign)
+        return data.Key.class.getCanonicalName() + ".with(" + indexFieldName + ", " + keyArgs + ")";
+
+//      return include(indexFieldName, "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, toTableRefName) + "_Key$", keyArgs, null);
     }
 
     String rangeArgs() {
@@ -102,18 +175,21 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
       return data.Key.class.getCanonicalName() + ".with(" + indexFieldName + ", " + fromArgs + "), " + data.Key.class.getCanonicalName() + ".with(" + indexFieldName + ", " + toArgs + ")";
     }
 
-    String keyClause(final String cacheSingletonName, final String cacheMethodName, final String toTableRefName, final String replace1, final String replace2) {
+    String keyClause(final String cacheSingletonName, final String cacheMethodName, final String toTableRefName, final String replace1, final CurOld curlOld, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
+      final String args = keyClauseValues.replace("{1}", replace1).replace("{2}", curlOld.toString());
       final String cacheColumnsRef = cacheSingletonName + "._" + ColumnModels.getInstanceNameForCache(cacheMethodName, toTableRefName) + "Index$";
-      if (!isForeign) {
-        final String argsXX = keyClauseValues.replace("{1}.this.", "").replace("{2}", replace2);
-        final String xxx = argsXX.replace(".get" + replace2, "").replace("()", "_").replace(", ", "");
-        final String prefix = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, xxx) + "ON_" + toTableRefName + replace2;
-        final String name = prefix + "_Key$";
-        include(cacheColumnsRef, name, argsXX);
-      }
+      if (!declared.add(cacheColumnsRef + ":" + args))
+        return null;
 
-      final String args = keyClauseValues.replace("{1}", replace1).replace("{2}", replace2);
-      return data.Key.class.getCanonicalName() + ".with(" + cacheColumnsRef + ", " + args + ")";
+//      if (isForeign) {
+        return data.Key.class.getCanonicalName() + ".with(" + cacheColumnsRef + ", " + args + ")";
+//      }
+
+//      final String argsXX = keyClauseValues.replace("{1}.this.", "").replace("{2}", curlOld.toString());
+//      final String xxx = argsXX.replace(".get" + curlOld, "").replace("()", "_").replace(", ", "");
+//      final String prefix = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, xxx) + "ON_" + toTableRefName + curlOld;
+//      final String name = prefix + "_Key$";
+//      return (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, argsXX, curlOld) + "/* " + comment + "*/";
     }
 
     @Override
@@ -134,13 +210,11 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
     }
   }
 
-  private final LinkedHashSet<String> declare;
-  private final LinkedHashSet<String> clear;
+  private final LinkedHashMap<String,Runnable> declarations;
 
   KeyModels(int initialCapacity) {
     super(initialCapacity);
-    this.declare = new LinkedHashSet<>(initialCapacity);
-    this.clear = new LinkedHashSet<>(initialCapacity);
+    this.declarations = new LinkedHashMap<>(initialCapacity);
   }
 
   KeyModel add(final boolean isForeign, final String singletonInstanceName, final String cacheMethodName, final String toTableRefName, final ColumnModels columns, final IndexType indexType) {
@@ -150,19 +224,13 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
   }
 
   void writeDeclare(final StringBuilder out) {
-    if (true || declare.size() == 0)
-      return;
-
-    for (final String str : declare)
-      out.append(str).append('\n');
-  }
-
-  void writeClear(final StringBuilder out, final String indent) {
-    if (clear.size() == 0)
+    if (declarations.size() == 0)
       return;
 
     out.append('\n');
-    for (final String str : clear)
-      out.append(indent).append(str).append('\n');
+    for (final Map.Entry<String,Runnable> entry : declarations.entrySet()) {
+      out.append(entry.getKey()).append('\n');
+      entry.getValue().run();
+    }
   }
 }

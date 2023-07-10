@@ -16,15 +16,21 @@
 
 package org.jaxdb.jsql.generator;
 
+import java.util.HashSet;
+
 class ManyToManyRelation extends ForeignRelation {
   ManyToManyRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign, final KeyModels keyModels) {
     super(schemaClassName, sourceTable, tableModel, columns, referenceTable, referenceColumns, indexType, indexTypeForeign, keyModels);
   }
 
   @Override
-  String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
+    final String keyClause = keyModel.keyClause(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, curOld, addSelfRef, declared, comment);
+    if (keyClause == null)
+      return null;
+
     final String method = indexType.isUnique ? "put$" : "add$";
-    return writeNullCheckClause(classSimpleName, curOld) + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyModel.keyClause(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, curOld.toString()) + ", " + classSimpleName + ".this); // ManyToManyRelation.writeCacheInsert(String,CurlOld)";
+    return writeNullCheckClause(classSimpleName, curOld) + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause + ", " + classSimpleName + ".this); // ManyToManyRelation.writeCacheInsert(String,CurlOld)";
   }
 
   @Override

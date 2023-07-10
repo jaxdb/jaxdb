@@ -36,7 +36,7 @@ final class GeneratorUtil {
   static final Object MUTABLE = new Object();
   static final Object PRIMARY_KEY = new Object();
   static final Object KEY_FOR_UPDATE = new Object();
-  static final Object COMMIT_UPDATE = new Object();
+  static final Object COMMIT_UPDATE_CHANGE = new Object();
 
   private static StringBuilder indent(final StringBuilder b, final int depth) {
     for (int i = 0, i$ = depth * 2; i < i$; ++i) // [N]

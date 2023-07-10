@@ -28,7 +28,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
@@ -79,6 +78,7 @@ import org.w3.www._2001.XMLSchema.yAA;
 
 class TableModel {
   private static final Logger logger = LoggerFactory.getLogger(TableModel.class);
+  private static final String onModifyClassName = data.class.getPackage().getName() + ".OnModify";
   private final Set<String> primaryKeyColumnNames;
   private final IndexType primaryKeyIndexType;
   private final Set<String> keyForUpdateColumnNames;
@@ -359,7 +359,7 @@ class TableModel {
 
     final boolean isPrimary = primaryKeyColumnNames.contains(columnName);
     final boolean isKeyForUpdate = tableModel.keyForUpdateColumnNames.contains(columnName);
-    final Object[] commonParams = {THIS, MUTABLE, "\"" + column.getName$().text() + "\"", PRIMARY_KEY, KEY_FOR_UPDATE, COMMIT_UPDATE, isNull(column)};
+    final Object[] commonParams = {THIS, MUTABLE, "\"" + column.getName$().text() + "\"", PRIMARY_KEY, KEY_FOR_UPDATE, COMMIT_UPDATE_CHANGE, isNull(column)};
     if (column instanceof $Char) {
       final $Char col = ($Char)column;
       if (col.getSqlxGenerateOnInsert$() != null) {
@@ -802,10 +802,21 @@ class TableModel {
 
       {
         out.append("\n    // CACHE DECLARE");
-        if (allRelations.size() > 0)
-          for (final LinkedHashSet<Relation> relations : allRelations) // [C]
-            for (final Relation relation : relations) // [S]
-              write("\n", relation.writeCacheDeclare(keyClauseColumnAssignments), out, declared);
+        if (allRelations.size() > 0) {
+          for (final Relations<Relation> relations : allRelations) { // [C]
+            for (final Relation relation : relations) { // [S]
+              if (relation.isDeclaredOnSourceTable())
+                write("\n", relation.writeCacheDeclare(keyClauseColumnAssignments, declared), out, declared);
+            }
+          }
+
+          for (final Relations<Relation> relations : allRelations) { // [C]
+            for (final Relation relation : relations) { // [S]
+              if (!relation.isDeclaredOnSourceTable())
+                write("\n", relation.writeCacheDeclare(keyClauseColumnAssignments, declared), out, declared);
+            }
+          }
+        }
 
         if (declared.size() > 0)
           out.append('\n');
@@ -823,7 +834,7 @@ class TableModel {
         out.append("\n      _cacheEnabled$ = true;\n");
 
         if (allRelations.size() > 0)
-          for (final LinkedHashSet<Relation> relations : allRelations) // [C]
+          for (final Relations<Relation> relations : allRelations) // [C]
             for (final Relation relation : relations) // [S]
               write("\n      ", relation.writeCacheInit(), out, declared);
 
@@ -859,14 +870,14 @@ class TableModel {
         declared.clear();
 
         if (allRelations.size() > 0) {
-          for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+          for (final Relations<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
               // Only write the declaration if the source of the relation came from this table, or an unrelated table.
               // This avoids sub-tables overriding the same declaration of super-tables.
               if (relation instanceof ForeignRelation) {
                 final ForeignRelation foreign = (ForeignRelation)relation;
                 if (!foreign.referenceTable.isAbstract)
-                  write("\n", foreign.writeDeclaration(classSimpleName), out, declared);
+                  write("\n", foreign.writeDeclaration(classSimpleName, declared, "%FOREIGN%"), out, declared);
               }
             }
           }
@@ -885,7 +896,7 @@ class TableModel {
         out.append("\n        return;\n");
         out.append("\n      getCache().addKey(").append(data.Key.class.getCanonicalName()).append(".ALL);");
         if (allRelations.size() > 0) {
-          for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+          for (final Relations<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
               write("\n      ", relation.writeCacheSelectAll(), out, declared);
             }
@@ -903,9 +914,9 @@ class TableModel {
         if (allRelations.size() > 0) {
           out.append("      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
           out.append("\n        return;\n");
-          for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+          for (final Relations<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
-              write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur), out, declared);
+              write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur, false, declared, "%LOCAL%"), out, declared);
             }
           }
 
@@ -935,7 +946,7 @@ class TableModel {
           declared.clear();
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
-            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Cur), out, declared);
+            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Cur, false, declared, "%LOCAL%"), out, declared);
           }
 
           if (declared.size() > 0)
@@ -1000,13 +1011,13 @@ class TableModel {
       out.append("\n    }\n");
     }
 
-    final String[] commitUpdates;
+    final String[] commitUpdateChanges;
 
     if (isAbstract) {
-      commitUpdates = null;
+      commitUpdateChanges = null;
     }
     else {
-      commitUpdates = new String[columns.length];
+      commitUpdateChanges = new String[columns.length];
       final StringBuilder ocb = new StringBuilder();
       for (int i = 0; i < columns.length; ++i) { // [A]
         final ColumnModel columnModel = columns[i];
@@ -1045,53 +1056,91 @@ class TableModel {
               onChangeRelationsForColumn.addAll(entry.getValue());
 
         if (onChangeRelationsForColumn.size() == 0) {
-          commitUpdates[i] = null;
-          continue;
+          commitUpdateChanges[i] = null;
         }
+        else {
+          final HashSet<String> declared2 = new HashSet<>();
 
-        final HashSet<String> declared2 = new HashSet<>();
+          ocb.append("\n        new ").append(onModifyClassName).append('<').append(className).append(">() {");
+          ocb.append("\n          @").append(Override.class.getName());
+          ocb.append("\n          public void update(final ").append(className).append(" self) {");
+          ocb.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          ocb.append("\n              return;\n");
 
-        ocb.append("\n        new ").append(Consumer.class.getName()).append('<').append(className).append(">() {\n          @").append(Override.class.getName());
-        ocb.append("\n          public void accept(final ").append(className).append(" self) {");
-        ocb.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
-        ocb.append("\n              return;\n");
-        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Old), ocb, declared2);
-        }
+          for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+            final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+            write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Old, true, declared2, "%LOCAL%"), ocb, declared2);
+          }
 
-        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
-        }
+          for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+            final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+            write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2, "%LOCAL%"), ocb, declared2);
+          }
 
-        if (primaryKeyColumnNames.contains(columnModel.name) && columnsToRelations.size() > 0) {
-          for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
-            final LinkedHashSet<Relation> relations = entry.getValue();
-            for (final Relation relation : relations) { // [S]
-              if (relation instanceof ForeignRelation) {
-                final ForeignRelation foreign = (ForeignRelation)relation;
+          if (primaryKeyColumnNames.contains(columnModel.name) && columnsToRelations.size() > 0) {
+            for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
+              final Relations<Relation> relations = entry.getValue();
+              for (final Relation relation : relations) { // [S]
+                if (relation instanceof ForeignRelation) {
+                  final ForeignRelation foreign = (ForeignRelation)relation;
 
-                if (entry.getKey().contains(columnModel) || relation instanceof ManyToManyRelation) {
-                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, CurOld.Old), ocb, declared2);
-                  write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
+                  if (entry.getKey().contains(columnModel) || relation instanceof ManyToManyRelation) {
+                    write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, CurOld.Old, true, declared2, "%FOREIGN%"), ocb, declared2);
+                    write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2, "%FOREIGN%"), ocb, declared2);
+                  }
+
+    //                    for (final Foreign reverse : relation.reverses) { // [?]
+    //                      if (reverse.referencesColumns.contains(columnModel))
+    //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, CurOld.Old), "\n", ocb, declared);
+    //                    }
                 }
-
-  //                    for (final Foreign reverse : relation.reverses) { // [?]
-  //                      if (reverse.referencesColumns.contains(columnModel))
-  //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, CurOld.Old), "\n", ocb, declared);
-  //                    }
               }
             }
           }
+          ocb.append("\n          }");
+
+          final StringBuilder changeBuilder = new StringBuilder();
+          declared2.clear();
+
+          changeBuilder.append("\n\n          @").append(Override.class.getName());
+          changeBuilder.append("\n          public void change(final ").append(className).append(" self) {");
+          changeBuilder.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          changeBuilder.append("\n              return;\n");
+          for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+            final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+            write("\n            ", onChangeRelation.keyModel.getReset(CurOld.Cur), changeBuilder, declared2);
+          }
+          changeBuilder.append("\n          }");
+
+          if (declared2.size() > 0) {
+            ocb.append(changeBuilder);
+            changeBuilder.setLength(0);
+            declared2.clear();
+          }
+
+          changeBuilder.append("\n\n          @").append(Override.class.getName());
+          changeBuilder.append("\n          public void changeOld(final ").append(className).append(" self) {");
+          changeBuilder.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          changeBuilder.append("\n              return;\n");
+          for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+            final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+            write("\n            ", onChangeRelation.keyModel.getReset(CurOld.Old), changeBuilder, declared2);
+          }
+          changeBuilder.append("\n          }");
+
+          if (declared2.size() > 0) {
+            ocb.append(changeBuilder);
+            changeBuilder.setLength(0);
+            declared2.clear();
+          }
+
+          ocb.append("\n        }");
+
+          // FIXME: Wow, what a hack!
+          Strings.replace(ocb, classSimpleName + ".this", "self");
+          commitUpdateChanges[i] = ocb.toString();
+          ocb.setLength(0);
         }
-
-        ocb.append("\n          }\n        }");
-
-        // FIXME: Wow, what a hack!
-        Strings.replace(ocb, classSimpleName + ".this", "self");
-        commitUpdates[i] = ocb.toString();
-        ocb.setLength(0);
       }
     }
 
@@ -1114,15 +1163,15 @@ class TableModel {
     final StringBuilder parameters = new StringBuilder();
     for (int i = 0; i < columns.length; ++i) { // [A]
       final ColumnModel column = columns[i];
-      parameters.append(", final ").append(Consumer.class.getName()).append("<? extends ").append(column.tableModel.className).append("> ").append(column.instanceCase);
-      init.append(", (").append(Consumer.class.getName()).append(")null");
+      parameters.append(", final ").append(onModifyClassName).append("<? extends ").append(column.tableModel.className).append("> ").append(column.instanceCase);
+      init.append(", (").append(onModifyClassName).append(")null");
     }
 
     final StringBuilder arguments = new StringBuilder();
     for (int s = columns.length - noColumnsLocal, i = 0; i < s; ++i) { // [A]
       arguments.append(", ").append(columns[i].instanceCase);
-      if (commitUpdates != null && commitUpdates[i] != null)
-        arguments.append(" != null ? ").append(columns[i].instanceCase).append(" : ").append(commitUpdates[i]);
+      if (commitUpdateChanges != null && commitUpdateChanges[i] != null)
+        arguments.append(" != null ? ").append(columns[i].instanceCase).append(" : ").append(commitUpdateChanges[i]);
     }
 
     out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) { // TableModel.makeTable()");
@@ -1179,7 +1228,7 @@ class TableModel {
           out.append(" = this.");
 
           if (x == 0)
-            columnModel.assignConstructor(out, i, commitUpdates == null ? null : commitUpdates[i]);
+            columnModel.assignConstructor(out, i, commitUpdateChanges == null ? null : commitUpdateChanges[i]);
           else
             columnModel.assignCopyConstructor(out);
 
@@ -1201,7 +1250,7 @@ class TableModel {
       buf.append("        ").append(fieldName).append(".copy(t.").append(fieldName).append(");\n");
     }
 
-    keyModels.writeDeclare(out);
+//    keyModels.writeDeclare(out);
 
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table) { // TableModel.makeTable()\n");
@@ -1365,6 +1414,13 @@ class TableModel {
     }
 
     out.append("  }");
+
+    // Audit
+    for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
+      for (final Relation relation : entry.getValue()) { // [S]
+        relation.keyModel.audit();
+      }
+    }
 
     return out.toString();
   }
