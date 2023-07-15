@@ -276,7 +276,7 @@ public final class Callbacks implements Closeable {
         try {
           int i = 0; do
             onExecutes.get(i).accept(count);
-          while (++i < size); // [RA]
+          while (++i < size);
         }
         finally {
           onExecutes.clear();
@@ -293,7 +293,7 @@ public final class Callbacks implements Closeable {
         try {
           int i = 0; do
             onCommits.get(i).accept(count);
-          while (++i < size); // [RA]
+          while (++i < size);
         }
         finally {
           onCommits.clear();

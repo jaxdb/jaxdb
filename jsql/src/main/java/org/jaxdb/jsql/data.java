@@ -5295,7 +5295,12 @@ public final class data {
     public abstract Table clone();
     abstract Table clone(boolean _mutable$);
     @Override
-    public abstract boolean equals(final Object obj);
+    public abstract boolean equals(Object obj);
+
+    /**
+     * Returns the table name.
+     * @return The table name.
+     */
     public abstract String getName();
     @Override
     abstract Schema getSchema();

@@ -421,7 +421,7 @@ public final class statement {
       }
 
       abstract String[] getSessionId();
-      public abstract boolean awaitNotify(final long timeout) throws InterruptedException;
+      public abstract boolean awaitNotify(long timeout) throws InterruptedException;
     }
 
     public static class NotifiableBatchResult extends NotifiableResult {

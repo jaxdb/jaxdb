@@ -94,8 +94,6 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
     private final boolean[] resetCalled = new boolean[2];
 
     String getReset(final CurOld curlOld) {
-      if ("self._accountIdBy_TO_accountIdBy_ON_EmailOld_Key$ = null;".equals(reset[curlOld.ordinal()]))
-        System.err.println();
       final String reset = this.reset[curlOld.ordinal()];
       if (reset == null)
         return null;
@@ -120,10 +118,6 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
 
     private String include(final String fieldName, final String name, final String args, final CurOld curlOld) {
       final String declare = "    private " + data.Key.class.getCanonicalName() + " " + name + ";\n\n    " + data.Key.class.getCanonicalName() + " " + name + "() {\n      return " + name + " == null ? " + name + " = " + data.Key.class.getCanonicalName() + ".with(" + fieldName + ", " + args + ") : " + name + ";\n    }\n";
-      if (declare.contains("CameraType$._make_model_TO_CameraTypeIndex$, make, model"))
-        System.err.println();
-      if (declare.contains("Ec$._cameraTypeMake_cameraTypeModel_TO_EcIndex$, cameraTypeMake, cameraTypeModel"))
-        System.err.println();
       if (curlOld == null) { // Means that resetting the key is not supported (i.e. it is a MutableKey)
         declarations.put(declare, () -> {});
       }
@@ -142,8 +136,6 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
         final String reset = "self." + name + " = null;";
         if (this.reset[curlOld.ordinal()] == null) {
           this.reset[curlOld.ordinal()] = reset;
-          if (reset.equals("self._accountIdBy_TO_accountIdBy_ON_EmailOld_Key$ = null;"))
-            System.err.println();
           if (this.resetCalled[curlOld.ordinal()])
             throw new IllegalStateException();
         }

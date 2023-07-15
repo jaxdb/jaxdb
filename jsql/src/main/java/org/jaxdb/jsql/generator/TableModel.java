@@ -1269,7 +1269,7 @@ class TableModel {
 
     if (isAbstract) {
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    abstract ").append(className).append(" clone(final boolean _mutable$);\n");
+      out.append("\n    abstract ").append(className).append(" clone(boolean _mutable$);\n");
       out.append("\n    @").append(Override.class.getName());
       out.append("\n    public abstract ").append(className).append(" clone();");
     }
