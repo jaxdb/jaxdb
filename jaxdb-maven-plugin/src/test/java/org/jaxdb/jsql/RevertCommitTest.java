@@ -34,7 +34,7 @@ public class RevertCommitTest {
     final String name = t.getClass().getSimpleName();
     assertTrue(name, t.isNull());
     assertNull(name, t.get());
-    assertFalse(name, t.set());
+    assertFalse(name, t.cued());
 
     assertTrue(name, t.set(v1));
     assertFalse(name, t.set(v1));
@@ -42,21 +42,21 @@ public class RevertCommitTest {
     assertTrue(name, t.changed);
     assertFalse(name, t.set(v1));
     assertFalse(name, t.isNull());
-    assertTrue(name, t.set());
+    assertTrue(name, t.cued());
     assertEquals(name, v1, t.get());
 
     t.revert();
     assertFalse(name, t.changed);
     assertTrue(name, t.isNull());
     assertNull(name, t.get());
-    assertFalse(name, t.set());
+    assertFalse(name, t.cued());
 
     assertTrue(name, t.set(v1));
     assertTrue(name, t.changed);
     assertFalse(name, t.set(v1));
     assertFalse(name, t.isNull());
-    assertTrue(name, t.set());
-    assertTrue(name, t.set());
+    assertTrue(name, t.cued());
+    assertTrue(name, t.cued());
     assertEquals(name, v1, t.get());
 
     t._commitEntity$();
@@ -64,7 +64,7 @@ public class RevertCommitTest {
     t.revert();
     assertFalse(name, t.changed);
     assertFalse(name, t.isNull());
-    assertTrue(name, t.set());
+    assertTrue(name, t.cued());
     assertEquals(name, v1, t.get());
 
     assertTrue(name, t.set(v2));
@@ -75,13 +75,13 @@ public class RevertCommitTest {
     assertTrue(name, t.changed);
     assertFalse(name, t.set(v2));
     assertFalse(name, t.isNull());
-    assertTrue(name, t.set());
+    assertTrue(name, t.cued());
     assertEquals(name, v2, t.get());
 
     t.revert();
     assertFalse(name, t.changed);
     assertFalse(name, t.isNull());
-    assertTrue(name, t.set());
+    assertTrue(name, t.cued());
     assertEquals(name, v1, t.get());
   }
 

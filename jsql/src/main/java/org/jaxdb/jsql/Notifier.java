@@ -254,7 +254,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
             queue.add(new Notification<>(sessionId, timestamp, entry.getKey(), action, null, old));
           }
           else {
-            old.merge(cur);
+            old.merge$(cur);
             queue.add(new Notification<>(sessionId, timestamp, entry.getKey(), action, (Map<String,String>)json.get("keyForUpdate"), old));
           }
 

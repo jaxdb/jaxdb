@@ -310,7 +310,7 @@ public abstract class NumericValueExpressionTest {
 
       // If version is wrong, but version.wasSet is false
       c.version.set(0);
-      c.version.reset();
+      c.version.cue(false);
       assertEquals(1,
         UPDATE(c)
           .execute(transaction)

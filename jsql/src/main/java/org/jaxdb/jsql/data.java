@@ -1939,11 +1939,28 @@ public final class data {
     void onChange() {
     }
 
-    public final boolean reset() {
-      final boolean wasSet = setByCur != null;
-      changed = false;
-      setByCur = null;
-      return wasSet;
+    /**
+     * Cue {@code this} {@link Column} for its value to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and
+     * {@code DELETE} statements.
+     *
+     * @param to The value to which {@code this} {@link Column}'s cue value is to be set.
+     * @return {@code true} if the execution of this method resulted in a change to the cue state of {@code this} {@link Column},
+     *         otherwise {@code false}.
+     */
+    public final boolean cue(final boolean to) {
+      final boolean changed;
+      if (to) {
+        changed = setByCur == null;
+        // this.changed = false;
+        setByCur = SetBy.USER;
+      }
+      else {
+        changed = setByCur != null;
+        this.changed = false;
+        setByCur = null;
+      }
+
+      return changed;
     }
 
     void resetPrimaryKey() {
@@ -1953,6 +1970,11 @@ public final class data {
       table._primaryKeyImmutable$ = null;
       if (setByOld == null)
         table._primaryKeyOldImmutable$ = null;
+    }
+
+    public final boolean revert(final boolean andCue) {
+      revert();
+      return cue(andCue);
     }
 
     final void set(final type.Column<V> ref) {
@@ -1984,12 +2006,14 @@ public final class data {
     }
 
     /**
-     * Returns {@code true} if this {@link Column}'s value was set, otherwise {@code false}.
+     * Returns {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT},
+     * {@code UPDATE}, and {@code DELETE} statements, otherwise {@code false}.
      *
-     * @return {@code true} if this {@link Column}'s value was set, otherwise {@code false}.
-     * @implNote A {@link Column}'s value may be set by either the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system}.
+     * @return {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT},
+     *         {@code UPDATE}, and {@code DELETE} statements., otherwise {@code false}.
+     * @implNote A {@link Column}'s value may be cued by either the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system}.
      */
-    public final boolean set() {
+    public final boolean cued() {
       return setByCur != null;
     }
   }
@@ -5290,7 +5314,6 @@ public final class data {
 
     abstract byte[] _columnIndex$();
     abstract String[] _columnName$();
-    abstract void _merge$(Table table);
     @Override
     public abstract Table clone();
     abstract Table clone(boolean _mutable$);
@@ -5308,7 +5331,7 @@ public final class data {
     public abstract int hashCode();
     abstract Table newInstance();
     abstract Table singleton();
-    protected abstract void toString(boolean wasSetOnly, StringBuilder s);
+    protected abstract void toString(boolean wasCuedOnly, StringBuilder s);
 
     void _commitDelete$() {
     }
@@ -5332,6 +5355,11 @@ public final class data {
     }
 
     void _initCache$() {
+    }
+
+    void _merge$(final Table table, final boolean checkMutable) {
+      if (checkMutable)
+        assertMutable();
     }
 
     @Override
@@ -5397,31 +5425,57 @@ public final class data {
       return this;
     }
 
+    public final Table merge(final Table table, final boolean andCue) {
+      merge(table);
+      cue(andCue);
+      return this;
+    }
+
     public final Table merge(final Table table) {
       if (table != this)
-        _merge$(table);
+        _merge$(table, true);
 
       return this;
     }
 
-    public final void reset() {
-      for (final Column<?> column : _column$) // [A]
-        column.reset();
+    final Table merge$(final Table table) {
+      if (table != this)
+        _merge$(table, false);
+
+      return this;
     }
 
-    public final void reset(final Except except) {
+    /**
+     * Cue all {@link Column}s in {@code this} {@link Table} to the value of {@code to}.
+     *
+     * @param to The value to which all {@link Column}s in {@code this} {@link Table} are to be cued.
+     */
+    public final void cue(final boolean to) {
+      for (final Column<?> column : _column$) // [A]
+        column.cue(to);
+    }
+
+    /**
+     * Cue all {@link Column}s in {@code this} {@link Table} to the value of {@code to}, except for the {@link Column}s matching the
+     * {@link Except} spec provided by {@code except}.
+     *
+     * @param to The value to which all {@link Column}s in {@code this} {@link Table} are to be cued, except for the {@link Column}s
+     *          matching the {@link Except} spec provided by {@code except}.
+     * @param except The {@link Except} spec defining which {@link Column}s are to be excepted.
+     */
+    public final void cue(final boolean to, final Except except) {
       if (except == null) {
-        reset();
+        cue(to);
       }
       else if (except == Except.PRIMARY_KEY_FOR_UPDATE) {
         for (final Column<?> column : _column$) // [A]
           if (column.primaryIndexType == null && !column.isKeyForUpdate)
-            column.reset();
+            column.cue(to);
       }
       else if (except == Except.PRIMARY_KEY) {
         for (final Column<?> column : _column$) // [A]
           if (column.primaryIndexType == null)
-            column.reset();
+            column.cue(to);
       }
       else {
         throw new UnsupportedOperationException("Unsupported Except: " + except);
@@ -5472,9 +5526,9 @@ public final class data {
       return toString(false);
     }
 
-    protected final String toString(final boolean wasSetOnly) {
+    protected final String toString(final boolean wasCuedOnly) {
       final StringBuilder s = new StringBuilder();
-      toString(wasSetOnly, s);
+      toString(wasCuedOnly, s);
 
       if (s.length() > 0)
         s.setCharAt(0, '{');
@@ -5486,9 +5540,18 @@ public final class data {
       return s.toString();
     }
 
-    public final boolean set() {
+    /**
+     * Returns {@code true} if any {@link Column} in this {@link Table} was cued to be considered in {@code SELECT}, {@code INSERT},
+     * {@code UPDATE}, and {@code DELETE} statements, otherwise {@code false}.
+     *
+     * @return {@code true} if any {@link Column} in this {@link Table} was cued to be considered in {@code SELECT}, {@code INSERT},
+     *         {@code UPDATE}, and {@code DELETE} statements., otherwise {@code false}.
+     * @implNote A {@link Column}'s value may be cued by either the {@link Column.SetBy#USER user} or the {@link Column.SetBy#SYSTEM
+     *           system}.
+     */
+    public final boolean cued() {
       for (final Column<?> column : _column$) // [A]
-        if (column.set())
+        if (column.cued())
           return true;
 
       return false;

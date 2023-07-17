@@ -1253,10 +1253,8 @@ class TableModel {
 //    keyModels.writeDeclare(out);
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table) { // TableModel.makeTable()\n");
-    if (superTable != null)
-      out.append("      super._merge$(table);\n");
-
+    out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table, final boolean checkMutable) { // TableModel.makeTable()\n");
+    out.append("      super._merge$(table, checkMutable);\n");
     out.append("      final ").append(className).append(" t = (").append(className).append(")table;\n");
     if (buf.length() > 0)
       out.append(buf);
@@ -1335,15 +1333,15 @@ class TableModel {
       final ColumnModel columnModel = columns[i];
       ifClause = !columnModel.isPrimary && !columnModel.isKeyForUpdate;
       if (ifClause)
-        buf.append("      if (!wasSetOnly || this.").append(columnModel.instanceCase).append(".setByCur != null)\n  ");
+        buf.append("      if (!wasCuedOnly || this.").append(columnModel.instanceCase).append(".setByCur != null)\n  ");
 
       buf.append("      this.").append(columnModel.instanceCase).append(".toJson(s.append(\",\\\"").append(columnModel.name).append("\\\":\"));\n");
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    protected void toString(final boolean wasSetOnly, final ").append(StringBuilder.class.getName()).append(" s) { // TableModel.makeTable()");
+    out.append("    protected void toString(final boolean wasCuedOnly, final ").append(StringBuilder.class.getName()).append(" s) { // TableModel.makeTable()");
     if (superTable != null)
-      out.append("\n      super.toString(wasSetOnly, s);\n");
+      out.append("\n      super.toString(wasCuedOnly, s);\n");
 
     if (buf.length() > 0)
       out.append(buf);

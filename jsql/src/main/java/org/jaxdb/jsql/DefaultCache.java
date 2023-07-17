@@ -78,7 +78,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
 
   private static data.Table update(final data.Table entity, final data.Table update) {
     if (logger.isTraceEnabled()) logger.trace("update(" + log(entity) + "," + log(update) + ")");
-    entity.merge(update);
+    entity.merge$(update);
     entity._commitUpdate$();
     entity._commitEntity$();
     return entity;
@@ -232,7 +232,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
    * @throws SQLException If a SQL error has occurred.
    */
   protected <T extends data.Table>data.Table refreshRow(final CacheMap<T> cache, final T row) throws IOException, SQLException {
-    row.reset(data.Except.PRIMARY_KEY);
+    row.cue(false, data.Except.PRIMARY_KEY);
     selectRow(row);
 
     final data.Key key = row.getKey();
@@ -242,7 +242,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
       entity._commitInsert$();
     }
     else {
-      entity.merge(row);
+      entity.merge$(row);
       entity._commitUpdate$();
     }
 
