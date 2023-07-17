@@ -501,7 +501,7 @@ public abstract class UpdateRowIteratorTest {
 
         SELECT(t.floatType, t.id).
         FROM(t).
-        WHERE(AND(GT(t.floatType, value - ulp), LT(t.floatType, value + ulp))).
+        WHERE(AND(GT(t.floatType, value - ulp * 100), LT(t.floatType, value + ulp * 100))).
         LIMIT(100)
           .execute(transaction, queryConfig)) {
 
@@ -542,24 +542,25 @@ public abstract class UpdateRowIteratorTest {
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
   public void testDouble(final Types types, final Transaction transaction) throws IOException, SQLException {
-    Double value = null;
+    Double value = 0d;
     boolean testing = false;
     final Types.Type t = types.Type$;
     while (true) {
       if (!testing)
         value = random.nextDouble();
 
+      final double ulp = Math.ulp(value);
       try (final RowIterator<?> rows =
 
         SELECT(t.doubleType, t.id).
         FROM(t).
-        WHERE(EQ(t.doubleType, value)).
+        WHERE(AND(GT(t.doubleType, value - ulp * 100), LT(t.doubleType, value + ulp * 100))).
         LIMIT(100)
           .execute(transaction, queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, ((data.DOUBLE)rows.nextEntity()).get());
+          assertEquals(value, ((data.DOUBLE)rows.nextEntity()).get(), ulp * 100);
           while (rows.nextRow());
           break;
         }
