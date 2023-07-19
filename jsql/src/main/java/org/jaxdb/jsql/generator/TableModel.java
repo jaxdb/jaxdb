@@ -142,6 +142,7 @@ class TableModel {
     this.table = table;
     this.schemaModel = schemaModel;
     this.tableName = table.getName$().text();
+
     this.classCase = Identifiers.toClassCase(tableName, '$');
 
     this.classSimpleName = Identifiers.toClassCase(tableName, '$');
@@ -151,7 +152,7 @@ class TableModel {
     final $Constraints constraints = table.getConstraints();
     final PrimaryKey primaryKey;
     if (constraints != null && (primaryKey = constraints.getPrimaryKey()) != null) {
-      primaryKeyIndexType = IndexType.of(primaryKey.getUsing$(), true);
+      primaryKeyIndexType = IndexType.of(primaryKey.getUsing$(), IndexType.BTREE_UNIQUE);
       final BindingList<? extends $Named> primaryKeyColumns = primaryKey.getColumn();
       final int noColumns = primaryKeyColumns.size();
       primaryKeyColumnNames = new LinkedHashSet<>(noColumns);
@@ -193,7 +194,7 @@ class TableModel {
             uniqueColumnModels.add(assertNotNull(columnNameToColumnModel.get(columns.get(j).getName$().text())));
 
           uniques.add(uniqueColumnModels);
-          columnsToIndexType.put(uniqueColumnModels, IndexType.of((String)null, true));
+          columnsToIndexType.put(uniqueColumnModels, IndexType.of((String)null, IndexType.UNDEFINED_UNIQUE));
         }
       }
 
@@ -248,7 +249,7 @@ class TableModel {
             indexColumnModels.add(assertNotNull(columnNameToColumnModel.get(columns.get(j).getName$().text())));
 
           final boolean isUnique = indexColumn.getUnique$() != null && indexColumn.getUnique$().text();
-          this.columnsToIndexType.put(indexColumnModels, IndexType.of(indexColumn.getType$(), isUnique));
+          this.columnsToIndexType.put(indexColumnModels, IndexType.of(indexColumn.getType$(), isUnique ? IndexType.HASH_UNIQUE : IndexType.HASH));
           this.indexes.add(indexColumnModels);
           if (isUnique)
             this.uniques.add(indexColumnModels);
@@ -263,7 +264,7 @@ class TableModel {
       if (index != null) {
         final ColumnModels indexColumnModels = new ColumnModels(column.tableModel, column);
         this.indexes.add(indexColumnModels);
-        columnsToIndexType.put(indexColumnModels, IndexType.of(index.getType$(), index.getUnique$().text()));
+        columnsToIndexType.put(indexColumnModels, IndexType.of(index.getType$(), index.getUnique$().text() ? IndexType.HASH_UNIQUE : IndexType.HASH));
         if (index.getUnique$() != null && index.getUnique$().text())
           uniques.add(indexColumnModels);
       }

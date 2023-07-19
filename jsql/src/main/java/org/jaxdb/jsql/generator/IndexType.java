@@ -159,9 +159,9 @@ abstract class IndexType {
       return this;
 
     if (indexType instanceof UNDEFINED || isSameStrategy(indexType))
-      return isUnique ? getUnique() : this;
+      return indexType.isUnique ? getUnique() : this;
 
-    return isUnique ? HASH_BTREE_UNIQUE : HASH_BTREE;
+    return isUnique || indexType.isUnique ? HASH_BTREE_UNIQUE : HASH_BTREE;
   }
 
   String getConcreteClass(final String declarationName) {
@@ -185,12 +185,12 @@ abstract class IndexType {
     this.iFaceKey = iFaceKey;
   }
 
-  static IndexType of(final $IndexType indexType, final boolean isUnique) {
-    return of(indexType == null ? null : indexType.text(), isUnique);
+  static IndexType of(final $IndexType indexType, final IndexType defaultValue) {
+    return of(indexType == null ? null : indexType.text(), defaultValue);
   }
 
-  static IndexType of(final String indexType, final boolean isUnique) {
-    return indexType == null ? (isUnique ? UNDEFINED_UNIQUE : UNDEFINED) : $IndexType.HASH.text().equals(indexType) ? (isUnique ? HASH_UNIQUE : HASH) : (isUnique ? BTREE_UNIQUE : BTREE);
+  static IndexType of(final String indexType, final IndexType defaultValue) {
+    return indexType == null ? defaultValue : $IndexType.HASH.text().equals(indexType) ? (defaultValue.isUnique ? HASH_UNIQUE : HASH) : (defaultValue.isUnique ? BTREE_UNIQUE : BTREE);
   }
 
   @Override
