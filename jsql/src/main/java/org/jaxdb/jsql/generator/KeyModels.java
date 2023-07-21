@@ -38,6 +38,8 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
     private final String fromArgs;
     private final String toArgs;
 
+    private final LinkedHashSet<String>[] resets = new LinkedHashSet[] {new LinkedHashSet<>(), new LinkedHashSet<>()};
+
     KeyModel(final boolean isForeign, final String singletonInstanceName, final String cacheMethodName, final String toTableRefName, final ColumnModels columns, final IndexType indexType) {
       this.isForeign = isForeign;
       this.cacheMethodName = cacheMethodName;
@@ -87,19 +89,9 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
       }
     }
 
-    private final String[] declare = new String[2];
-    private final boolean[] declareCalled = new boolean[2];
-
-    private final String[] reset = new String[2];
-    private final boolean[] resetCalled = new boolean[2];
-
-    String getReset(final CurOld curlOld) {
-      final String reset = this.reset[curlOld.ordinal()];
-      if (reset == null)
-        return null;
-
-      resetCalled[curlOld.ordinal()] = true;
-      return reset;
+    void writeReset(final StringBuilder b, final CurOld curlOld) {
+      for (final String reset : this.resets[curlOld.ordinal()])
+        b.append("\n            ").append(reset);
     }
 
     void audit() {
@@ -109,74 +101,55 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
 //      if (this.declare[1] != null && !this.declareCalled[1])
 //        throw new IllegalStateException();
 
-      if (this.reset[0] != null && !this.resetCalled[0])
-        throw new IllegalStateException();
+//      if (this.reset[0] != null && !this.resetCalled[0])
+//        throw new IllegalStateException();
 
 //      if (this.reset[1] != null && !this.resetCalled[1])
 //        throw new IllegalStateException();
     }
 
-    private String include(final String fieldName, final String name, final String args, final CurOld curlOld) {
-      final String declare = "    private " + data.Key.class.getCanonicalName() + " " + name + ";\n\n    " + data.Key.class.getCanonicalName() + " " + name + "() {\n      return " + name + " == null ? " + name + " = " + data.Key.class.getCanonicalName() + ".with(" + fieldName + ", " + args + ") : " + name + ";\n    }\n";
-      if (curlOld == null) { // Means that resetting the key is not supported (i.e. it is a MutableKey)
-        declarations.put(declare, () -> {});
-      }
-      else {
-        if (this.declare[curlOld.ordinal()] == null) {
-          this.declare[curlOld.ordinal()] = declare;
-          if (this.declareCalled[curlOld.ordinal()])
-            throw new IllegalStateException();
-
-          declarations.put(declare, () -> declareCalled[curlOld.ordinal()] = true);
-        }
-        else if (!this.declare[curlOld.ordinal()].equals(declare)) {
-//          throw new IllegalStateException(this.declare[curlOld.ordinal()] + "\n" + declare);
-        }
-
-        final String reset = "self." + name + " = null;";
-        if (this.reset[curlOld.ordinal()] == null) {
-          this.reset[curlOld.ordinal()] = reset;
-          if (this.resetCalled[curlOld.ordinal()])
-            throw new IllegalStateException();
-        }
-        else if (!this.reset[curlOld.ordinal()].equals(reset)) {
-//          throw new IllegalStateException(this.reset[curlOld.ordinal()] + "\n" + reset);
-        }
-      }
-
-      return name + "()";
-    }
-
-    String keyArgs(final HashSet<String> declared) {
+    String keyArgsExternal(final HashSet<String> declared) {
       if (keyArgs == null)
         return null;
 
       if (!declared.add(indexFieldName))
         return null;
 
-//      if (isForeign)
-        return data.Key.class.getCanonicalName() + ".with(" + indexFieldName + ", " + keyArgs + ")";
-
-//      return include(indexFieldName, "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, toTableRefName) + "_Key$", keyArgs, null);
+      return data.Key.class.getCanonicalName() + ".with(" + indexFieldName + ", " + keyArgs + ")";
     }
 
-    String rangeArgs() {
+    String keyArgsRange() {
       if (toArgs == null)
         return null;
 
       return data.Key.class.getCanonicalName() + ".with(" + indexFieldName + ", " + fromArgs + "), " + data.Key.class.getCanonicalName() + ".with(" + indexFieldName + ", " + toArgs + ")";
     }
 
-    String keyClause(final String cacheSingletonName, final String cacheMethodName, final String toTableRefName, final String replace1, final CurOld curlOld, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
+    private String include(final String fieldName, final String name, final String args, final CurOld curOld) {
+      final String declare = "    private " + data.Key.class.getCanonicalName() + " " + name + ";\n\n    " + data.Key.class.getCanonicalName() + " " + name + "() {\n      return " + name + " == null ? " + name + " = " + data.Key.class.getCanonicalName() + ".with(" + fieldName + ", " + args + ") : " + name + ";\n    }\n";
+      if (curOld == null) { // Means that resetting the key is not supported (i.e. it is a MutableKey)
+        declarations.put(declare, () -> {});
+      }
+      else {
+        declarations.put(declare, () -> {});
+
+        final String reset = "self." + name + " = null;";
+        resets[curOld.ordinal()].add(reset);
+      }
+
+      return name + "()";
+    }
+
+    String keyRefArgsInternal(final String cacheSingletonName, final String cacheMethodName, final String toTableRefName, final String replace1, final CurOld curlOld, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
       final String args = keyClauseValues.replace("{1}", replace1).replace("{2}", curlOld.toString());
       final String cacheColumnsRef = cacheSingletonName + "._" + ColumnModels.getInstanceNameForCache(cacheMethodName, toTableRefName) + "Index$";
       if (!declared.add(cacheColumnsRef + ":" + args))
         return null;
 
-//      if (isForeign) {
+//      if (isForeign)
         return data.Key.class.getCanonicalName() + ".with(" + cacheColumnsRef + ", " + args + ")";
-//      }
 
+        // FIXME: Uncomment to continue work on persistent keys
 //      final String argsXX = keyClauseValues.replace("{1}.this.", "").replace("{2}", curlOld.toString());
 //      final String xxx = argsXX.replace(".get" + curlOld, "").replace("()", "_").replace(", ", "");
 //      final String prefix = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, xxx) + "ON_" + toTableRefName + curlOld;
@@ -204,7 +177,7 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
 
   private final LinkedHashMap<String,Runnable> declarations;
 
-  KeyModels(int initialCapacity) {
+  KeyModels(final int initialCapacity) {
     super(initialCapacity);
     this.declarations = new LinkedHashMap<>(initialCapacity);
   }

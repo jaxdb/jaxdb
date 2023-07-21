@@ -34,8 +34,8 @@ abstract class ForeignRelation extends Relation {
   final String cacheMapFieldNameForeign;
   final String declarationNameForeign;
 
-  ForeignRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign, final KeyModels keyModels) {
-    super(schemaClassName, sourceTable, tableModel, columns, indexType, keyModels);
+  ForeignRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+    super(schemaClassName, sourceTable, tableModel, columns, indexType, tableModel.keyModels);
     this.indexTypeForeign = indexTypeForeign;
     this.referenceTable = referenceTable;
     this.referenceColumns = referenceColumns;
@@ -65,16 +65,16 @@ abstract class ForeignRelation extends Relation {
   }
 
   final String writeDeclaration(final String classSimpleName, final String typeName, final String declaredName, final String suffix, final HashSet<String> declared, final String comment) {
-    final String keyClause = keyModel.keyClause(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, CurOld.Old, false, declared, comment);
+    final String keyClause = keyModel.keyRefArgsInternal(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, CurOld.Old, false, declared, comment);
     if (keyClause == null)
       return null;
 
     final StringBuilder out = new StringBuilder();
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_CACHED() { // ForeignRelation.writeDeclaration(String,String,String,String)");
+    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_CACHED() {");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
     out.append("\n      return cache == null ? null : cache.get").append(suffix).append("(").append(keyClause).append(");");
     out.append("\n    }\n");
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_SELECT() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" { // ForeignRelation.writeDeclaration(String,String,String,String)");
+    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("_SELECT() throws ").append(IOException.class.getName()).append(", ").append(SQLException.class.getName()).append(" {");
     out.append("\n      final ").append(CacheMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(referenceTable.singletonInstanceName).append('.').append(cacheMapFieldNameForeign).append(';');
     out.append("\n      return cache == null ? null : cache.select").append(suffix).append("(").append(keyClause).append(");");
     out.append("\n    }");

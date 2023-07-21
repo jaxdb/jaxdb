@@ -109,7 +109,7 @@ class TableModel {
   final Table table;
   private final ColumnModel[] columns;
   private final LinkedHashMap<String,ColumnModel> columnNameToColumnModel;
-  private final KeyModels keyModels;
+  final KeyModels keyModels;
 
   private int totalAutoCount = 0;
   private int totalAutoOffset = 0;
@@ -783,7 +783,7 @@ class TableModel {
     final HashSet<String> declared = new HashSet<>();
     if (!isAbstract) {
       out.append("\n  public final ").append(className).append("$ ").append(singletonInstanceName).append(" = new ").append(classSimpleName).append("$();\n");
-      out.append("\n  public final class ").append(classSimpleName).append("$ extends ").append(className).append(" implements ").append(type.Table$.class.getCanonicalName()).append(" { // TableModel.makeTable()");
+      out.append("\n  public final class ").append(classSimpleName).append("$ extends ").append(className).append(" implements ").append(type.Table$.class.getCanonicalName()).append(" {");
       out.append("\n    private ").append(singletonInstanceName).append("() {");
       out.append("\n      super(false, false);");
       out.append("\n    }\n");
@@ -828,7 +828,7 @@ class TableModel {
         out.append("\n    boolean _cacheEnabled$;\n");
 
         out.append("\n    @").append(Override.class.getName());
-        out.append("\n    void _initCache$() { // TableModel.makeTable()");
+        out.append("\n    void _initCache$() {");
         out.append("\n      if (_cacheEnabled$)");
         out.append("\n        return;\n");
         out.append("\n      super._initCache$();");
@@ -892,7 +892,7 @@ class TableModel {
         declared.clear();
 
         out.append("\n    @").append(Override.class.getName());
-        out.append("\n    void _commitSelectAll$() { // TableModel.makeTable()");
+        out.append("\n    void _commitSelectAll$() {");
         out.append("\n      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
         out.append("\n        return;\n");
         out.append("\n      getCache().addKey(").append(data.Key.class.getCanonicalName()).append(".ALL);");
@@ -911,7 +911,7 @@ class TableModel {
         declared.clear();
 
         out.append("\n    @").append(Override.class.getName());
-        out.append("\n    void _commitInsert$() { // TableModel.makeTable()\n");
+        out.append("\n    void _commitInsert$() {\n");
         if (allRelations.size() > 0) {
           out.append("      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
           out.append("\n        return;\n");
@@ -932,7 +932,7 @@ class TableModel {
         declared.clear();
 
         out.append("\n    @").append(Override.class.getName());
-        out.append("\n    void _commitDelete$() { // TableModel.makeTable()\n");
+        out.append("\n    void _commitDelete$() {\n");
 
         // FIXME: Remove the re-addition of all Relation(s) to ArrayList
         final ArrayList<Relation> onChangeRelations = new ArrayList<>(1);
@@ -968,7 +968,7 @@ class TableModel {
 
     if (!isAbstract) {
       out.append("\n    /** Creates a new {@link ").append(className).append("}. */");
-      out.append("\n    public ").append(classSimpleName).append("() { // TableModel.makeTable()");
+      out.append("\n    public ").append(classSimpleName).append("() {");
       out.append("\n      this(true);");
       out.append("\n    }\n");
 
@@ -1002,12 +1002,12 @@ class TableModel {
 
       // Copy constructor
       out.append("\n    /** Creates a new {@link ").append(className).append("} as a copy of the provided {@link ").append(className).append("} instance. */");
-      out.append("\n    public ").append(classSimpleName).append("(final ").append(className).append(" copy) { // TableModel.makeTable()");
+      out.append("\n    public ").append(classSimpleName).append("(final ").append(className).append(" copy) {");
       out.append("\n      this(true, copy);");
       out.append("\n    }\n");
 
 
-      out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$) { // TableModel.makeTable()");
+      out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$) {");
       out.append("\n      this(_mutable$, false);");
       out.append("\n    }\n");
     }
@@ -1109,7 +1109,7 @@ class TableModel {
           changeBuilder.append("\n              return;\n");
           for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
             final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-            write("\n            ", onChangeRelation.keyModel.getReset(CurOld.Cur), changeBuilder, declared2);
+            onChangeRelation.keyModel.writeReset(changeBuilder, CurOld.Cur);
           }
           changeBuilder.append("\n          }");
 
@@ -1125,7 +1125,7 @@ class TableModel {
           changeBuilder.append("\n              return;\n");
           for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
             final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-            write("\n            ", onChangeRelation.keyModel.getReset(CurOld.Old), changeBuilder, declared2);
+            onChangeRelation.keyModel.writeReset(changeBuilder, CurOld.Old);
           }
           changeBuilder.append("\n          }");
 
@@ -1175,22 +1175,25 @@ class TableModel {
         arguments.append(" != null ? ").append(columns[i].instanceCase).append(" : ").append(commitUpdateChanges[i]);
     }
 
-    out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) { // TableModel.makeTable()");
+    // FIXME: Uncomment to continue work on persistent keys
+    // keyModels.writeDeclare(out);
+
+    out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) {");
     out.append("\n      this(_mutable$, _wasSelected$, ").append(init).append(");");
     out.append("\n    }\n");
 
     out.append("\n    /** Creates a new {@link ").append(className).append("} as a copy of the provided {@link ").append(className).append("} instance. */");
-    out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$, final ").append(className).append(" copy) { // TableModel.makeTable()");
+    out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$, final ").append(className).append(" copy) {");
     out.append("\n      this(_mutable$, false, ").append(init0).append(", copy);");
     out.append("\n    }\n\n");
 
     for (int x = 0; x < 2; ++x) { // [N]
       if (x == 0) {
-        out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _column$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _primary$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _keyForUpdate$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _auto$").append(parameters).append(") { // TableModel.makeTable()\n");
+        out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _column$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _primary$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _keyForUpdate$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _auto$").append(parameters).append(") {\n");
         out.append("      super(_mutable$, _wasSelected$, _column$, _primary$, _keyForUpdate$, _auto$").append(arguments).append(");\n");
       }
       else {
-        out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _column$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _primary$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _keyForUpdate$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _auto$, final ").append(className).append(" copy) { // TableModel.makeTable()\n");
+        out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _column$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _primary$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _keyForUpdate$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _auto$, final ").append(className).append(" copy) {\n");
         out.append("      super(_mutable$, _wasSelected$, _column$, _primary$, _keyForUpdate$, _auto$");
         if (superTable != null)
           out.append(", copy");
@@ -1199,7 +1202,7 @@ class TableModel {
 
       int primaryIndex = 0;
       int keyForUpdateIndex = 0;
-      int autoIndex = totalAutoOffset;
+      int autoIndex = 0;
       for (int s = columns.length - noColumnsLocal, i = 0; i < columns.length; ++i) { // [A]
         if (i > s)
           out.append('\n');
@@ -1251,10 +1254,8 @@ class TableModel {
       buf.append("        ").append(fieldName).append(".copy(t.").append(fieldName).append(");\n");
     }
 
-//    keyModels.writeDeclare(out);
-
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table, final boolean checkMutable) { // TableModel.makeTable()\n");
+    out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table, final boolean checkMutable) {\n");
     out.append("      super._merge$(table, checkMutable);\n");
     out.append("      final ").append(className).append(" t = (").append(className).append(")table;\n");
     if (buf.length() > 0)
@@ -1274,11 +1275,11 @@ class TableModel {
     }
     else {
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(className).append(" clone(final boolean _mutable$) { // TableModel.makeTable()");
+      out.append("\n    ").append(className).append(" clone(final boolean _mutable$) {");
       out.append("\n      return new ").append(className).append("(_mutable$, this);");
       out.append("\n    }\n");
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    public ").append(className).append(" clone() { // TableModel.makeTable()");
+      out.append("\n    public ").append(className).append(" clone() {");
       out.append("\n      return clone(true);");
       out.append("\n    }");
     }
@@ -1292,7 +1293,7 @@ class TableModel {
 
     out.append('\n');
     out.append("\n    @").append(Override.class.getName());
-    out.append("\n    public boolean equals(final ").append(Object.class.getName()).append(" obj) { // TableModel.makeTable()");
+    out.append("\n    public boolean equals(final ").append(Object.class.getName()).append(" obj) {");
     out.append("\n      if (obj == this)");
     out.append("\n        return true;\n");
     out.append("\n      if (!(obj instanceof ").append(className).append("))");
@@ -1316,7 +1317,7 @@ class TableModel {
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    public int hashCode() { // TableModel.makeTable()\n");
+    out.append("    public int hashCode() {\n");
     if (superTable != null)
       out.append("      int hashCode = super.hashCode();");
     else
@@ -1340,7 +1341,7 @@ class TableModel {
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    protected void toString(final boolean wasCuedOnly, final ").append(StringBuilder.class.getName()).append(" s) { // TableModel.makeTable()");
+    out.append("    protected void toString(final boolean wasCuedOnly, final ").append(StringBuilder.class.getName()).append(" s) {");
     if (superTable != null)
       out.append("\n      super.toString(wasCuedOnly, s);\n");
 
@@ -1353,7 +1354,7 @@ class TableModel {
       declared.clear();
 
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    public ").append(String.class.getName()).append(" getName() { // TableModel.makeTable()");
+      out.append("\n    public ").append(String.class.getName()).append(" getName() {");
       out.append("\n      return \"").append(tableName).append("\";");
       out.append("\n    }\n");
 
@@ -1374,7 +1375,7 @@ class TableModel {
       }
       out.append("};\n");
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(String.class.getName()).append("[] _columnName$() { // TableModel.makeTable()");
+      out.append("\n    ").append(String.class.getName()).append("[] _columnName$() {");
       out.append("\n      return _columnName$;");
       out.append("\n    }\n");
 
@@ -1390,24 +1391,24 @@ class TableModel {
       }
       out.append("};\n");
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    byte[] _columnIndex$() { // TableModel.makeTable()");
+      out.append("\n    byte[] _columnIndex$() {");
       out.append("\n      return _columnIndex$;");
       out.append("\n    }\n");
 
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(className).append(" newInstance() { // TableModel.makeTable()");
+      out.append("\n    ").append(className).append(" newInstance() {");
       out.append("\n      return new ").append(className).append("(true, true);");
       out.append("\n    }\n");
 
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(singletonInstanceName).append(" singleton() { // TableModel.makeTable()");
+      out.append("\n    ").append(singletonInstanceName).append(" singleton() {");
       out.append("\n      return ").append(singletonInstanceName).append(';');
       out.append("\n    }\n");
     }
 
     if (superTable == null) {
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() { // TableModel.makeTable()");
+      out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() {");
       out.append("\n      return ").append(schemaModel.schemaClassSimpleName).append(".this;");
       out.append("\n    }\n");
     }
@@ -1439,13 +1440,13 @@ class TableModel {
     final boolean isReferencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);
 
     if (isUnique && isReferencesUnique)
-      return new OneToOneRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign, keyModels);
+      return new OneToOneRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     if (isUnique && !isReferencesUnique)
-      return new OneToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign, keyModels);
+      return new OneToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     if (!isUnique && isReferencesUnique)
-      return new ManyToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign, keyModels);
+      return new ManyToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     throw new UnsupportedOperationException("Is this even possible?");
   }

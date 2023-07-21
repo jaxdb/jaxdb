@@ -16,12 +16,32 @@
 
 package org.jaxdb.jsql;
 
+/**
+ * Interface used define runtime actions to be made on {@link data.Column}s upon modification.
+ *
+ * @param <T> The type parameter of the {@link data.Table}.
+ */
 public interface OnModify<T extends data.Table> {
-  default void change(T table) {
+  /**
+   * Called when a change is made to the "cur" value of the {@link data.Column} in context.
+   *
+   * @param table A reference to {@code Table.this} for the {@link data.Column} in context of the caller.
+   */
+  default void changeCur(T table) {
   }
 
+  /**
+   * Called when a change is made to the "old" value of the {@link data.Column} in context.
+   *
+   * @param table A reference to {@code Table.this} for the {@link data.Column} in context of the caller.
+   */
   default void changeOld(T table) {
   }
 
+  /**
+   * Called when an UPDATE to the {@link data.Column} in context is committed in lieu of NOTIFY.
+   *
+   * @param table A reference to {@code Table.this} for the {@link data.Column} in context of the caller.
+   */
   void update(T table);
 }

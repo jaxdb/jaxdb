@@ -155,27 +155,27 @@ class SchemaModel {
     out.append('\n');
 
     out.append("\n  @").append(Override.class.getName());
-    out.append("\n  public ").append(type.Table$.class.getCanonicalName()).append("[] getTables() { // SchemaModel.generate(DDLx)");
+    out.append("\n  public ").append(type.Table$.class.getCanonicalName()).append("[] getTables() {");
     out.append("\n    return tables;");
     out.append("\n  }\n");
 
     out.append("\n  @").append(Override.class.getName());
-    out.append("\n  public ").append(type.Table$.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) { // SchemaModel.generate(DDLx)");
+    out.append("\n  public ").append(type.Table$.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) {");
     out.append("\n    final int index = ").append(Arrays.class.getName()).append(".binarySearch(names, name);");
     out.append("\n    return index < 0 ? null : tables[index];");
     out.append("\n  }\n");
 
     out.append("\n  @").append(Override.class.getName());
-    out.append("\n  public void setDefaultQueryConfig(final ").append(QueryConfig.class.getName()).append(" queryConfig) { // SchemaModel.generate(DDLx)");
+    out.append("\n  public void setDefaultQueryConfig(final ").append(QueryConfig.class.getName()).append(" queryConfig) {");
     out.append("\n    defaultQueryConfig = queryConfig;");
     out.append("\n  }\n");
 
     out.append("\n  @").append(Override.class.getName());
-    out.append("\n  public String getName() { // SchemaModel.generate(DDLx)");
+    out.append("\n  public String getName() {");
     out.append("\n    return \"").append(name).append("\";");
     out.append("\n  }\n");
 
-    out.append("\n  public ").append(schemaClassSimpleName).append("() { // SchemaModel.generate(DDLx)");
+    out.append("\n  public ").append(schemaClassSimpleName).append("() {");
     out.append("\n  }");
 
     out.append("\n}");
