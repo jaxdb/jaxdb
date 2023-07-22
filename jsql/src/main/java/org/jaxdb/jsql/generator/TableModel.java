@@ -1104,7 +1104,7 @@ class TableModel {
           declared2.clear();
 
           changeBuilder.append("\n\n          @").append(Override.class.getName());
-          changeBuilder.append("\n          public void change(final ").append(className).append(" self) {");
+          changeBuilder.append("\n          public void changeCur(final ").append(className).append(" self) {");
           changeBuilder.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
           changeBuilder.append("\n              return;\n");
           for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
@@ -1113,11 +1113,11 @@ class TableModel {
           }
           changeBuilder.append("\n          }");
 
-          if (declared2.size() > 0) {
+//          if (declared2.size() > 0) {
             ocb.append(changeBuilder);
             changeBuilder.setLength(0);
             declared2.clear();
-          }
+//          }
 
           changeBuilder.append("\n\n          @").append(Override.class.getName());
           changeBuilder.append("\n          public void changeOld(final ").append(className).append(" self) {");
@@ -1129,11 +1129,11 @@ class TableModel {
           }
           changeBuilder.append("\n          }");
 
-          if (declared2.size() > 0) {
+//          if (declared2.size() > 0) {
             ocb.append(changeBuilder);
             changeBuilder.setLength(0);
             declared2.clear();
-          }
+//          }
 
           ocb.append("\n        }");
 
@@ -1176,7 +1176,7 @@ class TableModel {
     }
 
     // FIXME: Uncomment to continue work on persistent keys
-    // keyModels.writeDeclare(out);
+     keyModels.writeDeclare(out);
 
     out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) {");
     out.append("\n      this(_mutable$, _wasSelected$, ").append(init).append(");");

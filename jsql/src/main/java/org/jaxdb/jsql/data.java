@@ -118,16 +118,16 @@ class KeyUtil {
 
 public final class data {
   public abstract static class ApproxNumeric<V extends Number> extends Numeric<V> implements type.ApproxNumeric<V> {
-    ApproxNumeric(final boolean mutable) {
-      super(null, mutable);
+    ApproxNumeric(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
     ApproxNumeric(final Table owner, final boolean mutable, final Numeric<V> copy) {
       super(owner, mutable, copy);
     }
 
-    ApproxNumeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    ApproxNumeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
   }
 
@@ -145,7 +145,7 @@ public final class data {
     private Class<T[]> type;
 
     private ARRAY(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.column = null;
     }
 
@@ -158,14 +158,19 @@ public final class data {
       this(null, true, null, null, false, null, true, value, null, null, (Class<? extends Column<T>>)value.getClass().getComponentType());
     }
 
+    ARRAY(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.column = null;
+    }
+
     @SuppressWarnings("unchecked")
     ARRAY(final Table owner, final boolean mutable, final ARRAY<T> copy) {
-      this(owner, mutable, copy.name, copy.primaryIndexType, copy.isKeyForUpdate, copy.commitUpdate, copy.isNullable, copy.valueCur, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends Column<T>>)copy.column.getClass());
+      this(owner, mutable, copy.name, copy.primaryIndexType, copy.isKeyForUpdate, copy.onModify, copy.isNullable, copy.valueCur, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends Column<T>>)copy.column.getClass());
       this.type = copy.type;
     }
 
-    ARRAY(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends Column<T>> type) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    ARRAY(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends Column<T>> type) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.column = newInstance(Classes.getDeclaredConstructor(type));
     }
 
@@ -184,14 +189,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final T[] valueCur = copy.valueCur;
-      this.changed = !equal(this.valueOld, valueCur);
-      resetPrimaryKey();
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -224,14 +232,12 @@ public final class data {
     @SuppressWarnings("unchecked")
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final java.sql.Array array = resultSet.getArray(columnIndex);
       set((T[])array.getArray()); // FIXME: This is incorrect.
       this.valueOld = this.valueCur; // FIXME: This is incorrect.
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -338,6 +344,18 @@ public final class data {
         set(value);
     }
 
+    private BIGINT(final Table owner, final boolean mutable, final Integer precision) {
+      super(owner, mutable, precision);
+      this.min = null;
+      this.max = null;
+    }
+
+    BIGINT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     BIGINT(final Table owner, final boolean mutable, final BIGINT copy) {
       super(owner, mutable, copy, copy.precision);
 
@@ -351,14 +369,8 @@ public final class data {
       this.valueCur = copy.valueCur;
     }
 
-    private BIGINT(final Table owner, final boolean mutable, final Integer precision) {
-      super(owner, mutable, precision);
-      this.min = null;
-      this.max = null;
-    }
-
-    BIGINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final Integer precision, final Long min, final Long max) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
+    BIGINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final Integer precision, final Long min, final Long max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -375,8 +387,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     private void checkValue(final long value) {
@@ -431,15 +442,18 @@ public final class data {
       // assertMutable();
       final boolean isNullCur = copy.isNullCur;
       final long valueCur = copy.valueCur;
-      this.changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
-      resetPrimaryKey();
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+//    if (!changed)
+//      return;
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -526,22 +540,20 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final long value = resultSet.getLong(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
     public final void revert() {
-      resetPrimaryKey();
       isNullCur = isNullOld;
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -614,11 +626,12 @@ public final class data {
         return false;
 
       this.changed = isNullOld || valueOld != value;
-      resetPrimaryKey();
 
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -634,10 +647,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      resetPrimaryKey();
+      this.isNullCur = true;
 
-      isNullCur = true;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -691,7 +704,7 @@ public final class data {
     private final boolean varying;
 
     private BINARY(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.length = 0;
       this.varying = false;
     }
@@ -706,10 +719,16 @@ public final class data {
     }
 
     public BINARY(final long length, final boolean varying) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       checkLength(length);
       this.length = length;
       this.varying = varying;
+    }
+
+    BINARY(final long length, final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.length = length;
+      this.varying = false;
     }
 
     BINARY(final Table owner, final boolean mutable, final BINARY copy) {
@@ -718,8 +737,8 @@ public final class data {
       this.varying = copy.varying;
     }
 
-    BINARY(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final long length, final boolean varying) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    BINARY(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final long length, final boolean varying) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       checkLength(length);
       this.length = length;
       this.varying = varying;
@@ -744,14 +763,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final byte[] valueCur = copy.valueCur;
-      this.changed = !Arrays.equals(this.valueOld, valueCur);
-      resetPrimaryKey();
+      this.changed = !Arrays.equals(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -786,14 +808,12 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final int columnType = resultSet.getMetaData().getColumnType(columnIndex);
       // FIXME: IS it right to support BIT here? Or should it be in BOOLEAN?
       this.valueOld = this.valueCur = columnType == Types.BIT ? new byte[] {resultSet.getBoolean(columnIndex) ? (byte)0x01 : (byte)0x00} : resultSet.getBytes(columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -903,24 +923,28 @@ public final class data {
     }
 
     private BLOB(final boolean mutable) {
-      super(null, mutable, (Long)null);
+      super(null, mutable, (Long)null, null);
     }
 
     public BLOB(final InputStream value) {
-      super(null, true, (Long)null);
+      super(null, true, (Long)null, null);
       set(value);
     }
 
     public BLOB(final long length) {
-      super(null, true, length);
+      super(null, true, length, null);
+    }
+
+    BLOB(final OnModify<? extends Table> onModify) {
+      super(null, true, null, onModify);
     }
 
     BLOB(final Table owner, final boolean mutable, final BLOB copy) {
       super(owner, mutable, copy);
     }
 
-    BLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, length);
+    BLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, length);
     }
 
     @Override
@@ -937,14 +961,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final InputStream valueCur = copy.valueCur;
-      this.changed = this.valueOld != valueCur;
-      resetPrimaryKey();
+      this.changed = valueOld != valueCur;
+      final boolean changed = this.valueCur != valueCur;
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -985,12 +1012,10 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -1070,27 +1095,31 @@ public final class data {
     private boolean valueCur;
 
     public BOOLEAN() {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
     }
 
     public BOOLEAN(final boolean value) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       set(value);
     }
 
     public BOOLEAN(final Boolean value) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       if (value != null)
         set(value);
     }
 
     @SuppressWarnings("unused")
     private BOOLEAN(final Class<BOOLEAN> cls) {
-      super(null, false);
+      super(null, false, (OnModify<?>)null);
     }
 
     BOOLEAN(final Table owner) {
-      super(owner, true);
+      super(owner, true, (OnModify<?>)null);
+    }
+
+    BOOLEAN(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
     }
 
     BOOLEAN(final Table owner, final boolean mutable, final BOOLEAN copy) {
@@ -1103,8 +1132,8 @@ public final class data {
       this.valueCur = copy.valueCur;
     }
 
-    BOOLEAN(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    BOOLEAN(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
@@ -1117,8 +1146,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     @Override
@@ -1152,8 +1180,8 @@ public final class data {
       // assertMutable();
       final boolean isNullCur = copy.isNullCur;
       final boolean valueCur = copy.valueCur;
-      this.changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
-      resetPrimaryKey();
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
 //      if (!changed)
 //        return;
@@ -1161,6 +1189,9 @@ public final class data {
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -1227,22 +1258,20 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
       this.valueOld = this.valueCur = !(this.isNullOld = this.isNullCur = resultSet.wasNull()) && value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
     public final void revert() {
-      resetPrimaryKey();
       isNullCur = isNullOld;
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -1318,11 +1347,11 @@ public final class data {
         return false;
 
       this.changed = isNullOld || valueOld != value;
-      resetPrimaryKey();
-
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -1338,10 +1367,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      resetPrimaryKey();
+      this.isNullCur = true;
 
-      isNullCur = true;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -1398,7 +1427,7 @@ public final class data {
     }
 
     private CHAR(final boolean mutable) {
-      super(null, mutable, null);
+      super(null, mutable, null, (OnModify<?>)null);
       this.varying = true;
     }
 
@@ -1411,13 +1440,13 @@ public final class data {
     }
 
     public CHAR(final long length, final boolean varying) {
-      super(null, true, (short)length);
+      super(null, true, (short)length, null);
       this.varying = varying;
       checkLength(length);
     }
 
     public CHAR(final Long length, final boolean varying) {
-      super(null, true, Numbers.cast(length, Short.class));
+      super(null, true, Numbers.cast(length, Short.class), (OnModify<?>)null);
       this.varying = varying;
       checkLength(length);
     }
@@ -1427,13 +1456,18 @@ public final class data {
       set(value);
     }
 
+    CHAR(final OnModify<? extends Table> onModify) {
+      super(null, true, null, onModify);
+      this.varying = true;
+    }
+
     CHAR(final Table owner, final boolean mutable, final CHAR copy) {
       super(owner, mutable, copy, copy.length());
       this.varying = copy.varying;
     }
 
-    CHAR(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final long length, final boolean varying) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, length);
+    CHAR(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final long length, final boolean varying) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, length);
       this.varying = varying;
       checkLength(length);
     }
@@ -1457,14 +1491,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final String valueCur = copy.valueCur;
-      this.changed = !equal(this.valueOld, valueCur);
-      resetPrimaryKey();
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -1488,12 +1525,10 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @SuppressWarnings("unused")
@@ -1582,24 +1617,28 @@ public final class data {
     }
 
     private CLOB(final boolean mutable) {
-      super(null, mutable, (Long)null);
+      super(null, mutable, (Long)null, null);
     }
 
     public CLOB(final long length) {
-      super(null, true, length);
+      super(null, true, length, null);
     }
 
     public CLOB(final Reader value) {
-      super(null, true, (Long)null);
+      super(null, true, (Long)null, null);
       set(value);
+    }
+
+    CLOB(final OnModify<? extends Table> onModify) {
+      super(null, true, null, onModify);
     }
 
     CLOB(final Table owner, final boolean mutable, final CLOB copy) {
       super(owner, mutable, copy);
     }
 
-    CLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, length);
+    CLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, length);
     }
 
     @Override
@@ -1616,14 +1655,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final Reader valueCur = copy.valueCur;
-      this.changed = this.valueOld != valueCur;
-      resetPrimaryKey();
+      this.changed = valueOld != valueCur;
+      final boolean changed = this.valueCur != valueCur;
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -1664,12 +1706,10 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -1753,7 +1793,7 @@ public final class data {
     final IndexType primaryIndexType;
     final boolean isKeyForUpdate;
     @SuppressWarnings("rawtypes")
-    final OnModify commitUpdate;
+    final OnModify onModify;
     final boolean isNullable;
     final boolean hasDefault;
     final GenerateOn<? super V> generateOnInsert;
@@ -1764,8 +1804,8 @@ public final class data {
     SetBy setByCur;
     boolean changed;
 
-    Column(final Table owner, final boolean mutable) {
-      this(owner, mutable, null, null, false, null, true, null, null, null);
+    Column(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      this(owner, mutable, null, null, false, onModify, true, null, null, null);
     }
 
     Column(final Table owner, final boolean mutable, final Column<V> copy) {
@@ -1778,7 +1818,7 @@ public final class data {
       this.generateOnInsert = copy.generateOnInsert;
       this.generateOnUpdate = copy.generateOnUpdate;
       this.isKeyForUpdate = copy.isKeyForUpdate;
-      this.commitUpdate = copy.commitUpdate;
+      this.onModify = copy.onModify;
 
       // NOTE: Deliberately not copying ref
       // this.ref = copy.ref;
@@ -1787,13 +1827,13 @@ public final class data {
       this.changed = copy.changed;
     }
 
-    Column(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+    Column(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
       super(mutable);
       this.table = owner;
       this.name = name;
       this.primaryIndexType = primaryIndexType;
       this.isKeyForUpdate = isKeyForUpdate;
-      this.commitUpdate = commitUpdate;
+      this.onModify = onModify;
       this.isNullable = isNullable;
       this.hasDefault = _default != null;
       this.generateOnInsert = generateOnInsert;
@@ -1963,13 +2003,26 @@ public final class data {
       return changed;
     }
 
-    void resetPrimaryKey() {
-      if (primaryIndexType == null)
-        return;
+    static final byte CUR = 0b00000001;
+    static final byte OLD = 0b00000010;
+    static final byte CUR_OLD = 0b00000100;
 
-      table._primaryKeyImmutable$ = null;
-      if (setByOld == null)
-        table._primaryKeyOldImmutable$ = null;
+    final void onChange(final byte curOld) {
+      if (primaryIndexType != null) {
+        if ((curOld & CUR) != 0)
+          table._primaryKeyImmutable$ = null;
+
+        if ((curOld & OLD) != 0 || setByOld == null) // Special case for "setByOld == null", under which condition the column's "old" value is equal to "cur".
+          table._primaryKeyOldImmutable$ = null;
+      }
+
+      if (onModify != null) {
+        if ((curOld & CUR) != 0)
+          onModify.changeCur(table);
+
+        if ((curOld & OLD) != 0)
+          onModify.changeOld(table);
+      }
     }
 
     public final boolean revert(final boolean andCue) {
@@ -2029,24 +2082,28 @@ public final class data {
     private static final Class<LocalDate> type = LocalDate.class;
 
     public DATE() {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
     }
 
     private DATE(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
     }
 
     public DATE(final LocalDate value) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       set(value);
+    }
+
+    DATE(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
     }
 
     DATE(final Table owner, final boolean mutable, final DATE copy) {
       super(owner, mutable, copy);
     }
 
-    DATE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    DATE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     @Override
@@ -2077,14 +2134,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final LocalDate valueCur = copy.valueCur;
-      this.changed = !equal(this.valueOld, valueCur);
-      resetPrimaryKey();
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -2105,12 +2165,10 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -2182,17 +2240,17 @@ public final class data {
     }
 
     private DATETIME(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.precision = null;
     }
 
     public DATETIME(final int precision) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       this.precision = (byte)precision;
     }
 
     public DATETIME(final Integer precision) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       this.precision = Numbers.cast(precision, Byte.class);
     }
 
@@ -2201,13 +2259,18 @@ public final class data {
       set(value);
     }
 
+    DATETIME(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.precision = null;
+    }
+
     DATETIME(final Table owner, final boolean mutable, final DATETIME copy) {
       super(owner, mutable, copy);
       this.precision = copy.precision;
     }
 
-    DATETIME(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    DATETIME(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.precision = precision == null ? null : precision.byteValue();
     }
 
@@ -2239,14 +2302,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final LocalDateTime valueCur = copy.valueCur;
-      this.changed = !equal(this.valueOld, valueCur);
-      resetPrimaryKey();
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -2271,12 +2337,10 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -2366,7 +2430,7 @@ public final class data {
     }
 
     private DECIMAL(final boolean mutable) {
-      super(null, mutable, null);
+      super(null, mutable, (OnModify<?>)null);
       this.scale = null;
       this.min = null;
       this.max = null;
@@ -2398,6 +2462,13 @@ public final class data {
       this.max = null;
     }
 
+    DECIMAL(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.scale = null;
+      this.min = null;
+      this.max = null;
+    }
+
     DECIMAL(final Table owner, final boolean mutable, final DECIMAL copy) {
       super(owner, mutable, copy, copy.precision);
 
@@ -2409,8 +2480,8 @@ public final class data {
       this.valueCur = copy.valueCur;
     }
 
-    DECIMAL(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
+    DECIMAL(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -2427,8 +2498,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     private void checkScale(final int precision, final int scale) {
@@ -2490,14 +2560,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final BigDecimal valueCur = copy.valueCur;
-      this.changed = !equal(this.valueCur, valueCur);
-      resetPrimaryKey();
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -2578,21 +2651,19 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final BigDecimal value = resultSet.getBigDecimal(columnIndex);
       this.valueOld = this.valueCur = resultSet.wasNull() ? null : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
     public final void revert() {
-      resetPrimaryKey();
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -2656,10 +2727,10 @@ public final class data {
         checkValue(value);
 
       this.changed = !equal(valueOld, value);
-      resetPrimaryKey();
-
       this.valueCur = value;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -2670,10 +2741,10 @@ public final class data {
         return false;
 
       this.changed = valueOld != null;
-      resetPrimaryKey();
+      this.valueCur = null;
 
-      valueCur = null;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -2745,7 +2816,7 @@ public final class data {
     }
 
     private DOUBLE(final boolean mutable) {
-      super(mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.min = null;
       this.max = null;
     }
@@ -2761,6 +2832,12 @@ public final class data {
         set(value);
     }
 
+    DOUBLE(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     DOUBLE(final Table owner, final boolean mutable, final DOUBLE copy) {
       super(owner, mutable, copy);
 
@@ -2774,8 +2851,8 @@ public final class data {
       this.valueCur = copy.valueCur;
     }
 
-    DOUBLE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    DOUBLE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -2792,8 +2869,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     private void checkValue(final double value) {
@@ -2848,8 +2924,8 @@ public final class data {
       // assertMutable();
       final boolean isNullCur = copy.isNullCur;
       final double valueCur = copy.valueCur;
-      this.changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
-      resetPrimaryKey();
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
 //      if (!changed)
 //        return;
@@ -2857,6 +2933,9 @@ public final class data {
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -2928,22 +3007,20 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Double.NaN : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
     public final void revert() {
-      resetPrimaryKey();
       isNullCur = isNullOld;
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -3006,11 +3083,11 @@ public final class data {
         return false;
 
       this.changed = isNullOld || valueOld != value;
-      resetPrimaryKey();
-
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -3026,10 +3103,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      resetPrimaryKey();
+      this.isNullCur = true;
 
-      isNullCur = true;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -3241,19 +3318,19 @@ public final class data {
     };
 
     private ENUM(final boolean mutable) {
-      super(null, mutable, null);
+      super(null, mutable, null, (OnModify<?>)null);
       this.enumType = null;
       this.constants = null;
       this.fromStringFunction = null;
     }
 
     public ENUM(final Class<E> enumType) {
-      this(enumType, getConstants(enumType));
+      this(enumType, getConstants(enumType), null);
     }
 
     @SuppressWarnings("unchecked")
-    private ENUM(final Class<E> enumType, final E[] constants) {
-      super(null, true, constants == null ? null : calcEnumLength(constants));
+    private ENUM(final Class<E> enumType, final E[] constants, final OnModify<? extends Table> onModify) {
+      super(null, true, constants == null ? null : calcEnumLength(constants), onModify);
       this.enumType = enumType;
       this.constants = constants;
       this.fromStringFunction = enumType == null ? null : s -> {
@@ -3300,6 +3377,10 @@ public final class data {
       set(value);
     }
 
+    ENUM(final Class<E> enumType, final OnModify<? extends Table> onModify) {
+      this(enumType, getConstants(enumType), onModify);
+    }
+
     ENUM(final Table owner, final boolean mutable, final ENUM<E> copy) {
       super(owner, mutable, copy, copy.length());
       this.enumType = copy.enumType;
@@ -3308,8 +3389,8 @@ public final class data {
     }
 
     @SuppressWarnings("unchecked")
-    ENUM(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final E[] constants, final Function<String,E> fromStringFunction) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, calcEnumLength(constants));
+    ENUM(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final E[] constants, final Function<String,E> fromStringFunction) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, calcEnumLength(constants));
       this.enumType = (Class<E>)constants.getClass().getComponentType();
       this.constants = constants;
       this.fromStringFunction = fromStringFunction;
@@ -3329,14 +3410,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final E valueCur = copy.valueCur;
-      this.changed = !equal(this.valueOld, valueCur);
-      resetPrimaryKey();
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -3366,14 +3450,12 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final String value = resultSet.getString(columnIndex);
       if (value == null) {
         this.valueOld = this.valueCur = null;
         this.setByOld = this.setByCur = SetBy.SYSTEM;
+        onChange(CUR_OLD);
         return;
       }
 
@@ -3381,6 +3463,7 @@ public final class data {
         if (constant.toString().equals(value)) {
           this.valueOld = this.valueCur = constant;
           this.setByOld = this.setByCur = SetBy.SYSTEM;
+          onChange(CUR_OLD);
           return;
         }
       }
@@ -3444,8 +3527,13 @@ public final class data {
   public abstract static class ExactNumeric<V extends Number> extends Numeric<V> implements type.ExactNumeric<V> {
     final Integer precision;
 
+    ExactNumeric(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
+      this.precision = null;
+    }
+
     ExactNumeric(final Table owner, final boolean mutable, final Integer precision) {
-      super(owner, mutable);
+      super(owner, mutable, (OnModify<?>)null);
       checkPrecision(precision);
       if (precision != null) {
         this.precision = precision;
@@ -3463,8 +3551,8 @@ public final class data {
       this.precision = precision;
     }
 
-    ExactNumeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    ExactNumeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       checkPrecision(precision);
       this.precision = precision;
     }
@@ -3511,7 +3599,7 @@ public final class data {
     }
 
     private FLOAT(final boolean mutable) {
-      super(mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.min = null;
       this.max = null;
     }
@@ -3527,6 +3615,12 @@ public final class data {
         set(value);
     }
 
+    FLOAT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     FLOAT(final Table owner, final boolean mutable, final FLOAT copy) {
       super(owner, mutable, copy);
 
@@ -3540,8 +3634,8 @@ public final class data {
       this.valueCur = copy.valueCur;
     }
 
-    FLOAT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    FLOAT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -3558,8 +3652,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     private void checkValue(final float value) {
@@ -3614,8 +3707,8 @@ public final class data {
       // assertMutable();
       final boolean isNullCur = copy.isNullCur;
       final float valueCur = copy.valueCur;
-      this.changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
-      resetPrimaryKey();
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
 //      if (!changed)
 //        return;
@@ -3623,6 +3716,9 @@ public final class data {
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -3694,22 +3790,20 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Float.NaN : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
     public final void revert() {
-      resetPrimaryKey();
       isNullCur = isNullOld;
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -3775,11 +3869,11 @@ public final class data {
         return false;
 
       this.changed = isNullOld || valueOld != value;
-      resetPrimaryKey();
-
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -3795,10 +3889,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      resetPrimaryKey();
+      this.isNullCur = true;
 
-      isNullCur = true;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -3887,6 +3981,12 @@ public final class data {
       this(null, true, precision);
     }
 
+    INT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     INT(final Table owner, final boolean mutable, final INT copy) {
       super(owner, mutable, copy, copy.precision);
 
@@ -3906,8 +4006,8 @@ public final class data {
       this.max = null;
     }
 
-    INT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final Integer precision, final Integer min, final Integer max) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
+    INT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final Integer precision, final Integer min, final Integer max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -3924,8 +4024,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     private void checkValue(final int value) {
@@ -3980,8 +4079,8 @@ public final class data {
       // assertMutable();
       final boolean isNullCur = copy.isNullCur;
       final int valueCur = copy.valueCur;
-      this.changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
-      resetPrimaryKey();
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
 //      if (!changed)
 //        return;
@@ -3989,6 +4088,9 @@ public final class data {
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -4075,22 +4177,20 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
     public final void revert() {
-      resetPrimaryKey();
       isNullCur = isNullOld;
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -4164,11 +4264,11 @@ public final class data {
         return false;
 
       this.changed = isNullOld || valueOld != value;
-      resetPrimaryKey();
-
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -4184,10 +4284,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      resetPrimaryKey();
+      this.isNullCur = true;
 
-      isNullCur = true;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -4545,13 +4645,13 @@ public final class data {
       this.length = copy.length;
     }
 
-    LargeObject(final Table owner, final boolean mutable, final Long length) {
-      super(owner, mutable);
+    LargeObject(final Table owner, final boolean mutable, final Long length, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
       this.length = length;
     }
 
-    LargeObject(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    LargeObject(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       checkLength(length);
       this.length = length;
     }
@@ -4680,16 +4780,16 @@ public final class data {
       throw new UnsupportedOperationException("Unsupported Number type: " + as.getName());
     }
 
-    Numeric(final Table owner, final boolean mutable) {
-      super(owner, mutable);
+    Numeric(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
     Numeric(final Table owner, final boolean mutable, final Numeric<V> copy) {
       super(owner, mutable, copy);
     }
 
-    Numeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    Numeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     public abstract V max();
@@ -4733,8 +4833,8 @@ public final class data {
     V valueOld;
     V valueCur;
 
-    Objective(final Table owner, final boolean mutable) {
-      super(owner, mutable);
+    Objective(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
     Objective(final Table owner, final boolean mutable, final Objective<V> copy) {
@@ -4744,8 +4844,8 @@ public final class data {
       this.valueCur = copy.valueCur;
     }
 
-    Objective(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    Objective(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.valueOld = this.valueCur = _default;
     }
 
@@ -4754,8 +4854,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     @Override
@@ -4786,10 +4885,10 @@ public final class data {
     @Override
     public final void revert() {
       // FIXME: Optimize this to only revert if `changed == true`. But that means it must absolutely be the case that `changed = true` when `valueCur` is modified.
-      resetPrimaryKey();
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -4831,10 +4930,10 @@ public final class data {
         return false;
 
       this.changed = !equal(valueOld, value);
-      resetPrimaryKey();
-
       this.valueCur = value;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -4845,10 +4944,10 @@ public final class data {
         return false;
 
       this.changed = valueOld != null;
-      resetPrimaryKey();
+      this.valueCur = null;
 
-      valueCur = null;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -4858,16 +4957,16 @@ public final class data {
   }
 
   public abstract static class Primitive<V> extends Column<V> implements type.Primitive<V> {
-    Primitive(final Table owner, final boolean mutable) {
-      super(owner, mutable);
+    Primitive(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
     Primitive(final Table owner, final boolean mutable, final Primitive<V> copy) {
       super(owner, mutable, copy);
     }
 
-    Primitive(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    Primitive(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     abstract String primitiveToString();
@@ -4933,6 +5032,12 @@ public final class data {
       this.max = null;
     }
 
+    SMALLINT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     SMALLINT(final Table owner, final boolean mutable, final SMALLINT copy) {
       super(owner, mutable, copy, copy.precision);
 
@@ -4946,8 +5051,8 @@ public final class data {
       this.valueCur = copy.valueCur;
     }
 
-    SMALLINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final Integer precision, final Short min, final Short max) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
+    SMALLINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final Integer precision, final Short min, final Short max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -4964,8 +5069,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     private void checkValue(final short value) {
@@ -5020,8 +5124,8 @@ public final class data {
       // assertMutable();
       final boolean isNullCur = copy.isNullCur;
       final short valueCur = copy.valueCur;
-      this.changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
-      resetPrimaryKey();
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
 //      if (!changed)
 //        return;
@@ -5029,6 +5133,9 @@ public final class data {
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -5115,22 +5222,20 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
     public final void revert() {
-      resetPrimaryKey();
       isNullCur = isNullOld;
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -5207,11 +5312,11 @@ public final class data {
         return false;
 
       this.changed = isNullOld || valueOld != value;
-      resetPrimaryKey();
-
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -5227,10 +5332,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      resetPrimaryKey();
+      this.isNullCur = true;
 
-      isNullCur = true;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -5348,10 +5453,10 @@ public final class data {
     }
 
     @SuppressWarnings("unchecked")
-    final void _commitUpdate$() {
+    final void _onModifyUpdate$() {
       for (final Column<?> column : _column$) // [A]
-        if (column.changed && column.commitUpdate != null)
-          column.commitUpdate.update(this);
+        if (column.changed && column.onModify != null)
+          column.onModify.update(this);
     }
 
     void _initCache$() {
@@ -5559,12 +5664,12 @@ public final class data {
   }
 
   public abstract static class Temporal<V extends java.time.temporal.Temporal> extends Objective<V> implements Comparable<Column<? extends java.time.temporal.Temporal>>, type.Temporal<V> {
-    Temporal(final Table owner, final boolean mutable) {
-      super(owner, mutable);
+    Temporal(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
-    Temporal(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    Temporal(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     Temporal(final Table owner, final boolean mutable, final Temporal<V> copy) {
@@ -5590,13 +5695,13 @@ public final class data {
   public abstract static class Textual<V extends CharSequence & Comparable<?>> extends Objective<V> implements type.Textual<V>, Comparable<Textual<?>> {
     private final Short length;
 
-    Textual(final Table owner, final boolean mutable, final Short length) {
-      super(owner, mutable);
+    Textual(final Table owner, final boolean mutable, final Short length, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
       this.length = length;
     }
 
-    Textual(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final long length) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    Textual(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.length = (short)length;
     }
 
@@ -5656,17 +5761,17 @@ public final class data {
     }
 
     private TIME(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.precision = null;
     }
 
     public TIME(final int precision) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       this.precision = (byte)precision;
     }
 
     public TIME(final Integer precision) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       this.precision = Numbers.cast(precision, Byte.class);
     }
 
@@ -5675,8 +5780,13 @@ public final class data {
       set(value);
     }
 
-    TIME(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
+    TIME(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.precision = null;
+    }
+
+    TIME(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.precision = precision == null ? null : precision.byteValue();
     }
 
@@ -5713,14 +5823,17 @@ public final class data {
       // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final LocalTime valueCur = copy.valueCur;
-      this.changed = !equal(this.valueOld, valueCur);
-      resetPrimaryKey();
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -5745,12 +5858,10 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -5853,8 +5964,14 @@ public final class data {
       this.max = null;
     }
 
-    TINYINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> commitUpdate, final boolean isNullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final Integer precision, final Byte min, final Byte max) {
-      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
+    TINYINT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
+    TINYINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final Integer precision, final Byte min, final Byte max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -5884,8 +6001,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
-      if (primaryIndexType != null)
-        table._primaryKeyOldImmutable$ = null;
+      onChange(OLD);
     }
 
     private void checkValue(final byte value) {
@@ -5940,8 +6056,8 @@ public final class data {
       // assertMutable();
       final boolean isNullCur = copy.isNullCur;
       final byte valueCur = copy.valueCur;
-      this.changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
-      resetPrimaryKey();
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
 //      if (!changed)
 //        return;
@@ -5949,6 +6065,9 @@ public final class data {
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -6035,22 +6154,20 @@ public final class data {
     @Override
     final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
-      if (primaryIndexType != null)
-        table._primaryKeyImmutable$ = table._primaryKeyOldImmutable$ = null;
-
       this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
     public final void revert() {
-      resetPrimaryKey();
       isNullCur = isNullOld;
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -6133,11 +6250,11 @@ public final class data {
         return false;
 
       this.changed = isNullOld || valueOld != value;
-      resetPrimaryKey();
-
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -6153,10 +6270,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      resetPrimaryKey();
+      this.isNullCur = true;
 
-      isNullCur = true;
-      return changed;
+      onChange(CUR);
+      return true;
     }
 
     @Override

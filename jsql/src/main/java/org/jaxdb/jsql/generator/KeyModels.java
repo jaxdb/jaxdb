@@ -147,14 +147,14 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
         return null;
 
 //      if (isForeign)
-        return data.Key.class.getCanonicalName() + ".with(" + cacheColumnsRef + ", " + args + ")";
+//        return data.Key.class.getCanonicalName() + ".with(" + cacheColumnsRef + ", " + args + ")";
 
         // FIXME: Uncomment to continue work on persistent keys
-//      final String argsXX = keyClauseValues.replace("{1}.this.", "").replace("{2}", curlOld.toString());
-//      final String xxx = argsXX.replace(".get" + curlOld, "").replace("()", "_").replace(", ", "");
-//      final String prefix = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, xxx) + "ON_" + toTableRefName + curlOld;
-//      final String name = prefix + "_Key$";
-//      return (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, argsXX, curlOld) + "/* " + comment + "*/";
+      final String argsXX = keyClauseValues.replace("{1}.this.", "").replace("{2}", curlOld.toString());
+      final String xxx = argsXX.replace(".get" + curlOld, "").replace("()", "_").replace(", ", "");
+      final String prefix = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, xxx) + "ON_" + toTableRefName + curlOld;
+      final String name = prefix + "_Key$";
+      return (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, argsXX, curlOld) + "/* " + comment + "*/";
     }
 
     @Override

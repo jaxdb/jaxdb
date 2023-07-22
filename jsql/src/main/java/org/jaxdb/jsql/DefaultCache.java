@@ -79,7 +79,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   private static data.Table update(final data.Table entity, final data.Table update) {
     if (logger.isTraceEnabled()) logger.trace("update(" + log(entity) + "," + log(update) + ")");
     entity.merge$(update);
-    entity._commitUpdate$();
+    entity._onModifyUpdate$();
     entity._commitEntity$();
     return entity;
   }
@@ -243,7 +243,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     }
     else {
       entity.merge$(row);
-      entity._commitUpdate$();
+      entity._onModifyUpdate$();
     }
 
     entity._commitEntity$();
