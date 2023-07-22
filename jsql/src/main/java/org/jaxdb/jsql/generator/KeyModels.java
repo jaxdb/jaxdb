@@ -146,15 +146,17 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
       if (!declared.add(cacheColumnsRef + ":" + args))
         return null;
 
+      final String key = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsRef + ", " + args + ")";
+
 //      if (isForeign)
-//        return data.Key.class.getCanonicalName() + ".with(" + cacheColumnsRef + ", " + args + ")";
+//        return key;
 
         // FIXME: Uncomment to continue work on persistent keys
       final String argsXX = keyClauseValues.replace("{1}.this.", "").replace("{2}", curlOld.toString());
       final String xxx = argsXX.replace(".get" + curlOld, "").replace("()", "_").replace(", ", "");
       final String prefix = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, xxx) + "ON_" + toTableRefName + curlOld;
       final String name = prefix + "_Key$";
-      return (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, argsXX, curlOld) + "/* " + comment + "*/";
+      return "assertKey(" + (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, argsXX, curlOld) + ", " + key + ")";
     }
 
     @Override
