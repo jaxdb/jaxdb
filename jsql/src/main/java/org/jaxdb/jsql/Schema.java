@@ -159,7 +159,7 @@ public abstract class Schema {
     if (k1.equals(k2))
       return k1;
 
-    if (logger.isErrorEnabled()) logger.error("ASYNCDB key mismatch: " + k1 + " " + k2);
+    if (logger.isErrorEnabled()) logger.error("ASYNCDB key mismatch: " + k1 + " " + k2, new Exception());
     return k2;
   }
 }
