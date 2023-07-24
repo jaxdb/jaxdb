@@ -408,9 +408,6 @@ class TableModel {
         final $Tinyint integer = ($Tinyint)column;
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Tinyint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-            if (isPrimary)
-              throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
             generateOnUpdate = GenerateOn.INCREMENT;
           }
           else {
@@ -425,9 +422,6 @@ class TableModel {
         final $Smallint integer = ($Smallint)column;
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Smallint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-            if (isPrimary)
-              throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
             generateOnUpdate = GenerateOn.INCREMENT;
           }
           else {
@@ -462,9 +456,6 @@ class TableModel {
         }
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
             generateOnUpdate = GenerateOn.INCREMENT;
           }
@@ -518,9 +509,6 @@ class TableModel {
         }
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
             generateOnUpdate = GenerateOn.INCREMENT;
           }
@@ -581,9 +569,6 @@ class TableModel {
 
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Date.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
         else {
@@ -605,9 +590,6 @@ class TableModel {
 
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Time.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
         else {
@@ -629,9 +611,6 @@ class TableModel {
 
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Datetime.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableModel.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
         else {
