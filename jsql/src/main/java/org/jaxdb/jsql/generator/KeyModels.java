@@ -26,7 +26,6 @@ import org.jaxdb.jsql.generator.Relation.CurOld;
 
 class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
   class KeyModel {
-    private final boolean isForeign;
     final String cacheMethodName;
     final String toTableRefName;
     final String indexFieldName;
@@ -40,8 +39,7 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
 
     private final LinkedHashSet<String>[] resets = new LinkedHashSet[] {new LinkedHashSet<>(), new LinkedHashSet<>()};
 
-    KeyModel(final boolean isForeign, final String singletonInstanceName, final String cacheMethodName, final String toTableRefName, final ColumnModels columns, final IndexType indexType) {
-      this.isForeign = isForeign;
+    private KeyModel(final String singletonInstanceName, final String cacheMethodName, final String toTableRefName, final ColumnModels columns, final IndexType indexType) {
       this.cacheMethodName = cacheMethodName;
       this.toTableRefName = toTableRefName;
       this.indexFieldName = singletonInstanceName + "._" + ColumnModels.getInstanceNameForCache(cacheMethodName, toTableRefName) + "Index$";
@@ -140,7 +138,7 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
       return name + "()";
     }
 
-    String keyRefArgsInternal(final String cacheSingletonName, final String cacheMethodName, final String toTableRefName, final String replace1, final CurOld curlOld, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
+    String keyRefArgsInternal(final String cacheSingletonName, final String cacheMethodName, final String toTableRefName, final String replace1, final CurOld curlOld, final boolean addSelfRef, final HashSet<String> declared) {
       final String args = keyClauseValues.replace("{1}", replace1).replace("{2}", curlOld.toString());
       final String cacheColumnsRef = cacheSingletonName + "._" + ColumnModels.getInstanceNameForCache(cacheMethodName, toTableRefName) + "Index$";
       if (!declared.add(cacheColumnsRef + ":" + args))
@@ -151,12 +149,10 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
 //      if (isForeign)
 //        return key;
 
-        // FIXME: Uncomment to continue work on persistent keys
-      final String argsXX = keyClauseValues.replace("{1}.this.", "").replace("{2}", curlOld.toString());
-      final String xxx = argsXX.replace(".get" + curlOld, "").replace("()", "_").replace(", ", "");
-      final String prefix = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, xxx) + "ON_" + toTableRefName + curlOld;
-      final String name = prefix + "_Key$";
-      return "assertKey(" + (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, argsXX, curlOld) + ", " + key + ")";
+      final String args2 = keyClauseValues.replace("{1}.this.", "").replace("{2}", curlOld.toString());
+      final String args3 = args2.replace(".get" + curlOld, "").replace("()", "_").replace(", ", "");
+      final String name = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, args3) + "ON_" + toTableRefName + curlOld + "_Key$";
+      return "assertKey(" + (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, args2, curlOld) + ", " + key + ")";
     }
 
     @Override
@@ -184,8 +180,8 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
     this.declarations = new LinkedHashMap<>(initialCapacity);
   }
 
-  KeyModel add(final boolean isForeign, final String singletonInstanceName, final String cacheMethodName, final String toTableRefName, final ColumnModels columns, final IndexType indexType) {
-    final KeyModel keyModel = new KeyModel(isForeign, singletonInstanceName, cacheMethodName, toTableRefName, columns, indexType);
+  KeyModel add(final String singletonInstanceName, final String cacheMethodName, final String toTableRefName, final ColumnModels columns, final IndexType indexType) {
+    final KeyModel keyModel = new KeyModel(singletonInstanceName, cacheMethodName, toTableRefName, columns, indexType);
     super.add(keyModel);
     return keyModel;
   }

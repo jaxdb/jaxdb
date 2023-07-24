@@ -24,10 +24,10 @@ class OneToManyRelation extends ForeignRelation {
   }
 
   @Override
-  String writeDeclaration(final String classSimpleName, final HashSet<String> declared, final String comment) {
+  String writeDeclaration(final String classSimpleName, final HashSet<String> declared) {
     final String typeName = indexTypeForeign.isUnique ? declarationNameForeign : getType();
     final String declaredName = indexTypeForeign.isUnique ? declarationNameForeign : getDeclaredName();
-    return writeDeclaration(classSimpleName, typeName, declaredName, "", declared, comment);
+    return writeDeclaration(classSimpleName, typeName, declaredName, "", declared);
   }
 
   @Override

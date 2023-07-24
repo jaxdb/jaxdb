@@ -24,8 +24,8 @@ class ManyToManyRelation extends ForeignRelation {
   }
 
   @Override
-  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
-    final String keyClause = keyModel.keyRefArgsInternal(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, curOld, addSelfRef, declared, comment);
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared) {
+    final String keyClause = keyModel.keyRefArgsInternal(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, curOld, addSelfRef, declared);
     if (keyClause == null)
       return null;
 

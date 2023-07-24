@@ -90,7 +90,7 @@ class Relation {
     rangeParams.setLength(rangeParams.length() - 2);
     this.rangeParams = rangeParams.toString();
 
-    keyModel = keyModels.add(this instanceof ForeignRelation, tableModel.singletonInstanceName, columnName, tableModel.classCase, columns, indexType);
+    keyModel = keyModels.add(tableModel.singletonInstanceName, columnName, tableModel.classCase, columns, indexType);
   }
 
   boolean isDeclaredOnSourceTable() {
@@ -111,8 +111,8 @@ class Relation {
       "\n    }\n";
   }
 
-  final String keyClause(final String replace1, final CurOld replace2, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
-    return keyModel.keyRefArgsInternal(tableModel.singletonInstanceName, columnName, tableModel.classCase, replace1, replace2, addSelfRef, declared, comment);
+  final String keyClause(final String replace1, final CurOld replace2, final boolean addSelfRef, final HashSet<String> declared) {
+    return keyModel.keyRefArgsInternal(tableModel.singletonInstanceName, columnName, tableModel.classCase, replace1, replace2, addSelfRef, declared);
   }
 
   final void keyClauseColumnAssignments(final LinkedHashSet<String> keyClauseColumnAssignments) {
@@ -168,8 +168,8 @@ class Relation {
     return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") ";
   }
 
-  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
-    final String keyClause = keyClause(classSimpleName, curOld, addSelfRef, declared, comment);
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared) {
+    final String keyClause = keyClause(classSimpleName, curOld, addSelfRef, declared);
     if (keyClause == null)
       return null;
 
@@ -181,8 +181,8 @@ class Relation {
     return tableModel.singletonInstanceName + "." + cacheMapFieldName + ".addKey(" + data.Key.class.getCanonicalName() + ".ALL);";
   }
 
-  final String writeOnChangeClearCache(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared, final String comment) {
-    final String keyClause = keyClause(classSimpleName, curOld, addSelfRef, declared, comment);
+  final String writeOnChangeClearCache(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared) {
+    final String keyClause = keyClause(classSimpleName, curOld, addSelfRef, declared);
     if (keyClause == null)
       return null;
 

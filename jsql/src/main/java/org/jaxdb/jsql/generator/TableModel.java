@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.CacheMap;
 import org.jaxdb.jsql.GenerateOn;
+import org.jaxdb.jsql.OnModify;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.type;
@@ -78,7 +79,7 @@ import org.w3.www._2001.XMLSchema.yAA;
 
 class TableModel {
   private static final Logger logger = LoggerFactory.getLogger(TableModel.class);
-  private static final String onModifyClassName = data.class.getPackage().getName() + ".OnModify";
+  private static final String onModifyClassName = OnModify.class.getName();
   private final Set<String> primaryKeyColumnNames;
   private final IndexType primaryKeyIndexType;
   private final Set<String> keyForUpdateColumnNames;
@@ -743,7 +744,7 @@ class TableModel {
 
     out.append("\n  public interface $").append(classSimpleName).append(" {");
 
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
       final ColumnModel column = columns[i];
       if (column.column instanceof $Enum) {
         final $Enum enumColumn = ($Enum)column.column;
@@ -857,7 +858,7 @@ class TableModel {
               if (relation instanceof ForeignRelation) {
                 final ForeignRelation foreign = (ForeignRelation)relation;
                 if (!foreign.referenceTable.isAbstract)
-                  write("\n", foreign.writeDeclaration(classSimpleName, declared, "%FOREIGN%"), out, declared);
+                  write("\n", foreign.writeDeclaration(classSimpleName, declared), out, declared);
               }
             }
           }
@@ -896,7 +897,7 @@ class TableModel {
           out.append("\n        return;\n");
           for (final Relations<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
-              write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur, false, declared, "%LOCAL%"), out, declared);
+              write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur, false, declared), out, declared);
             }
           }
 
@@ -926,7 +927,7 @@ class TableModel {
           declared.clear();
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
-            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Cur, false, declared, "%LOCAL%"), out, declared);
+            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Cur, false, declared), out, declared);
           }
 
           if (declared.size() > 0)
@@ -939,7 +940,7 @@ class TableModel {
 
     dcl.setLength(0);
 
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
       final ColumnModel column = columns[i];
       out.append(getDoc(column.column, 2, '\n', '\0', "Column", column.column.getName$().text(), "Primary", column.isPrimary, "KeyForUpdate", column.isKeyForUpdate, "NULL", column.column.getNull$() == null || column.column.getNull$().text())); // FIXME: Add DEFAULT
       out.append("\n    public final ").append(column.declareColumn()).append(";\n");
@@ -997,9 +998,9 @@ class TableModel {
       commitUpdateChanges = null;
     }
     else {
-      commitUpdateChanges = new String[columns.length];
+      commitUpdateChanges = new String[noColumnsTotal];
       final StringBuilder ocb = new StringBuilder();
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0; i < noColumnsTotal; ++i) { // [A]
         final ColumnModel columnModel = columns[i];
           // This section executed onChanged() for each column to clear the foreign Key
   //      Map<String,String> foreignKeyColumns = tableToForeignKeyColumns.get(table);
@@ -1049,12 +1050,12 @@ class TableModel {
 
           for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
             final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-            write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Old, true, declared2, "%LOCAL%"), ocb, declared2);
+            write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Old, true, declared2), ocb, declared2);
           }
 
           for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
             final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-            write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2, "%LOCAL%"), ocb, declared2);
+            write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2), ocb, declared2);
           }
 
           if (primaryKeyColumnNames.contains(columnModel.name) && columnsToRelations.size() > 0) {
@@ -1065,8 +1066,8 @@ class TableModel {
                   final ForeignRelation foreign = (ForeignRelation)relation;
 
                   if (entry.getKey().contains(columnModel) || relation instanceof ManyToManyRelation) {
-                    write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, CurOld.Old, true, declared2, "%FOREIGN%"), ocb, declared2);
-                    write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2, "%FOREIGN%"), ocb, declared2);
+                    write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, CurOld.Old, true, declared2), ocb, declared2);
+                    write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2), ocb, declared2);
                   }
 
     //                    for (final Foreign reverse : relation.reverses) { // [?]
@@ -1080,7 +1081,6 @@ class TableModel {
           ocb.append("\n          }");
 
           final StringBuilder changeBuilder = new StringBuilder();
-          declared2.clear();
 
           changeBuilder.append("\n\n          @").append(Override.class.getName());
           changeBuilder.append("\n          public void changeCur(final ").append(className).append(" self) {");
@@ -1092,11 +1092,8 @@ class TableModel {
           }
           changeBuilder.append("\n          }");
 
-//          if (declared2.size() > 0) {
-            ocb.append(changeBuilder);
-            changeBuilder.setLength(0);
-            declared2.clear();
-//          }
+          ocb.append(changeBuilder);
+          changeBuilder.setLength(0);
 
           changeBuilder.append("\n\n          @").append(Override.class.getName());
           changeBuilder.append("\n          public void changeOld(final ").append(className).append(" self) {");
@@ -1108,11 +1105,8 @@ class TableModel {
           }
           changeBuilder.append("\n          }");
 
-//          if (declared2.size() > 0) {
-            ocb.append(changeBuilder);
-            changeBuilder.setLength(0);
-            declared2.clear();
-//          }
+          ocb.append(changeBuilder);
+          changeBuilder.setLength(0);
 
           ocb.append("\n        }");
 
@@ -1141,21 +1135,20 @@ class TableModel {
     final String init0 = init.toString();
 
     final StringBuilder parameters = new StringBuilder();
-    for (int i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0; i < noColumnsTotal; ++i) { // [A]
       final ColumnModel column = columns[i];
       parameters.append(", final ").append(onModifyClassName).append("<? extends ").append(column.tableModel.className).append("> ").append(column.instanceCase);
       init.append(", (").append(onModifyClassName).append(")null");
     }
 
     final StringBuilder arguments = new StringBuilder();
-    for (int s = columns.length - noColumnsLocal, i = 0; i < s; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = 0; i < s; ++i) { // [A]
       arguments.append(", ").append(columns[i].instanceCase);
       if (commitUpdateChanges != null && commitUpdateChanges[i] != null)
         arguments.append(" != null ? ").append(columns[i].instanceCase).append(" : ").append(commitUpdateChanges[i]);
     }
 
-    // FIXME: Uncomment to continue work on persistent keys
-     keyModels.writeDeclare(out);
+    keyModels.writeDeclare(out);
 
     out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) {");
     out.append("\n      this(_mutable$, _wasSelected$, ").append(init).append(");");
@@ -1182,7 +1175,7 @@ class TableModel {
       int primaryIndex = 0;
       int keyForUpdateIndex = 0;
       int autoIndex = 0;
-      for (int s = columns.length - noColumnsLocal, i = 0; i < columns.length; ++i) { // [A]
+      for (int s = noColumnsTotal - noColumnsLocal, i = 0; i < noColumnsTotal; ++i) { // [A]
         if (i > s)
           out.append('\n');
 
@@ -1223,7 +1216,7 @@ class TableModel {
     }
 
     final StringBuilder buf = new StringBuilder();
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
       final ColumnModel columnModel = columns[i];
       if (buf.length() > 0)
         buf.append('\n');
@@ -1264,7 +1257,7 @@ class TableModel {
     }
 
     buf.setLength(0);
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
       final ColumnModel columnModel = columns[i];
       buf.append("\n      if (this.").append(columnModel.instanceCase).append(".isNull() ? !that.").append(columnModel.instanceCase).append(".isNull() : !").append(columnModel.getEqualsClause()).append(')');
       buf.append("\n        return false;\n");
@@ -1289,7 +1282,7 @@ class TableModel {
     out.append("\n    }\n\n");
 
     buf.setLength(0);
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
       final ColumnModel columnModel = columns[i];
       buf.append("\n      if (!this.").append(columnModel.instanceCase).append(".isNull())");
       buf.append("\n        hashCode = 31 * hashCode + this.").append(columnModel.instanceCase).append(".get().hashCode();\n");
@@ -1308,7 +1301,7 @@ class TableModel {
 
     buf.setLength(0);
     boolean ifClause = true;
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
       if (ifClause)
         buf.append('\n');
       final ColumnModel columnModel = columns[i];

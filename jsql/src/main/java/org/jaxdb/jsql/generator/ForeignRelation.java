@@ -58,14 +58,14 @@ abstract class ForeignRelation extends Relation {
     return declarationNameForeign;
   }
 
-  String writeDeclaration(final String classSimpleName, final HashSet<String> declared, final String comment) {
+  String writeDeclaration(final String classSimpleName, final HashSet<String> declared) {
     final String typeName = getType();
     final String declaredName = getDeclaredName();
-    return writeDeclaration(classSimpleName, typeName, declaredName, "", declared, comment);
+    return writeDeclaration(classSimpleName, typeName, declaredName, "", declared);
   }
 
-  final String writeDeclaration(final String classSimpleName, final String typeName, final String declaredName, final String suffix, final HashSet<String> declared, final String comment) {
-    final String keyClause = keyModel.keyRefArgsInternal(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, CurOld.Old, false, declared, comment);
+  final String writeDeclaration(final String classSimpleName, final String typeName, final String declaredName, final String suffix, final HashSet<String> declared) {
+    final String keyClause = keyModel.keyRefArgsInternal(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, CurOld.Old, false, declared);
     if (keyClause == null)
       return null;
 
