@@ -43,8 +43,8 @@ public abstract class TestCommand<E> extends Command<E> {
     }
 
     private static boolean called;
-    private static ThreadLocal<AssertCommand> assertCommand = new ThreadLocal<>();
-    private static ThreadLocal<AssertSelect> assertSelect = new ThreadLocal<>();
+    private static final ThreadLocal<AssertCommand> assertCommand = new ThreadLocal<>();
+    private static final ThreadLocal<AssertSelect> assertSelect = new ThreadLocal<>();
 
     public static boolean called() {
       if (!called)

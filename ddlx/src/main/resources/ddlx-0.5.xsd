@@ -15,9 +15,11 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <xs:schema
+  vc:minVersion="1.1"
   elementFormDefault="qualified"
   targetNamespace="http://www.jaxdb.org/ddlx-0.5.xsd"
   xmlns:ddlx="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:include schemaLocation="ddlx-common-0.5.xsd"/>

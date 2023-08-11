@@ -109,8 +109,9 @@ public abstract class Schema {
         final SELECT<T> select = onConnectPreLoad.apply(table);
         if (select != null) {
           final Connector connector = table.getSchema().getConnector();
-          try (final RowIterator<T> rows = select.execute(connector)) {
-            while (rows.nextRow());
+          try (final RowIterator<T> rows = select.execute(connector, CacheConfig.withoutCacheSelectEntity)) {
+            while (rows.nextRow())
+              cacheNotifier.onSelect(rows.nextEntity());
           }
         }
       }

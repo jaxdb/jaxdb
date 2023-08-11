@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public abstract class TestConnectionFactory implements ConnectionFactory {
-  private static ThreadLocal<Boolean> called = new ThreadLocal<Boolean>() {
+  private static final ThreadLocal<Boolean> called = new ThreadLocal<Boolean>() {
     @Override
     protected Boolean initialValue() {
       return Boolean.FALSE;
