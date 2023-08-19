@@ -18,6 +18,7 @@ package org.jaxdb.ddlx;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -54,7 +55,7 @@ final class OracleCompiler extends Compiler {
   void init(final Connection connection) throws SQLException {
     try {
       final ClassLoader classLoader = OracleCompiler.class.getClassLoader();
-      Resources.walk(classLoader, "org/jaxdb/oracle", (root, entry, isDirectory) -> {
+      Resources.walk(classLoader, "org/jaxdb/oracle", (final URL root, final String entry, final boolean isDirectory) -> {
         if (!isDirectory) {
           try (final Statement statement = connection.createStatement()) {
             statement.execute(new String(URLs.readBytes(classLoader.getResource(entry))));
