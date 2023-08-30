@@ -16,7 +16,7 @@
       <plugin>
         <groupId>org.jaxdb</groupId>
         <artifactId>jaxdb-maven-plugin</artifactId>
-        <version>0.5.2-SNAPSHOT</version>
+        <version>0.5.1-SNAPSHOT</version>
         <executions>
           <execution>
             <id>ddlx2sql</id>
@@ -75,7 +75,7 @@
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>jsql</artifactId>
-      <version>0.5.2-SNAPSHOT</version>
+      <version>0.5.1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>xml-apis</groupId>
