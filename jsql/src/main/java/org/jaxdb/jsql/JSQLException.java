@@ -1,4 +1,4 @@
-/* Copyright (c) 2022 JAX-DB
+/* Copyright (c) 2023 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,8 +16,20 @@
 
 package org.jaxdb.jsql;
 
-import java.util.Map;
+public class JSQLException extends RuntimeException {
+  public JSQLException() {
+    super();
+  }
 
-public interface RelationMap<V> extends Map<data.Key,V> {
-  V superGet(final data.Key key);
+  public JSQLException(final String message) {
+    super(message);
+  }
+
+  public JSQLException(final Throwable cause) {
+    super(cause);
+  }
+
+  public JSQLException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }

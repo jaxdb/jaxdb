@@ -16,7 +16,7 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -24,8 +24,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 import org.jaxdb.jsql.Batch;
+import org.jaxdb.jsql.Classicmodels;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -33,7 +34,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,8 +52,9 @@ public abstract class BatchTest {
   }
 
   @Test
-  public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
 
     final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;
     final Batch batch = new Batch();
@@ -74,14 +75,14 @@ public abstract class BatchTest {
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, classicmodels.Purchase.Status.ON_HOLD).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.DISPUTED))
+      SET(p.status, Classicmodels.Purchase.Status.ON_HOLD).
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.DISPUTED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 3)));
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, classicmodels.Purchase.Status.ON_HOLD).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.DISPUTED))
+      SET(p.status, Classicmodels.Purchase.Status.ON_HOLD).
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.DISPUTED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 0)));
 
     batch.addStatement(
@@ -96,25 +97,25 @@ public abstract class BatchTest {
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.CANCELED))
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.CANCELED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.RESOLVED))
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.RESOLVED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 4)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.IN_PROCESS))
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.IN_PROCESS))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
 
-    final classicmodels.Purchase p1 = new classicmodels.Purchase();
+    final Classicmodels.Purchase p1 = classicmodels.new Purchase();
     p1.purchaseDate.set(LocalDate.now());
     p1.requiredDate.set(LocalDate.now());
     p1.customerNumber.set((short)114);
     p1.purchaseNumber.set(SELECT(ADD(MAX(p.purchaseNumber), 1)).FROM(p));
-    p1.status.set(classicmodels.Purchase.Status.IN_PROCESS);
+    p1.status.set(Classicmodels.Purchase.Status.IN_PROCESS);
 
     for (int i = 0; i < 5; ++i) { // [N]
       batch.addStatement(
@@ -124,13 +125,13 @@ public abstract class BatchTest {
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, classicmodels.Purchase.Status.CANCELED).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.IN_PROCESS))
+      SET(p.status, Classicmodels.Purchase.Status.CANCELED).
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.IN_PROCESS))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.CANCELED))
+      WHERE(EQ(p.status, Classicmodels.Purchase.Status.CANCELED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
 
     if (!isOracle)

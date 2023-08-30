@@ -16,87 +16,177 @@
 
 package org.jaxdb.jsql.generator;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.SortedMap;
+
 import org.jaxdb.jsql.data;
 
 class Relation {
-  final Columns columns;
-  final TableMeta sourceTable;
-  final TableMeta tableMeta;
+  enum CurOld {
+    Cur(""),
+    Old("Old");
+
+    private final String str;
+
+    private CurOld(final String str) {
+      this.str = str;
+    }
+
+    @Override
+    public String toString() {
+      return str;
+    }
+  }
+
+  private final String cacheIndexFieldName;
+  private final String cacheMethodName;
+  final String cacheMapFieldName;
+  private final String declarationName;
+
+  private final ColumnModels columns;
+  private final TableModel sourceTable;
+  final TableModel tableModel;
   final IndexType indexType;
   final String columnName;
-  final String keyClause;
-  final String keyCondition;
-  final String keyParams;
-  final String keyArgs;
+  private final String keyClauseNotNullCheck;
+  private final String rangeParams;
+  private final String keyParams;
+  final KeyModels.KeyModel keyModel;
 
-  final String cacheInstanceName;
-  final String declarationName;
+  Relation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final IndexType indexType, final KeyModels keyModels) {
+    this.cacheMethodName = columns.getInstanceNameForCache(tableModel.classCase);
+    this.cacheMapFieldName = "_" + cacheMethodName + "Map$";
+    this.cacheIndexFieldName = "_" + cacheMethodName + "Index$";
+    this.declarationName = schemaClassName + "." + tableModel.classCase;
 
-  Relation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final IndexType indexType) {
     this.sourceTable = sourceTable;
-    this.tableMeta = tableMeta;
+    this.tableModel = tableModel;
     this.columns = columns;
     this.indexType = indexType;
 
     this.columnName = columns.getInstanceNameForKey();
 
-    final StringBuilder keyClause = new StringBuilder();
-    final StringBuilder keyCondition = new StringBuilder();
+    final StringBuilder keyClauseNotNullCheck = new StringBuilder();
     final StringBuilder keyParams = new StringBuilder();
-    final StringBuilder keyArgs = new StringBuilder();
+    final StringBuilder rangeParams = new StringBuilder();
+
     if (columns.size() > 0) {
-      for (final ColumnMeta column : columns) { // [S]
-        keyClause.append("{1}.this.").append(column.camelCase).append(".{2}(), ");
-        keyCondition.append("{1}.this.").append(column.camelCase).append(".{2}() != null && ");
+      for (final ColumnModel column : columns) { // [S]
+        keyClauseNotNullCheck.append("!{1}.this.").append(column.camelCase).append(".isNull{2}() && ");
         keyParams.append("final ").append(column.rawType).append(' ').append(column.instanceCase).append(", ");
-        keyArgs.append(column.instanceCase).append(", ");
+        rangeParams.append("final ").append(column.rawType).append(' ').append(column.instanceCase).append("From, final ").append(column.rawType).append(' ').append(column.instanceCase).append("To, ");
       }
     }
 
-    keyClause.setLength(keyClause.length() - 2);
-    this.keyClause = data.Key.class.getCanonicalName() + ".with(" + keyClause + ")";
-
-    keyCondition.setLength(keyCondition.length() - 4);
-    this.keyCondition = keyCondition.toString();
+    keyClauseNotNullCheck.setLength(keyClauseNotNullCheck.length() - 4);
+    this.keyClauseNotNullCheck = keyClauseNotNullCheck.toString();
 
     keyParams.setLength(keyParams.length() - 2);
     this.keyParams = keyParams.toString();
 
-    keyArgs.setLength(keyArgs.length() - 2);
-    this.keyArgs = keyArgs.toString();
+    rangeParams.setLength(rangeParams.length() - 2);
+    this.rangeParams = rangeParams.toString();
 
-    this.cacheInstanceName = tableMeta.getInstanceNameForCache(columns);
-    this.declarationName = schemaClassName + "." + tableMeta.classCase;
+    keyModel = keyModels.add(tableModel.singletonInstanceName, columnName, tableModel.classCase, columns, indexType);
   }
 
-  final String writeCacheDeclare() {
-    final String returnType = indexType.unique ? declarationName : indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationName + ">";
+  boolean isDeclaredOnSourceTable() {
+    return sourceTable == tableModel;
+  }
+
+  private String writeGetRangeMethod(final String returnType) {
+    if (!indexType.isBTree())
+      return "";
+
+    final String rangeArgs = keyModel.keyArgsRange();
     return
-      "\n    static " + indexType.getConcreteClass().getName() + "<" + declarationName + "> " + cacheInstanceName + ";\n" +
-      "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + data.Key.class.getCanonicalName() + ".with(" + keyArgs + "));" +
+      "\n    public " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "_CACHED(" + rangeParams + ") {" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".subMap(" + rangeArgs + ");" +
       "\n    }\n" +
-      "\n    public static " + indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "() {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ";" +
+      "\n    public " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "_SELECT(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".select(" + rangeArgs + ");" +
+      "\n    }\n";
+  }
+
+  final String keyClause(final String replace1, final CurOld replace2, final boolean addSelfRef, final HashSet<String> declared) {
+    return keyModel.keyRefArgsInternal(tableModel.singletonInstanceName, columnName, tableModel.classCase, replace1, replace2, addSelfRef, declared);
+  }
+
+  final void keyClauseColumnAssignments(final LinkedHashSet<String> keyClauseColumnAssignments) {
+    if (columns.size() == 0)
+      return;
+
+    final StringBuilder keyClauseColumnAssignment = new StringBuilder();
+    final boolean isPrimary = columns.equals(tableModel.primaryKey);
+    if (isPrimary) {
+      keyClauseColumnAssignment.append(tableModel.singletonInstanceName).append("._primary$");
+      keyClauseColumnAssignments.add(cacheIndexFieldName + " = " + keyClauseColumnAssignment);
+    }
+    else {
+      for (final ColumnModel column : columns) // [S]
+        keyClauseColumnAssignment.append(tableModel.singletonInstanceName).append("._column$[").append(column.index).append("], ");
+
+      keyClauseColumnAssignment.setLength(keyClauseColumnAssignment.length() - 2);
+      keyClauseColumnAssignments.add(cacheIndexFieldName + " = new " + data.Column.class.getCanonicalName() + "<?>[] {" + keyClauseColumnAssignment + "}");
+    }
+  }
+
+  final String writeCacheDeclare(final LinkedHashSet<String> keyClauseColumnAssignments, final HashSet<String> declared) {
+    keyClauseColumnAssignments(keyClauseColumnAssignments);
+    final String keyArgs = keyModel.keyArgsExternal(declared);
+    if (keyArgs == null)
+      return null;
+
+    final String returnType = indexType.isUnique ? declarationName : indexType.getInterfaceClass(declarationName);
+    return
+      "\n    private " + data.Column.class.getCanonicalName() + "<?>[] " + cacheIndexFieldName + ";" +
+      "\n    " + indexType.getConcreteClass(declarationName) + " " + cacheMapFieldName + ";\n" +
+      "\n    public " + returnType + " " + cacheMethodName + "_CACHED(" + keyParams + ") {" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".get(" + keyArgs + ");" +
+      "\n    }\n" +
+      "\n    public " + returnType + " " + cacheMethodName + "_SELECT(" + keyParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".select(" + keyArgs + ");" +
+      "\n    }\n" +
+      writeGetRangeMethod(returnType) +
+      "\n    public " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "_CACHED() {" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ";" +
+      "\n    }\n" +
+      "\n    public " + indexType.getInterfaceClass(returnType) + " " + cacheMethodName + "_SELECT() throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".selectAll();" +
+      "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ";" +
       "\n    }";
   }
 
   final String writeCacheInit() {
-    return cacheInstanceName + " = new " + indexType.getConcreteClass().getName() + "<>();";
+    return cacheMapFieldName + " = new " + indexType.getConcreteClass(null) + "<>(this);";
   }
 
-  String writeCacheInsert(final String classSimpleName, final String curOld) {
-    final String method = indexType.unique ? "put" : "add";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ", " + classSimpleName + ".this);";
+  final String writeNullCheckClause(final String classSimpleName, final CurOld curOld) {
+    return "if (" + keyClauseNotNullCheck.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") ";
   }
 
-  String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final String curOld) {
-    return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", "get" + curOld) + (indexType.unique ? "" : ", " + classSimpleName + ".this") + ");";
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared) {
+    final String keyClause = keyClause(classSimpleName, curOld, addSelfRef, declared);
+    if (keyClause == null)
+      return null;
+
+    final String method = indexType.isUnique ? "put$" : "add$";
+    return writeNullCheckClause(classSimpleName, curOld) + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause + ", " + classSimpleName + ".this);";
   }
 
-  String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final String curOld, final String curOld2) {
-//    return declarationName + "." + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ");";
-    return null;
+  final String writeCacheSelectAll() {
+    return tableModel.singletonInstanceName + "." + cacheMapFieldName + ".addKey(" + data.Key.class.getCanonicalName() + ".ALL);";
+  }
+
+  final String writeOnChangeClearCache(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared) {
+    final String keyClause = keyClause(classSimpleName, curOld, addSelfRef, declared);
+    if (keyClause == null)
+      return null;
+
+    return writeNullCheckClause(classSimpleName, curOld) + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".remove$" + curOld + "(" + keyClause + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
   }
 
   @Override
@@ -108,12 +198,12 @@ class Relation {
       return false;
 
     final Relation that = (Relation)obj;
-    return tableMeta.equals(that.tableMeta) && columns.equals(that.columns);
+    return tableModel.equals(that.tableModel) && columns.equals(that.columns);
   }
 
   @Override
   public int hashCode() {
-    return tableMeta.hashCode() ^ columns.hashCode();
+    return tableModel.hashCode() ^ columns.hashCode();
   }
 
   @Override

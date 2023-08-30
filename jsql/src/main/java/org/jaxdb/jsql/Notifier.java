@@ -130,8 +130,8 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     private final Queue<Notification<T>> queue;
 
     private TableNotifier(final T table, final Queue<Notification<T>> queue) {
-      this.table = assertNotNull(table);
-      this.queue = assertNotNull(queue);
+      this.table = table;
+      this.queue = queue;
     }
 
     private boolean isClosed() {
@@ -254,7 +254,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
             queue.add(new Notification<>(sessionId, timestamp, entry.getKey(), action, null, old));
           }
           else {
-            ((data.Table)old).merge(cur);
+            old.merge$(cur);
             queue.add(new Notification<>(sessionId, timestamp, entry.getKey(), action, (Map<String,String>)json.get("keyForUpdate"), old));
           }
 
@@ -296,9 +296,17 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         if (logger.isTraceEnabled()) logger.trace("JAXDB-Notify Thread.flushQueues()");
 
         final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
-        if (tableNotifiers.size() > 0)
-          for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
-            for (Notification<?> notification; (notification = tableNotifier.queue.poll()) != null; notification.invoke()); // [C]
+        if (tableNotifiers.size() > 0) {
+          Notification<?> notification = null;
+          try {
+            for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
+              while ((notification = tableNotifier.queue.poll()) != null)
+                notification.invoke();
+          }
+          catch (final Exception e) {
+            if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.flushQueues(): " + notification, e);
+          }
+        }
       }
 
       @Override
@@ -326,7 +334,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
             }
           }
           catch (final Throwable t) {
-            if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.flushQueues()", t);
+            if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.run()", t);
 
             setState(Notifier.State.FAILED);
             if (!(t instanceof Exception))
@@ -483,7 +491,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       recreateTrigger(connection, tables, actionSets);
     }
 
-    if (tableNameToNotifier.isEmpty()) {
+    if (tableNameToNotifier.size() == 0) {
       setState(Notifier.State.STOPPED);
       stop();
       if (connection != null)
@@ -516,13 +524,14 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private <T extends data.Table>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T[] tables) throws SQLException {
-    final Action[][] actionSets = new Action[tables.length][];
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+    final int len = tables.length;
+    final Action[][] actionSets = new Action[len][];
+    for (int i = 0; i < len; ++i) { // [A]
       final T table = tables[i];
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)
-        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.singleton(), queue));
+        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table, queue));
 
       // actionSet must not be null here, because we're adding notification listeners for tables
       actionSets[i] = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
@@ -604,76 +613,88 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   @Override
   @SuppressWarnings("rawtypes")
   void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
       return;
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          entry.getKey().onConnect(connection, table);
+        entry.getKey().onConnect(connection, table);
   }
 
   @Override
-  @SuppressWarnings("rawtypes")
+  @SuppressWarnings({"rawtypes", "unchecked"})
   void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
       return;
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          entry.getKey().onFailure(sessionId, timestamp, table, e);
+      for (final Notification.Listener listener : notificationListenerToActions.keySet()) // [S]
+        listener.onFailure(sessionId, timestamp, table, e);
+  }
+
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void onSelect(final data.Table row) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
+    if (tableNotifier == null)
+      return;
+
+    final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    if (notificationListenerToActions.size() > 0)
+      for (final Notification.Listener listener : notificationListenerToActions.keySet()) // [S]
+        Action.onSelect(listener, row);
   }
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   void onInsert(final String sessionId, final long timestamp, final data.Table row) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
-    if (tableNotifier == null)
-      return;
-
-    final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
-    if (notificationListenerToActions.size() > 0)
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          Action.INSERT.invoke(sessionId, timestamp, entry.getKey(), null, row);
-  }
-
-  @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  void onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
     if (tableNotifier == null)
       return;
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0) {
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) { // [S]
-        final Action[] actions = entry.getValue();
-        if (actions[Action.UPDATE.ordinal()] != null)
-          Action.UPDATE.invoke(sessionId, timestamp, entry.getKey(), null, row);
-        else if (actions[Action.UPGRADE.ordinal()] != null)
-          Action.UPGRADE.invoke(sessionId, timestamp, entry.getKey(), keyForUpdate, row);
-      }
+      final byte ordinal = Action.INSERT.ordinal();
+      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
+        if (entry.getValue()[ordinal] != null)
+          Action.INSERT.invoke(sessionId, timestamp, entry.getKey(), null, row);
+    }
+  }
+
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
+    if (tableNotifier == null)
+      return;
+
+    final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    if (notificationListenerToActions.size() > 0) {
+      final byte ordinal = Action.UP.ordinal();
+      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
+        if (entry.getValue()[ordinal] != null)
+          Action.UP.invoke(sessionId, timestamp, entry.getKey(), keyForUpdate, row);
     }
   }
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   void onDelete(final String sessionId, final long timestamp, final data.Table row) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
     if (tableNotifier == null)
       return;
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
-    if (notificationListenerToActions.size() > 0)
+    if (notificationListenerToActions.size() > 0) {
+      final byte ordinal = Action.DELETE.ordinal();
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.DELETE.ordinal()] != null)
+        if (entry.getValue()[ordinal] != null)
           Action.DELETE.invoke(sessionId, timestamp, entry.getKey(), null, row);
+    }
   }
 
   @Override

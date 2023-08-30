@@ -17,83 +17,11 @@
 <classicmodels xmlns="urn:jaxdb:sqlx:classicmodels"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="urn:jaxdb:sqlx:classicmodels ../../../target/generated-test-resources/jaxdb/classicmodels.xsd">
-  <office
-    office_code="1"
-    city="San Francisco"
-    phone="16502194782"
-    address1="100 Market Street"
-    address2="Suite 300"
-    locality="CA"
-    country="US"
-    postal_code="94080"
-    territory="NA"
-    latitude="37.7942635"
-    longitude="-122.3955861"/>
-  <office
-    office_code="2"
-    city="Boston"
-    phone="12158370825"
-    address1="1550 Court Place"
-    address2="Suite 102"
-    locality="MA"
-    country="US"
-    postal_code="02107"
-    territory="NA"
-    latitude="42.3519343"
-    longitude="-71.0900118"/>
-  <office
-    office_code="3"
-    city="New York City"
-    phone="12125553000"
-    address1="523 East 53rd Street"
-    address2="apt. 5A"
-    locality="NY"
-    country="US"
-    postal_code="10022"
-    territory="NA"
-    latitude="40.7548902"
-    longitude="-73.9627258"/>
-  <office
-    office_code="4"
-    city="Paris"
-    phone="33147234404"
-    address1="43 Rue Jouffroy D'abbans"
-    country="FR"
-    postal_code="75017"
-    territory="EMEA"
-    latitude="48.8852922"
-    longitude="2.3079787"/>
-  <office
-    office_code="5"
-    city="Tokyo"
-    phone="81332245000"
-    address1="4-1 Kioicho"
-    locality="Chiyoda-Ku"
-    country="JP"
-    postal_code="102-8578"
-    territory="Japan"
-    latitude="35.6811759"
-    longitude="139.734872"/>
-  <office
-    office_code="6"
-    city="Sydney"
-    phone="61292642451"
-    address1="5-11 Wentworth Avenue"
-    address2="Floor #2"
-    country="AU"
-    postal_code="NSW 2010"
-    territory="APAC"
-    latitude="-33.8774518"
-    longitude="151.2118393"/>
-  <office
-    office_code="7"
-    city="London"
-    phone="442078772041"
-    address1="25 Old Broad Street"
-    address2="Level 7"
-    country="BR"
-    postal_code="EC2N 1HN"
-    territory="EMEA"
-    latitude="51.5151536"
-    longitude="-0.0838496"/>
+  <office office_code="1" city="San Francisco" phone="16502194782"  address1="100 Market Street"     address2="Suite 300" locality="CA"         country="US" postal_code="94080"    territory="NA"    latitude="37.7942635"  longitude="-122.3955861"/>
+  <office office_code="2" city="Boston"        phone="12158370825"  address1="1550 Court Place"      address2="Suite 102" locality="MA"         country="US" postal_code="02107"    territory="NA"    latitude="42.3519343"  longitude="-71.0900118"/>
+  <office office_code="3" city="New York City" phone="12125553000"  address1="523 East 53rd Street"  address2="apt. 5A"   locality="NY"         country="US" postal_code="10022"    territory="NA"    latitude="40.7548902"  longitude="-73.9627258"/>
+  <office office_code="4" city="Paris"         phone="33147234404"  address1="43 Rue Jouffroy D'abbans"                                         country="FR" postal_code="75017"    territory="EMEA"  latitude="48.8852922"  longitude="2.3079787"/>
+  <office office_code="5" city="Tokyo"         phone="81332245000"  address1="4-1 Kioicho"                                locality="Chiyoda-Ku" country="JP" postal_code="102-8578" territory="Japan" latitude="35.6811759"  longitude="139.734872"/>
+  <office office_code="6" city="Sydney"        phone="61292642451"  address1="5-11 Wentworth Avenue" address2="Floor #2"                        country="AU" postal_code="NSW 2010" territory="APAC"  latitude="-33.8774518" longitude="151.2118393"/>
+  <office office_code="7" city="London"        phone="442078772041" address1="25 Old Broad Street"   address2="Level 7"                         country="BR" postal_code="EC2N 1HN" territory="EMEA"  latitude="51.5151536"  longitude="-0.0838496"/>
 </classicmodels>

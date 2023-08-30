@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -52,38 +51,38 @@ public class DMLxGeneratorTest {
   private enum Returning {
     FIRST {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, 0, null, catalogs);
       }
     },
     SECOND {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, 1, null, catalogs);
       }
     },
     BOTH {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, -1, null, catalogs);
       }
     },
     SECOND_APPROX {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, 1, approxTypes, catalogs);
       }
     },
     BOTH_APPROX {
       @Override
-      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs) {
+      Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[][] catalogs) {
         return Returning.getReturnType(parameters, -1, approxTypes, catalogs);
       }
     };
 
-    abstract Class<?> getReturnType(Class<?>[] parameters, Class<?>[] ... catalogs);
+    abstract Class<?> getReturnType(Class<?>[] parameters, Class<?>[][] catalogs);
 
-    private static Class<?> getReturnType(final Class<?>[] parameters, final int x, final Class<?>[] approx, final Class<?>[] ... catalogs) {
+    private static Class<?> getReturnType(final Class<?>[] parameters, final int x, final Class<?>[] approx, final Class<?>[][] catalogs) {
       int j = 0;
       int z = -1;
       for (int k = 0; k < catalogs.length && z == -1; ++k) // [A]
@@ -207,6 +206,65 @@ public class DMLxGeneratorTest {
     return compose2("  public static %s " + function + "(" + params + ") { return new " + getCanonicalCompositeName(OperationImpl.Operation2.class, false) + ".%s(" + getCanonicalCompositeName(operatorClass, false) + "." + function + ", " + args + "); }", returning, types, catalogs);
   }
 
+  private static StringBuilder between(final StringBuilder builder, final int spaces, final boolean positive) {
+    builder.append('\n');
+    final Class<?>[] numericTypes = {type.Numeric.class, Number.class};
+    between(builder, spaces, BetweenPredicates.NumericBetweenPredicate.class, positive, numericTypes).append('\n');
+
+    final Class<?>[] textualTypes = {type.Textual.class, CharSequence.class};
+    between(builder, spaces, BetweenPredicates.TextualBetweenPredicate.class, positive, textualTypes).append('\n');
+
+    final Class<?>[] temporalTypes = {type.DATE.class, type.DATETIME.class, LocalDate.class, LocalDateTime.class};
+    between(builder, spaces, BetweenPredicates.TemporalBetweenPredicate.class, positive, temporalTypes).append('\n');
+
+    final Class<?>[] timeTypes = {type.TIME.class, LocalTime.class};
+    between(builder, spaces, BetweenPredicates.TimeBetweenPredicate.class, positive, timeTypes);
+
+    return builder;
+  }
+
+  private static String toStringArg(final Object[] stringArgs, final Class<?> type, final int index, String generic) {
+    stringArgs[index] = getCanonicalCompositeName(type, true);
+    if (type.getDeclaringClass() != type.class) {
+//      generic = "<V extends " + stringArgs[index] + ">";
+      stringArgs[index] = stringArgs[index];
+    }
+
+    return generic;
+  }
+
+  private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final boolean positive, final Class<?>[] types) {
+    final Class<?>[] parameters = new Class[2];
+    for (final Class<?> type : types) { // [A]
+      final boolean isTypeClass = type.getDeclaringClass() == type.class;
+      for (int i = 0, i$ = types.length; i < i$; ++i) { // [A]
+        parameters[0] = types[i];
+        for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
+          parameters[1] = types[j];
+
+          if (!isTypeClass) {
+            boolean hasOneTypeClass = false;
+            for (final Class<?> parameter : parameters) // [A]
+              if (hasOneTypeClass = (parameter.getDeclaringClass() == type.class))
+                break;
+
+            if (!hasOneTypeClass)
+              continue;
+          }
+
+          final Object[] stringArgs = new Object[parameters.length + 1];
+          String generic = toStringArg(stringArgs, type, 0, "");
+          for (int k = 1, k$ = stringArgs.length; k < k$; ++k) // [A]
+            generic = toStringArg(stringArgs, parameters[k - 1], k, generic);
+
+          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(data.BOOLEAN.class, false) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, false) + "<>(v, l, r, " + positive + "); }", stringArgs)).append('\n');
+        }
+      }
+    }
+
+    return builder;
+  }
+
   @Test
   public void generate() throws IOException {
     final StringBuilder dml = new StringBuilder();
@@ -219,24 +277,24 @@ public class DMLxGeneratorTest {
 
     // -- 1 param --
     final Class<?> function1 = function.Function1.class;
-    compose1(dml, "ABS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n'); // FIXME: !!!! ABS((byte)-127) = -127
-    compose1(dml, "ACOS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "ASIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "ATAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "CEIL", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "COS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "DEGREES", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "EXP", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "FLOOR", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "LN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "LOG10", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "LOG2", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "RADIANS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "ROUND", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "SIGN", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "SIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "SQRT", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-    compose1(dml, "TAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "ABS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "ACOS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "ASIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "ATAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "CEIL", Returning.BOTH, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "COS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "DEGREES", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "EXP", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "FLOOR", Returning.BOTH, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "LN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "LOG10", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "LOG2", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "RADIANS", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "ROUND", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "SIGN", Returning.BOTH, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "SIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "SQRT", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
+    compose1(dml, "TAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericCatalogs).append('\n');
 
     // -- 2 param --
     final Class<?> function2 = function.Function2.class;
@@ -261,58 +319,16 @@ public class DMLxGeneratorTest {
       .replace("/**** DMLx ****/", dml.toString().trim())
       .replace("/** DMLx.NOT **/", not.toString().trim());
 
-    final File controlJavaFile = new File("src/main/java", DML.class.getName().replace('.', '/') + ".java");
-    final String controlSource = controlJavaFile.exists() ? new String(Files.readAllBytes(controlJavaFile.toPath())) : null;
+    assertMatch(source, DML.class, true);
+    assertMatch(source.replace(" DML",  " TestDML").replace("new Command.", "new TestCommand."), TestDML.class, false);
+  }
+
+  private static void assertMatch(final String source, final Class<?> c, final boolean mainOrTest) throws IOException {
+    final File controlMainFile = new File("src/" + (mainOrTest ? "main" : "test") + "/java", c.getName().replace('.', '/') + ".java");
+    final String controlSource = controlMainFile.exists() ? new String(Files.readAllBytes(controlMainFile.toPath())) : null;
     if (!source.equals(controlSource)) {
       System.err.println(source);
       assertEquals(controlSource, source);
     }
-  }
-
-  private static StringBuilder between(final StringBuilder builder, final int spaces, final boolean positive) {
-    builder.append('\n');
-    final Class<?>[] numericTypes = {type.Numeric.class, Number.class};
-    between(builder, spaces, BetweenPredicates.NumericBetweenPredicate.class, positive, numericTypes).append('\n');
-
-    final Class<?>[] textualTypes = {type.Textual.class, CharSequence.class};
-    between(builder, spaces, BetweenPredicates.TextualBetweenPredicate.class, positive, textualTypes).append('\n');
-
-    final Class<?>[] temporalTypes = {type.DATE.class, type.DATETIME.class, LocalDate.class, LocalDateTime.class};
-    between(builder, spaces, BetweenPredicates.TemporalBetweenPredicate.class, positive, temporalTypes).append('\n');
-
-    final Class<?>[] timeTypes = {type.TIME.class, LocalTime.class};
-    between(builder, spaces, BetweenPredicates.TimeBetweenPredicate.class, positive, timeTypes);
-
-    return builder;
-  }
-
-  private static String toStringArg(final Object[] stringArgs, final Class<?> type, final int index, String generic) {
-    stringArgs[index] = getCanonicalCompositeName(type, true);
-    if (!Serializable.class.isAssignableFrom(type)) { // FIXME: Oh man, copy+paste just below?!?!!
-      generic = "<V extends " + stringArgs[index] + " & " + Serializable.class.getName() + ">";
-      stringArgs[index] = "V";
-    }
-
-    return generic;
-  }
-
-  private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final boolean positive, final Class<?>[] types) {
-    final Class<?>[] parameters = new Class[2];
-    for (final Class<?> type : types) { // [A]
-      for (int i = 0, i$ = types.length; i < i$; ++i) { // [A]
-        parameters[0] = types[i];
-        for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
-          parameters[1] = types[j];
-          final Object[] stringArgs = new Object[parameters.length + 1];
-          String generic = toStringArg(stringArgs, type, 0, "");
-          for (int k = 1, k$ = stringArgs.length; k < k$; ++k) // [A]
-            generic = toStringArg(stringArgs, parameters[k - 1], k, generic);
-
-          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');
-        }
-      }
-    }
-
-    return builder;
   }
 }

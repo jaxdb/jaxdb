@@ -17,8 +17,8 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.jaxdb.jsql.keyword.Select;
@@ -28,18 +28,23 @@ final class ExistsPredicate extends Predicate {
   final boolean isPositive;
 
   ExistsPredicate(final Select.untyped.SELECT<?> query, final boolean isPositive) {
-    super(null);
+    super();
     this.subQuery = (Subject)query;
     this.isPositive = isPositive;
   }
 
   @Override
-  Serializable evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException("EXISTS cannot be evaluated outside the DB");
   }
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     compilation.compiler.compileExistsPredicate(this, isPositive, compilation);
+  }
+
+  @Override
+  void collectColumns(final ArrayList<data.Column<?>> list) {
+    list.add(subQuery.getColumn());
   }
 }

@@ -21,7 +21,8 @@ import static org.libj.lang.Assertions.*;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.Serializable;
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -38,22 +39,23 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.QueryConfig.Concurrency;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
+import org.libj.io.DelegateInputStream;
+import org.libj.io.DelegateReader;
 import org.libj.io.Readers;
-import org.libj.io.SerializableInputStream;
-import org.libj.io.SerializableReader;
 import org.libj.io.Streams;
 import org.libj.io.UnsynchronizedStringReader;
 import org.libj.lang.Classes;
@@ -62,28 +64,78 @@ import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
+import org.libj.util.DiscreteTopologies;
+import org.libj.util.DiscreteTopology;
+import org.libj.util.Interval;
 import org.libj.util.function.Throwing;
+
+class KeyUtil {
+  static int hashCode(final type.Key key) {
+    int hashCode = 1;
+    for (int i = 0, i$ = key.length(); i < i$; ++i) { // [RA]
+      hashCode *= 31;
+      final Object value = key.value(i);
+      if (value != null)
+        hashCode += value.hashCode();
+    }
+
+    return hashCode;
+  }
+
+  static boolean equals(final type.Key key, final Object obj) {
+    if (obj == key)
+      return true;
+
+    if (!(obj instanceof type.Key))
+      return false;
+
+    final type.Key that = (type.Key)obj;
+    final int i$ = key.length();
+    if (i$ != that.length())
+      return false;
+
+    for (int i = 0; i < i$; ++i) // [RA]
+      if (!Objects.equals(key.value(i), that.value(i)))
+        return false;
+
+    return true;
+  }
+
+  static String toString(final type.Key key) {
+    final int i$ = key.length();
+    if (i$ == 0)
+      return "{}";
+
+    final StringBuilder s = new StringBuilder();
+    s.append('{');
+    for (int i = 0; i < i$; ++i) // [RA]
+      s.append(key.value(i)).append(',');
+
+    s.setCharAt(s.length() - 1, '}');
+    return s.toString();
+  }
+}
 
 public final class data {
   public abstract static class ApproxNumeric<V extends Number> extends Numeric<V> implements type.ApproxNumeric<V> {
-    ApproxNumeric(final boolean mutable) {
-      super(null, mutable);
+    ApproxNumeric(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
     ApproxNumeric(final Table owner, final boolean mutable, final Numeric<V> copy) {
       super(owner, mutable, copy);
     }
 
-    ApproxNumeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    ApproxNumeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
   }
 
-  public static class ARRAY<T extends Serializable> extends Objective<T[]> implements type.ARRAY<T> {
-    @SuppressWarnings({"rawtypes", "unchecked"})
+  public static class ARRAY<T> extends Objective<T[]> implements type.ARRAY<T> {
+    @SuppressWarnings("rawtypes")
     public static final class NULL extends ARRAY implements data.NULL {
       private NULL() {
-        super(ARRAY.class);
+        super(false);
       }
     }
 
@@ -92,23 +144,33 @@ public final class data {
     final Column<T> column;
     private Class<T[]> type;
 
+    private ARRAY(final boolean mutable) {
+      super(null, mutable, (OnModify<?>)null);
+      this.column = null;
+    }
+
     public ARRAY(final Class<? extends Column<T>> type) {
-      this(null, true, null, false, false, null, true, null, null, null, type);
+      this(null, true, null, null, false, null, true, null, null, null, type);
     }
 
     @SuppressWarnings("unchecked")
     public ARRAY(final T[] value) {
-      this(null, true, null, false, false, null, true, value, null, null, (Class<? extends Column<T>>)value.getClass().getComponentType());
+      this(null, true, null, null, false, null, true, value, null, null, (Class<? extends Column<T>>)value.getClass().getComponentType());
+    }
+
+    ARRAY(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.column = null;
     }
 
     @SuppressWarnings("unchecked")
     ARRAY(final Table owner, final boolean mutable, final ARRAY<T> copy) {
-      this(owner, mutable, copy.name, copy.primary, copy.keyForUpdate, copy.commitUpdate, copy.nullable, copy.valueCur, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends Column<T>>)copy.column.getClass());
+      this(owner, mutable, copy.name, copy.primaryIndexType, copy.isKeyForUpdate, copy.onModify, copy.isNullable, copy.valueCur, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends Column<T>>)copy.column.getClass());
       this.type = copy.type;
     }
 
-    ARRAY(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends Column<T>> type) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    ARRAY(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends Column<T>> type) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.column = newInstance(Classes.getDeclaredConstructor(type));
     }
 
@@ -119,19 +181,25 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return Compiler.getCompiler(vendor).compileArray(b, this, column, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) throws IOException {
+      return compiler.compileArray(b, this, column, isForUpdateWhere);
     }
 
     final void copy(final ARRAY<T> copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = !equal(this.valueOld, copy.valueCur);
+      final T[] valueCur = copy.valueCur;
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -151,19 +219,25 @@ public final class data {
     }
 
     @Override
+    final DiscreteTopology<T[]> getDiscreteTopology() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     final T[] parseString(final DbVendor vendor, final String s) {
       return null;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final java.sql.Array array = resultSet.getArray(columnIndex);
       set((T[])array.getArray()); // FIXME: This is incorrect.
-      this.valueOld = this.valueCur;
+      this.valueOld = this.valueCur; // FIXME: This is incorrect.
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -199,7 +273,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
@@ -218,7 +292,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -234,7 +308,6 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-
     private static final Class<Long> type = Long.class;
 
     private final Long min;
@@ -271,6 +344,18 @@ public final class data {
         set(value);
     }
 
+    private BIGINT(final Table owner, final boolean mutable, final Integer precision) {
+      super(owner, mutable, precision);
+      this.min = null;
+      this.max = null;
+    }
+
+    BIGINT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     BIGINT(final Table owner, final boolean mutable, final BIGINT copy) {
       super(owner, mutable, copy, copy.precision);
 
@@ -282,21 +367,10 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
-    private BIGINT(final Table owner, final boolean mutable, final Integer precision) {
-      super(owner, mutable, precision);
-      this.min = null;
-      this.max = null;
-    }
-
-    BIGINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final Integer precision, final Long min, final Long max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
+    BIGINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final Integer precision, final Long min, final Long max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -313,6 +387,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     private void checkValue(final long value) {
@@ -358,19 +433,27 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final BIGINT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
-//      if (!changed)
-//        return;
+      final boolean isNullCur = copy.isNullCur;
+      final long valueCur = copy.valueCur;
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-      this.isNullCur = copy.isNullCur;
-      this.valueCur = copy.valueCur;
+//    if (!changed)
+//      return;
+
+      this.isNullCur = isNullCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -397,6 +480,11 @@ public final class data {
 
     public final long getAsLong(final long defaultValue) {
       return isNullCur ? defaultValue : valueCur;
+    }
+
+    @Override
+    final DiscreteTopology<Long> getDiscreteTopology() {
+      return DiscreteTopologies.LONG;
     }
 
     @Override
@@ -450,12 +538,13 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final long value = resultSet.getLong(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -464,6 +553,7 @@ public final class data {
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -511,7 +601,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final BIGINT set(final NULL value) {
-      setValueNull();
+      setNull();
       return this;
     }
 
@@ -521,18 +611,11 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final long value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
-    }
-
-    @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
       this.setByCur = SetBy.USER;
-      return changed;
+      return true;
     }
 
     final boolean setValue(final long value) {
@@ -543,9 +626,12 @@ public final class data {
         return false;
 
       this.changed = isNullOld || valueOld != value;
+
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -553,6 +639,7 @@ public final class data {
       return value == null ? setValueNull() : setValue((long)value);
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = !isNullCur;
@@ -560,8 +647,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      isNullCur = true;
-      return changed;
+      this.isNullCur = true;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -575,7 +664,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -593,7 +682,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -609,14 +698,13 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-
     private static final Class<byte[]> type = byte[].class;
 
     private final long length;
     private final boolean varying;
 
     private BINARY(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.length = 0;
       this.varying = false;
     }
@@ -631,10 +719,16 @@ public final class data {
     }
 
     public BINARY(final long length, final boolean varying) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       checkLength(length);
       this.length = length;
       this.varying = varying;
+    }
+
+    BINARY(final long length, final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.length = length;
+      this.varying = false;
     }
 
     BINARY(final Table owner, final boolean mutable, final BINARY copy) {
@@ -643,8 +737,8 @@ public final class data {
       this.varying = copy.varying;
     }
 
-    BINARY(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final long length, final boolean varying) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    BINARY(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final long length, final boolean varying) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       checkLength(length);
       this.length = length;
       this.varying = varying;
@@ -661,18 +755,25 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final BINARY copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = !Arrays.equals(this.valueOld, copy.valueCur);
+      final byte[] valueCur = copy.valueCur;
+      this.changed = !Arrays.equals(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
+
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -690,6 +791,11 @@ public final class data {
       return equal(valueCur, ((BINARY)obj).valueCur);
     }
 
+    @Override
+    final DiscreteTopology<byte[]> getDiscreteTopology() {
+      return DiscreteTopologies.BYTES;
+    }
+
     public final long length() {
       return length;
     }
@@ -700,13 +806,14 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final int columnType = resultSet.getMetaData().getColumnType(columnIndex);
       // FIXME: IS it right to support BIT here? Or should it be in BOOLEAN?
       this.valueOld = this.valueCur = columnType == Types.BIT ? new byte[] {resultSet.getBoolean(columnIndex) ? (byte)0x01 : (byte)0x00} : resultSet.getBytes(columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -745,7 +852,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
@@ -767,7 +874,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -775,16 +882,15 @@ public final class data {
     }
   }
 
-  public static class BLOB extends LargeObject<SerializableInputStream> implements type.BLOB {
+  public static class BLOB extends LargeObject<InputStream> implements type.BLOB {
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
-    private final class BlobInputStream extends SerializableInputStream {
-      private final String string;
+    private final class BlobInputStream extends DelegateInputStream {
       private final byte[] buf;
+      private String string;
 
       private BlobInputStream(final byte[] buf) {
-        super(new ByteArrayInputStream(buf));
+        in = new ByteArrayInputStream(buf);
         this.buf = buf;
-        this.string = Hexadecimal.encode(buf);
       }
 
       @Override
@@ -799,7 +905,7 @@ public final class data {
 
       @Override
       public String toString() {
-        return string;
+        return string == null ? string = Hexadecimal.encode(buf) : string;
       }
     }
 
@@ -810,32 +916,35 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-
-    private static final Class<SerializableInputStream> type = SerializableInputStream.class;
+    private static final Class<InputStream> type = InputStream.class;
 
     public BLOB() {
       this(true);
     }
 
     private BLOB(final boolean mutable) {
-      super(null, mutable, (Long)null);
+      super(null, mutable, (Long)null, null);
+    }
+
+    public BLOB(final InputStream value) {
+      super(null, true, (Long)null, null);
+      set(value);
     }
 
     public BLOB(final long length) {
-      super(null, true, length);
+      super(null, true, length, null);
     }
 
-    public BLOB(final SerializableInputStream value) {
-      super(null, true, (Long)null);
-      set(value);
+    BLOB(final OnModify<? extends Table> onModify) {
+      super(null, true, null, onModify);
     }
 
     BLOB(final Table owner, final boolean mutable, final BLOB copy) {
       super(owner, mutable, copy);
     }
 
-    BLOB(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final SerializableInputStream _default, final GenerateOn<? super SerializableInputStream> generateOnInsert, final GenerateOn<? super SerializableInputStream> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, length);
+    BLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, length);
     }
 
     @Override
@@ -844,18 +953,25 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) throws IOException {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final BLOB copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = this.valueOld != copy.valueCur;
+      final InputStream valueCur = copy.valueCur;
+      this.changed = valueOld != valueCur;
+      final boolean changed = this.valueCur != valueCur;
+
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -865,11 +981,16 @@ public final class data {
 
     // FIXME: Warning! Calling equals will result in the underlying stream to be fully read
     @Override
-    final boolean equals(final Column<SerializableInputStream> obj) {
+    final boolean equals(final Column<InputStream> obj) {
       final BLOB that = (BLOB)obj;
       initBlobInputStream();
       that.initBlobInputStream();
       return equal(valueCur, that.valueCur);
+    }
+
+    @Override
+    final DiscreteTopology<InputStream> getDiscreteTopology() {
+      throw new UnsupportedOperationException();
     }
 
     private void initBlobInputStream() {
@@ -884,16 +1005,17 @@ public final class data {
     }
 
     @Override
-    final SerializableInputStream parseString(final DbVendor vendor, final String s) {
-      return new SerializableInputStream(new ByteArrayInputStream(s.getBytes()));
+    final InputStream parseString(final DbVendor vendor, final String s) {
+      return new ByteArrayInputStream(s.getBytes());
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -930,13 +1052,13 @@ public final class data {
     }
 
     @Override
-    final Class<SerializableInputStream> type() {
+    final Class<InputStream> type() {
       return type;
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      compiler.updateColumn(this, resultSet, columnIndex);
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
@@ -952,8 +1074,8 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
-      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+      compiler.setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
   }
 
@@ -965,7 +1087,6 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-
     private static final Class<Boolean> type = Boolean.class;
 
     private boolean isNullOld = true;
@@ -974,23 +1095,31 @@ public final class data {
     private boolean valueCur;
 
     public BOOLEAN() {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
     }
 
     public BOOLEAN(final boolean value) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       set(value);
     }
 
     public BOOLEAN(final Boolean value) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       if (value != null)
         set(value);
     }
 
     @SuppressWarnings("unused")
     private BOOLEAN(final Class<BOOLEAN> cls) {
-      super(null, false);
+      super(null, false, (OnModify<?>)null);
+    }
+
+    BOOLEAN(final Table owner) {
+      super(owner, true, (OnModify<?>)null);
+    }
+
+    BOOLEAN(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
     }
 
     BOOLEAN(final Table owner, final boolean mutable, final BOOLEAN copy) {
@@ -1001,15 +1130,10 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
-    BOOLEAN(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    BOOLEAN(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
@@ -1022,11 +1146,17 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     @Override
     public final BOOLEAN clone() {
       return new BOOLEAN(getTable(), true, this);
+    }
+
+    @Override
+    void collectColumns(final ArrayList<Column<?>> list) {
+      list.add(getColumn());
     }
 
     @Override
@@ -1041,19 +1171,27 @@ public final class data {
     }
 
     @Override
-    StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final BOOLEAN copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+      final boolean isNullCur = copy.isNullCur;
+      final boolean valueCur = copy.valueCur;
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
+
 //      if (!changed)
 //        return;
 
-      this.isNullCur = copy.isNullCur;
-      this.valueCur = copy.valueCur;
+      this.isNullCur = isNullCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -1088,6 +1226,11 @@ public final class data {
     }
 
     @Override
+    final DiscreteTopology<Boolean> getDiscreteTopology() {
+      return DiscreteTopologies.BOOLEAN;
+    }
+
+    @Override
     final Boolean getOld() {
       return setByOld == null ? get() : isNullOld ? null : valueOld;
     }
@@ -1113,12 +1256,13 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
       this.valueOld = this.valueCur = !(this.isNullOld = this.isNullCur = resultSet.wasNull()) && value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -1127,6 +1271,7 @@ public final class data {
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -1159,7 +1304,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final BOOLEAN set(final NULL value) {
-      setValueNull();
+      setNull();
       return this;
     }
 
@@ -1169,18 +1314,20 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final boolean value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
+      this.setByCur = SetBy.USER;
+      return true;
     }
 
     @Override
     public final boolean setIfNotEqual(final Boolean value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
+      this.setByCur = SetBy.USER;
+      return true;
     }
 
     @Override
@@ -1193,14 +1340,6 @@ public final class data {
       return value != null && setIfNotEqual(value);
     }
 
-    @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
-      this.setByCur = SetBy.USER;
-      return changed;
-    }
-
     final boolean setValue(final boolean value) {
       assertMutable();
       final boolean changed = isNullCur || valueCur != value;
@@ -1210,7 +1349,9 @@ public final class data {
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -1218,6 +1359,7 @@ public final class data {
       return value == null ? setValueNull() : setValue((boolean)value);
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = !isNullCur;
@@ -1225,8 +1367,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      isNullCur = true;
-      return changed;
+      this.isNullCur = true;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -1240,7 +1384,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -1258,7 +1402,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -1274,7 +1418,6 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-
     private static final Class<String> type = String.class;
 
     private final boolean varying;
@@ -1284,7 +1427,7 @@ public final class data {
     }
 
     private CHAR(final boolean mutable) {
-      super(null, mutable, null);
+      super(null, mutable, null, (OnModify<?>)null);
       this.varying = true;
     }
 
@@ -1297,13 +1440,13 @@ public final class data {
     }
 
     public CHAR(final long length, final boolean varying) {
-      super(null, true, (short)length);
+      super(null, true, (short)length, null);
       this.varying = varying;
       checkLength(length);
     }
 
     public CHAR(final Long length, final boolean varying) {
-      super(null, true, Numbers.cast(length, Short.class));
+      super(null, true, Numbers.cast(length, Short.class), (OnModify<?>)null);
       this.varying = varying;
       checkLength(length);
     }
@@ -1313,13 +1456,18 @@ public final class data {
       set(value);
     }
 
+    CHAR(final OnModify<? extends Table> onModify) {
+      super(null, true, null, onModify);
+      this.varying = true;
+    }
+
     CHAR(final Table owner, final boolean mutable, final CHAR copy) {
       super(owner, mutable, copy, copy.length());
       this.varying = copy.varying;
     }
 
-    CHAR(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final long length, final boolean varying) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, length);
+    CHAR(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final long length, final boolean varying) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, length);
       this.varying = varying;
       checkLength(length);
     }
@@ -1335,18 +1483,25 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final CHAR copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = !equal(this.valueOld, copy.valueCur);
+      final String valueCur = copy.valueCur;
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
+
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -1358,16 +1513,22 @@ public final class data {
     }
 
     @Override
+    final DiscreteTopology<String> getDiscreteTopology() {
+      return DiscreteTopologies.STRING;
+    }
+
+    @Override
     final String parseString(final DbVendor vendor, final String s) {
       return s;
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @SuppressWarnings("unused")
@@ -1397,8 +1558,8 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      compiler.updateColumn(this, resultSet, columnIndex);
     }
 
     public final boolean varying() {
@@ -1411,18 +1572,18 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      compiler.setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
   }
 
-  public static class CLOB extends LargeObject<SerializableReader> implements type.CLOB {
+  public static class CLOB extends LargeObject<Reader> implements type.CLOB {
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
-    private final class ClobReader extends SerializableReader {
+    private final class ClobReader extends DelegateReader {
       private final String string;
 
       private ClobReader(final String string) {
-        super(new UnsynchronizedStringReader(string));
+        in = new UnsynchronizedStringReader(string);
         this.string = string;
       }
 
@@ -1449,32 +1610,35 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-
-    private static final Class<SerializableReader> type = SerializableReader.class;
+    private static final Class<Reader> type = Reader.class;
 
     public CLOB() {
       this(true);
     }
 
     private CLOB(final boolean mutable) {
-      super(null, mutable, (Long)null);
+      super(null, mutable, (Long)null, null);
     }
 
     public CLOB(final long length) {
-      super(null, true, length);
+      super(null, true, length, null);
     }
 
-    public CLOB(final SerializableReader value) {
-      super(null, true, (Long)null);
+    public CLOB(final Reader value) {
+      super(null, true, (Long)null, null);
       set(value);
+    }
+
+    CLOB(final OnModify<? extends Table> onModify) {
+      super(null, true, null, onModify);
     }
 
     CLOB(final Table owner, final boolean mutable, final CLOB copy) {
       super(owner, mutable, copy);
     }
 
-    CLOB(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final SerializableReader _default, final GenerateOn<? super SerializableReader> generateOnInsert, final GenerateOn<? super SerializableReader> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, length);
+    CLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, length);
     }
 
     @Override
@@ -1483,18 +1647,25 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) throws IOException {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final CLOB copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = this.valueOld != copy.valueCur;
+      final Reader valueCur = copy.valueCur;
+      this.changed = valueOld != valueCur;
+      final boolean changed = this.valueCur != valueCur;
+
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -1504,11 +1675,16 @@ public final class data {
 
     // FIXME: Warning! Calling equals will result in the underlying stream to be fully read
     @Override
-    final boolean equals(final Column<SerializableReader> obj) {
+    final boolean equals(final Column<Reader> obj) {
       final CLOB that = (CLOB)obj;
       initClobReader();
       that.initClobReader();
       return valueCur.equals(that.valueCur);
+    }
+
+    @Override
+    final DiscreteTopology<Reader> getDiscreteTopology() {
+      throw new UnsupportedOperationException();
     }
 
     private void initClobReader() {
@@ -1523,16 +1699,17 @@ public final class data {
     }
 
     @Override
-    final SerializableReader parseString(final DbVendor vendor, final String s) {
-      return new SerializableReader(new UnsynchronizedStringReader(s));
+    final Reader parseString(final DbVendor vendor, final String s) {
+      return new UnsynchronizedStringReader(s);
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -1569,13 +1746,13 @@ public final class data {
     }
 
     @Override
-    final Class<SerializableReader> type() {
+    final Class<Reader> type() {
       return type;
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      compiler.updateColumn(this, resultSet, columnIndex);
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
@@ -1591,19 +1768,15 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
-      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+      compiler.setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
   }
 
-  public abstract static class Column<V extends Serializable> extends Entity implements type.Column<V> {
+  public abstract static class Column<V> extends Entity implements type.Column<V> {
     static enum SetBy {
       USER,
       SYSTEM
-    }
-
-    static StringBuilder compile(final StringBuilder b, final Column<?> column, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return column.compile(b, vendor, isForUpdateWhere);
     }
 
     static String getSimpleName(final Class<?> cls) {
@@ -1614,70 +1787,73 @@ public final class data {
       return name.substring(name.indexOf("data.") + 5).replace('.', ' ');
     }
 
-    private final Table table;
+    final Table table;
+
     final String name;
-    final boolean primary;
-    final boolean nullable;
+    final IndexType primaryIndexType;
+    final boolean isKeyForUpdate;
+    @SuppressWarnings("rawtypes")
+    final OnModify onModify;
+    final boolean isNullable;
     final boolean hasDefault;
     final GenerateOn<? super V> generateOnInsert;
     final GenerateOn<? super V> generateOnUpdate;
-    final boolean keyForUpdate;
-    @SuppressWarnings("rawtypes")
-    final Consumer commitUpdate;
     int columnIndex;
     type.Column<V> ref;
     SetBy setByOld;
     SetBy setByCur;
     boolean changed;
 
-    Column(final Table owner, final boolean mutable) {
-      this(owner, mutable, null, false, false, null, true, null, null, null);
+    Column(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      this(owner, mutable, null, null, false, onModify, true, null, null, null);
     }
 
     Column(final Table owner, final boolean mutable, final Column<V> copy) {
       super(mutable);
       this.table = owner;
       this.name = copy.name;
-      this.primary = copy.primary;
-      this.nullable = copy.nullable;
+      this.primaryIndexType = copy.primaryIndexType;
+      this.isNullable = copy.isNullable;
       this.hasDefault = copy.hasDefault;
       this.generateOnInsert = copy.generateOnInsert;
       this.generateOnUpdate = copy.generateOnUpdate;
-      this.keyForUpdate = copy.keyForUpdate;
-      this.commitUpdate = copy.commitUpdate;
+      this.isKeyForUpdate = copy.isKeyForUpdate;
+      this.onModify = copy.onModify;
 
-      // NOTE: Deliberately not copying ref or setBy
+      // NOTE: Deliberately not copying ref
       // this.ref = copy.ref;
       this.setByCur = copy.setByCur;
       this.setByOld = copy.setByOld;
+      this.changed = copy.changed;
     }
 
-    Column(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+    Column(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
       super(mutable);
       this.table = owner;
       this.name = name;
-      this.primary = primary;
-      this.nullable = nullable;
+      this.primaryIndexType = primaryIndexType;
+      this.isKeyForUpdate = isKeyForUpdate;
+      this.onModify = onModify;
+      this.isNullable = isNullable;
       this.hasDefault = _default != null;
       this.generateOnInsert = generateOnInsert;
       this.generateOnUpdate = generateOnUpdate;
-      this.keyForUpdate = keyForUpdate;
-      this.commitUpdate = commitUpdate;
     }
 
     abstract void _commitEntity$();
     @Override
     public abstract Column<V> clone();
-    abstract StringBuilder compile(StringBuilder b, DbVendor vendor, boolean isForUpdateWhere) throws IOException;
+    abstract StringBuilder compile(Compiler compiler, StringBuilder b, boolean isForUpdateWhere) throws IOException;
     abstract StringBuilder declare(StringBuilder b, DbVendor vendor);
     abstract boolean equals(Column<V> that);
     public abstract V get();
     public abstract V get(V defaultValue);
+    abstract DiscreteTopology<V> getDiscreteTopology();
     abstract V getOld();
     public abstract boolean isNull();
     abstract boolean isNullOld();
     abstract V parseString(DbVendor vendor, String s);
-    abstract void read(DbVendor vendor, ResultSet resultSet, int columnIndex) throws SQLException;
+    abstract void read(Compiler compiler, ResultSet resultSet, int columnIndex) throws SQLException;
     public abstract void revert();
     abstract Column<?> scaleTo(Column<?> column);
     protected abstract boolean set(V value);
@@ -1685,15 +1861,16 @@ public final class data {
     protected abstract boolean setIfNotEqual(V value);
     protected abstract boolean setIfNotNull(V value);
     protected abstract boolean setIfNotNullOrEqual(V value);
-    abstract boolean setValue(final V value);
+    abstract boolean setValue(V value);
+    abstract boolean setValueNull();
     abstract int sqlType();
     abstract StringBuilder toJson(StringBuilder b);
     @Override
     public abstract String toString();
     abstract Class<V> type();
-    abstract void update(DbVendor vendor, ResultSet resultSet, int columnIndex) throws SQLException;
+    abstract void update(Compiler compiler, ResultSet resultSet, int columnIndex) throws SQLException;
     abstract int valueHashCode();
-    abstract void write(DbVendor vendor, PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
+    abstract void write(Compiler compiler, PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
 
     public final <C extends Column<V>>C AS(final C column) {
       column.wrap(new As<>(this, column));
@@ -1707,7 +1884,28 @@ public final class data {
 
     @Override
     void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      Compiler.compile(this, compilation, isExpression);
+      final Evaluable wrapped = wrapped();
+      if (wrapped == null) {
+        final Table table = getTable();
+        if (table != null) {
+          final Alias alias = compilation.getAlias(table);
+          final StringBuilder sql = compilation.sql;
+          if (alias != null) {
+            alias.compile(compilation, false);
+            sql.append('.');
+            compilation.vendor.getDialect().quoteIdentifier(sql, name);
+          }
+          else if (!compilation.subCompile(table)) {
+            compilation.vendor.getDialect().quoteIdentifier(sql, name);
+          }
+        }
+        else {
+          compilation.addParameter(this, false, false);
+        }
+      }
+      else if (!compilation.subCompile(this)) {
+        wrapped.compile(compilation, isExpression);
+      }
     }
 
     boolean equal(final V a, final V b) {
@@ -1731,9 +1929,11 @@ public final class data {
     }
 
     @Override
-    Serializable evaluate(final Set<Evaluable> visited) {
-      if (ref == null || visited.contains(this))
-        return wrapped() != null ? wrapped().evaluate(visited) : get();
+    Object evaluate(final Set<Evaluable> visited) {
+      if (ref == null || visited.contains(this)) {
+        final Evaluable wrapped = wrapped();
+        return wrapped != null ? wrapped.evaluate(visited) : get();
+      }
 
       visited.add(this);
       return ((Evaluable)ref).evaluate(visited);
@@ -1773,20 +1973,69 @@ public final class data {
     }
 
     final boolean isForUpdateWhereGetOld(final boolean isForUpdateWhere) {
-      return isForUpdateWhere && primary && setByOld != null;
+      return isForUpdateWhere && primaryIndexType != null && setByOld != null;
     }
 
-    public final boolean reset() {
-      final boolean wasSet = setByCur != null;
-      changed = false;
-      setByCur = null;
-      return wasSet;
+    void onChange() {
+    }
+
+    /**
+     * Cue {@code this} {@link Column} for its value to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and
+     * {@code DELETE} statements.
+     *
+     * @param to The value to which {@code this} {@link Column}'s cue value is to be set.
+     * @return {@code true} if the execution of this method resulted in a change to the cue state of {@code this} {@link Column},
+     *         otherwise {@code false}.
+     */
+    public final boolean cue(final boolean to) {
+      final boolean changed;
+      if (to) {
+        changed = setByCur == null;
+        // this.changed = false;
+        setByCur = SetBy.USER;
+      }
+      else {
+        changed = setByCur != null;
+        this.changed = false;
+        setByCur = null;
+      }
+
+      return changed;
+    }
+
+    static final byte CUR = 0b00000001;
+    static final byte OLD = 0b00000010;
+    static final byte CUR_OLD = 0b00000100;
+
+    final void onChange(final byte curOld) {
+      if (primaryIndexType != null) {
+        if ((curOld & CUR) != 0)
+          table._primaryKeyImmutable$ = null;
+
+        if ((curOld & OLD) != 0 || setByOld == null) // Special case for "setByOld == null", under which condition the column's "old" value is equal to "cur".
+          table._primaryKeyOldImmutable$ = null;
+      }
+
+      if (onModify != null) {
+        if ((curOld & CUR) != 0)
+          onModify.changeCur(table);
+
+        if ((curOld & OLD) != 0)
+          onModify.changeOld(table);
+      }
+    }
+
+    public final boolean revert(final boolean andCue) {
+      revert();
+      return cue(andCue);
     }
 
     final void set(final type.Column<V> ref) {
       assertMutable();
-      this.setByCur = null;
-      this.ref = ref;
+      if (this.ref != ref) {
+        this.ref = ref;
+        this.setByCur = null;
+      }
     }
 
     final boolean setFromString(final DbVendor vendor, final String value, final SetBy setBy) {
@@ -1794,12 +2043,10 @@ public final class data {
       return set(value == null ? null : parseString(vendor, value), setBy);
     }
 
-    boolean setNull() {
-      assertMutable();
-
-      this.changed = !isNullOld();
-      this.setByCur = SetBy.USER;
+    final boolean setNull() {
+      final boolean changed = setValueNull();
       this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
@@ -1808,10 +2055,18 @@ public final class data {
       if (rows.getConcurrency() == Concurrency.READ_ONLY)
         throw new IllegalStateException(rows.getConcurrency().getClass().getSimpleName() + "." + rows.getConcurrency());
 
-      update(DbVendor.valueOf(rows.resultSet.getStatement().getConnection().getMetaData()), rows.resultSet, columnIndex);
+      update(Compiler.getCompiler(DbVendor.valueOf(rows.resultSet.getStatement().getConnection().getMetaData())), rows.resultSet, columnIndex);
     }
 
-    public final boolean wasSet() {
+    /**
+     * Returns {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT},
+     * {@code UPDATE}, and {@code DELETE} statements, otherwise {@code false}.
+     *
+     * @return {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT},
+     *         {@code UPDATE}, and {@code DELETE} statements., otherwise {@code false}.
+     * @implNote A {@link Column}'s value may be cued by either the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system}.
+     */
+    public final boolean cued() {
       return setByCur != null;
     }
   }
@@ -1827,24 +2082,28 @@ public final class data {
     private static final Class<LocalDate> type = LocalDate.class;
 
     public DATE() {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
     }
 
     private DATE(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
     }
 
     public DATE(final LocalDate value) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       set(value);
+    }
+
+    DATE(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
     }
 
     DATE(final Table owner, final boolean mutable, final DATE copy) {
       super(owner, mutable, copy);
     }
 
-    DATE(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    DATE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     @Override
@@ -1867,18 +2126,25 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final DATE copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = !equal(this.valueOld, copy.valueCur);
+      final LocalDate valueCur = copy.valueCur;
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
+
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -1887,16 +2153,22 @@ public final class data {
     }
 
     @Override
+    final DiscreteTopology<LocalDate> getDiscreteTopology() {
+      return DiscreteTopologies.LOCAL_DATE;
+    }
+
+    @Override
     final LocalDate parseString(final DbVendor vendor, final String s) {
       return Dialect.dateFromString(s);
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -1934,8 +2206,8 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      compiler.updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
@@ -1944,8 +2216,8 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      compiler.setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
   }
 
@@ -1957,9 +2229,8 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-
     private static final Class<LocalDateTime> type = LocalDateTime.class;
-    // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
+    // FIXME: Is this the correct default? MySQL says that 6 is per the SQL topology, but their own default is 0
     private static final byte DEFAULT_PRECISION = 6;
 
     private final Byte precision;
@@ -1969,17 +2240,17 @@ public final class data {
     }
 
     private DATETIME(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.precision = null;
     }
 
     public DATETIME(final int precision) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       this.precision = (byte)precision;
     }
 
     public DATETIME(final Integer precision) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       this.precision = Numbers.cast(precision, Byte.class);
     }
 
@@ -1988,13 +2259,18 @@ public final class data {
       set(value);
     }
 
+    DATETIME(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.precision = null;
+    }
+
     DATETIME(final Table owner, final boolean mutable, final DATETIME copy) {
       super(owner, mutable, copy);
       this.precision = copy.precision;
     }
 
-    DATETIME(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    DATETIME(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.precision = precision == null ? null : precision.byteValue();
     }
 
@@ -2018,23 +2294,35 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final DATETIME copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = !equal(this.valueOld, copy.valueCur);
+      final LocalDateTime valueCur = copy.valueCur;
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
+
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
     final StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareDateTime(b, precision);
+    }
+
+    @Override
+    final DiscreteTopology<LocalDateTime> getDiscreteTopology() {
+      return DiscreteTopologies.LOCAL_DATE_TIME[precision];
     }
 
     @Override
@@ -2047,11 +2335,12 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -2089,8 +2378,8 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      compiler.updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
@@ -2099,8 +2388,8 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      compiler.setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
   }
 
@@ -2112,7 +2401,6 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-
     private static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
 
@@ -2142,7 +2430,7 @@ public final class data {
     }
 
     private DECIMAL(final boolean mutable) {
-      super(null, mutable, null);
+      super(null, mutable, (OnModify<?>)null);
       this.scale = null;
       this.min = null;
       this.max = null;
@@ -2174,6 +2462,13 @@ public final class data {
       this.max = null;
     }
 
+    DECIMAL(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.scale = null;
+      this.min = null;
+      this.max = null;
+    }
+
     DECIMAL(final Table owner, final boolean mutable, final DECIMAL copy) {
       super(owner, mutable, copy, copy.precision);
 
@@ -2183,15 +2478,10 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
-    DECIMAL(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final Integer precision, final int scale, final BigDecimal min, final BigDecimal max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
+    DECIMAL(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -2208,6 +2498,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     private void checkScale(final int precision, final int scale) {
@@ -2261,20 +2552,25 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final DECIMAL copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      final BigDecimal value = copy.valueCur;
-      this.changed = !equal(this.valueCur, value);
+      final BigDecimal valueCur = copy.valueCur;
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
 
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -2295,6 +2591,11 @@ public final class data {
     @Override
     public final BigDecimal get(final BigDecimal defaultValue) {
       return isNull() ? defaultValue : valueCur;
+    }
+
+    @Override
+    final DiscreteTopology<BigDecimal> getDiscreteTopology() {
+      return DiscreteTopologies.BIG_DECIMAL(scale);
     }
 
     @Override
@@ -2348,12 +2649,13 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final BigDecimal value = resultSet.getBigDecimal(columnIndex);
       this.valueOld = this.valueCur = resultSet.wasNull() ? null : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -2361,6 +2663,7 @@ public final class data {
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -2414,14 +2717,6 @@ public final class data {
     }
 
     @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
-      this.setByCur = SetBy.USER;
-      return changed;
-    }
-
-    @Override
     boolean setValue(final BigDecimal value) {
       assertMutable();
       final boolean changed = !equal(valueCur, value);
@@ -2433,9 +2728,12 @@ public final class data {
 
       this.changed = !equal(valueOld, value);
       this.valueCur = value;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = valueCur != null;
@@ -2443,8 +2741,10 @@ public final class data {
         return false;
 
       this.changed = valueOld != null;
-      valueCur = null;
-      return changed;
+      this.valueCur = null;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -2468,7 +2768,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
@@ -2486,7 +2786,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2516,7 +2816,7 @@ public final class data {
     }
 
     private DOUBLE(final boolean mutable) {
-      super(mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.min = null;
       this.max = null;
     }
@@ -2532,6 +2832,12 @@ public final class data {
         set(value);
     }
 
+    DOUBLE(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     DOUBLE(final Table owner, final boolean mutable, final DOUBLE copy) {
       super(owner, mutable, copy);
 
@@ -2543,15 +2849,10 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
-    DOUBLE(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    DOUBLE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -2568,6 +2869,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     private void checkValue(final double value) {
@@ -2613,19 +2915,27 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final DOUBLE copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+      final boolean isNullCur = copy.isNullCur;
+      final double valueCur = copy.valueCur;
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
+
 //      if (!changed)
 //        return;
 
-      this.isNullCur = copy.isNullCur;
-      this.valueCur = copy.valueCur;
+      this.isNullCur = isNullCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -2652,6 +2962,11 @@ public final class data {
 
     public final double getAsDouble(final double defaultValue) {
       return isNullCur ? defaultValue : valueCur;
+    }
+
+    @Override
+    final DiscreteTopology<Double> getDiscreteTopology() {
+      return DiscreteTopologies.DOUBLE;
     }
 
     @Override
@@ -2690,12 +3005,13 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Double.NaN : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -2704,6 +3020,7 @@ public final class data {
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -2741,7 +3058,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final DOUBLE set(final NULL value) {
-      setValueNull();
+      setNull();
       return this;
     }
 
@@ -2751,18 +3068,11 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final double value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
-    }
-
-    @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
       this.setByCur = SetBy.USER;
-      return changed;
+      return true;
     }
 
     final boolean setValue(final double value) {
@@ -2775,7 +3085,9 @@ public final class data {
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -2783,6 +3095,7 @@ public final class data {
       return value == null ? setValueNull() : setValue((double)value);
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = !isNullCur;
@@ -2790,8 +3103,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      isNullCur = true;
-      return changed;
+      this.isNullCur = true;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -2805,7 +3120,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -2823,7 +3138,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2833,7 +3148,6 @@ public final class data {
 
   public abstract static class Entity extends Evaluable implements type.Entity {
     final boolean _mutable$;
-
     private Evaluable wrapped;
 
     protected Entity(final boolean mutable) {
@@ -2881,7 +3195,7 @@ public final class data {
       }
     }
 
-    // FIXME: data.ENUM.NULL
+    // FIXME: ENUM.NULL
     // @org.jaxdb.jsql.EntityEnum.Spec(table="relation", column="units")
     private static final class NULL_ENUM implements EntityEnum {
       public static final NULL_ENUM NULL;
@@ -2925,6 +3239,7 @@ public final class data {
         return 0;
       }
 
+      @Override
       public byte ordinal() {
         return ordinal;
       }
@@ -2954,7 +3269,6 @@ public final class data {
       typeToLength.put(constants.getClass().getComponentType(), length);
       return length;
     }
-
     @SuppressWarnings("unchecked")
     private static <E extends EntityEnum>E[] getConstants(final Class<E> enumType) {
       try {
@@ -2964,10 +3278,11 @@ public final class data {
         throw new RuntimeException(e);
       }
       catch (final InvocationTargetException e) {
-        if (e.getCause() instanceof RuntimeException)
-          throw (RuntimeException)e.getCause();
+        final Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException)
+          throw (RuntimeException)cause;
 
-        throw new RuntimeException(e.getCause());
+        throw new RuntimeException(cause);
       }
     }
 
@@ -2975,20 +3290,47 @@ public final class data {
     final E[] constants;
     private final Function<String,E> fromStringFunction;
 
+    private final DiscreteTopology<E> topology = new DiscreteTopology<E>() {
+      @Override
+      public int compare(final E o1, final E o2) {
+        return Integer.compare(o1.ordinal(), o2.ordinal());
+      }
+
+      @Override
+      public boolean isMaxValue(final E v) {
+        return constants[constants.length - 1].ordinal() == v.ordinal();
+      }
+
+      @Override
+      public boolean isMinValue(final E v) {
+        return constants[0].ordinal() == v.ordinal();
+      }
+
+      @Override
+      public E nextValue(final E v) {
+        return isMaxValue(v) ? v : constants[v.ordinal() + 1];
+      }
+
+      @Override
+      public E prevValue(final E v) {
+        return isMinValue(v) ? v : constants[v.ordinal() - 1];
+      }
+    };
+
     private ENUM(final boolean mutable) {
-      super(null, mutable, null);
+      super(null, mutable, null, (OnModify<?>)null);
       this.enumType = null;
       this.constants = null;
       this.fromStringFunction = null;
     }
 
     public ENUM(final Class<E> enumType) {
-      this(enumType, getConstants(enumType));
+      this(enumType, getConstants(enumType), null);
     }
 
     @SuppressWarnings("unchecked")
-    private ENUM(final Class<E> enumType, final E[] constants) {
-      super(null, true, constants == null ? null : calcEnumLength(constants));
+    private ENUM(final Class<E> enumType, final E[] constants, final OnModify<? extends Table> onModify) {
+      super(null, true, constants == null ? null : calcEnumLength(constants), onModify);
       this.enumType = enumType;
       this.constants = constants;
       this.fromStringFunction = enumType == null ? null : s -> {
@@ -3020,10 +3362,11 @@ public final class data {
           throw new RuntimeException(e);
         }
         catch (final InvocationTargetException e) {
-          if (e.getCause() instanceof RuntimeException)
-            throw (RuntimeException)e.getCause();
+          final Throwable cause = e.getCause();
+          if (cause instanceof RuntimeException)
+            throw (RuntimeException)cause;
 
-          throw new RuntimeException(e.getCause());
+          throw new RuntimeException(cause);
         }
       };
     }
@@ -3034,6 +3377,10 @@ public final class data {
       set(value);
     }
 
+    ENUM(final Class<E> enumType, final OnModify<? extends Table> onModify) {
+      this(enumType, getConstants(enumType), onModify);
+    }
+
     ENUM(final Table owner, final boolean mutable, final ENUM<E> copy) {
       super(owner, mutable, copy, copy.length());
       this.enumType = copy.enumType;
@@ -3042,8 +3389,8 @@ public final class data {
     }
 
     @SuppressWarnings("unchecked")
-    ENUM(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final E[] constants, final Function<String,E> fromStringFunction) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, calcEnumLength(constants));
+    ENUM(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final E[] constants, final Function<String,E> fromStringFunction) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, calcEnumLength(constants));
       this.enumType = (Class<E>)constants.getClass().getComponentType();
       this.constants = constants;
       this.fromStringFunction = fromStringFunction;
@@ -3055,18 +3402,25 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final ENUM<E> copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = !equal(this.valueOld, copy.valueCur);
+      final E valueCur = copy.valueCur;
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
+
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -3084,18 +3438,24 @@ public final class data {
     }
 
     @Override
+    final DiscreteTopology<E> getDiscreteTopology() {
+      return topology;
+    }
+
+    @Override
     final E parseString(final DbVendor vendor, final String s) {
       return fromStringFunction.apply(s);
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final String value = resultSet.getString(columnIndex);
       if (value == null) {
         this.valueOld = this.valueCur = null;
         this.setByOld = this.setByCur = SetBy.SYSTEM;
+        onChange(CUR_OLD);
         return;
       }
 
@@ -3103,6 +3463,7 @@ public final class data {
         if (constant.toString().equals(value)) {
           this.valueOld = this.valueCur = constant;
           this.setByOld = this.setByCur = SetBy.SYSTEM;
+          onChange(CUR_OLD);
           return;
         }
       }
@@ -3141,7 +3502,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
@@ -3155,7 +3516,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -3166,8 +3527,13 @@ public final class data {
   public abstract static class ExactNumeric<V extends Number> extends Numeric<V> implements type.ExactNumeric<V> {
     final Integer precision;
 
+    ExactNumeric(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
+      this.precision = null;
+    }
+
     ExactNumeric(final Table owner, final boolean mutable, final Integer precision) {
-      super(owner, mutable);
+      super(owner, mutable, (OnModify<?>)null);
       checkPrecision(precision);
       if (precision != null) {
         this.precision = precision;
@@ -3185,8 +3551,8 @@ public final class data {
       this.precision = precision;
     }
 
-    ExactNumeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    ExactNumeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       checkPrecision(precision);
       this.precision = precision;
     }
@@ -3233,7 +3599,7 @@ public final class data {
     }
 
     private FLOAT(final boolean mutable) {
-      super(mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.min = null;
       this.max = null;
     }
@@ -3249,6 +3615,12 @@ public final class data {
         set(value);
     }
 
+    FLOAT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     FLOAT(final Table owner, final boolean mutable, final FLOAT copy) {
       super(owner, mutable, copy);
 
@@ -3260,15 +3632,10 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
-    FLOAT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    FLOAT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -3285,6 +3652,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     private void checkValue(final float value) {
@@ -3330,19 +3698,27 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final FLOAT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+      final boolean isNullCur = copy.isNullCur;
+      final float valueCur = copy.valueCur;
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
+
 //      if (!changed)
 //        return;
 
-      this.isNullCur = copy.isNullCur;
-      this.valueCur = copy.valueCur;
+      this.isNullCur = isNullCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -3369,6 +3745,11 @@ public final class data {
 
     public final float getAsFloat(final float defaultValue) {
       return isNullCur ? defaultValue : valueCur;
+    }
+
+    @Override
+    final DiscreteTopology<Float> getDiscreteTopology() {
+      return DiscreteTopologies.FLOAT;
     }
 
     @Override
@@ -3407,12 +3788,13 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Float.NaN : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -3421,6 +3803,7 @@ public final class data {
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -3461,7 +3844,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final FLOAT set(final NULL value) {
-      setValueNull();
+      setNull();
       return this;
     }
 
@@ -3471,18 +3854,11 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final float value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
-    }
-
-    @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
       this.setByCur = SetBy.USER;
-      return changed;
+      return true;
     }
 
     final boolean setValue(final float value) {
@@ -3495,7 +3871,9 @@ public final class data {
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -3503,6 +3881,7 @@ public final class data {
       return value == null ? setValueNull() : setValue((float)value);
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = !isNullCur;
@@ -3510,8 +3889,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      isNullCur = true;
-      return changed;
+      this.isNullCur = true;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -3525,7 +3906,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -3543,12 +3924,15 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setFloat(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
+  }
+
+  static final class IndexType extends Condition.Identity {
   }
 
   public static class INT extends ExactNumeric<Integer> implements type.INT {
@@ -3597,6 +3981,12 @@ public final class data {
       this(null, true, precision);
     }
 
+    INT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     INT(final Table owner, final boolean mutable, final INT copy) {
       super(owner, mutable, copy, copy.precision);
 
@@ -3608,11 +3998,6 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
     private INT(final Table owner, final boolean mutable, final Short precision) {
@@ -3621,8 +4006,8 @@ public final class data {
       this.max = null;
     }
 
-    INT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final Integer precision, final Integer min, final Integer max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
+    INT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final Integer precision, final Integer min, final Integer max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -3639,6 +4024,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     private void checkValue(final int value) {
@@ -3684,19 +4070,27 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final INT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+      final boolean isNullCur = copy.isNullCur;
+      final int valueCur = copy.valueCur;
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
+
 //      if (!changed)
 //        return;
 
-      this.isNullCur = copy.isNullCur;
-      this.valueCur = copy.valueCur;
+      this.isNullCur = isNullCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -3723,6 +4117,11 @@ public final class data {
 
     public final int getAsInt(final int defaultValue) {
       return isNullCur ? defaultValue : valueCur;
+    }
+
+    @Override
+    final DiscreteTopology<Integer> getDiscreteTopology() {
+      return DiscreteTopologies.INTEGER;
     }
 
     @Override
@@ -3776,12 +4175,13 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -3790,6 +4190,7 @@ public final class data {
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -3838,7 +4239,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final INT set(final NULL value) {
-      setValueNull();
+      setNull();
       return this;
     }
 
@@ -3848,18 +4249,11 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final int value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
-    }
-
-    @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
       this.setByCur = SetBy.USER;
-      return changed;
+      return true;
     }
 
     final boolean setValue(final int value) {
@@ -3872,7 +4266,9 @@ public final class data {
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -3880,6 +4276,7 @@ public final class data {
       return value == null ? setValueNull() : setValue((int)value);
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = !isNullCur;
@@ -3887,8 +4284,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      isNullCur = true;
-      return changed;
+      this.isNullCur = true;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -3902,7 +4301,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -3920,7 +4319,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -3928,70 +4327,317 @@ public final class data {
     }
   }
 
-  public static final class Key extends type.Key {
-    static MutableKey cur(final data.Column<?>[] columns) {
+  public static class Key extends Interval<Key> implements type.Key {
+    static final Key ALL = new Key(null) {
+      @Override
+      public int compareTo(final Interval<Key> o) {
+        return -1;
+      }
+
+      @Override
+      public Key getMax() {
+        return null;
+      }
+    };
+
+    static {
+      ALL.min = null;
+    }
+
+    private static final ARRAY<?>[] _array = {ARRAY()};
+    private static final BIGINT[] _bigint = {BIGINT()};
+    private static final BINARY[] _binary = {BINARY()};
+    private static final BLOB[] _blob = {BLOB()};
+    private static final BOOLEAN[] _boolean = {BOOLEAN()};
+    private static final CHAR[] _char = {CHAR()};
+    private static final CLOB[] _clob = {CLOB()};
+    private static final DATE[] _date = {DATE()};
+    private static final DATETIME[] _datetime = {DATETIME()};
+    private static final DECIMAL[] _decimal = {DECIMAL()};
+    private static final DOUBLE[] _double = {DOUBLE()};
+    private static final ENUM<?>[] _enum = {ENUM()};
+    private static final FLOAT[] _float = {FLOAT()};
+    private static final INT[] _int = {INT()};
+    private static final SMALLINT[] _smallint = {SMALLINT()};
+    private static final TIME[] _time = {TIME()};
+    private static final TINYINT[] _tinyint = {TINYINT()};
+
+    static MutableKey cur(final Column<?>[] columns) {
       return new MutableKey(columns) {
         @Override
-        public Serializable get(final int i) {
-          return columns[i].get();
-        }
-
-        @Override
         public Key immutable() {
-          final Serializable[] values = new Serializable[columns.length];
+          final Object[] values = new Object[columns.length];
           for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].get();
 
-          return new Key(values);
+          return new Key(columns, values);
+        }
+
+        @Override
+        public Object value(final int i) {
+          return columns[i].get();
         }
       };
     }
 
-    static MutableKey old(final data.Column<?>[] columns) {
+    static MutableKey old(final Column<?>[] columns) {
       return new MutableKey(columns) {
         @Override
-        public Serializable get(final int i) {
-          return columns[i].getOld();
-        }
-
-        @Override
         public Key immutable() {
-          final Serializable[] values = new Serializable[columns.length];
+          final Object[] values = new Object[columns.length];
           for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].getOld();
 
-          return new Key(values);
+          return new Key(columns, values);
+        }
+
+        @Override
+        public Object value(final int i) {
+          return columns[i].getOld();
         }
       };
     }
 
-    public static Key with(final Serializable ... values) {
-      return new Key(values);
+    public static Key with(final BigDecimal value) {
+      return new Key(_decimal, value);
     }
 
-    private final Serializable[] values;
+    public static Key with(final Boolean value) {
+      return new Key(_boolean, value);
+    }
 
-    private Key(final Serializable[] values) {
-      this.values = assertNotEmpty(values, "Cannot instantiate empty Key");
+    public static Key with(final Byte value) {
+      return new Key(_tinyint, value);
+    }
+
+    public static Key with(final byte[] value) {
+      return new Key(_binary, value);
+    }
+
+    static Key with(final Column<?>[] columns, final Object ... values) {
+      return new Key(columns, values);
+    }
+
+    public static Key with(final Double value) {
+      return new Key(_double, value);
+    }
+
+    public static Key with(final EntityEnum value) {
+      return new Key(_enum, value);
+    }
+
+    public static Key with(final Float value) {
+      return new Key(_float, value);
+    }
+
+    public static Key with(final InputStream value) {
+      return new Key(_blob, value);
+    }
+
+    public static Key with(final Integer value) {
+      return new Key(_int, value);
+    }
+
+    public static Key with(final LocalDate value) {
+      return new Key(_date, value);
+    }
+
+    public static Key with(final LocalDateTime value) {
+      return new Key(_datetime, value);
+    }
+
+    public static Key with(final LocalTime value) {
+      return new Key(_time, value);
+    }
+
+    public static Key with(final Long value) {
+      return new Key(_bigint, value);
+    }
+
+    public static Key with(final Object[] value) {
+      return new Key(_array, value);
+    }
+
+    public static Key with(final Reader value) {
+      return new Key(_clob, value);
+    }
+
+    public static Key with(final Short value) {
+      return new Key(_smallint, value);
+    }
+
+    public static Key with(final String value) {
+      return new Key(_char, value);
+    }
+
+    private DiscreteTopology<Object[]> topology;
+    private final Object[] values;
+    private final Column[] columns;
+
+    private static final Comparator<Key> comparator = (o1, o2) -> o1.compareTo(o2);
+
+    private Key(final Column<?>[] columns, final Object ... values) {
+      min = this;
+      c = comparator;
+
+      this.columns = columns;
+      this.values = values;
     }
 
     @Override
-    public final Serializable get(final int i) {
+    public Key getMax() {
+      return max == null ? max = next() : max;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public int compareTo(final Interval<Key> o) {
+      if (o == Key.ALL)
+        return 1;
+
+      final Key key = (Key)o;
+      final int i$ = length();
+      if (i$ != key.length())
+        throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + key.length() + ")");
+
+      for (int i = 0; i < i$; ++i) { // [RA]
+        final Object a = value(i);
+        final Object b = key.value(i);
+        if (a == null) {
+          if (b == null)
+            continue;
+
+          return -1;
+        }
+
+        if (b == null)
+          return 1;
+
+        if (a.getClass() != b.getClass())
+          throw new IllegalArgumentException(a.getClass().getName() + " != " + b.getClass().getName());
+
+        final int c = ((Comparable<Object>)a).compareTo(b);
+        if (c != 0)
+          return c;
+      }
+
+      return 0;
+    }
+
+    @Override
+    public final Column column(final int i) {
+      return columns[i];
+    }
+
+    @Override
+    public final int length() {
+      return values.length;
+    }
+
+    final Key next() {
+      try {
+        return new Key(columns, topology().nextValue(values));
+      }
+      catch (final Exception e) {
+        final StringBuilder b = new StringBuilder();
+        for (int i = 0, i$ = columns.length; i < i$; ++i) // [A]
+          b.append(columns[i].getName()).append('=').append(values[i]);
+
+        b.append(')').setCharAt(0, '(');
+        throw new JSQLException(b.toString(), e);
+      }
+    }
+
+    final DiscreteTopology<Object[]> topology() {
+      return topology == null ? topology = new DiscreteTopology<Object[]>() {
+        @Override
+        public int compare(final Object[] o1, final Object[] o2) {
+          final int len = o1.length;
+          if (len < o2.length)
+            return -1;
+
+          if (len > o2.length)
+            return 1;
+
+          for (int i = 0, c; i < len; ++i) { // [RA]
+            c = columns[i].getDiscreteTopology().compare(o1[i], o2[i]);
+            if (c != 0)
+              return c;
+          }
+
+          return 0;
+        }
+
+        @Override
+        public boolean isMaxValue(final Object[] v) {
+          for (int i = 0, i$ = columns.length; i < i$; ++i) // [A]
+            if (columns[i].getDiscreteTopology().isMaxValue(v[i]))
+              return true;
+
+          return false;
+        }
+
+        @Override
+        public boolean isMinValue(final Object[] v) {
+          for (int i = 0, i$ = columns.length; i < i$; ++i) // [A]
+            if (columns[i].getDiscreteTopology().isMinValue(v[i]))
+              return true;
+
+          return false;
+        }
+
+        @Override
+        public Object[] nextValue(final Object[] key) {
+          final Object[] next = key.clone();
+          Object k, p;
+          for (int i = key.length - 1; i >= 0; --i) { // [A]
+            k = key[i];
+            p = next[i] = columns[i].getDiscreteTopology().nextValue(k);
+            if (p == k)
+              next[i] = null;
+          }
+
+          return next;
+        }
+
+        @Override
+        public Object[] prevValue(final Object[] key) {
+          final Object[] prev = key.clone();
+          Object k, p;
+          for (int i = key.length - 1; i >= 0; --i) { // [A]
+            k = key[i];
+            p = prev[i] = columns[i].getDiscreteTopology().prevValue(k);
+            if (p == null || p == k)
+              prev[i] = null;
+          }
+
+          return prev;
+        }
+      } : topology;
+    }
+
+    @Override
+    public final Object value(final int i) {
       return values[i];
     }
 
     @Override
-    public final Key immutable() {
-      return this;
+    public final int hashCode() {
+      return KeyUtil.hashCode(this);
     }
 
     @Override
-    final int length() {
-      return values.length;
+    public final boolean equals(final Object obj) {
+      return KeyUtil.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+      return KeyUtil.toString(this);
     }
   }
 
-  public abstract static class LargeObject<V extends Closeable & Serializable> extends Objective<V> implements type.LargeObject<V> {
+  public abstract static class LargeObject<V extends Closeable> extends Objective<V> implements type.LargeObject<V> {
     private final Long length;
 
     LargeObject(final Table owner, final boolean mutable, final LargeObject<V> copy) {
@@ -3999,13 +4645,13 @@ public final class data {
       this.length = copy.length;
     }
 
-    LargeObject(final Table owner, final boolean mutable, final Long length) {
-      super(owner, mutable);
+    LargeObject(final Table owner, final boolean mutable, final Long length, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
       this.length = length;
     }
 
-    LargeObject(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    LargeObject(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       checkLength(length);
       this.length = length;
     }
@@ -4020,158 +4666,38 @@ public final class data {
     }
   }
 
-  @SuppressWarnings("rawtypes")
-  static final class Marker extends Column {
-    Marker() {
-      super(null, false);
-    }
+  static abstract class MutableKey implements type.Key {
+    private final Column<?>[] columns;
 
-    @Override
-    void _commitEntity$() {
-    }
-
-    @Override
-    public Column clone() {
-      return null;
-    }
-
-    @Override
-    StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return null;
-    }
-
-    @Override
-    final StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
-      return b;
-    }
-
-    @Override
-    boolean equals(final Column that) {
-      return false;
-    }
-
-    @Override
-    public Serializable get() {
-      return null;
-    }
-
-    @Override
-    public Serializable get(final Serializable defaultValue) {
-      return null;
-    }
-
-    @Override
-    Serializable getOld() {
-      return null;
-    }
-
-    @Override
-    public boolean isNull() {
-      return false;
-    }
-
-    @Override
-    boolean isNullOld() {
-      return false;
-    }
-
-    @Override
-    Serializable parseString(final DbVendor vendor, final String s) {
-      return null;
-    }
-
-    @Override
-    void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    }
-
-    @Override
-    public void revert() {
-    }
-
-    @Override
-    Column scaleTo(final Column column) {
-      return null;
-    }
-
-    @Override
-    protected boolean set(final Serializable value) {
-      return false;
-    }
-
-    @Override
-    boolean set(final Serializable value, final SetBy setBy) {
-      return false;
-    }
-
-    @Override
-    protected boolean setIfNotEqual(final Serializable value) {
-      return false;
-    }
-
-    @Override
-    protected boolean setIfNotNull(final Serializable value) {
-      return false;
-    }
-
-    @Override
-    protected boolean setIfNotNullOrEqual(final Serializable value) {
-      return false;
-    }
-
-    @Override
-    boolean setValue(final Serializable value) {
-      return false;
-    }
-
-    @Override
-    int sqlType() {
-      return 0;
-    }
-
-    @Override
-    StringBuilder toJson(final StringBuilder b) {
-      return null;
-    }
-
-    @Override
-    public final String toString() {
-      return null;
-    }
-
-    @Override
-    Class type() {
-      return null;
-    }
-
-    @Override
-    void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    }
-
-    @Override
-    int valueHashCode() {
-      return 0;
-    }
-
-    @Override
-    void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
-    }
-  }
-
-  public static abstract class MutableKey extends type.Key {
-    private final data.Column<?>[] columns;
-
-    private MutableKey(final data.Column<?>[] columns) {
+    private MutableKey(final Column<?>[] columns) {
       this.columns = assertNotNull(columns);
     }
 
     @Override
-    public abstract Serializable get(final int i);
-    @Override
-    public abstract Key immutable();
+    public final Column column(final int i) {
+      return columns[i];
+    }
+
+    abstract Key immutable();
 
     @Override
-    final int length() {
+    public final int length() {
       return columns.length;
+    }
+
+    @Override
+    public final int hashCode() {
+      return KeyUtil.hashCode(this);
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+      return KeyUtil.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+      return KeyUtil.toString(this);
     }
   }
 
@@ -4254,16 +4780,16 @@ public final class data {
       throw new UnsupportedOperationException("Unsupported Number type: " + as.getName());
     }
 
-    Numeric(final Table owner, final boolean mutable) {
-      super(owner, mutable);
+    Numeric(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
     Numeric(final Table owner, final boolean mutable, final Numeric<V> copy) {
       super(owner, mutable, copy);
     }
 
-    Numeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    Numeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     public abstract V max();
@@ -4281,10 +4807,11 @@ public final class data {
 
     @Override
     public final boolean setIfNotEqual(final V value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
+      this.setByCur = SetBy.USER;
+      return true;
     }
 
     @Override
@@ -4302,12 +4829,12 @@ public final class data {
     }
   }
 
-  public abstract static class Objective<V extends Serializable> extends Column<V> implements type.Objective<V> {
+  public abstract static class Objective<V> extends Column<V> implements type.Objective<V> {
     V valueOld;
     V valueCur;
 
-    Objective(final Table owner, final boolean mutable) {
-      super(owner, mutable);
+    Objective(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
     Objective(final Table owner, final boolean mutable, final Objective<V> copy) {
@@ -4315,15 +4842,10 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
-    Objective(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    Objective(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.valueOld = this.valueCur = _default;
     }
 
@@ -4332,6 +4854,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     @Override
@@ -4361,9 +4884,11 @@ public final class data {
 
     @Override
     public final void revert() {
+      // FIXME: Optimize this to only revert if `changed == true`. But that means it must absolutely be the case that `changed = true` when `valueCur` is modified.
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -4380,10 +4905,11 @@ public final class data {
 
     @Override
     public final boolean setIfNotEqual(final V value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
+      this.setByCur = SetBy.USER;
+      return true;
     }
 
     @Override
@@ -4397,14 +4923,6 @@ public final class data {
     }
 
     @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
-      this.setByCur = SetBy.USER;
-      return changed;
-    }
-
-    @Override
     final boolean setValue(final V value) {
       assertMutable();
       final boolean changed = !equal(valueCur, value);
@@ -4413,9 +4931,12 @@ public final class data {
 
       this.changed = !equal(valueOld, value);
       this.valueCur = value;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = valueCur != null;
@@ -4423,8 +4944,10 @@ public final class data {
         return false;
 
       this.changed = valueOld != null;
-      valueCur = null;
-      return changed;
+      this.valueCur = null;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -4433,17 +4956,17 @@ public final class data {
     }
   }
 
-  public abstract static class Primitive<V extends Serializable> extends Column<V> implements type.Primitive<V> {
-    Primitive(final Table owner, final boolean mutable) {
-      super(owner, mutable);
+  public abstract static class Primitive<V> extends Column<V> implements type.Primitive<V> {
+    Primitive(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
     Primitive(final Table owner, final boolean mutable, final Primitive<V> copy) {
       super(owner, mutable, copy);
     }
 
-    Primitive(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    Primitive(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     abstract String primitiveToString();
@@ -4509,6 +5032,12 @@ public final class data {
       this.max = null;
     }
 
+    SMALLINT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
     SMALLINT(final Table owner, final boolean mutable, final SMALLINT copy) {
       super(owner, mutable, copy, copy.precision);
 
@@ -4520,15 +5049,10 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
-    SMALLINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final Integer precision, final Short min, final Short max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
+    SMALLINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final Integer precision, final Short min, final Short max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -4545,6 +5069,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     private void checkValue(final short value) {
@@ -4590,19 +5115,27 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final SMALLINT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+      final boolean isNullCur = copy.isNullCur;
+      final short valueCur = copy.valueCur;
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
+
 //      if (!changed)
 //        return;
 
-      this.isNullCur = copy.isNullCur;
-      this.valueCur = copy.valueCur;
+      this.isNullCur = isNullCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -4629,6 +5162,11 @@ public final class data {
 
     public final short getAsShort(final short defaultValue) {
       return isNullCur ? defaultValue : valueCur;
+    }
+
+    @Override
+    final DiscreteTopology<Short> getDiscreteTopology() {
+      return DiscreteTopologies.SHORT;
     }
 
     @Override
@@ -4682,12 +5220,13 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -4696,6 +5235,7 @@ public final class data {
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -4727,7 +5267,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final SMALLINT set(final NULL value) {
-      setValueNull();
+      setNull();
       return this;
     }
 
@@ -4757,18 +5297,11 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final short value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
-    }
-
-    @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
       this.setByCur = SetBy.USER;
-      return changed;
+      return true;
     }
 
     final boolean setValue(final short value) {
@@ -4781,7 +5314,9 @@ public final class data {
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -4789,6 +5324,7 @@ public final class data {
       return value == null ? setValueNull() : setValue((short)value);
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = !isNullCur;
@@ -4796,8 +5332,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      isNullCur = true;
-      return changed;
+      this.isNullCur = true;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -4811,7 +5349,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -4829,7 +5367,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -4844,59 +5382,61 @@ public final class data {
     final Column<?>[] _primary$;
     final Column<?>[] _keyForUpdate$;
     final Column<?>[] _auto$;
-
-    private final boolean _wasSelected$;
-    private final data.MutableKey _primaryKey$;
-    private final data.MutableKey _primaryKey$Old;
+    private final MutableKey _primaryKey$;
+    private final MutableKey _primaryKeyOld$;
+    Key _primaryKeyImmutable$;
+    Key _primaryKeyOldImmutable$;
 
     Table() {
       super(true);
-      this._wasSelected$ = false;
       this._column$ = null;
       this._primary$ = null;
       this._keyForUpdate$ = null;
       this._auto$ = null;
       this._primaryKey$ = null;
-      this._primaryKey$Old = null;
+      this._primaryKeyOld$ = null;
     }
 
     Table(final boolean mutable, final boolean _wasSelected$, final Column<?>[] _column$, final Column<?>[] _primary$, final Column<?>[] _keyForUpdate$, final Column<?>[] _auto$) {
       super(mutable);
-      this._wasSelected$ = _wasSelected$;
       this._column$ = _column$;
       this._primary$ = _primary$;
       this._keyForUpdate$ = _keyForUpdate$;
       this._auto$ = _auto$;
-      this._primaryKey$ = data.Key.cur(_primary$);
-      this._primaryKey$Old = data.Key.old(_primary$);
+      this._primaryKey$ = Key.cur(_primary$);
+      this._primaryKeyOld$ = Key.old(_primary$);
     }
 
     Table(final boolean mutable, final Table copy) {
       super(mutable);
-      this._wasSelected$ = false;
       this._column$ = copy._column$.clone();
       this._primary$ = copy._primary$.clone();
       this._keyForUpdate$ = copy._keyForUpdate$.clone();
       this._auto$ = copy._auto$.clone();
-      this._primaryKey$ = data.Key.cur(_primary$);
-      this._primaryKey$Old = data.Key.old(_primary$);
+      this._primaryKey$ = Key.cur(_primary$);
+      this._primaryKeyOld$ = Key.old(_primary$);
     }
 
     abstract byte[] _columnIndex$();
     abstract String[] _columnName$();
-    abstract void _merge$(Table table);
     @Override
     public abstract Table clone();
     abstract Table clone(boolean _mutable$);
     @Override
-    public abstract boolean equals(final Object obj);
+    public abstract boolean equals(Object obj);
+
+    /**
+     * Returns the table name.
+     * @return The table name.
+     */
     public abstract String getName();
+    @Override
     abstract Schema getSchema();
     @Override
     public abstract int hashCode();
     abstract Table newInstance();
     abstract Table singleton();
-    protected abstract void toString(boolean wasSetOnly, StringBuilder s);
+    protected abstract void toString(boolean wasCuedOnly, StringBuilder s);
 
     void _commitDelete$() {
     }
@@ -4909,14 +5449,22 @@ public final class data {
     void _commitInsert$() {
     }
 
+    void _commitSelectAll$() {
+    }
+
     @SuppressWarnings("unchecked")
-    final void _commitUpdate$() {
+    final void _onModifyUpdate$() {
       for (final Column<?> column : _column$) // [A]
-        if (column.changed && column.commitUpdate != null)
-          column.commitUpdate.accept(this);
+        if (column.changed && column.onModify != null)
+          column.onModify.update(this);
     }
 
     void _initCache$() {
+    }
+
+    void _merge$(final Table table, final boolean checkMutable) {
+      if (checkMutable)
+        assertMutable();
     }
 
     @Override
@@ -4924,13 +5472,21 @@ public final class data {
       compilation.compiler.compile(this, compilation, isExpression);
     }
 
+    void setCacheSelectEntity(final boolean cacheSelectEntity) {
+      throw new UnsupportedOperationException();
+    }
+
     @Override
     final Table evaluate(final Set<Evaluable> visited) {
       return this;
     }
 
-    Map<data.Key,? extends Table> getCache() {
+    CacheMap<? extends Table> getCache() {
       return singleton().getCache();
+    }
+
+    boolean getCacheSelectEntity() {
+      return singleton().getCacheSelectEntity();
     }
 
     @Override
@@ -4961,12 +5517,12 @@ public final class data {
       return _column$;
     }
 
-    public final data.MutableKey getKey() {
-      return _primaryKey$;
+    public final Key getKey() {
+      return _primaryKeyImmutable$ == null ? _primaryKeyImmutable$ = _primaryKey$.immutable() : _primaryKeyImmutable$;
     }
 
-    final data.MutableKey getKeyOld() {
-      return _primaryKey$Old;
+    final Key getKeyOld() {
+      return _primaryKeyOldImmutable$ == null ? _primaryKeyOldImmutable$ = _primaryKeyOld$.immutable() : _primaryKeyOldImmutable$;
     }
 
     @Override
@@ -4974,29 +5530,57 @@ public final class data {
       return this;
     }
 
-    public final void merge(final Table table) {
+    public final Table merge(final Table table, final boolean andCue) {
+      merge(table);
+      cue(andCue);
+      return this;
+    }
+
+    public final Table merge(final Table table) {
       if (table != this)
-        _merge$(table);
+        _merge$(table, true);
+
+      return this;
     }
 
-    public final void reset() {
+    final Table merge$(final Table table) {
+      if (table != this)
+        _merge$(table, false);
+
+      return this;
+    }
+
+    /**
+     * Cue all {@link Column}s in {@code this} {@link Table} to the value of {@code to}.
+     *
+     * @param to The value to which all {@link Column}s in {@code this} {@link Table} are to be cued.
+     */
+    public final void cue(final boolean to) {
       for (final Column<?> column : _column$) // [A]
-        column.reset();
+        column.cue(to);
     }
 
-    public final void reset(final Except except) {
+    /**
+     * Cue all {@link Column}s in {@code this} {@link Table} to the value of {@code to}, except for the {@link Column}s matching the
+     * {@link Except} spec provided by {@code except}.
+     *
+     * @param to The value to which all {@link Column}s in {@code this} {@link Table} are to be cued, except for the {@link Column}s
+     *          matching the {@link Except} spec provided by {@code except}.
+     * @param except The {@link Except} spec defining which {@link Column}s are to be excepted.
+     */
+    public final void cue(final boolean to, final Except except) {
       if (except == null) {
-        reset();
+        cue(to);
       }
       else if (except == Except.PRIMARY_KEY_FOR_UPDATE) {
         for (final Column<?> column : _column$) // [A]
-          if (!column.primary && !column.keyForUpdate)
-            column.reset();
+          if (column.primaryIndexType == null && !column.isKeyForUpdate)
+            column.cue(to);
       }
       else if (except == Except.PRIMARY_KEY) {
         for (final Column<?> column : _column$) // [A]
-          if (!column.primary)
-            column.reset();
+          if (column.primaryIndexType == null)
+            column.cue(to);
       }
       else {
         throw new UnsupportedOperationException("Unsupported Except: " + except);
@@ -5008,7 +5592,23 @@ public final class data {
         column.revert();
     }
 
-    private String[] setColumns(final DbVendor vendor, final data.Column.SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
+    /**
+     * Set the provided {@link Map map} specifying the values (parsable by the given {@link DbVendor}) for the named columns in this
+     * {@link Table}.
+     *
+     * @param vendor The {@link DbVendor}.
+     * @param map The {@link Map Map&lt;String,String&gt;} specifying the values for the named columns in this {@link Table}.
+     * @param setBy The {@link Column.SetBy} value to be used when setting each column.
+     * @return A list of column names that were not found (and thus not set) in the table, or {@code null} if all columns were found
+     *         (and thus set).
+     * @throws NullPointerException If the provided {@link Map map} is null.
+     * @throws IllegalArgumentException If this {@link Table} does not define a named column for a key in the {@link Map map}.
+     */
+    final String[] setColumns(final DbVendor vendor, final Map<String,String> map, final Column.SetBy setBy) {
+      return map.size() == 0 ? null : setColumns(vendor, setBy, map.entrySet().iterator(), 0);
+    }
+
+    private String[] setColumns(final DbVendor vendor, final Column.SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
       while (iterator.hasNext()) {
         final Map.Entry<String,String> entry = iterator.next();
         final String key = entry.getKey();
@@ -5026,30 +5626,14 @@ public final class data {
       return depth == 0 ? null : new String[depth];
     }
 
-    /**
-     * Set the provided {@link Map map} specifying the values (parsable by the given {@link DbVendor}) for the named columns in this
-     * {@link Table}.
-     *
-     * @param vendor The {@link DbVendor}.
-     * @param map The {@link Map Map&lt;String,String&gt;} specifying the values for the named columns in this {@link Table}.
-     * @param setBy The {@link data.Column.SetBy} value to be used when setting each column.
-     * @return A list of column names that were not found (and thus not set) in the table, or {@code null} if all columns were found
-     *         (and thus set).
-     * @throws NullPointerException If the provided {@link Map map} is null.
-     * @throws IllegalArgumentException If this {@link Table} does not define a named column for a key in the {@link Map map}.
-     */
-    final String[] setColumns(final DbVendor vendor, final Map<String,String> map, final data.Column.SetBy setBy) {
-      return map.size() == 0 ? null : setColumns(vendor, setBy, map.entrySet().iterator(), 0);
-    }
-
     @Override
     public final String toString() {
       return toString(false);
     }
 
-    protected final String toString(final boolean wasSetOnly) {
+    protected final String toString(final boolean wasCuedOnly) {
       final StringBuilder s = new StringBuilder();
-      toString(wasSetOnly, s);
+      toString(wasCuedOnly, s);
 
       if (s.length() > 0)
         s.setCharAt(0, '{');
@@ -5061,26 +5645,31 @@ public final class data {
       return s.toString();
     }
 
-    final boolean wasSelected() {
-      return _wasSelected$;
-    }
-
-    public final boolean wasSet() {
-      for (final Column<?> column : _column$)
-        if (column.wasSet())
+    /**
+     * Returns {@code true} if any {@link Column} in this {@link Table} was cued to be considered in {@code SELECT}, {@code INSERT},
+     * {@code UPDATE}, and {@code DELETE} statements, otherwise {@code false}.
+     *
+     * @return {@code true} if any {@link Column} in this {@link Table} was cued to be considered in {@code SELECT}, {@code INSERT},
+     *         {@code UPDATE}, and {@code DELETE} statements., otherwise {@code false}.
+     * @implNote A {@link Column}'s value may be cued by either the {@link Column.SetBy#USER user} or the {@link Column.SetBy#SYSTEM
+     *           system}.
+     */
+    public final boolean cued() {
+      for (final Column<?> column : _column$) // [A]
+        if (column.cued())
           return true;
 
       return false;
     }
   }
 
-  public abstract static class Temporal<V extends java.time.temporal.Temporal & Serializable> extends Objective<V> implements Comparable<Column<? extends java.time.temporal.Temporal>>, type.Temporal<V> {
-    Temporal(final Table owner, final boolean mutable) {
-      super(owner, mutable);
+  public abstract static class Temporal<V extends java.time.temporal.Temporal> extends Objective<V> implements Comparable<Column<? extends java.time.temporal.Temporal>>, type.Temporal<V> {
+    Temporal(final Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
     }
 
-    Temporal(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    Temporal(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     Temporal(final Table owner, final boolean mutable, final Temporal<V> copy) {
@@ -5103,16 +5692,16 @@ public final class data {
     }
   }
 
-  public abstract static class Textual<V extends CharSequence & Comparable<?> & Serializable> extends Objective<V> implements type.Textual<V>, Comparable<Textual<?>> {
+  public abstract static class Textual<V extends CharSequence & Comparable<?>> extends Objective<V> implements type.Textual<V>, Comparable<Textual<?>> {
     private final Short length;
 
-    Textual(final Table owner, final boolean mutable, final Short length) {
-      super(owner, mutable);
+    Textual(final Table owner, final boolean mutable, final Short length, final OnModify<? extends Table> onModify) {
+      super(owner, mutable, onModify);
       this.length = length;
     }
 
-    Textual(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final long length) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    Textual(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.length = (short)length;
     }
 
@@ -5123,12 +5712,12 @@ public final class data {
 
     @Override
     public final int compareTo(final Textual<?> o) {
-      return o == null || o.isNull() ? isNull() ? 0 : 1 : isNull() ? -1 : valueCur.toString().compareTo(o.valueCur.toString());
+      return o == null || o.isNull() ? isNull() ? 0 : 1 : isNull() ? -1 : valueCur.toString().compareTo(o.valueCur.toString()); // FIXME: Why toString()?
     }
 
     @Override
     final boolean equals(final Column<V> obj) {
-      return valueCur.toString().equals(((Textual<?>)obj).valueCur.toString());
+      return valueCur.toString().equals(((Textual<?>)obj).valueCur.toString()); // FIXME: Why toString()?
     }
 
     @Override
@@ -5172,17 +5761,17 @@ public final class data {
     }
 
     private TIME(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, (OnModify<?>)null);
       this.precision = null;
     }
 
     public TIME(final int precision) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       this.precision = (byte)precision;
     }
 
     public TIME(final Integer precision) {
-      super(null, true);
+      super(null, true, (OnModify<?>)null);
       this.precision = Numbers.cast(precision, Byte.class);
     }
 
@@ -5191,8 +5780,13 @@ public final class data {
       set(value);
     }
 
-    TIME(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    TIME(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.precision = null;
+    }
+
+    TIME(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.precision = precision == null ? null : precision.byteValue();
     }
 
@@ -5221,23 +5815,35 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final TIME copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = !equal(this.valueOld, copy.valueCur);
+      final LocalTime valueCur = copy.valueCur;
+      this.changed = !equal(valueOld, valueCur);
+      final boolean changed = !equal(this.valueCur, valueCur);
+
 //      if (!changed)
 //        return;
 
-      this.valueCur = copy.valueCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
     final StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareTime(b, precision);
+    }
+
+    @Override
+    final DiscreteTopology<LocalTime> getDiscreteTopology() {
+      return DiscreteTopologies.LOCAL_TIME[precision];
     }
 
     @Override
@@ -5250,11 +5856,12 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = compiler.getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -5292,8 +5899,8 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      compiler.updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
@@ -5302,8 +5909,8 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      compiler.setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
   }
 
@@ -5357,8 +5964,14 @@ public final class data {
       this.max = null;
     }
 
-    TINYINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final Integer precision, final Byte min, final Byte max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, precision);
+    TINYINT(final OnModify<? extends Table> onModify) {
+      super(null, true, onModify);
+      this.min = null;
+      this.max = null;
+    }
+
+    TINYINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final Integer precision, final Byte min, final Byte max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -5380,11 +5993,6 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
-
-      this.setByOld = copy.setByOld;
-      this.setByCur = copy.setByCur;
-
-      this.changed = copy.changed;
     }
 
     @Override
@@ -5393,6 +6001,7 @@ public final class data {
       valueOld = valueCur;
       setByOld = setByCur;
       changed = false;
+      onChange(OLD);
     }
 
     private void checkValue(final byte value) {
@@ -5438,19 +6047,27 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
     final void copy(final TINYINT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
-      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+      final boolean isNullCur = copy.isNullCur;
+      final byte valueCur = copy.valueCur;
+      this.changed = isNullOld != isNullCur || valueOld != valueCur;
+      final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
+
 //      if (!changed)
 //        return;
 
-      this.isNullCur = copy.isNullCur;
-      this.valueCur = copy.valueCur;
+      this.isNullCur = isNullCur;
+      this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
+
+      if (changed)
+        onChange(CUR);
     }
 
     @Override
@@ -5477,6 +6094,11 @@ public final class data {
 
     public final byte getAsByte(final byte defaultValue) {
       return isNullCur ? defaultValue : valueCur;
+    }
+
+    @Override
+    final DiscreteTopology<Byte> getDiscreteTopology() {
+      return DiscreteTopologies.BYTE;
     }
 
     @Override
@@ -5530,12 +6152,13 @@ public final class data {
     }
 
     @Override
-    final void read(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
       this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
+      onChange(CUR_OLD);
     }
 
     @Override
@@ -5544,6 +6167,7 @@ public final class data {
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
+      onChange(CUR);
     }
 
     @Override
@@ -5601,7 +6225,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final TINYINT set(final NULL value) {
-      setValueNull();
+      setNull();
       return this;
     }
 
@@ -5611,18 +6235,11 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final byte value) {
-      if (setValue(value))
-        this.setByCur = SetBy.USER;
+      if (!setValue(value))
+        return false;
 
-      return changed;
-    }
-
-    @Override
-    public final boolean setNull() {
-      final boolean changed = setValueNull();
-      this.ref = null;
       this.setByCur = SetBy.USER;
-      return changed;
+      return true;
     }
 
     final boolean setValue(final byte value) {
@@ -5635,7 +6252,9 @@ public final class data {
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
       this.isNullCur = false;
-      return changed;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -5643,6 +6262,7 @@ public final class data {
       return value == null ? setValueNull() : setValue((byte)value);
     }
 
+    @Override
     final boolean setValueNull() {
       assertMutable();
       final boolean changed = !isNullCur;
@@ -5650,8 +6270,10 @@ public final class data {
         return false;
 
       this.changed = !isNullOld;
-      isNullCur = true;
-      return changed;
+      this.isNullCur = true;
+
+      onChange(CUR);
+      return true;
     }
 
     @Override
@@ -5665,7 +6287,7 @@ public final class data {
     }
 
     @Override
-    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -5684,7 +6306,7 @@ public final class data {
     }
 
     @Override
-    final void write(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -5708,8 +6330,11 @@ public final class data {
     }
   }
 
-  static final Marker PRIMARY_KEY = new Marker();
-  static final Marker KEY_FOR_UPDATE = new Marker();
+  static final IndexType BTREE = new IndexType();
+  static final IndexType HASH = new IndexType();
+  static final Condition.Identity KEY_FOR_UPDATE = new Condition.Identity();
+
+  private static ARRAY<?> $array;
   private static BIGINT $bigint;
   private static BINARY $binary;
   private static BLOB $blob;
@@ -5726,6 +6351,10 @@ public final class data {
   private static SMALLINT $smallint;
   private static TINYINT $tinyint;
   private static TIME $time;
+
+  public static ARRAY<?> ARRAY() {
+    return $array == null ? $array = new ARRAY<>(false) : $array;
+  }
 
   public static BIGINT BIGINT() {
     return $bigint == null ? $bigint = new BIGINT(false) : $bigint;
@@ -5791,11 +6420,12 @@ public final class data {
     }
     catch (final IllegalAccessException | InstantiationException | InvocationTargetException e) {
       if (e instanceof InvocationTargetException) {
-        if (e.getCause() instanceof RuntimeException)
-          throw (RuntimeException)e.getCause();
+        final Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException)
+          throw (RuntimeException)cause;
 
-        if (e.getCause() instanceof IOException)
-          Throwing.rethrow(e.getCause());
+        if (cause instanceof IOException)
+          Throwing.rethrow(cause);
       }
 
       throw new RuntimeException(e);
@@ -5815,7 +6445,7 @@ public final class data {
   }
 
   @SuppressWarnings("unchecked")
-  private static <E extends Serializable>ARRAY<E> wrap(final E[] value) {
+  private static <E>ARRAY<E> wrap(final E[] value) {
     final ARRAY<E> array;
     if (value.getClass().getComponentType().isEnum())
       array = new ARRAY<>((Class<? extends Column<E>>)value.getClass().getComponentType());
@@ -5827,7 +6457,7 @@ public final class data {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static <V extends Serializable,C extends Column<V>>C wrap(final V value) {
+  static <V,C extends Column<V>>C wrap(final V value) {
     if (EntityEnum.class.isAssignableFrom(value.getClass()))
       return (C)new ENUM((EntityEnum)value);
 

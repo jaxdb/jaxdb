@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql.generator;
 
-import static org.libj.lang.Assertions.*;
-
 import java.util.Map;
 import java.util.NavigableMap;
 
@@ -27,6 +25,7 @@ import org.jaxdb.jsql.OneToManyTreeMap;
 import org.jaxdb.jsql.OneToOneHashMap;
 import org.jaxdb.jsql.OneToOneHashTreeMap;
 import org.jaxdb.jsql.OneToOneTreeMap;
+import org.jaxdb.jsql.data;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 
 @SuppressWarnings("rawtypes")
@@ -41,8 +40,8 @@ abstract class IndexType {
   static final IndexType HASH_BTREE_UNIQUE = new HASH_BTREE(true, OneToOneHashTreeMap.class);
 
   static class UNDEFINED extends IndexType {
-    UNDEFINED(final boolean unique) {
-      super(unique, null, null);
+    UNDEFINED(final boolean isUnique) {
+      super(isUnique, null, null, false);
     }
 
     @Override
@@ -56,14 +55,19 @@ abstract class IndexType {
     }
 
     @Override
+    boolean isBTree() {
+      return false;
+    }
+
+    @Override
     boolean isSameStrategy(final IndexType indexType) {
       return indexType == UNDEFINED || indexType == UNDEFINED_UNIQUE;
     }
   }
 
   static class BTREE extends IndexType {
-    BTREE(final boolean unique, final Class<? extends Map> cls) {
-      super(unique, cls, NavigableMap.class);
+    BTREE(final boolean isUnique, final Class<? extends Map> cls) {
+      super(isUnique, cls, NavigableMap.class, true);
     }
 
     @Override
@@ -77,14 +81,19 @@ abstract class IndexType {
     }
 
     @Override
+    boolean isBTree() {
+      return true;
+    }
+
+    @Override
     boolean isSameStrategy(final IndexType indexType) {
       return indexType == BTREE || indexType == BTREE_UNIQUE;
     }
   }
 
   static class HASH extends IndexType {
-    HASH(final boolean unique, final Class<? extends Map> cls) {
-      super(unique, cls, Map.class);
+    HASH(final boolean isUnique, final Class<? extends Map> cls) {
+      super(isUnique, cls, Map.class, true);
     }
 
     @Override
@@ -98,14 +107,19 @@ abstract class IndexType {
     }
 
     @Override
+    boolean isBTree() {
+      return false;
+    }
+
+    @Override
     boolean isSameStrategy(final IndexType indexType) {
       return indexType == HASH || indexType == HASH_UNIQUE;
     }
   }
 
   static class HASH_BTREE extends IndexType {
-    HASH_BTREE(final boolean unique, final Class<? extends Map> cls) {
-      super(unique, cls, NavigableMap.class);
+    HASH_BTREE(final boolean isUnique, final Class<? extends Map> cls) {
+      super(isUnique, cls, NavigableMap.class, true);
     }
 
     @Override
@@ -119,56 +133,68 @@ abstract class IndexType {
     }
 
     @Override
+    boolean isBTree() {
+      return true;
+    }
+
+    @Override
     boolean isSameStrategy(final IndexType indexType) {
       return indexType == HASH_BTREE || indexType == HASH_BTREE_UNIQUE;
     }
   }
 
-  final boolean unique;
-  private final Class<? extends Map> iface;
+  final boolean isUnique;
   private final Class<? extends Map> cls;
+  private final boolean clsKey = false;
+  private final Class<? extends Map> iface;
+  private final boolean iFaceKey;
 
   abstract IndexType getNonUnique();
   abstract IndexType getUnique();
+  abstract boolean isBTree();
   abstract boolean isSameStrategy(IndexType indexType);
 
   final IndexType merge(final IndexType indexType) {
-    if (assertNotNull(indexType) instanceof UNDEFINED || isSameStrategy(indexType))
-      return unique ? getUnique() : this;
+    if (indexType == null)
+      return this;
 
-    return unique ? HASH_BTREE_UNIQUE : HASH_BTREE;
+    if (indexType instanceof UNDEFINED || isSameStrategy(indexType))
+      return indexType.isUnique ? getUnique() : this;
+
+    return isUnique || indexType.isUnique ? HASH_BTREE_UNIQUE : HASH_BTREE;
   }
 
-  Class<? extends Map> getInterfaceClass() {
-    if (iface == null)
-      throw new IllegalStateException();
-
-    return iface;
-  }
-
-  Class<? extends Map> getConcreteClass() {
+  String getConcreteClass(final String declarationName) {
     if (cls == null)
       throw new IllegalStateException();
 
-    return cls;
+    return cls.getName() + (declarationName == null ? "" : "<" + (clsKey ? data.Key.class.getCanonicalName() + "," : "") + declarationName + ">");
   }
 
-  IndexType(final boolean unique, final Class<? extends Map> cls, final Class<? extends Map> iface) {
-    this.unique = unique;
-    this.iface = iface;
+  String getInterfaceClass(final String declarationName) {
+    if (iface == null)
+      throw new IllegalStateException();
+
+    return iface.getName() + "<" + (iFaceKey ? data.Key.class.getCanonicalName() + "," : "") + declarationName + ">";
+  }
+
+  IndexType(final boolean isUnique, final Class<? extends Map> cls, final Class<? extends Map> iface, final boolean iFaceKey) {
+    this.isUnique = isUnique;
     this.cls = cls;
+    this.iface = iface;
+    this.iFaceKey = iFaceKey;
   }
 
-  static IndexType of(final $IndexType indexType, final boolean unique) {
-    return of(indexType == null ? null : indexType.text(), unique);
+  static IndexType of(final $IndexType indexType, final IndexType defaultValue) {
+    return of(indexType == null ? null : indexType.text(), defaultValue);
   }
 
-  static IndexType of(final String indexType, final boolean unique) {
-    return indexType == null ? (unique ? UNDEFINED_UNIQUE : UNDEFINED) : $IndexType.HASH.text().equals(indexType) ? (unique ? HASH_UNIQUE : HASH) : (unique ? BTREE_UNIQUE : BTREE);
+  static IndexType of(final String indexType, final IndexType defaultValue) {
+    return indexType == null ? defaultValue : $IndexType.HASH.text().equals(indexType) ? (defaultValue.isUnique ? HASH_UNIQUE : HASH) : (defaultValue.isUnique ? BTREE_UNIQUE : BTREE);
   }
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + (unique ? "_UNIQUE" : "");
+    return getClass().getSimpleName() + (isUnique ? "_UNIQUE" : "");
   }
 }

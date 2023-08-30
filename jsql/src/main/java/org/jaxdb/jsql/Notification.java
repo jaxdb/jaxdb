@@ -22,6 +22,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.libj.lang.ObjectUtil;
+import org.openjax.json.JSON;
+
 public final class Notification<T extends data.Table> {
   public abstract static class Action implements Comparable<Action>, Serializable {
     abstract <T extends data.Table>void action(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
@@ -44,38 +47,29 @@ public final class Notification<T extends data.Table> {
       }
     }
 
-    public abstract static class UP extends Action {
+    public static class UP extends Action {
       private static final byte ordinal = 1;
 
       private UP(final String name) {
         super(name, "UPDATE", ordinal, Notification.UpdateListener.class);
       }
 
-      private UP() {
-        super("UP", "UPDATE", ordinal, Notification.UpdateListener.class);
+      @Override
+      final <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
       }
     }
 
-    // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified alongside each other
+    // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified in one set of actions
     public static final class UPDATE extends UP {
       private UPDATE() {
         super("UPDATE");
-      }
-
-      @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, null);
       }
     }
 
     public static final class UPGRADE extends UP {
       private UPGRADE() {
         super("UPGRADE");
-      }
-
-      @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
       }
     }
 
@@ -90,13 +84,16 @@ public final class Notification<T extends data.Table> {
       }
     }
 
+    static final UP UP = new UP("UP");
+
+    static <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row) {
+      if (!(listener instanceof Notification.SelectListener))
+        throw new UnsupportedOperationException("Unsupported action: SELECT");
+
+      ((SelectListener<T>)listener).onSelect(row);
+    }
+
     public static final INSERT INSERT;
-    static final UP UP = new UP() {
-      @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        throw new UnsupportedOperationException();
-      }
-    };
     public static final UPDATE UPDATE;
     public static final UPGRADE UPGRADE;
     public static final DELETE DELETE;
@@ -149,7 +146,11 @@ public final class Notification<T extends data.Table> {
     }
   }
 
-  public interface DefaultListener<T extends data.Table> extends InsertListener<T>, UpdateListener<T>, DeleteListener<T> {
+  public interface DefaultListener<T extends data.Table> extends SelectListener<T>, InsertListener<T>, UpdateListener<T>, DeleteListener<T> {
+  }
+
+  public interface SelectListener<T extends data.Table> extends Listener<T> {
+    void onSelect(T row);
   }
 
   @FunctionalInterface
@@ -169,10 +170,10 @@ public final class Notification<T extends data.Table> {
 
   public interface Listener<T extends data.Table> {
     /**
-     * Called when a new {@link Connection} is established for the context of a {@link data.Table}.
+     * Called when a new {@link Connection} is established for the context of a {@link type.Table$}.
      *
      * @param connection The {@link Connection}.
-     * @param table The {@link data.Table}.
+     * @param table The {@link type.Table$}.
      * @throws IOException If an I/O error has occurred.
      * @throws SQLException If a SQL error has occurred.
      */
@@ -184,7 +185,7 @@ public final class Notification<T extends data.Table> {
      *
      * @param sessionId The session ID.
      * @param timestamp The timestamp (in microseconds) of the NOTIFY invocation.
-     * @param table The {@link data.Table}.
+     * @param table The {@link type.Table$}.
      * @param e The unhandled {@link Exception}.
      */
     default void onFailure(String sessionId, long timestamp, T table, Exception e) {
@@ -209,5 +210,10 @@ public final class Notification<T extends data.Table> {
 
   void invoke() {
     action.invoke(sessionId, timestamp, listener, keyForUpdate, row);
+  }
+
+  @Override
+  public String toString() {
+    return "{sessionId:\"" + sessionId + "\",timestamp:" + timestamp + ",listener:\"" + ObjectUtil.simpleIdentityString(listener) + "\",action:\"" + action + "\",keyForUpdate:\"" + JSON.toString(keyForUpdate) + "\",row:" + row + "}";
   }
 }

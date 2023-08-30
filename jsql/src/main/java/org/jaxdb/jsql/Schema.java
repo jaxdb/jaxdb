@@ -16,103 +16,119 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.Notification.Action.*;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
+import javax.sql.DataSource;
+
+import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
+import org.jaxdb.jsql.Notification.DefaultListener;
+import org.jaxdb.jsql.keyword.Select.untyped.SELECT;
 import org.libj.lang.ObjectUtil;
+import org.libj.sql.AuditConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Schema extends Notifiable {
+public abstract class Schema {
   private static final Logger logger = LoggerFactory.getLogger(Schema.class);
-  private static final IdentityHashMap<Class<? extends Schema>,Schema> instances = new IdentityHashMap<>();
 
-  Schema() {
-    instances.put(getClass(), this);
+  private static ConnectionFactory toConnectionFactory(final DataSource dataSource) {
+    assertNotNull(dataSource, "dataSource is null");
+    return (final Transaction.Isolation isolation) -> {
+      final Connection connection = dataSource.getConnection();
+      if (isolation != null)
+        connection.setTransactionIsolation(isolation.getLevel());
+
+      return AuditConnection.wrapIfDebugEnabled(connection);
+    };
   }
 
-  static Schema getSchema(final Class<? extends Schema> schemaClass) {
-    final Schema schema = instances.get(assertNotNull(schemaClass));
-    if (schema == null) {
-      try {
-        Class.forName(schemaClass.getName());
-      }
-      catch (final ClassNotFoundException e) {
+  private Connector connector;
+  private boolean isPrepared;
+
+  public Connector connect(final ConnectionFactory connectionFactory, final boolean isPrepared) {
+    this.isPrepared = isPrepared;
+    return this.connector = new Connector(this, connectionFactory, isPrepared);
+  }
+
+  public Connector connect(final DataSource dataSource, final boolean isPrepared) {
+    return connect(toConnectionFactory(dataSource), isPrepared);
+  }
+
+  protected Schema() {
+  }
+
+  public Connector getConnector() {
+    if (connector == null)
+      throw new IllegalStateException("Schema \"" + getName() + "\" is not connected");
+
+    return connector;
+  }
+
+  public abstract String getName();
+  public abstract type.Table$ getTable(String name);
+  public abstract type.Table$[] getTables();
+  public abstract void setDefaultQueryConfig(QueryConfig queryConfig);
+
+  public boolean isPrepared() {
+    return isPrepared;
+  }
+
+  private Notifier<?> cacheNotifier;
+
+  Notifier<?> getCacheNotifier() {
+    return cacheNotifier;
+  }
+
+  <T extends data.Table & type.Table$,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>>void initCache(final L notificationListener, final Queue<Notification<T>> queue, final Set<T> tables, final ArrayList<OnConnectPreLoad> onConnectPreLoads) throws IOException, SQLException {
+    if (this.cacheNotifier != null)
+      throw new IllegalStateException("Cache was already initialized");
+
+    final int len = tables.size();
+    final T[] array = (T[])tables.toArray(new data.Table[len]);
+    for (int i = 0; i < len; ++i) // [RA]
+      array[i]._initCache$();
+
+    connector.addNotificationListener(INSERT, UPGRADE, DELETE, notificationListener, queue, array);
+    this.cacheNotifier = connector.getNotifier();
+
+    for (int i = 0; i < len; ++i) { // [RA]
+      final OnConnectPreLoad<T> onConnectPreLoad = onConnectPreLoads.get(i);
+      if (onConnectPreLoad != null) {
+        final T table = array[i];
+        final SELECT<T> select = onConnectPreLoad.apply(table);
+        if (select != null) {
+          final Connector connector = table.getSchema().getConnector();
+          try (final RowIterator<T> rows = select.execute(connector, CacheConfig.withoutCacheSelectEntity)) {
+            while (rows.nextRow())
+              cacheNotifier.onSelect(rows.nextEntity());
+          }
+        }
       }
     }
-
-    return instances.get(assertNotNull(schemaClass));
   }
 
-  Listeners<Notification.Listener<?>> listeners;
-  Listeners<Notification.InsertListener<?>> insertListeners;
-  Listeners<Notification.UpdateListener<?>> updateListeners;
-  Listeners<Notification.DeleteListener<?>> deleteListeners;
+  public void configCache(final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
+    if (cacheNotifier != null)
+      throw new IllegalStateException("Cache already configured");
+
+    final CacheConfig builder = new CacheConfig(this, notificationListener, queue);
+    cacheBuilder.accept(builder);
+    builder.commit();
+  }
+
+  QueryConfig defaultQueryConfig;
   ConcurrentHashMap<String,OnNotifyCallbackList> notifyListeners;
-
-  @SuppressWarnings("unchecked")
-  private static Class<? extends data.Table> getTableClass(final data.Table table) {
-    Class<?> c = table.getClass();
-    while (c.isAnonymousClass())
-      c = c.getSuperclass();
-
-    return (Class<? extends data.Table>)c;
-  }
-
-  private class Listeners<K extends Notification.Listener<?>> extends LinkedHashMap<K,LinkedHashSet<Class<? extends data.Table>>> {
-    @Override
-    @SuppressWarnings("unchecked")
-    public LinkedHashSet<Class<? extends data.Table>> get(final Object key) {
-      LinkedHashSet<Class<? extends data.Table>> value = super.get(key);
-      if (value == null)
-        put((K)key, value = new LinkedHashSet<>());
-
-      return value;
-    }
-
-    void add(final K key, final data.Table[] tables) {
-      final LinkedHashSet<Class<? extends data.Table>> set = get(key);
-      for (final data.Table table : tables) // [A]
-        set.add(getTableClass(table));
-    }
-  }
-
-  void addListener(final Notification.Listener<?> listener, final data.Table[] tables) {
-    if (listeners == null)
-      listeners = new Listeners<>();
-
-    listeners.add(listener, tables);
-  }
-
-  void addListener(final Notification.InsertListener<?> listener, final data.Table[] tables) {
-    if (insertListeners == null)
-      insertListeners = new Listeners<>();
-
-    insertListeners.add(listener, tables);
-  }
-
-  void addListener(final Notification.UpdateListener<?> listener, final data.Table[] tables) {
-    if (updateListeners == null)
-      updateListeners = new Listeners<>();
-
-    updateListeners.add(listener, tables);
-  }
-
-  void addListener(final Notification.DeleteListener<?> listener, final data.Table[] tables) {
-    if (deleteListeners == null)
-      deleteListeners = new Listeners<>();
-
-    deleteListeners.add(listener, tables);
-  }
 
   void awaitNotify(final String sessionId, final OnNotifyCallbackList onNotifyCallbackList) {
     if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".awaitNotify(" + sessionId + "," + ObjectUtil.simpleIdentityString(onNotifyCallbackList) + ")");
@@ -139,63 +155,12 @@ public abstract class Schema extends Notifiable {
     return onNotifyCallbackList;
   }
 
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
-    if (listeners == null)
-      return;
+  // FIXME: Remove this when confidence is high
+  static data.Key assertKey(final data.Key k1, final data.Key k2) {
+    if (k1.equals(k2))
+      return k1;
 
-    final Class<?> tableClass = table.getClass();
-    for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet()) // [S]
-      if (entry.getValue().contains(tableClass))
-        entry.getKey().onConnect(connection, table);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
-    if (listeners == null)
-      return;
-
-    final Class<?> tableClass = table.getClass();
-    for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet()) // [S]
-      if (entry.getValue().contains(tableClass))
-        entry.getKey().onFailure(sessionId, timestamp, table, e);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onInsert(final String sessionId, final long timestamp, final data.Table row) {
-    if (insertListeners == null)
-      return;
-
-    final Class<?> rowClass = row.getClass();
-    for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table>>> entry : insertListeners.entrySet()) // [S]
-      if (entry.getValue().contains(rowClass))
-        entry.getKey().onInsert(sessionId, timestamp, row);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
-    if (updateListeners == null)
-      return;
-
-    final Class<?> rowClass = row.getClass();
-    for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table>>> entry : updateListeners.entrySet()) // [S]
-      if (entry.getValue().contains(rowClass))
-        entry.getKey().onUpdate(sessionId, timestamp, row, keyForUpdate);
-  }
-
-  @Override
-  @SuppressWarnings("rawtypes")
-  void onDelete(final String sessionId, final long timestamp, final data.Table row) {
-    if (deleteListeners == null)
-      return;
-
-    final Class<?> rowClass = row.getClass();
-    for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table>>> entry : deleteListeners.entrySet()) // [S]
-      if (entry.getValue().contains(rowClass))
-        entry.getKey().onDelete(sessionId, timestamp, row);
+    if (logger.isErrorEnabled()) logger.error("ASYNCDB key mismatch: " + k1 + " " + k2, new Exception());
+    return k2;
   }
 }

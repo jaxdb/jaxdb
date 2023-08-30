@@ -134,11 +134,11 @@ public final class Schemas {
     exec(connection, true, true, false, ddlxs);
   }
 
-  private static final DDLx[] EMPTY_AUDITS = {};
+  private static final DDLx[] EMPTY_DDLxs = {};
 
   private static DDLx[] parseDDLs(final URL[] urls) throws IOException, SAXException, TransformerException {
     if (urls.length == 0)
-      return EMPTY_AUDITS;
+      return EMPTY_DDLxs;
 
     final DDLx[] audits = new DDLx[urls.length];
     for (int i = 0, i$ = urls.length; i < i$; ++i) // [A]
@@ -159,7 +159,7 @@ public final class Schemas {
   private static DDLx[] parseDDLs(final Collection<URL> urls) throws IOException, SAXException, TransformerException {
     final int len = urls.size();
     if (len == 0)
-      return EMPTY_AUDITS;
+      return EMPTY_DDLxs;
 
     final DDLx[] audits = new DDLx[len];
     final Iterator<URL> iterator = urls.iterator();

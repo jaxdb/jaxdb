@@ -31,12 +31,12 @@ import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import org.jaxdb.jsql.Command.Select.untyped;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
-import org.libj.io.SerializableReader;
 import org.libj.io.Streams;
 import org.libj.io.UnsynchronizedStringReader;
 
@@ -57,35 +57,35 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
-    if (as.cast instanceof data.Temporal) {
-      final StringBuilder sql = compilation.sql;
-      sql.append("STRFTIME(\"");
-      if (as.cast instanceof data.DATE) {
-        sql.append("%Y-%m-%d");
-      }
-      else if (as.cast instanceof data.TIME) {
-        sql.append("%H:%M:");
-        final data.TIME time = (data.TIME)as.cast;
-        final Byte precision = time.precision();
-        sql.append(precision == null || precision > 0 ? "%f" : "%S");
-      }
-      else if (as.cast instanceof data.DATETIME) {
-        sql.append("%Y-%m-%d %H:%M:");
-        final data.DATETIME dateTime = (data.DATETIME)as.cast;
-        final Byte precision = dateTime.precision();
-        sql.append(precision == null || precision > 0 ? "%f" : "%S");
-      }
-      else {
-        throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass().getName());
-      }
+    if (!(as.cast instanceof data.Temporal)) {
+      super.compileCast(as, compilation);
+      return;
+    }
 
-      sql.append("\", (");
-      toSubject(as.column).compile(compilation, true);
-      sql.append("))");
+    final StringBuilder sql = compilation.sql;
+    sql.append("STRFTIME(\"");
+    if (as.cast instanceof data.DATE) {
+      sql.append("%Y-%m-%d");
+    }
+    else if (as.cast instanceof data.TIME) {
+      sql.append("%H:%M:");
+      final data.TIME time = (data.TIME)as.cast;
+      final Byte precision = time.precision();
+      sql.append(precision == null || precision > 0 ? "%f" : "%S");
+    }
+    else if (as.cast instanceof data.DATETIME) {
+      sql.append("%Y-%m-%d %H:%M:");
+      final data.DATETIME dateTime = (data.DATETIME)as.cast;
+      final Byte precision = dateTime.precision();
+      sql.append(precision == null || precision > 0 ? "%f" : "%S");
     }
     else {
-      super.compileCast(as, compilation);
+      throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass().getName());
     }
+
+    sql.append("\", (");
+    toSubject(as.column).compile(compilation, true);
+    sql.append("))");
   }
 
   @Override
@@ -164,11 +164,21 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
+  void compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+    if (select.groupBy == null && select.having != null) {
+      final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
+      select.groupBy = command.getPrimaryColumnsFromCondition(select.having);
+    }
+
+    super.compileGroupByHaving(select, useAliases, compilation);
+  }
+
+  @Override
   void compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(");
     toSubject(a).compile(compilation, true);
-    sql.append(')');
+    sql.append(") / 0.4342944819032518");
   }
 
   @Override
@@ -186,7 +196,7 @@ final class SQLiteCompiler extends Compiler {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(");
     toSubject(a).compile(compilation, true);
-    sql.append(") / 0.6931471805599453");
+    sql.append(") / 0.3010299956639811");
   }
 
   @Override
@@ -205,9 +215,9 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  SerializableReader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  Reader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
-    return value == null ? null : new SerializableReader(new UnsynchronizedStringReader(value));
+    return value == null ? null : new UnsynchronizedStringReader(value);
   }
 
   @Override
@@ -335,22 +345,25 @@ final class SQLiteCompiler extends Compiler {
       compileInsert(columns, false, compilation);
     }
 
-    sql.append(" ON CONFLICT (");
-    for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
-      if (i > 0)
-        sql.append(", ");
+    sql.append(" ON CONFLICT ");
+    if (onConflict != null) {
+      sql.append('(');
+      for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
+        if (i > 0)
+          sql.append(", ");
 
-      onConflict[i].compile(compilation, false);
+        onConflict[i].compile(compilation, false);
+      }
+      sql.append(')');
     }
 
-    sql.append(')');
     if (doUpdate) {
       sql.append(" DO UPDATE SET ");
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column<?> column = columns[i];
-        if (column.primary)
+        if (column.primaryIndexType != null)
           continue;
 
         if (select != null) {

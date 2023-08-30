@@ -16,41 +16,28 @@
 
 package org.jaxdb.jsql.generator;
 
-import org.jaxdb.jsql.RelationMap;
-import org.jaxdb.jsql.data;
+import java.util.HashSet;
 
 class OneToManyRelation extends ForeignRelation {
-  OneToManyRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
-    super(schemaClassName, sourceTable, tableMeta, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+  OneToManyRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+    super(schemaClassName, sourceTable, tableModel, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
   }
 
   @Override
-  String writeDeclaration(final String classSimpleName) {
-    final String typeName = indexTypeForeign.unique ? declarationNameForeign : getType();
-    final String declaredName = indexTypeForeign.unique ? declarationNameForeign : getDeclaredName();
-
-    final StringBuilder out = new StringBuilder();
-    out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("() {");
-    out.append("\n      final ").append(RelationMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheInstanceNameForeign).append(';');
-    out.append("\n      return cache == null ? null : cache.get(").append(keyClause.replace("{1}", classSimpleName).replace("{2}", "getOld")).append(");");
-    out.append("\n    }");
-    return out.toString();
-  }
-
-  @Override
-  String writeOnChangeReverse(final String fieldName) {
-//    return "if (" + fieldName + " != null) " + fieldName + "." + this.fieldName + " = null;";
-    return null;
+  String writeDeclaration(final String classSimpleName, final HashSet<String> declared) {
+    final String typeName = indexTypeForeign.isUnique ? declarationNameForeign : getType();
+    final String declaredName = indexTypeForeign.isUnique ? declarationNameForeign : getDeclaredName();
+    return writeDeclaration(classSimpleName, typeName, declaredName, "", declared);
   }
 
   @Override
   String getDeclaredName() {
-    return indexTypeForeign.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationNameForeign + ">";
+    return indexTypeForeign.getInterfaceClass(declarationNameForeign);
   }
 
   @Override
   String getType() {
-    return indexTypeForeign.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationNameForeign + ">";
+    return indexTypeForeign.getInterfaceClass(declarationNameForeign);
   }
 
   @Override

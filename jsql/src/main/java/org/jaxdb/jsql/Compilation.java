@@ -17,10 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,7 +31,7 @@ final class Compilation implements AutoCloseable {
   final StringBuilder sql = new StringBuilder();
   private ArrayList<String> columnTokens;
   private ArrayList<data.Column<?>> parameters;
-  private final boolean prepared;
+  private final boolean isPrepared;
   private BooleanConsumer afterExecute;
   private boolean closed;
 
@@ -52,10 +49,18 @@ final class Compilation implements AutoCloseable {
   }
 
   private Compilation(final Keyword command, final DbVendor vendor, final boolean prepared, final Compilation parent) {
+    this(command, vendor, Compiler.getCompiler(vendor), prepared, parent);
+  }
+
+  Compilation(final Keyword command, final DbVendor vendor, final Compiler compiler, final boolean prepared) {
+    this(command, vendor, compiler, prepared, null);
+  }
+
+  private Compilation(final Keyword command, final DbVendor vendor, final Compiler compiler, final boolean isPrepared, final Compilation parent) {
     this.command = command;
     this.vendor = vendor;
-    this.prepared = prepared;
-    this.compiler = Compiler.getCompiler(vendor);
+    this.isPrepared = isPrepared;
+    this.compiler = compiler;
     this.parent = parent;
     if (parent != null)
       this.parameters = parent.parameters;
@@ -69,7 +74,7 @@ final class Compilation implements AutoCloseable {
     if (subCompilations == null)
       subCompilations = new HashMap<>();
 
-    final Compilation subCompilation = new Compilation(command, vendor, prepared, this);
+    final Compilation subCompilation = new Compilation(command, vendor, isPrepared, this);
     subCompilations.put(command, subCompilation);
     return subCompilation;
   }
@@ -87,7 +92,7 @@ final class Compilation implements AutoCloseable {
   }
 
   boolean isPrepared() {
-    return prepared;
+    return isPrepared;
   }
 
   ArrayList<data.Column<?>> getParameters() {
@@ -141,10 +146,10 @@ final class Compilation implements AutoCloseable {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.keyForUpdate)) {
+    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.isKeyForUpdate)) {
       ((Subject)column.ref).compile(this, false);
     }
-    else if (prepared) {
+    else if (isPrepared) {
       compiler.getPreparedStatementMark(sql, column);
       if (parameters == null) {
         parameters = new ArrayList<>();
@@ -156,7 +161,7 @@ final class Compilation implements AutoCloseable {
       parameters.add(column);
     }
     else {
-      column.compile(sql, vendor, isForUpdateWhere);
+      column.compile(compiler, sql, isForUpdateWhere);
     }
   }
 
@@ -169,36 +174,16 @@ final class Compilation implements AutoCloseable {
       this.afterExecute.accept(success);
   }
 
-  static PreparedStatement configure(final Connection connection, final QueryConfig config, final String sql) throws SQLException {
-    if (config == null)
-      return connection.prepareStatement(sql);
-
-    if (config.getHoldability() == null)
-      return config.apply(connection.prepareStatement(sql, config.getType().index, config.getConcurrency().index));
-
-    return config.apply(connection.prepareStatement(sql, config.getType().index, config.getConcurrency().index, config.getHoldability().index));
-  }
-
-  static Statement configure(final Connection connection, final QueryConfig config) throws SQLException {
-    if (config == null)
-      return connection.createStatement();
-
-    if (config.getHoldability() == null)
-      return config.apply(connection.createStatement(config.getType().index, config.getConcurrency().index));
-
-    return config.apply(connection.createStatement(config.getType().index, config.getConcurrency().index, config.getHoldability().index));
-  }
-
   boolean subCompile(final Subject subject) {
-    if (subCompilations == null || !(subject instanceof data.Entity))
+    if (this.subCompilations == null || !(subject instanceof data.Entity))
       return false;
 
-    final Collection<Compilation> compilations = subCompilations.values();
-    if (compilations.size() > 0) {
-      for (final Compilation compilation : compilations) { // [C]
-        final Alias alias = compilation.aliases.get(subject);
+    final Collection<Compilation> subCompilations = this.subCompilations.values();
+    if (subCompilations.size() > 0) {
+      for (final Compilation subCompilation : subCompilations) { // [C]
+        final Alias alias = subCompilation.aliases.get(subject);
         if (alias != null) {
-          final Alias commandAlias = compilation.getSuperAlias(compilation.command);
+          final Alias commandAlias = subCompilation.getSuperAlias(subCompilation.command);
           if (commandAlias != null) {
             sql.append(commandAlias).append('.').append(alias);
             return true;
@@ -208,7 +193,7 @@ final class Compilation implements AutoCloseable {
           return false;
         }
 
-        if (compilation.subCompile(subject))
+        if (subCompilation.subCompile(subject))
           return true;
       }
     }

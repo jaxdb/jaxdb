@@ -19,7 +19,6 @@ package org.jaxdb.jsql;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.SQLException;
@@ -356,7 +355,6 @@ public final class Interval extends data.Entity implements TemporalAmount {
 
   @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    // FIXME: Does this ever get called?
     compilation.compiler.compileInterval(null, null, this, compilation);
   }
 
@@ -389,7 +387,7 @@ public final class Interval extends data.Entity implements TemporalAmount {
   }
 
   @Override
-  Serializable evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException();
   }
 }

@@ -16,13 +16,28 @@
 
 package org.jaxdb.jsql;
 
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
-import org.jaxdb.jsql.data.Key;
+public class OneToOneTreeMap<V extends data.Table> extends TreeCacheMap<V> implements OneToOneMap<V> {
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  static final OneToOneTreeMap EMPTY = new OneToOneTreeMap(null, null, new TreeMap<>());
 
-public class OneToOneTreeMap<V extends data.Table> extends ConcurrentSkipListMap<data.Key,V> implements OneToOneMap<V> {
+  OneToOneTreeMap(final data.Table table) {
+    super(table);
+  }
+
+  private OneToOneTreeMap(final data.Table table, final Schema schema, final NavigableMap<data.Key,V> map) {
+    super(table, schema, map);
+  }
+
   @Override
-  public ConcurrentSkipListMap<Key,V> clone() {
-    throw new UnsupportedOperationException();
+  TreeCacheMap<V> newInstance(final data.Table table, final NavigableMap<data.Key,V> map) {
+    return new OneToOneTreeMap<>(table, table.getSchema(), map);
+  }
+
+  @Override
+  public V get(final Object key) {
+    return map.get(key);
   }
 }

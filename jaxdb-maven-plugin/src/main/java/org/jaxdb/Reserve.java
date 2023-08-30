@@ -16,14 +16,26 @@
 
 package org.jaxdb;
 
-import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
+
+import org.libj.lang.Strings;
+import org.libj.net.URLs;
+import org.libj.util.StringPaths;
 
 class Reserve<T> {
   final T obj;
-  final HashMap<String,File> renameToFile = new HashMap<>();
+  private final HashMap<String,String> nameToName = new HashMap<>();
 
   Reserve(final T obj) {
     this.obj = obj;
+  }
+
+  String get(final URL schema, final String name) {
+    String value = nameToName.get(name);
+    if (value == null)
+      nameToName.put(name, value = name == null ? URLs.getSimpleName(schema) + ".sql" : Strings.searchReplace(StringPaths.getName(schema.toString()), name));
+
+    return value;
   }
 }

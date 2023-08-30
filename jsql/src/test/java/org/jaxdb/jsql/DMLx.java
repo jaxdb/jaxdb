@@ -16,7 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import java.io.Serializable;
 /**[import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,8 +36,8 @@ import org.libj.util.ArrayUtil;
 /*** public ***/ final class DMLx {
   /* START Ordering Specification */
 
-  public static <D extends data.Column<V>,V extends Serializable>D ASC(final D column) { return (D)column.clone().wrap(new OrderingSpec(true, column)); }
-  public static <D extends data.Column<V>,V extends Serializable>D DESC(final D column) { return (D)column.clone().wrap(new OrderingSpec(false, column)); }
+  public static <D extends data.Column<V>,V>D ASC(final D column) { return (D)column.clone().wrap(new OrderingSpec(true, column)); }
+  public static <D extends data.Column<V>,V>D DESC(final D column) { return (D)column.clone().wrap(new OrderingSpec(false, column)); }
 
   /* END Ordering Specification */
 
@@ -64,164 +63,163 @@ import org.libj.util.ArrayUtil;
 
   /* START ComparisonPredicate */
 
-  static data.BOOLEAN EQ(final data.Column<?> a, final Serializable b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static data.BOOLEAN EQ(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static data.BOOLEAN EQ(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <Textual extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN EQ(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<Textual>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static data.BOOLEAN EQ(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
-  public static data.BOOLEAN EQ(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN EQ(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.EQ, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN EQ(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN EQ(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.EQ, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN EQ(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate<V>(function.Logical.EQ, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN EQ(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.EQ, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN EQ(final type.Temporal<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN EQ(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.EQ, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN EQ(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static data.BOOLEAN EQ(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN EQ(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN EQ(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static data.BOOLEAN GT(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static data.BOOLEAN GT(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN GT(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static data.BOOLEAN GT(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
-  public static data.BOOLEAN GT(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN GT(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN GT(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN GT(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN GT(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN GT(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN GT(final type.Temporal<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN GT(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN GT(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static data.BOOLEAN GT(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GT(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN GT(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static data.BOOLEAN GTE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static data.BOOLEAN GTE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN GTE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static data.BOOLEAN GTE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
-  public static data.BOOLEAN GTE(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN GTE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN GTE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN GTE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN GTE(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN GTE(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN GTE(final type.Temporal<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN GTE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN GTE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static data.BOOLEAN GTE(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN GTE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN GTE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static data.BOOLEAN LT(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static data.BOOLEAN LT(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN LT(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static data.BOOLEAN LT(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
-  public static data.BOOLEAN LT(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN LT(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN LT(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN LT(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN LT(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN LT(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN LT(final type.Temporal<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN LT(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN LT(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static data.BOOLEAN LT(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LT(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN LT(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static data.BOOLEAN LTE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static data.BOOLEAN LTE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN LTE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static data.BOOLEAN LTE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
-  public static data.BOOLEAN LTE(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN LTE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN LTE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN LTE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN LTE(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN LTE(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN LTE(final type.Temporal<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN LTE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN LTE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static data.BOOLEAN LTE(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN LTE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN LTE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static data.BOOLEAN NE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static data.BOOLEAN NE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN NE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static data.BOOLEAN NE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
-  public static data.BOOLEAN NE(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN NE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN NE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN NE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN NE(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN NE(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN NE(final type.Temporal<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends CharSequence & Comparable<?>& Serializable>data.BOOLEAN NE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
-  public static <V extends java.lang.Number& Serializable>data.BOOLEAN NE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static data.BOOLEAN NE(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends EntityEnum& Serializable>data.BOOLEAN NE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends java.time.temporal.Temporal& Serializable>data.BOOLEAN NE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
+  public static data.BOOLEAN EQ(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final V a, final type.CHAR b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final V a, final type.ENUM<V> b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static data.BOOLEAN EQ(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <Textual extends CharSequence & Comparable<?>>data.BOOLEAN EQ(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate.Eq<Textual>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.CHAR a, final V b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static data.BOOLEAN EQ(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate.Eq<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate.Eq<String>(a, b); }
+  public static data.BOOLEAN EQ(final type.CHAR a, final String b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final V b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate.Eq<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate.Eq<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final String b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN EQ(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate.Eq<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN EQ(final type.Numeric<?> a, final V b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN EQ(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Eq<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN EQ(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate.Eq<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN EQ(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Eq<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN EQ(final type.Temporal<V> a, final V b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN EQ(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Eq<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN EQ(final V a, final type.Numeric<?> b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static data.BOOLEAN EQ(final String a, final type.CHAR b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final String a, final type.ENUM<V> b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN EQ(final V a, final type.Temporal<V> b) { return new ComparisonPredicate.Eq<>(a, b); }
+  public static data.BOOLEAN GT(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final V a, final type.CHAR b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final V a, final type.ENUM<V> b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static data.BOOLEAN GT(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN GT(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate.Gt<V>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.CHAR a, final V b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static data.BOOLEAN GT(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate.Gt<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate.Gt<String>(a, b); }
+  public static data.BOOLEAN GT(final type.CHAR a, final String b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final V b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate.Gt<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate.Gt<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final String b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN GT(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate.Gt<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN GT(final type.Numeric<?> a, final V b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN GT(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Gt<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN GT(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate.Gt<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN GT(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Gt<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN GT(final type.Temporal<V> a, final V b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN GT(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Gt<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN GT(final V a, final type.Numeric<?> b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static data.BOOLEAN GT(final String a, final type.CHAR b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final String a, final type.ENUM<V> b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN GT(final V a, final type.Temporal<V> b) { return new ComparisonPredicate.Gt<>(a, b); }
+  public static data.BOOLEAN GTE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final V a, final type.CHAR b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static data.BOOLEAN GTE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN GTE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate.Gte<V>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.CHAR a, final V b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static data.BOOLEAN GTE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate.Gte<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate.Gte<String>(a, b); }
+  public static data.BOOLEAN GTE(final type.CHAR a, final String b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate.Gte<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate.Gte<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN GTE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate.Gte<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN GTE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN GTE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Gte<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN GTE(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate.Gte<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN GTE(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Gte<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN GTE(final type.Temporal<V> a, final V b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN GTE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Gte<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN GTE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static data.BOOLEAN GTE(final String a, final type.CHAR b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN GTE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate.Gte<>(a, b); }
+  public static data.BOOLEAN LT(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final V a, final type.CHAR b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final V a, final type.ENUM<V> b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static data.BOOLEAN LT(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN LT(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate.Lt<V>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.CHAR a, final V b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static data.BOOLEAN LT(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate.Lt<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate.Lt<String>(a, b); }
+  public static data.BOOLEAN LT(final type.CHAR a, final String b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final V b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate.Lt<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate.Lt<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final String b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN LT(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate.Lt<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN LT(final type.Numeric<?> a, final V b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN LT(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Lt<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN LT(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate.Lt<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN LT(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Lt<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN LT(final type.Temporal<V> a, final V b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN LT(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Lt<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN LT(final V a, final type.Numeric<?> b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static data.BOOLEAN LT(final String a, final type.CHAR b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final String a, final type.ENUM<V> b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN LT(final V a, final type.Temporal<V> b) { return new ComparisonPredicate.Lt<>(a, b); }
+  public static data.BOOLEAN LTE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final V a, final type.CHAR b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static data.BOOLEAN LTE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN LTE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate.Lte<V>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.CHAR a, final V b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static data.BOOLEAN LTE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate.Lte<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate.Lte<String>(a, b); }
+  public static data.BOOLEAN LTE(final type.CHAR a, final String b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate.Lte<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate.Lte<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN LTE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate.Lte<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN LTE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN LTE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Lte<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN LTE(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate.Lte<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN LTE(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Lte<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN LTE(final type.Temporal<V> a, final V b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN LTE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Lte<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN LTE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static data.BOOLEAN LTE(final String a, final type.CHAR b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN LTE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate.Lte<>(a, b); }
+  public static data.BOOLEAN NE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final V a, final type.CHAR b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static data.BOOLEAN NE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN NE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate.Ne<V>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.CHAR a, final V b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static data.BOOLEAN NE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate.Ne<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate.Ne<String>(a, b); }
+  public static data.BOOLEAN NE(final type.CHAR a, final String b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate.Ne<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate.Ne<String>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN NE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate.Ne<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN NE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN NE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Ne<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN NE(final type.Temporal<V> a, final type.Temporal<V> b) { return new ComparisonPredicate.Ne<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN NE(final type.Temporal<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Ne<V>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN NE(final type.Temporal<V> a, final V b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends CharSequence & Comparable<?>>data.BOOLEAN NE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate.Ne<V>(a, b); }
+  public static <V extends java.lang.Number>data.BOOLEAN NE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static data.BOOLEAN NE(final String a, final type.CHAR b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate.Ne<>(a, b); }
+  public static <V extends java.time.temporal.Temporal>data.BOOLEAN NE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate.Ne<>(a, b); }
 
   /* END ComparisonPredicate */
 
   /* SELECT */
 
-  @SafeVarargs public static <V extends Serializable>Select.ARRAY._SELECT<data.ARRAY<V>> SELECT(final type.ARRAY<? extends V> ... entities) { return new Command.Select.ARRAY.SELECT<>(false, entities); }
+  @SafeVarargs public static <V>Select.ARRAY._SELECT<data.ARRAY<V>> SELECT(final type.ARRAY<? extends V> ... entities) { return new Command.Select.ARRAY.SELECT<>(false, entities); }
   @SafeVarargs public static Select.BIGINT._SELECT<data.BIGINT> SELECT(final type.BIGINT ... entities) { return new Command.Select.BIGINT.SELECT<>(false, entities); }
   @SafeVarargs public static Select.BINARY._SELECT<data.BINARY> SELECT(final type.BINARY ... entities) { return new Command.Select.BINARY.SELECT<>(false, entities); }
   @SafeVarargs public static Select.BLOB._SELECT<data.BLOB> SELECT(final type.BLOB ... entities) { return new Command.Select.BLOB.SELECT<>(false, entities); }
   @SafeVarargs public static Select.BOOLEAN._SELECT<data.BOOLEAN> SELECT(final type.BOOLEAN ... entities) { return new Command.Select.BOOLEAN.SELECT<>(false, entities); }
   @SafeVarargs public static Select.CHAR._SELECT<data.CHAR> SELECT(final type.CHAR ... entities) { return new Command.Select.CHAR.SELECT<>(false, entities); }
   @SafeVarargs public static Select.CLOB._SELECT<data.CLOB> SELECT(final type.CLOB ... entities) { return new Command.Select.CLOB.SELECT<>(false, entities); }
-  @SafeVarargs public static <V extends Serializable>Select.Column._SELECT<data.Column<V>> SELECT(final type.Column<? extends V> ... entities) { return new Command.Select.Column.SELECT<>(false, entities); }
+  @SafeVarargs public static <V>Select.Column._SELECT<data.Column<V>> SELECT(final type.Column<? extends V> ... entities) { return new Command.Select.Column.SELECT<>(false, entities); }
   @SafeVarargs public static Select.DATE._SELECT<data.DATE> SELECT(final type.DATE ... entities) { return new Command.Select.DATE.SELECT<>(false, entities); }
   @SafeVarargs public static Select.DATETIME._SELECT<data.DATETIME> SELECT(final type.DATETIME ... entities) { return new Command.Select.DATETIME.SELECT<>(false, entities); }
   @SafeVarargs public static Select.DECIMAL._SELECT<data.DECIMAL> SELECT(final type.DECIMAL ... entities) { return new Command.Select.DECIMAL.SELECT<>(false, entities); }
@@ -231,8 +229,8 @@ import org.libj.util.ArrayUtil;
   @SafeVarargs public static Select.INT._SELECT<data.INT> SELECT(final type.INT ... entities) { return new Command.Select.INT.SELECT<>(false, entities); }
   @SafeVarargs public static <V extends Number>Select.Numeric._SELECT<data.Numeric<V>> SELECT(final type.Numeric<? extends V> ... entities) { return new Command.Select.Numeric.SELECT<>(false, entities); }
   @SafeVarargs public static Select.SMALLINT._SELECT<data.SMALLINT> SELECT(final type.SMALLINT ... entities) { return new Command.Select.SMALLINT.SELECT<>(false, entities); }
-  @SafeVarargs public static <V extends java.time.temporal.Temporal & Serializable>Select.Temporal._SELECT<data.Temporal<V>> SELECT(final type.Temporal<? extends V> ... entities) { return new Command.Select.Temporal.SELECT<>(false, entities); }
-  @SafeVarargs public static <V extends CharSequence & Comparable<?> & Serializable>Select.Textual._SELECT<data.Textual<V>> SELECT(final type.Textual<? extends V> ... entities) { return new Command.Select.Textual.SELECT<>(false, entities); }
+  @SafeVarargs public static <V extends java.time.temporal.Temporal>Select.Temporal._SELECT<data.Temporal<V>> SELECT(final type.Temporal<? extends V> ... entities) { return new Command.Select.Temporal.SELECT<>(false, entities); }
+  @SafeVarargs public static <V extends CharSequence & Comparable<?>>Select.Textual._SELECT<data.Textual<V>> SELECT(final type.Textual<? extends V> ... entities) { return new Command.Select.Textual.SELECT<>(false, entities); }
   @SafeVarargs public static Select.TIME._SELECT<data.TIME> SELECT(final type.TIME ... entities) { return new Command.Select.TIME.SELECT<>(false, entities); }
   @SafeVarargs public static Select.TINYINT._SELECT<data.TINYINT> SELECT(final type.TINYINT ... entities) { return new Command.Select.TINYINT.SELECT<>(false, entities); }
   @SafeVarargs public static Select.Entity._SELECT<type.Entity> SELECT(final type.Entity ... entities) { return new Command.Select.Entity.SELECT<>(false, entities); }
@@ -241,14 +239,14 @@ import org.libj.util.ArrayUtil;
   public static final class SELECT {
     private SELECT() {}
 
-    @SafeVarargs public static <V extends Serializable>Select.ARRAY._SELECT<data.ARRAY<V>> DISTINCT(final type.ARRAY<? extends V> ... entities) { return new Command.Select.ARRAY.SELECT<>(true, entities); }
+    @SafeVarargs public static <V>Select.ARRAY._SELECT<data.ARRAY<V>> DISTINCT(final type.ARRAY<? extends V> ... entities) { return new Command.Select.ARRAY.SELECT<>(true, entities); }
     @SafeVarargs public static Select.BIGINT._SELECT<data.BIGINT> DISTINCT(final type.BIGINT ... entities) { return new Command.Select.BIGINT.SELECT<>(true, entities); }
     @SafeVarargs public static Select.BINARY._SELECT<data.BINARY> DISTINCT(final type.BINARY ... entities) { return new Command.Select.BINARY.SELECT<>(true, entities); }
     @SafeVarargs public static Select.BLOB._SELECT<data.BLOB> DISTINCT(final type.BLOB ... entities) { return new Command.Select.BLOB.SELECT<>(true, entities); }
     @SafeVarargs public static Select.BOOLEAN._SELECT<data.BOOLEAN> DISTINCT(final type.BOOLEAN ... entities) { return new Command.Select.BOOLEAN.SELECT<>(true, entities); }
     @SafeVarargs public static Select.CHAR._SELECT<data.CHAR> DISTINCT(final type.CHAR ... entities) { return new Command.Select.CHAR.SELECT<>(true, entities); }
     @SafeVarargs public static Select.CLOB._SELECT<data.CLOB> DISTINCT(final type.CLOB ... entities) { return new Command.Select.CLOB.SELECT<>(true, entities); }
-    @SafeVarargs public static <V extends Serializable>Select.Column._SELECT<data.Column<V>> DISTINCT(final type.Column<? extends V> ... entities) { return new Command.Select.Column.SELECT<>(true, entities); }
+    @SafeVarargs public static <V>Select.Column._SELECT<data.Column<V>> DISTINCT(final type.Column<? extends V> ... entities) { return new Command.Select.Column.SELECT<>(true, entities); }
     @SafeVarargs public static Select.DATE._SELECT<data.DATE> DISTINCT(final type.DATE ... entities) { return new Command.Select.DATE.SELECT<>(true, entities); }
     @SafeVarargs public static Select.DATETIME._SELECT<data.DATETIME> DISTINCT(final type.DATETIME ... entities) { return new Command.Select.DATETIME.SELECT<>(true, entities); }
     @SafeVarargs public static Select.DECIMAL._SELECT<data.DECIMAL> DISTINCT(final type.DECIMAL ... entities) { return new Command.Select.DECIMAL.SELECT<>(true, entities); }
@@ -258,8 +256,8 @@ import org.libj.util.ArrayUtil;
     @SafeVarargs public static Select.INT._SELECT<data.INT> DISTINCT(final type.INT ... entities) { return new Command.Select.INT.SELECT<>(true, entities); }
     @SafeVarargs public static <V extends Number>Select.Numeric._SELECT<data.Numeric<V>> DISTINCT(final type.Numeric<? extends V> ... entities) { return new Command.Select.Numeric.SELECT<>(true, entities); }
     @SafeVarargs public static Select.SMALLINT._SELECT<data.SMALLINT> DISTINCT(final type.SMALLINT ... entities) { return new Command.Select.SMALLINT.SELECT<>(true, entities); }
-    @SafeVarargs public static <V extends java.time.temporal.Temporal & Serializable>Select.Temporal._SELECT<data.Temporal<V>> DISTINCT(final type.Temporal<? extends V> ... entities) { return new Command.Select.Temporal.SELECT<>(true, entities); }
-    @SafeVarargs public static <V extends CharSequence & Comparable<?> & Serializable>Select.Textual._SELECT<data.Textual<V>> DISTINCT(final type.Textual<? extends V> ... entities) { return new Command.Select.Textual.SELECT<>(true, entities); }
+    @SafeVarargs public static <V extends java.time.temporal.Temporal>Select.Temporal._SELECT<data.Temporal<V>> DISTINCT(final type.Temporal<? extends V> ... entities) { return new Command.Select.Temporal.SELECT<>(true, entities); }
+    @SafeVarargs public static <V extends CharSequence & Comparable<?>>Select.Textual._SELECT<data.Textual<V>> DISTINCT(final type.Textual<? extends V> ... entities) { return new Command.Select.Textual.SELECT<>(true, entities); }
     @SafeVarargs public static Select.TIME._SELECT<data.TIME> DISTINCT(final type.TIME ... entities) { return new Command.Select.TIME.SELECT<>(true, entities); }
     @SafeVarargs public static Select.TINYINT._SELECT<data.TINYINT> DISTINCT(final type.TINYINT ... entities) { return new Command.Select.TINYINT.SELECT<>(true, entities); }
     @SafeVarargs public static Select.Entity._SELECT<type.Entity> DISTINCT(final type.Entity ... entities) { return new Command.Select.Entity.SELECT<>(true, entities); }
@@ -271,14 +269,14 @@ import org.libj.util.ArrayUtil;
   public static final class CASE {
     private CASE() {}
 
-    public static <V extends Serializable>Case.search.WHEN<V> WHEN(final Condition<V> condition) { return new CaseImpl.Search.WHEN<>(condition); }
+    public static <V>Case.search.WHEN<V> WHEN(final Condition<V> condition) { return new CaseImpl.Search.WHEN<>(condition); }
   }
 
   public static Case.simple.CASE<byte[]> CASE(final data.BINARY binary) { return new CaseImpl.Simple.CASE<byte[],data.BINARY>(binary); }
   public static Case.simple.CASE<Boolean> CASE(final data.BOOLEAN bool) { return new CaseImpl.Simple.CASE<Boolean,data.BOOLEAN>(bool); }
   public static <V extends Number>Case.simple.CASE<V> CASE(final data.Numeric<V> numeric) { return new CaseImpl.Simple.CASE<V,data.Numeric<V>>(numeric); }
-  public static <V extends Temporal & Serializable>Case.simple.CASE<V> CASE(final data.Temporal<V> temporal) { return new CaseImpl.Simple.CASE<V,data.Temporal<V>>(temporal); }
-  public static <V extends CharSequence & Comparable<?> & Serializable>Case.simple.CASE<V> CASE(final data.Textual<V> textual) { return new CaseImpl.Simple.CASE<V,data.Textual<V>>(textual); }
+  public static <V extends Temporal>Case.simple.CASE<V> CASE(final data.Temporal<V> temporal) { return new CaseImpl.Simple.CASE<V,data.Temporal<V>>(temporal); }
+  public static <V extends CharSequence & Comparable<?>>Case.simple.CASE<V> CASE(final data.Textual<V> textual) { return new CaseImpl.Simple.CASE<V,data.Textual<V>>(textual); }
 
   /* DELETE */
 
@@ -295,65 +293,65 @@ import org.libj.util.ArrayUtil;
 
   /* String Functions */
 
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c, final type.CHAR d, final V e) { return new ExpressionImpl.Concat(a, b, c, d, e); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c, final type.CHAR d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c, final type.ENUM<?> d, final V e) { return new ExpressionImpl.Concat(a, b, c, d, e); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c, final type.ENUM<?> d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final type.CHAR c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final type.CHAR c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final type.ENUM<?> c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b, final type.ENUM<?> c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.CHAR b) { return new ExpressionImpl.Concat(a, b); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c, final type.CHAR d, final V e) { return new ExpressionImpl.Concat(a, b, c, d, e); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c, final type.CHAR d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c, final type.ENUM<?> d, final V e) { return new ExpressionImpl.Concat(a, b, c, d, e); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c, final type.ENUM<?> d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final type.CHAR c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final type.CHAR c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final type.ENUM<?> c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final type.ENUM<?> c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final V a, final type.ENUM<?> b) { return new ExpressionImpl.Concat(a, b); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final V b, final type.CHAR c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final V b, final type.CHAR c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final V b, final type.ENUM<?> c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final V b, final type.ENUM<?> c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final V b) { return new ExpressionImpl.Concat(a, b); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final type.CHAR b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final type.CHAR b) { return new ExpressionImpl.Concat(a, b); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final type.ENUM<?> b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.CHAR a, final type.ENUM<?> b) { return new ExpressionImpl.Concat(a, b); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final V b, final type.CHAR c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final V b, final type.CHAR c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final V b, final type.ENUM<?> c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final V b, final type.ENUM<?> c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final V b) { return new ExpressionImpl.Concat(a, b); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final type.CHAR b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final type.CHAR b) { return new ExpressionImpl.Concat(a, b); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final type.ENUM<?> b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
-  public static <V extends CharSequence & Serializable>exp.CHAR CONCAT(final type.ENUM<?> a, final type.ENUM<?> b) { return new ExpressionImpl.Concat(a, b); }
-  public static <V extends CharSequence & Serializable>data.CHAR LOWER(final V a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.LOWER_CASE, String.valueOf(a))); }
-  public static <V extends CharSequence & Serializable>data.CHAR LOWER(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.LOWER_CASE, a)); }
-  public static <V extends CharSequence & Serializable>data.CHAR UPPER(final V a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.UPPER_CASE, String.valueOf(a))); }
-  public static <V extends CharSequence & Serializable>data.CHAR UPPER(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.UPPER_CASE, a)); }
-  public static <V extends CharSequence & Serializable>data.INT LENGTH(final V a) { return new data.INT().wrap(new ExpressionImpl.Length(String.valueOf(a))); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c, final type.CHAR d, final V e) { return new ExpressionImpl.Concat(a, b, c, d, e); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c, final type.CHAR d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c, final type.ENUM<?> d, final V e) { return new ExpressionImpl.Concat(a, b, c, d, e); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c, final type.ENUM<?> d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final type.CHAR c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final type.CHAR c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final type.ENUM<?> c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b, final type.ENUM<?> c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.CHAR b) { return new ExpressionImpl.Concat(a, b); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c, final type.CHAR d, final V e) { return new ExpressionImpl.Concat(a, b, c, d, e); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c, final type.CHAR d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c, final type.ENUM<?> d, final V e) { return new ExpressionImpl.Concat(a, b, c, d, e); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c, final type.ENUM<?> d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final type.CHAR c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final type.CHAR c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final type.ENUM<?> c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b, final type.ENUM<?> c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final V a, final type.ENUM<?> b) { return new ExpressionImpl.Concat(a, b); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final V b, final type.CHAR c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final V b, final type.CHAR c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final V b, final type.ENUM<?> c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final V b, final type.ENUM<?> c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final V b) { return new ExpressionImpl.Concat(a, b); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final type.CHAR b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final type.CHAR b) { return new ExpressionImpl.Concat(a, b); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final type.ENUM<?> b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.CHAR a, final type.ENUM<?> b) { return new ExpressionImpl.Concat(a, b); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final V b, final type.CHAR c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final V b, final type.CHAR c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final V b, final type.ENUM<?> c, final V d) { return new ExpressionImpl.Concat(a, b, c, d); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final V b, final type.ENUM<?> c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final V b) { return new ExpressionImpl.Concat(a, b); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final type.CHAR b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final type.CHAR b) { return new ExpressionImpl.Concat(a, b); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final type.ENUM<?> b, final V c) { return new ExpressionImpl.Concat(a, b, c); }
+  public static <V extends CharSequence>exp.CHAR CONCAT(final type.ENUM<?> a, final type.ENUM<?> b) { return new ExpressionImpl.Concat(a, b); }
+  public static <V extends CharSequence>data.CHAR LOWER(final V a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.Varchar.LOWER_CASE, String.valueOf(a))); }
+  public static <V extends CharSequence>data.CHAR LOWER(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.Varchar.LOWER_CASE, a)); }
+  public static <V extends CharSequence>data.CHAR UPPER(final V a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.Varchar.UPPER_CASE, String.valueOf(a))); }
+  public static <V extends CharSequence>data.CHAR UPPER(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.Varchar.UPPER_CASE, a)); }
+  public static <V extends CharSequence>data.INT LENGTH(final V a) { return new data.INT().wrap(new ExpressionImpl.Length(String.valueOf(a))); }
   public static data.INT LENGTH(final type.CHAR a) { return new data.INT().wrap(new ExpressionImpl.Length(a)); }
   public static data.INT LENGTH(final type.ENUM<?> a) { return new data.INT().wrap(new ExpressionImpl.Length(a)); }
-  public static <V extends CharSequence & Serializable>data.CHAR SUBSTRING(final V a) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), (data.INT)null, (data.INT)null)); }
-  public static <V extends CharSequence & Serializable>data.CHAR SUBSTRING(final V a, final Integer from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, (data.INT)null)); }
-  public static <V extends CharSequence & Serializable>data.CHAR SUBSTRING(final V a, final type.INT from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, (data.INT)null)); }
-  public static <V extends CharSequence & Serializable>data.CHAR SUBSTRING(final V a, final Integer from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, to)); }
-  public static <V extends CharSequence & Serializable>data.CHAR SUBSTRING(final V a, final type.INT from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, to)); }
-  public static <V extends CharSequence & Serializable>data.CHAR SUBSTRING(final V a, final Integer from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, to)); }
-  public static <V extends CharSequence & Serializable>data.CHAR SUBSTRING(final V a, final type.INT from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, to)); }
-  public static data.CHAR SUBSTRING(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, (data.INT)null, (data.INT)null)); }
-  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, (data.INT)null)); }
-  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, (data.INT)null)); }
-  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, to)); }
-  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, to)); }
-  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, to)); }
-  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, to)); }
+  public static <V extends CharSequence>data.CHAR SUBSTRING(final V a) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, String.valueOf(a), (data.INT)null, (data.INT)null)); }
+  public static <V extends CharSequence>data.CHAR SUBSTRING(final V a, final Integer from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, String.valueOf(a), from, (data.INT)null)); }
+  public static <V extends CharSequence>data.CHAR SUBSTRING(final V a, final type.INT from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, String.valueOf(a), from, (data.INT)null)); }
+  public static <V extends CharSequence>data.CHAR SUBSTRING(final V a, final Integer from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, String.valueOf(a), from, to)); }
+  public static <V extends CharSequence>data.CHAR SUBSTRING(final V a, final type.INT from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, String.valueOf(a), from, to)); }
+  public static <V extends CharSequence>data.CHAR SUBSTRING(final V a, final Integer from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, String.valueOf(a), from, to)); }
+  public static <V extends CharSequence>data.CHAR SUBSTRING(final V a, final type.INT from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, String.valueOf(a), from, to)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, a, (data.INT)null, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, a, from, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, a, from, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, a, from, to)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, a, from, to)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, a, from, to)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.Varchar.SUBSTRING, a, from, to)); }
 
   /* Start Math Functions (1 parameter) */
 
@@ -361,13 +359,13 @@ import org.libj.util.ArrayUtil;
 
   /* End Math Functions (1 parameter) */
 
-  public static <D extends data.Temporal<V>,V extends java.time.temporal.Temporal & Serializable>D ADD(final D a, final Interval interval) { return (D)a.clone().wrap(new ExpressionImpl.TemporalAdd<>(a, interval)); }
-  public static <D extends data.Temporal<V>,V extends java.time.temporal.Temporal & Serializable>D SUB(final D a, final Interval interval) { return (D)a.clone().wrap(new ExpressionImpl.TemporalSub<>(a, interval)); }
+  public static <D extends data.Temporal<V>,V extends java.time.temporal.Temporal>D ADD(final D a, final Interval interval) { return (D)a.clone().wrap(new ExpressionImpl.TemporalAdd<>(a, interval)); }
+  public static <D extends data.Temporal<V>,V extends java.time.temporal.Temporal>D SUB(final D a, final Interval interval) { return (D)a.clone().wrap(new ExpressionImpl.TemporalSub<>(a, interval)); }
 
   /* Start Aggregates */
 
   public static exp.BIGINT COUNT(final data.Table table) { return new ExpressionImpl.Count(table, false); }
-  public static <V extends Serializable>exp.BIGINT COUNT(final data.Column<V> column) { return new ExpressionImpl.Count(column, false); }
+  public static <V>exp.BIGINT COUNT(final data.Column<V> column) { return new ExpressionImpl.Count(column, false); }
   public static final class COUNT {
     private COUNT() {}
 
@@ -391,18 +389,18 @@ import org.libj.util.ArrayUtil;
     public static <D extends data.Numeric<V>,V extends java.lang.Number>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.AVG, a, true)); }
   }
 
-  public static <D extends data.Column<V>,V extends Serializable>D MAX(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MAX, a, false)); }
+  public static <D extends data.Column<V>,V>D MAX(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MAX, a, false)); }
   public static final class MAX {
     private MAX() {}
 
-    public static <D extends data.Column<V>,V extends Serializable>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MAX, a, true)); }
+    public static <D extends data.Column<V>,V>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MAX, a, true)); }
   }
 
-  public static <D extends data.Column<V>,V extends Serializable>D MIN(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MIN, a, false)); }
+  public static <D extends data.Column<V>,V>D MIN(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MIN, a, false)); }
   public static final class MIN {
     private MIN() {}
 
-    public static <D extends data.Column<V>,V extends Serializable>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MIN, a, true)); }
+    public static <D extends data.Column<V>,V>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MIN, a, true)); }
   }
 
   /* End Aggregates */
@@ -415,19 +413,19 @@ import org.libj.util.ArrayUtil;
 
   /* Condition */
 
-  @SafeVarargs public static data.BOOLEAN AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) { return new BooleanTerm(true, a, b, conditions); }
+  @SafeVarargs public static data.BOOLEAN AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) { return new BooleanTerm.And(a, b, conditions); }
   public static data.BOOLEAN AND(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanTerm(true, a, conditions[0], ArrayUtil.subArray(conditions, 1));
+    return new BooleanTerm.And(a, conditions[0], ArrayUtil.subArray(conditions, 1));
   }
 
   public static data.BOOLEAN AND(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanTerm(true, conditions[0], conditions[1], ArrayUtil.subArray(conditions, 2));
+    return new BooleanTerm.And(conditions[0], conditions[1], ArrayUtil.subArray(conditions, 2));
   }
 
   public static data.BOOLEAN AND(final Collection<Condition<?>> conditions) {
@@ -435,22 +433,22 @@ import org.libj.util.ArrayUtil;
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanTerm(true, array[0], array[1], ArrayUtil.subArray(array, 2));
+    return new BooleanTerm.And(array[0], array[1], ArrayUtil.subArray(array, 2));
   }
 
-  @SafeVarargs public static data.BOOLEAN OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) { return new BooleanTerm(false, a, b, conditions); }
+  @SafeVarargs public static data.BOOLEAN OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) { return new BooleanTerm.Or(a, b, conditions); }
   public static data.BOOLEAN OR(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanTerm(false, a, conditions[0], ArrayUtil.subArray(conditions, 1));
+    return new BooleanTerm.Or(a, conditions[0], ArrayUtil.subArray(conditions, 1));
   }
 
   public static data.BOOLEAN OR(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanTerm(false, conditions[0], conditions[1], ArrayUtil.subArray(conditions, 2));
+    return new BooleanTerm.Or(conditions[0], conditions[1], ArrayUtil.subArray(conditions, 2));
   }
 
   public static data.BOOLEAN OR(final Collection<Condition<?>> conditions) {
@@ -458,29 +456,29 @@ import org.libj.util.ArrayUtil;
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanTerm(false, array[0], array[1], ArrayUtil.subArray(array, 2));
+    return new BooleanTerm.Or(array[0], array[1], ArrayUtil.subArray(array, 2));
   }
 
-  static final class ALL<V extends Serializable> extends QuantifiedComparisonPredicate<V> {
+  static final class ALL<V> extends QuantifiedComparisonPredicate<V> {
     ALL(final Select.untyped.SELECT<?> subQuery) { super("ALL", subQuery); }
   }
 
-  static final class ANY<V extends Serializable> extends QuantifiedComparisonPredicate<V> {
+  static final class ANY<V> extends QuantifiedComparisonPredicate<V> {
     ANY(final Select.untyped.SELECT<?> subQuery) { super("ANY", subQuery); }
   }
 
-  static final class SOME<V extends Serializable> extends QuantifiedComparisonPredicate<V> {
+  static final class SOME<V> extends QuantifiedComparisonPredicate<V> {
     SOME(final Select.untyped.SELECT<?> subQuery) { super("SOME", subQuery); }
   }
 
-  public static <V extends Serializable>ALL<V> ALL(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new ALL<>(subQuery); }
-  public static <V extends Serializable>ANY<V> ANY(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new ANY<>(subQuery); }
-  public static <V extends Serializable>SOME<V> SOME(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new SOME<>(subQuery); }
+  public static <V>ALL<V> ALL(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new ALL<>(subQuery); }
+  public static <V>ANY<V> ANY(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new ANY<>(subQuery); }
+  public static <V>SOME<V> SOME(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new SOME<>(subQuery); }
 
   public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery, true); }
-  public static <V extends Serializable>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, true, b); }
-  public static <V extends Serializable>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, true, b); }
-  @SafeVarargs public static <V extends Serializable>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, true, b); }
+  public static <V>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, true, b); }
+  public static <V>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, true, b); }
+  @SafeVarargs public static <V>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, true, b); }
   public static Predicate LIKE(final type.CHAR a, final CharSequence b) { return new LikePredicate(a, true, b); }
 
   /**** DMLx ****/
@@ -499,9 +497,9 @@ import org.libj.util.ArrayUtil;
     private NOT() { super(); }
 
     public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery, false); }
-    public static <V extends Serializable>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, false, b); }
-    public static <V extends Serializable>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, false, b); }
-    @SafeVarargs public static <V extends Serializable>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, false, b); }
+    public static <V>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, false, b); }
+    public static <V>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, false, b); }
+    @SafeVarargs public static <V>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, false, b); }
     public static Predicate LIKE(final type.CHAR a, final String b) { return new LikePredicate(a, false, b); }
 
     /** DMLx.NOT **/

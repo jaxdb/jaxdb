@@ -16,13 +16,13 @@
 
 package org.jaxdb;
 
-abstract class Produce<T extends JaxDbMojo<?>.Configuration> {
+abstract class Produce<C extends JaxDbMojo<?>.Configuration,P extends Produce<?,?,?>,T> {
   final String name;
 
-  Produce(final String name, final Produce<?>[] values, final int index) {
+  Produce(final String name, final Produce<?,?,?>[] values, final int index) {
     this.name = name;
     values[index] = this;
   }
 
-  abstract void execute(T configuration, SqlMojo<?,?> sqlMojo) throws Exception;
+  abstract void execute(C configuration, SqlMojo<P,T> sqlMojo) throws Exception;
 }

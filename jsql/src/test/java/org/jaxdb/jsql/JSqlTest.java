@@ -36,6 +36,8 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.statement.Modification.Result;
 import org.jaxdb.jsql.generator.Generator;
+import org.jaxdb.runner.DBTestRunner;
+import org.jaxdb.sqlx.SQLxTest;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
@@ -44,22 +46,19 @@ import org.libj.jci.InMemoryCompiler;
 import org.xml.sax.SAXException;
 
 public abstract class JSqlTest {
-  static void createEntities(final String name) throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
+  static void createEntities(final String name, final String className) throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
     final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
-    final File destDir = new File("target/generated-test-sources/jaxdb");
-    Generator.generate(url, name, destDir);
+    final File srcDir = new File("target/generated-test-sources/jaxdb");
+    Generator.generate(url, className, srcDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();
-    Files.walk(destDir.toPath())
+    Files.walk(srcDir.toPath())
       .filter(p -> p.getFileName().toString().endsWith(".java"))
       .forEach(rethrow((Path p) -> compiler.addSource(new String(Files.readAllBytes(p)))));
 
-    compiler.compile(destDir, "-g");
+    compiler.compile(SQLxTest.testClassesDir, "-g");
   }
 
-  @SuppressWarnings("unchecked")
-  static Result loadEntitiesJaxSB(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, TransformerException {
-    Database.threadLocal((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name)).connectPrepared((final Transaction.Isolation isolation) -> connection);
-
+  static Result loadEntitiesJaxSB(final Connection connection, final String name, final String className) throws IOException, SAXException, SQLException, TransformerException {
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
     final $Database database = ($Database)Bindings.parse(sqlx);
@@ -69,11 +68,11 @@ public abstract class JSqlTest {
     Schemas.truncate(connection, ddlx.getMergedSchema().getTable());
     final Batch batch = new Batch();
     final int expectedCount = DbVendor.valueOf(connection.getMetaData()) == DbVendor.ORACLE ? 0 : 1;
-    for (final data.Table table : Entities.toEntities(database)) // [A]
+    for (final data.Table table : Entities.toEntities(database, className)) // [A]
       batch.addStatement(
         INSERT(table)
           .onExecute(c -> assertEquals(expectedCount, c)));
 
-    return batch.execute();
+    return batch.execute(connection, DBTestRunner.isPrepared());
   }
 }

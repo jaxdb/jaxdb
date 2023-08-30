@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 JAX-DB
+/* Copyright (c) 2022 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,15 +14,22 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.runner;
+package org.jaxdb.jsql;
 
-import org.jaxdb.jsql.ConnectionFactory;
-import org.jaxdb.jsql.Connector;
-import org.jaxdb.jsql.Schema;
+import org.libj.util.function.IntBooleanConsumer;
+import org.libj.util.function.Throwing;
 
-class PreparedConnector extends Connector {
-  PreparedConnector(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory) {
-    super(schemaClass, null);
-    set(connectionFactory, true);
+@FunctionalInterface
+public interface ThrowingIntBooleanConsumer<E extends Throwable> extends IntBooleanConsumer {
+  @Override
+  default void accept(final int v1, final boolean v2) {
+    try {
+      acceptThrows(v1, v2);
+    }
+    catch (final Throwable e) {
+      Throwing.rethrow(e);
+    }
   }
+
+  void acceptThrows(int v1, boolean v2) throws E;
 }

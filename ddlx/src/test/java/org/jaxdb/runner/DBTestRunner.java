@@ -67,6 +67,8 @@ import org.slf4j.event.Level;
 
 public class DBTestRunner extends BlockJUnit4ClassRunner {
   static final Logger logger = LoggerFactory.getLogger(DBTestRunner.class);
+  private static final String propertyName = "jaxdb.jsql.test.dbs";
+  private static final InheritableThreadLocal<Boolean> prepared = new InheritableThreadLocal<>();
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
@@ -75,11 +77,12 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     boolean deferLog() default false;
     boolean failFast() default false;
     boolean cache() default false;
+    boolean prepared() default false;
   }
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface Spec {
+  public @interface TestSpec {
     int order() default 1;
     int cardinality() default 1;
   }
@@ -104,12 +107,16 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     Class<? extends Vendor>[] value();
   }
 
+  public static boolean isPrepared() {
+    return prepared.get();
+  }
+
   private static final Comparator<FrameworkMethod> orderComparator = (o1, o2) -> {
-    final Spec a1 = o1.getAnnotation(Spec.class);
+    final TestSpec a1 = o1.getAnnotation(TestSpec.class);
     if (a1 == null)
       return -1;
 
-    final Spec a2 = o2.getAnnotation(Spec.class);
+    final TestSpec a2 = o2.getAnnotation(TestSpec.class);
     if (a2 == null)
       return -1;
 
@@ -199,22 +206,22 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   }
 
   private static boolean matches(final DB db, final String[] testDBs) {
-    for (final String testDB : testDBs)
+    for (final String testDB : testDBs) // [A]
       if (testDB.equals(db.value().getSimpleName().toLowerCase()))
         return true;
 
     return false;
   }
 
-  private static Executor[] getExecutors(final String[] testDBs, final DB[] dbs, final int index, final int depth) {
-    if (index == dbs.length)
+  private static Executor[] getExecutors(final String[] testDBs, final DB[] dbs, final int length, final int index, final int depth) {
+    if (index == length)
       return new Executor[depth];
 
     final DB db = dbs[index];
     if (!matches(db, testDBs))
-      return getExecutors(testDBs, dbs, index + 1, depth);
+      return getExecutors(testDBs, dbs, length, index + 1, depth);
 
-    final Executor[] executors = getExecutors(testDBs, dbs, index + 1, depth + 1);
+    final Executor[] executors = getExecutors(testDBs, dbs, length, index + 1, depth + 1);
     executors[depth] = vendorToExecutor.get(db);
     return executors;
   }
@@ -224,13 +231,11 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       return null;
 
     final String[] testDBs = Strings.split(property, ',');
-    for (int i = 0, i$ = testDBs.length; i < i$; ++i)
+    for (int i = 0, i$ = testDBs.length; i < i$; ++i) // [A]
       testDBs[i] = testDBs[i].toLowerCase();
 
     return testDBs;
   }
-
-  private static final String propertyName = "jaxdb.jsql.test.dbs";
 
   static Executor[] getExecutors(final Class<?> testClass) {
     final DBs dbs$ = Classes.getAnnotationDeep(testClass, DBs.class);
@@ -248,13 +253,13 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       final DB[] dbs = dbs$.value();
       if (testDBs == null) {
         final Executor[] executors = new Executor[dbs.length];
-        for (int i = 0, i$ = executors.length; i < i$; ++i)
+        for (int i = 0, i$ = executors.length; i < i$; ++i) // [A]
           executors[i] = vendorToExecutor.get(dbs[i]);
 
         return executors;
       }
 
-      final Executor[] executors = getExecutors(testDBs, dbs, 0, 0);
+      final Executor[] executors = getExecutors(testDBs, dbs, dbs.length, 0, 0);
       if (executors.length > 0)
         return executors;
     }
@@ -292,12 +297,14 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       this.sync = config.sync();
       this.failFast = config.failFast();
       this.cache = config.cache();
+      DBTestRunner.prepared.set(config.prepared());
       deferLog = config.deferLog();
     }
     else {
       this.sync = false;
       this.failFast = false;
       this.cache = false;
+      DBTestRunner.prepared.set(Boolean.FALSE);
       deferLog = true;
     }
 
@@ -392,16 +399,17 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
    */
   protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Object target, final Object ... params) throws Throwable {
     final Method method = frameworkMethod.getMethod();
-    final Class<? extends Vendor> vendor = frameworkMethod.getExecutor().getDB().value();
+    final Executor executor = frameworkMethod.getExecutor();
+    final Class<? extends Vendor> vendor = executor.getDB().value();
     if (method.getParameterTypes().length == 1) {
-      try (final Connection connection = frameworkMethod.getExecutor().getConnection()) {
+      try (final Connection connection = executor.getConnection()) {
         if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
-        return frameworkMethod.invokeExplosivelySuper(target, connection);
+        return frameworkMethod.invokeExplosively$(target, connection);
       }
     }
 
     if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
-    return frameworkMethod.invokeExplosivelySuper(target);
+    return frameworkMethod.invokeExplosively$(target);
   }
 
   protected class VendorFrameworkMethod extends FrameworkMethod {
@@ -413,7 +421,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     }
 
     private void runChild(final Statement statement, final Description description, final RunNotifier notifier) {
-      final Spec spec = getMethod().getAnnotation(Spec.class);
+      final TestSpec spec = getMethod().getAnnotation(TestSpec.class);
       final int cardinality = spec == null ? 1 : spec.cardinality();
       for (int c = 0; c < cardinality; ++c) { // [N]
         if (sync)
@@ -450,7 +458,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       return DBTestRunner.this.invokeExplosively(this, target, params);
     }
 
-    final Object invokeExplosivelySuper(final Object target, final Object ... params) throws Throwable {
+    final Object invokeExplosively$(final Object target, final Object ... params) throws Throwable {
       try {
         executor.sempaphore.acquire();
         return super.invokeExplosively(target, params);
@@ -500,7 +508,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
 
     int numTests = 0;
     for (final Description child : description.getChildren()) { // [L]
-      final Spec spec = child.getAnnotation(Spec.class);
+      final TestSpec spec = child.getAnnotation(TestSpec.class);
       numTests += spec == null ? 1 : spec.cardinality();
     }
 

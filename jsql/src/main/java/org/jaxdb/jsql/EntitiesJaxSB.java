@@ -17,8 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.ByteArrayInputStream;
-import java.io.Serializable;
-import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Row;
 import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
-import org.libj.io.SerializableInputStream;
 import org.libj.lang.Classes;
 import org.libj.lang.Identifiers;
 import org.openjax.xml.datatype.HexBinary;
@@ -40,16 +38,17 @@ import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class EntitiesJaxSB {
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static data.Table toEntity(final $Database database, final $Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
-    // FIXME: This is brittle... Need to modularize it and make it clearer:
-    final String tableName = row.id().substring(0, row.id().lastIndexOf('-'));
-    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id()) + "$" + Identifiers.toClassCase(tableName));
-    final data.Table table = (data.Table)binding.getDeclaredConstructor().newInstance();
+  private static data.Table toEntity(final Schema schema, final $Row row) throws IllegalAccessException, InvocationTargetException {
+    final String rowId = row.id();
+    final String tableName = rowId.substring(0, rowId.lastIndexOf('-'));
+    final data.Table table = ((data.Table)schema.getTable(tableName)).newInstance();
+
     for (final Method method : Classes.getDeclaredMethodsDeep(row.getClass())) { // [A]
-      if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
+      final Class<?> returnType = method.getReturnType();
+      if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(returnType))
         continue;
 
-      final Id id = method.getReturnType().getAnnotation(Id.class);
+      final Id id = returnType.getAnnotation(Id.class);
       if (id == null)
         continue;
 
@@ -60,17 +59,17 @@ final class EntitiesJaxSB {
       final String idValue = id.value();
       final int d1 = idValue.indexOf('-');
       final int d2 = idValue.indexOf('-', d1 + 1);
-      final Field field = binding.getField(Identifiers.toCamelCase(d2 > -1 ? idValue.substring(d1 + 1, d2) : idValue.substring(d1 + 1)));
-      final data.Column column = (data.Column<?>)field.get(table);
 
-      final Class<? extends $AnySimpleType> returnType = (Class<? extends $AnySimpleType>)method.getReturnType();
-      final Serializable value = (Serializable)type.text(); // FIXME: Should all xsb text be forced as serializable?
+      final data.Column column = table.getColumn(d2 > -1 ? idValue.substring(d1 + 1, d2) : idValue.substring(d1 + 1));
+
+      final Class<? extends $AnySimpleType> simpleReturnType = (Class<? extends $AnySimpleType>)returnType;
+      final Object value = type.text();
       if (value == null)
         column.set(null);
-      else if ($Binary.class.isAssignableFrom(returnType))
+      else if ($Binary.class.isAssignableFrom(simpleReturnType))
         column.set(((HexBinary)value).getBytes());
-      else if ($Blob.class.isAssignableFrom(returnType))
-        column.set(new SerializableInputStream(new ByteArrayInputStream(((HexBinary)value).getBytes())));
+      else if ($Blob.class.isAssignableFrom(simpleReturnType))
+        column.set(new ByteArrayInputStream(((HexBinary)value).getBytes()));
       else if (value instanceof String)
         column.set(column.parseString(null, (String)value)); // FIXME: Setting vendor to null here... need to review this pattern
       else
@@ -80,26 +79,30 @@ final class EntitiesJaxSB {
     return table;
   }
 
-  public static data.Table[] toEntities(final $Database database) {
+  public static data.Table[] toEntities(final $Database database, final String className) {
     try {
       final Iterator<$Row> iterator = SQL.newRowIterator(database);
       if (!iterator.hasNext())
         return new data.Table[0];
 
+      final Constructor<?> constructor = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toClassCase(database.id())).getDeclaredConstructor();
+      constructor.setAccessible(true);
+      final Schema schema = (Schema)constructor.newInstance();
       final List<data.Table> entities = new ArrayList<>();
       while (iterator.hasNext())
-        entities.add(toEntity(database, iterator.next()));
+        entities.add(toEntity(schema, iterator.next()));
 
       return entities.toArray(new data.Table[entities.size()]);
     }
-    catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchFieldException | NoSuchMethodException e) {
+    catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
       throw new RuntimeException(e);
     }
     catch (final InvocationTargetException e) {
-      if (e.getCause() instanceof RuntimeException)
-        throw (RuntimeException)e.getCause();
+      final Throwable cause = e.getCause();
+      if (cause instanceof RuntimeException)
+        throw (RuntimeException)cause;
 
-      throw new RuntimeException(e.getCause());
+      throw new RuntimeException(cause);
     }
   }
 

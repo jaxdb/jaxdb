@@ -16,20 +16,22 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.NumericFunctionDynamicTest.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Types;
+import org.jaxdb.jsql.World;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
-import org.jaxdb.jsql.world;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -37,7 +39,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,10 +57,12 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product$;
     final data.BIGINT b = new data.BIGINT();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(
         COUNT(p),
         ADD(COUNT(p), COUNT(p)).AS(b),
@@ -96,17 +99,24 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  public void testAdd(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
-    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
-      LTE(t.tinyintType, 0),
-      LTE(t.smallintType, 0),
-      LTE(t.intType, 0),
-      LTE(t.bigintType, 0),
-      LTE(t.floatType, 0),
-      LTE(t.doubleType, 0),
-      LTE(t.decimalType, 0)), transaction), 0);
-    final types.Type clone = t.clone();
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  public void testAdd(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type$;
+    t = getNthRow(0,
+
+      SELECT(t).
+      FROM(t).
+      WHERE(AND(
+        LTE(t.tinyintType, 0),
+        LTE(t.smallintType, 0),
+        LTE(t.intType, 0),
+        LTE(t.bigintType, 0),
+        LTE(t.floatType, 0),
+        LTE(t.doubleType, 0),
+        LTE(t.decimalType, 0)))
+          .execute(transaction));
+
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(ADD(t.tinyintType, t.tinyintType));
     t.smallintType.set(ADD(t.smallintType, t.smallintType));
@@ -131,17 +141,24 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  public void testSubtract(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
-    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
-      GTE(t.tinyintType, 0),
-      GTE(t.smallintType, 0),
-      GTE(t.intType, 0),
-      GTE(t.bigintType, 0),
-      GTE(t.floatType, 0),
-      GTE(t.doubleType, 0),
-      GTE(t.decimalType, 0)), transaction), 0);
-    final types.Type clone = t.clone();
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  public void testSubtract(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type$;
+    t = getNthRow(0,
+
+      SELECT(t).
+      FROM(t).
+      WHERE(AND(
+        GTE(t.tinyintType, 0),
+        GTE(t.smallintType, 0),
+        GTE(t.intType, 0),
+        GTE(t.bigintType, 0),
+        GTE(t.floatType, 0),
+        GTE(t.doubleType, 0),
+        GTE(t.decimalType, 0)))
+          .execute(transaction));
+
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(SUB(t.tinyintType, t.tinyintType));
     t.smallintType.set(SUB(t.smallintType, t.smallintType));
@@ -166,17 +183,24 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  public void testMultiply(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
-    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
-      GTE(t.tinyintType, -10), LTE(t.tinyintType, 10),
-      GTE(t.smallintType, -100), LTE(t.smallintType, 100),
-      GTE(t.intType, -1000), LTE(t.intType, 1000),
-      GTE(t.bigintType, -10000), LTE(t.bigintType, 10000),
-      IS.NOT.NULL(t.floatType),
-      IS.NOT.NULL(t.doubleType),
-      GTE(t.decimalType, -100000), LTE(t.decimalType, 100000)), transaction), 0);
-    final types.Type clone = t.clone();
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  public void testMultiply(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type$;
+    t = getNthRow(0,
+
+      SELECT(t).
+      FROM(t).
+      WHERE(AND(
+        GTE(t.tinyintType, -10), LTE(t.tinyintType, 10),
+        GTE(t.smallintType, -100), LTE(t.smallintType, 100),
+        GTE(t.intType, -1000), LTE(t.intType, 1000),
+        GTE(t.bigintType, -10000), LTE(t.bigintType, 10000),
+        IS.NOT.NULL(t.floatType),
+        IS.NOT.NULL(t.doubleType),
+        GTE(t.decimalType, -100000), LTE(t.decimalType, 100000)))
+          .execute(transaction));
+
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(MUL(t.tinyintType, t.tinyintType));
     t.smallintType.set(MUL(t.smallintType, t.smallintType));
@@ -201,17 +225,24 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  public void testDivide(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
-    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
-      NE(t.tinyintType, 0),
-      NE(t.smallintType, 0),
-      NE(t.intType, 0),
-      NE(t.bigintType, 0),
-      NE(t.floatType, 0),
-      NE(t.doubleType, 0),
-      NE(t.decimalType, 0)), transaction), 0);
-    final types.Type clone = t.clone();
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  public void testDivide(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type$;
+    t = getNthRow(0,
+
+      SELECT(t).
+      FROM(t).
+      WHERE(AND(
+        NE(t.tinyintType, 0),
+        NE(t.smallintType, 0),
+        NE(t.intType, 0),
+        NE(t.bigintType, 0),
+        NE(t.floatType, 0),
+        NE(t.doubleType, 0),
+        NE(t.decimalType, 0)))
+          .execute(transaction));
+
+    final Types.Type clone = t.clone();
 
     t.tinyintType.set(CAST(DIV(t.tinyintType, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
     t.smallintType.set(CAST(DIV(t.smallintType, t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
@@ -236,12 +267,15 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  public void testUpdateVersion(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
-    world.City c = world.City();
-    try (final RowIterator<world.City> rows =
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  public void testUpdateVersion(final World world, final Transaction transaction) throws IOException, SQLException {
+    World.City c = world.City$;
+    try (final RowIterator<World.City> rows =
+
       SELECT(c).
       FROM(c)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       c = rows.nextEntity();
 
@@ -276,7 +310,7 @@ public abstract class NumericValueExpressionTest {
 
       // If version is wrong, but version.wasSet is false
       c.version.set(0);
-      c.version.reset();
+      c.version.cue(false);
       assertEquals(1,
         UPDATE(c)
           .execute(transaction)

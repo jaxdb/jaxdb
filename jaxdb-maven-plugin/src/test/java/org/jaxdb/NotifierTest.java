@@ -16,23 +16,17 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
-import static org.jaxdb.jsql.DML.DELETE;
-import static org.jaxdb.jsql.DML.INSERT;
-import static org.jaxdb.jsql.DML.UPDATE;
-import static org.jaxdb.jsql.Notification.Action.DELETE;
-import static org.jaxdb.jsql.Notification.Action.INSERT;
-import static org.jaxdb.jsql.Notification.Action.UPDATE;
+import static org.jaxdb.jsql.Notification.Action.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.xml.transform.TransformerException;
@@ -40,16 +34,13 @@ import javax.xml.transform.TransformerException;
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.Connector;
-import org.jaxdb.jsql.Database;
-import org.jaxdb.jsql.DefaultCache;
 import org.jaxdb.jsql.Notification;
 import org.jaxdb.jsql.Notification.Action;
-import org.jaxdb.jsql.Transaction;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
-import org.jaxdb.runner.DBTestRunner.Spec;
+import org.jaxdb.runner.DBTestRunner.TestSpec;
 import org.jaxdb.runner.DBTestRunner.Unsupported;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -57,7 +48,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.runner.Vendor;
 import org.junit.After;
 import org.junit.Test;
@@ -80,49 +70,31 @@ public abstract class NotifierTest {
   }
 
   private static final int id = 10000;
+  private static final int count = 100;
+  private static final int sleep = 100;
   private static final Random r = new Random();
-  private static final Map<Integer,Integer> checks = new HashMap<>();
-  private static final Map<Integer,data.Table> pre = new HashMap<>();
-  private final Map<Integer,data.Table> post = new HashMap<>();
-  private final Map<Integer,Integer> expectedChecks = new HashMap<>();
+  private static final HashMap<Integer,Integer> checks = new HashMap<>();
+  private static final HashMap<Integer,data.Table> pre = new HashMap<>();
+  private final HashMap<Integer,data.Table> post = new HashMap<>();
+  private final HashMap<Integer,Integer> expectedChecks = new HashMap<>();
 
-  private static void setPre(final types.Type t) {
+  private static void setPre(final Types.Type t) {
     pre.put(t.id.get(), t);
   }
 
-  private void checkPre(final Action action, final types.Type t) {
-    try {
-      final data.Table e = pre.get(t.id.get());
-      assertNotNull(action.toString(), e);
-      assertEquals(action.toString(), e.toString(), t.toString());
-      checks.put(t.id.get(), checks.getOrDefault(t.id.get(), 0) + 1);
-      post.put(t.id.get(), t);
-      System.err.println("[OK] checkPre(" + action + "," + t.getName() + ")");
-    }
-    catch (final Throwable e) {
-      throw e;
-    }
+  private void checkPre(final Action action, final Types.Type t) {
+    final String message = action + "," + t.getName() + "," + t.id.get();
+    final data.Table e = pre.get(t.id.get());
+    assertNotNull(message, e);
+    assertEquals(message, e.toString(), t.toString());
+    checks.put(t.id.get(), checks.getOrDefault(t.id.get(), 0) + 1);
+    post.put(t.id.get(), t);
+    System.err.println("[OK] checkPre(" + message + ")");
   }
 
-  private void checkPost(final types.Type t) {
+  private void checkPost(final Types.Type t) {
     assertEquals(t, post.remove(t.id.get()));
   }
-
-  private static Connection getConnection(final Transaction.Isolation isolation, final Vendor vendor) throws IOException, SQLException {
-    return isolation != null ? vendor.getConnection(isolation.getLevel()) : vendor.getConnection();
-  }
-
-  private final ConcurrentHashMap<Vendor,DefaultCache> vendorToTableCache = new ConcurrentHashMap<Vendor,DefaultCache>() {
-    @Override
-    public DefaultCache get(final Object key) {
-      final Vendor vendor = (Vendor)key;
-      DefaultCache value = super.get(vendor);
-      if (value == null)
-        super.put(vendor, value = new DefaultCache(Database.threadLocal(types.class).connect(i -> getConnection(i, vendor))));
-
-      return value;
-    }
-  };
 
   @After
   public void after() {
@@ -133,19 +105,24 @@ public abstract class NotifierTest {
   }
 
   @Test
-  @Spec(order = 0)
+  @TestSpec(order = 0)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void setUp(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
-    DDLxTest.recreateSchema(transaction.getConnection(), "types");
-    transaction.commit();
+  public void setUp(final Types types) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+    final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
+      e.printStackTrace();
+      System.err.flush();
+      System.exit(1);
+    };
 
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(i -> getConnection(i, vendor));
-    connector.removeNotificationListeners();
+    Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
+    try (final Connection connection = types.getConnector().getConnection(null)) {
+      DDLxTest.recreateSchema(connection, "types");
+    }
   }
 
   private static int run = 1;
 
-  private class Handler<T extends types.Type> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.DeleteListener<T> {
+  private class Handler<T extends Types.Type> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.DeleteListener<T> {
     private final String calledFrom;
     private final Vendor vendor;
 
@@ -180,69 +157,68 @@ public abstract class NotifierTest {
   }
 
   @Test
-  @Spec(order = 1)
-  @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
+  @TestSpec(order = 1)
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public void testFast(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+  @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
+  public void testFast(final Types types, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+    final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(i -> getConnection(i, vendor));
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast1", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast2", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast3", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast4", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast5", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast6", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast7", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast8", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast9", vendor), queue, types.Type());
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast10", vendor), queue, types.Type());
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast0", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast1", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast2", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast3", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast4", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast5", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast6", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast7", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast8", vendor), queue, types.Type$);
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast9", vendor), queue, types.Type$);
 
-    types.Type t = types.Type();
-    final ArrayList<types.Type> inserts = new ArrayList<>();
-    for (int id = 0; id < 100; ++id) { // [N]
-      inserts.add(t = new types.Type());
+    Types.Type t = types.Type$;
+    final Types.Type[] inserts = new Types.Type[count];
+    for (int id = 0; id < count; ++id) { // [N]
+      inserts[id] = t = types.new Type();
       t.id.set(NotifierTest.id + 50 + id);
       t.intType.set(r.nextInt());
 
-      INSERT(t)
-        .execute(transaction);
-
       setPre(t);
+
+      INSERT(t)
+        .execute(connector);
     }
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
 
-    for (int i = 0, i$ = inserts.size(); i < i$; ++i) // [RA]
-      checkPost(inserts.get(i));
+    for (int i = 0; i < count; ++i) // [RA]
+      checkPost(inserts[i]);
 
     for (int i = 0; i < 10; ++i) { // [N]
       final int value = r.nextInt();
+      pre.values().forEach(c -> ((Types.Type)c).intType.set(value));
+
       UPDATE(t).
       SET(t.intType, value)
-        .execute(transaction);
+        .execute(connector);
 
-      Thread.sleep(300);
-      pre.values().forEach(c -> ((types.Type)c).intType.set(value));
-      transaction.commit();
+      Thread.sleep(sleep);
     }
 
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     post.clear();
     connector.removeNotificationListeners();
   }
 
   @Test
-  @Spec(order = 2, cardinality = 3)
+  @TestSpec(order = 2, cardinality = 3)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testMulti(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(i -> getConnection(i, vendor));
+  public void testMulti(final Types types, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+    final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testMulti", vendor), queue, types.Type());
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testMulti", vendor), queue, types.Type$);
 
     final int id = NotifierTest.id + 2;
 
-    final types.Type t = new types.Type();
+    final Types.Type t = types.new Type();
 
     t.id.set(id);
     t.tinyintType.set((byte)48);
@@ -252,10 +228,9 @@ public abstract class NotifierTest {
     setPre(t);
 
     INSERT(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     t.intType.set(489234);
@@ -263,19 +238,17 @@ public abstract class NotifierTest {
     setPre(t);
 
     UPDATE(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     setPre(t);
 
     DELETE(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     // https://www.wolframalpha.com/input/?i=0%2C+3%2C+9%2C+18%2C+30%2C+45%2C+63%2C+84%2C+108%2C+135%2C+165%2C+198
@@ -285,16 +258,16 @@ public abstract class NotifierTest {
   }
 
   @Test
-  @Spec(order = 3)
+  @TestSpec(order = 3)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testInsert(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(i -> getConnection(i, vendor));
+  public void testInsert(final Types types) throws InterruptedException, IOException, SQLException {
+    final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, new Handler<>("testInsert", null), queue, types.Type());
+    connector.addNotificationListener(INSERT, new Handler<>("testInsert", null), queue, types.Type$);
 
     final int id = NotifierTest.id + 3;
 
-    final types.Type t = new types.Type();
+    final Types.Type t = types.new Type();
 
     t.id.set(id);
     t.tinyintType.set((byte)47);
@@ -304,10 +277,9 @@ public abstract class NotifierTest {
     setPre(t);
 
     INSERT(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     expectedChecks.put(id, 4);
@@ -315,16 +287,16 @@ public abstract class NotifierTest {
   }
 
   @Test
-  @Spec(order = 4)
+  @TestSpec(order = 4)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testUpdate(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(i -> getConnection(i, vendor));
+  public void testUpdate(final Types types) throws InterruptedException, IOException, SQLException {
+    final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, UPDATE, new Handler<>("testUpdate", null), queue, types.Type());
+    connector.addNotificationListener(INSERT, UPDATE, new Handler<>("testUpdate", null), queue, types.Type$);
 
     final int id = NotifierTest.id + 4;
 
-    final types.Type t = new types.Type();
+    final Types.Type t = types.new Type();
     t.id.set(id);
 
     t.tinyintType.set((byte)48);
@@ -334,10 +306,9 @@ public abstract class NotifierTest {
     setPre(t);
 
     INSERT(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     t.intType.set(489234);
@@ -345,10 +316,9 @@ public abstract class NotifierTest {
     setPre(t);
 
     UPDATE(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     expectedChecks.put(id, 9);
@@ -356,16 +326,16 @@ public abstract class NotifierTest {
   }
 
   @Test
-  @Spec(order = 5)
+  @TestSpec(order = 5)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testDelete(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(i -> getConnection(i, vendor));
+  public void testDelete(final Types types) throws InterruptedException, IOException, SQLException {
+    final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, DELETE, new Handler<>("testDelete", null), queue, types.Type());
+    connector.addNotificationListener(INSERT, DELETE, new Handler<>("testDelete", null), queue, types.Type$);
 
     final int id = NotifierTest.id + 5;
 
-    final types.Type t = new types.Type();
+    final Types.Type t = types.new Type();
 
     t.id.set(id);
     t.tinyintType.set((byte)48);
@@ -375,19 +345,17 @@ public abstract class NotifierTest {
     setPre(t);
 
     INSERT(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     setPre(t);
 
     DELETE(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     expectedChecks.put(id, 10);
@@ -395,23 +363,23 @@ public abstract class NotifierTest {
   }
 
   @Test
-  @Spec(order = 6)
+  @TestSpec(order = 6)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testRemove(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
-    pre.clear();
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(i -> getConnection(i, vendor));
-    connector.removeNotificationListeners(DELETE);
+  public void testRemove(final Types types) throws InterruptedException, IOException, SQLException {
+    final Connector connector = types.getConnector();
 
-    final types.Type t = new types.Type();
+    pre.clear();
+    assertTrue(connector.removeNotificationListeners(DELETE));
+
+    final Types.Type t = types.new Type();
 
     DELETE(t).
-    WHERE(BETWEEN(t.id, id, id + 100))
-      .execute(transaction);
+    WHERE(BETWEEN(t.id, id, id + count))
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
 
-    connector.removeNotificationListeners(INSERT);
+    assertTrue(connector.removeNotificationListeners(INSERT));
 
     t.id.set(id + 3);
     t.tinyintType.set((byte)48);
@@ -419,36 +387,34 @@ public abstract class NotifierTest {
     t.intType.set(489233);
 
     INSERT(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
 
-    connector.removeNotificationListeners(UPDATE);
+    assertTrue(connector.removeNotificationListeners(UPDATE));
 
     t.intType.set(489234);
 
     UPDATE(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
 
     assertEquals(0, post.size());
     System.err.println("[OK] testRemove()");
   }
 
   @Test
-  @Spec(order = 7)
+  @TestSpec(order = 7)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testAddAgain(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(i -> getConnection(i, vendor));
+  public void testAddAgain(final Types types) throws InterruptedException, IOException, SQLException {
+    final Connector connector = types.getConnector();
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
-    connector.addNotificationListener(INSERT, new Handler<>("testAddAgain", null), queue, types.Type());
+    connector.addNotificationListener(INSERT, new Handler<>("testAddAgain", null), queue, types.Type$);
 
     final int id = NotifierTest.id + 7;
 
-    final types.Type t = new types.Type();
+    final Types.Type t = types.new Type();
 
     t.id.set(id);
     t.tinyintType.set((byte)47);
@@ -458,10 +424,9 @@ public abstract class NotifierTest {
     setPre(t);
 
     INSERT(t)
-      .execute(transaction);
+      .execute(connector);
 
-    transaction.commit();
-    Thread.sleep(300);
+    Thread.sleep(sleep);
     checkPost(t);
 
     expectedChecks.put(id, 1);
@@ -469,15 +434,14 @@ public abstract class NotifierTest {
   }
 
   @Test
-  @Spec(order = 8)
+  @TestSpec(order = 8)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void cleanUp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.Type t = types.Type();
+  public void cleanUp(final Types types) throws IOException, SQLException {
+    final Connector connector = types.getConnector();
+    final Types.Type t = types.Type$;
 
     DELETE(t).
     WHERE(BETWEEN(t.id, id, id + 200))
-      .execute(transaction);
-
-    transaction.commit();
+      .execute(connector);
   }
 }

@@ -16,15 +16,16 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -33,7 +34,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,11 +52,13 @@ public abstract class QuantifiedComparisonPredicateTest {
 
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
-  public void testAll(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testAll(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
 
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(LT(c.creditLimit, ALL(
@@ -67,16 +69,19 @@ public abstract class QuantifiedComparisonPredicateTest {
 
       assertTrue(rows.nextRow());
       assertEquals(24, rows.nextEntity().getAsLong());
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
-  public void testAny(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testAny(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
 
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(GT(c.customerNumber, ANY(
@@ -87,16 +92,19 @@ public abstract class QuantifiedComparisonPredicateTest {
 
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
-  public void testSome(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testSome(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
 
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(GT(c.customerNumber, SOME(
@@ -107,6 +115,7 @@ public abstract class QuantifiedComparisonPredicateTest {
 
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 50);
+      assertFalse(rows.nextRow());
     }
   }
 }

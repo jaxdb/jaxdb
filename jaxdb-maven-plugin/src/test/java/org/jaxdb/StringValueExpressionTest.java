@@ -16,18 +16,20 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.NumericFunctionDynamicTest.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -35,7 +37,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,9 +55,11 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  public void testConcatStatic(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testConcatStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.CHAR> rows =
+
       SELECT(
         // Char/Enum
         CONCAT(o.city, o.country),
@@ -109,6 +112,7 @@ public abstract class StringValueExpressionTest {
         CONCAT("-", o.country, "-")).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
 
       // Char/Enum
@@ -164,12 +168,19 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  public void testConcatDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
-    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  public void testConcatDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type$;
+    t = getNthRow(0,
+
+      SELECT(t).
+      FROM(t).
+      WHERE(AND(
       IS.NOT.NULL(t.charType),
-      IS.NOT.NULL(t.enumType)), transaction), 0);
-    final types.Type clone = t.clone();
+      IS.NOT.NULL(t.enumType)))
+        .execute(transaction));
+
+    final Types.Type clone = t.clone();
 
     t.charType.set(CONCAT(t.enumType, t.enumType));
 
@@ -202,9 +213,11 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  public void testChangeCaseStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testChangeCaseStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.CHAR> rows =
+
       SELECT(
         LOWER(o.city),
         UPPER(o.city),
@@ -212,6 +225,7 @@ public abstract class StringValueExpressionTest {
         UPPER("city")).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertEquals("san francisco", rows.nextEntity().get());
       assertEquals("SAN FRANCISCO", rows.nextEntity().get());
@@ -221,10 +235,17 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  public void testChangeCaseDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
-    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, IS.NOT.NULL(t.charType), transaction), 0);
-    final types.Type clone = t.clone();
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  public void testChangeCaseDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type$;
+    t = getNthRow(0,
+
+      SELECT(t).
+      FROM(t).
+      WHERE(IS.NOT.NULL(t.charType))
+        .execute(transaction));
+
+    final Types.Type clone = t.clone();
 
     t.charType.set(LOWER(t.charType));
 
@@ -247,9 +268,11 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @Ignore
-  public void testLengthStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testLengthStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.INT> rows =
+
       SELECT(
         // Char
         LENGTH(o.city),
@@ -259,39 +282,43 @@ public abstract class StringValueExpressionTest {
         LENGTH("hello")).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
 
       // Char/Enum
-      assertEquals(Integer.valueOf(13), rows.nextEntity().get());
-      assertEquals(Integer.valueOf(2), rows.nextEntity().get());
-      assertEquals(Integer.valueOf(5), rows.nextEntity().get());
+      assertEquals(13, rows.nextEntity().getAsInt());
+      assertEquals(2, rows.nextEntity().getAsInt());
+      assertEquals(5, rows.nextEntity().getAsInt());
     }
   }
 
   @Test
   @Ignore
-  public void testLengthDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testLengthDynamic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.INT> rows =
+
       SELECT(LENGTH(CONCAT("-", o.country, "-", o.city, "-"))).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
 
       // Char/Enum
-      assertEquals(Integer.valueOf(18), rows.nextEntity().get());
+      assertEquals(18, rows.nextEntity().getAsInt());
     }
   }
 
   @Test
   @Ignore
-  public void testSubstringStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSubstringStatic(final Types types, final Transaction transaction) throws IOException, SQLException {
     // TODO: Implement this
   }
 
   @Test
   @Ignore
-  public void testSubstringDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSubstringDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
     // TODO: Implement this
   }
 }

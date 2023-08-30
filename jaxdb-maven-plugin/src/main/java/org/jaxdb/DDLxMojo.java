@@ -68,8 +68,7 @@ public class DDLxMojo extends SqlMojo<DDLxProduce,DDLx> {
 
   @Override
   final void execute(final Configuration configuration) throws Exception {
-    for (final DDLxProduce produce : configuration.getProduce()) { // [A]
+    for (final DDLxProduce produce : configuration.getProduce()) // [A]
       produce.execute(configuration, this);
-    }
   }
 }

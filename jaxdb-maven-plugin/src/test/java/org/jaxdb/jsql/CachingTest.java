@@ -16,10 +16,9 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.Notification.Action.*;
-
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -33,17 +32,15 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.jsql.CacheConfig.OnConnectPreLoad;
 import org.jaxdb.jsql.keyword.Delete.DELETE_NOTIFY;
 import org.jaxdb.jsql.keyword.Insert.CONFLICT_ACTION_NOTIFY;
 import org.jaxdb.jsql.keyword.Update.UPDATE_NOTIFY;
 import org.jaxdb.jsql.statement.NotifiableModification;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
-import org.jaxdb.runner.DBTestRunner.Spec;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.jaxdb.runner.Vendor;
+import org.jaxdb.runner.DBTestRunner.TestSpec;
 import org.junit.Assert;
 import org.junit.Test;
-import org.libj.util.function.IntBooleanConsumer;
 import org.xml.sax.SAXException;
 
 public abstract class CachingTest {
@@ -83,7 +80,7 @@ public abstract class CachingTest {
     }
   }
 
-  static void INSERT(final Transaction transaction, final data.Table row, final int i, final IntConsumer sync, final IntConsumer async) throws InterruptedException, IOException, SQLException {
+  static void INSERT(final Transaction transaction, final data.Table row, final int i, final ThrowingIntConsumer<Exception> sync, final IntConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -112,7 +109,7 @@ public abstract class CachingTest {
     sync.accept(i);
   }
 
-  static void UPDATE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
+  static void UPDATE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final ThrowingIntConsumer<Exception> sync, final ThrowingIntBooleanConsumer<Exception> async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -153,7 +150,7 @@ public abstract class CachingTest {
     return i % 2 == 0 ? statement.execute(transaction) : new Batch(statement).execute(transaction);
   }
 
-  static void DELETE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
+  static void DELETE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final ThrowingIntConsumer<Exception> sync, final ThrowingIntBooleanConsumer<Exception> async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -202,29 +199,25 @@ public abstract class CachingTest {
   }
 
   @Test
-  @Spec(order = 0)
-  public void setUp(@Schema(caching.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  @TestSpec(order = 0)
+  public void setUp(final Caching caching) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.err.flush();
       System.exit(1);
     };
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
-    DDLxTest.recreateSchema(transaction.getConnection(), "caching");
-    transaction.commit();
 
-    final Connector connector = transaction.getConnector();
-    final Database database = Database.global(transaction.getSchemaClass());
-    database.addNotificationListener(connector, INSERT, UPDATE, DELETE, new DefaultCache() {
-      @Override
-      protected Connector getConnector() {
-        return connector;
-      }
+    final Connector connector = caching.getConnector();
+    try (final Connection connection = connector.getConnection(null)) {
+      DDLxTest.recreateSchema(connection, "caching");
+    }
 
+    caching.configCache(new DefaultCache(caching) {
       @Override
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
-    }, new ConcurrentLinkedQueue<>(), caching.getTables());
+    }, new ConcurrentLinkedQueue<>(), c -> c.with(OnConnectPreLoad.ALL, caching.getTables()));
   }
 }

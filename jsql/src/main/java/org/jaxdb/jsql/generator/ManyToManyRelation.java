@@ -16,54 +16,25 @@
 
 package org.jaxdb.jsql.generator;
 
+import java.util.HashSet;
+
 class ManyToManyRelation extends ForeignRelation {
-  ManyToManyRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
-    super(schemaClassName, sourceTable, tableMeta, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+  ManyToManyRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+    super(schemaClassName, sourceTable, tableModel, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
   }
 
   @Override
-  String writeCacheInsert(final String classSimpleName, final String curOld) {
-    final String method = indexType.unique ? "put" : "add";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ", " + classSimpleName + ".this);";
-  }
-
-  @Override
-  String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final String curOld) {
-    final String member = indexType.unique ? "" : ", " + classSimpleName + ".this";
-    return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", "get" + curOld) + member + ");";
-  }
-
-  @Override
-  String writeOnChangeReverse(final String fieldName) {
-//    return "if (" + fieldName + " != null) for (final " + declarationName + " member : " + fieldName + ") member." + this.fieldName + " = null;"; // [?]
-    return null;
-  }
-
-  @Override
-  String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final String curOld, final String curOld2) {
-    if (true)
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final boolean addSelfRef, final HashSet<String> declared) {
+    final String keyClause = keyModel.keyRefArgsInternal(referenceTable.singletonInstanceName, foreignName, referenceTable.classCase, classSimpleName, curOld, addSelfRef, declared);
+    if (keyClause == null)
       return null;
 
-    return "{\n" +
-      "            " + declarationName + "." + cacheInstanceName + ".superGet(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ");\n" +
-      "            if (set != null) for (final " + declarationName + " member : set) member." + fieldName + " = null;\n" + // [?]
-      "            " + declarationName + "." + cacheInstanceName + ".superGet(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld2) + ");\n" +
-      "            if (set != null) for (final " + declarationName + " member : set) member." + fieldName + " = " + classSimpleName + "." + "this;\n" + // [?]
-      "          }";
-  }
-
-  @Override
-  String getDeclaredName() {
-    return declarationNameForeign;
-  }
-
-  @Override
-  String getType() {
-    return declarationNameForeign;
+    final String method = indexType.isUnique ? "put$" : "add$";
+    return writeNullCheckClause(classSimpleName, curOld) + tableModel.singletonInstanceName + "." + cacheMapFieldName + "." + method + "(" + keyClause + ", " + classSimpleName + ".this); // ManyToManyRelation.writeCacheInsert(String,CurlOld)";
   }
 
   @Override
   String getSymbol() {
-    return "*:1";
+    return "*:*";
   }
 }

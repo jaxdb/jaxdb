@@ -35,7 +35,6 @@ import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
-import org.libj.io.SerializableReader;
 import org.libj.io.Streams;
 import org.libj.io.UnsynchronizedStringReader;
 
@@ -280,7 +279,10 @@ final class PostgreSQLCompiler extends Compiler {
       else
         a.compile(compilation, true);
 
-      compilation.sql.append(' ').append(predicate.operator).append(' ');
+      final StringBuilder sql = compilation.sql;
+      sql.append(' ');
+      predicate.compile(null, sql, false);
+      sql.append(' ');
       if (b instanceof data.ENUM)
         toChar((data.ENUM<?>)b, compilation);
       else
@@ -299,14 +301,14 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   private static void compileCastNumeric(final Subject dateType, final Compilation compilation) throws IOException, SQLException {
-    if (dateType instanceof data.ApproxNumeric) {
+    if (!(dateType instanceof data.ApproxNumeric)) {
+      dateType.compile(compilation, true);
+    }
+    else {
       final StringBuilder sql = compilation.sql;
       sql.append("CAST(");
       dateType.compile(compilation, true);
       sql.append(" AS NUMERIC)");
-    }
-    else {
-      dateType.compile(compilation, true);
     }
   }
 
@@ -369,9 +371,9 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  SerializableReader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  Reader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
-    return value == null ? null : new SerializableReader(new UnsynchronizedStringReader(value));
+    return value == null ? null : new UnsynchronizedStringReader(value);
   }
 
   @Override
@@ -419,22 +421,25 @@ final class PostgreSQLCompiler extends Compiler {
       compileInsert(columns, false, compilation);
 
     final StringBuilder sql = compilation.sql;
-    sql.append(" ON CONFLICT (");
-    for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
-      if (i > 0)
-        sql.append(", ");
+    sql.append(" ON CONFLICT ");
+    if (onConflict != null) {
+      sql.append('(');
+      for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
+        if (i > 0)
+          sql.append(", ");
 
-      onConflict[i].compile(compilation, false);
+        onConflict[i].compile(compilation, false);
+      }
+      sql.append(')');
     }
 
-    sql.append(')');
     if (doUpdate) {
       sql.append(" DO UPDATE SET ");
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
-        if (column.primary)
+        if (column.primaryIndexType != null)
           continue;
 
         if (select != null) {

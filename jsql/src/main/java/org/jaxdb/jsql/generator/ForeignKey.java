@@ -17,12 +17,12 @@
 package org.jaxdb.jsql.generator;
 
 class ForeignKey {
-  final TableMeta table;
-  final Columns columns;
-  final TableMeta referenceTable;
-  final Columns referenceColumns;
+  final TableModel table;
+  final ColumnModels columns;
+  final TableModel referenceTable;
+  final ColumnModels referenceColumns;
 
-  ForeignKey(final TableMeta table, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns) {
+  ForeignKey(final TableModel table, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns) {
     this.table = table;
     this.columns = columns;
     this.referenceTable = referenceTable;

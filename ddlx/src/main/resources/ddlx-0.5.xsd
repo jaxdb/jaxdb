@@ -15,9 +15,11 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <xs:schema
+  vc:minVersion="1.1"
   elementFormDefault="qualified"
   targetNamespace="http://www.jaxdb.org/ddlx-0.5.xsd"
   xmlns:ddlx="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:include schemaLocation="ddlx-common-0.5.xsd"/>
@@ -134,10 +136,6 @@
               <xs:field xpath="@name"/>
             </xs:key>
 
-            <xs:keyref name="foreignKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
-              <xs:selector xpath="ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
-              <xs:field xpath="@name"/>
-            </xs:keyref>
             <xs:keyref name="check_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
               <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
               <xs:field xpath="@column"/>

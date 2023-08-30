@@ -16,15 +16,16 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -33,7 +34,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,10 +51,12 @@ public abstract class ExistsPredicateTest {
   }
 
   @Test
-  public void testExistsPredicate(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testExistsPredicate(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    final Classicmodels.Customer c = classicmodels.Customer$;
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(EXISTS(
         SELECT(p).
         FROM(p).
@@ -75,10 +77,13 @@ public abstract class ExistsPredicateTest {
         FROM(p).
         WHERE(EQ(c.customerNumber, p.customerNumber))))
           .execute(transaction)) {
+
       for (int i = 0; i < 98; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 }

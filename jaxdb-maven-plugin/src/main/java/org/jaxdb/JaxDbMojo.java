@@ -32,7 +32,7 @@ import org.openjax.maven.mojo.FilterParameter;
 import org.openjax.maven.mojo.FilterType;
 import org.openjax.maven.mojo.GeneratorMojo;
 
-abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
+abstract class JaxDbMojo<P extends Produce<?,?,?>> extends GeneratorMojo {
   static final Pattern EXTENSION_PATTERN = Pattern.compile("\\.\\S+$");
   class Configuration extends GeneratorMojo.Configuration {
     private final LinkedHashSet<URL> schemas;
@@ -49,11 +49,11 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
     }
 
     LinkedHashSet<URL> getSchemas() {
-      return this.schemas;
+      return schemas;
     }
 
     P[] getProduce() {
-      return this.produce;
+      return produce;
     }
   }
 
@@ -87,8 +87,9 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
     }
 
     try {
-      final LinkedHashSet<URL> schemas = new LinkedHashSet<>(this.schemas.size());
-      for (int i = 0, i$ = this.schemas.size(); i < i$; ++i) // [RA]
+      final int len = this.schemas.size();
+      final LinkedHashSet<URL> schemas = new LinkedHashSet<>(len);
+      for (int i = 0; i < len; ++i) // [RA]
         schemas.add(new URL(this.schemas.get(i)));
 
       execute(new Configuration(configuration, schemas, produce));

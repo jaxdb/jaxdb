@@ -17,6 +17,7 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -33,13 +34,17 @@ import org.libj.net.MemoryURLStreamHandler;
 import org.xml.sax.SAXException;
 
 public abstract class DDLxTest {
-  public static Schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
-    return recreateSchema(connection, ddlx, false);
+  public static Schema recreateSchema(final Connection connection, final String name) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+    return recreateSchema(connection, name, false);
   }
 
   // FIXME: The efficiency of this is TERRIBLE!
-  public static Schema recreateSchema(final Connection connection, final String ddlxFileName, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
-    final DDLx ddlx = new DDLx(ClassLoader.getSystemClassLoader().getResource(ddlxFileName + ".ddlx"));
+  public static Schema recreateSchema(final Connection connection, final String name, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+    final URL url = ClassLoader.getSystemClassLoader().getResource(name + ".ddlx");
+    if (url == null)
+      throw new IllegalStateException("Cannot find " + name + ".ddlx");
+
+    final DDLx ddlx = new DDLx(url);
     final Schema schema = ddlx.getNormalizedSchema();
     if (!unaltered) {
       final Dialect dialect = DbVendor.valueOf(connection.getMetaData()).getDialect();

@@ -27,8 +27,9 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.libj.lang.Classes;
 import org.libj.lang.Identifiers;
 
-final class ColumnMeta {
-  final TableMeta tableMeta;
+final class ColumnModel {
+  final TableModel tableModel;
+  final int index;
   final $Column column;
   final String name;
   final boolean isPrimary;
@@ -45,14 +46,15 @@ final class ColumnMeta {
   final String camelCase;
 
   @SuppressWarnings("rawtypes")
-  ColumnMeta(final TableMeta tableMeta, final $Column column, final boolean isPrimary, final boolean isKeyForUpdate, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
-    this.tableMeta = tableMeta;
+  ColumnModel(final TableModel tableModel, final int index, final $Column column, final boolean isPrimary, final boolean isKeyForUpdate, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
+    this.tableModel = tableModel;
+    this.index = index;
     this.column = column;
     this.isPrimary = isPrimary;
     this.isKeyForUpdate = isKeyForUpdate;
     this.name = column.getName$().text();
     this.type = type;
-    this.rawType = column instanceof $Enum ? tableMeta.getClassNameOfEnum(($Enum)column).toString() : ((Class<?>)Classes.getSuperclassGenericTypes(type)[0]).getCanonicalName();
+    this.rawType = column instanceof $Enum ? tableModel.getClassNameOfEnum(($Enum)column).toString() : ((Class<?>)Classes.getSuperclassGenericTypes(type)[0]).getCanonicalName();
     this.commonParams = commonParams;
     this._default = "null".equals(_default) ? null : _default;
     this.generateOnInsert = generateOnInsert;
@@ -69,10 +71,24 @@ final class ColumnMeta {
     return "this." + instanceCase + ".get().equals(that." + instanceCase + ".get())";
   }
 
-  private String compileParams(final int columnIndex, final String commitUpdates) {
+  private String compileParams(final int columnIndex, final String commitUpdateChange) {
     final StringBuilder out = new StringBuilder();
-    for (final Object param : commonParams) // [A]
-      out.append(param == THIS ? "this" : param == MUTABLE ? "_mutable$" : param == PRIMARY_KEY ? "_column$[" + columnIndex + "] == " + data.class.getCanonicalName() + ".PRIMARY_KEY" : param == KEY_FOR_UPDATE ? "_column$[" + columnIndex + "] == " + data.class.getCanonicalName() + ".KEY_FOR_UPDATE" : param == COMMIT_UPDATE ? (commitUpdates != null ? instanceCase + " != null ? " + instanceCase + " : " + commitUpdates : instanceCase) : param).append(", ");
+    for (final Object param : commonParams) { // [A]
+      if (param == THIS)
+        out.append("this");
+      else if (param == MUTABLE)
+        out.append("_mutable$");
+      else if (param == PRIMARY_KEY)
+        out.append("_column$[").append(columnIndex).append("] instanceof ").append(data.class.getCanonicalName()).append(".IndexType ? (").append(data.class.getCanonicalName()).append(".IndexType)_column$[").append(columnIndex).append("] : null");
+      else if (param == KEY_FOR_UPDATE)
+        out.append("_column$[").append(columnIndex).append("] == ").append(data.class.getCanonicalName()).append(".KEY_FOR_UPDATE");
+      else if (param == COMMIT_UPDATE_CHANGE)
+        out.append(commitUpdateChange != null ? instanceCase + " != null ? " + instanceCase + " : " + commitUpdateChange : instanceCase);
+      else
+        out.append(param);
+
+      out.append(", ");
+    }
 
     out.append(compile(_default, type)).append(", ");
     out.append(compile(generateOnInsert, type)).append(", ");
@@ -89,22 +105,22 @@ final class ColumnMeta {
     return getCanonicalName(true).append(' ').append(camelCase).toString();
   }
 
-  StringBuilder getCanonicalName(final boolean withGeneric) {
+  StringBuilder getCanonicalName(final Boolean withGeneric) {
     final StringBuilder out = new StringBuilder();
     out.append(type.getCanonicalName());
-    if (type != data.ENUM.class)
+    if (type != data.ENUM.class || withGeneric == null)
       return out;
 
     out.append('<');
     if (withGeneric)
-      out.append(tableMeta.getClassNameOfEnum(($Enum)column));
+      out.append(tableModel.getClassNameOfEnum(($Enum)column));
 
     out.append('>');
     return out;
   }
 
-  void assignConstructor(final StringBuilder out, final int columnIndex, final String commitUpdates) {
-    out.append(camelCase).append(" = ").append(getConstructor(columnIndex, commitUpdates));
+  void assignConstructor(final StringBuilder out, final int columnIndex, final String commitUpdateChange) {
+    out.append(camelCase).append(" = ").append(getConstructor(columnIndex, commitUpdateChange));
   }
 
   void assignCopyConstructor(final StringBuilder out) {
@@ -115,12 +131,12 @@ final class ColumnMeta {
     return "new " + getCanonicalName(false) + "(this, _mutable$, copy." + instanceCase + ")";
   }
 
-  String getConstructor(final int columnIndex, final String commitUpdates) {
+  String getConstructor(final int columnIndex, final String commitUpdateChange) {
     final StringBuilder out = new StringBuilder("new ");
     out.append(getCanonicalName(true)).append('(');
-    out.append(compileParams(columnIndex, commitUpdates));
+    out.append(compileParams(columnIndex, commitUpdateChange));
     if (type == data.ENUM.class) {
-      final StringBuilder enumClassName = tableMeta.getClassNameOfEnum(($Enum)column);
+      final StringBuilder enumClassName = tableModel.getClassNameOfEnum(($Enum)column);
       out.append(", ").append(enumClassName).append(".values()");
       out.append(", ").append(enumClassName).append("::valueOf");
     }
@@ -133,11 +149,11 @@ final class ColumnMeta {
     if (obj == this)
       return true;
 
-    if (!(obj instanceof ColumnMeta))
+    if (!(obj instanceof ColumnModel))
       return false;
 
-    final ColumnMeta that = (ColumnMeta)obj;
-    return name.equals(that.name) && tableMeta.isRelated(that.tableMeta);
+    final ColumnModel that = (ColumnModel)obj;
+    return name.equals(that.name) && tableModel.isRelated(that.tableModel);
   }
 
   @Override
@@ -147,6 +163,6 @@ final class ColumnMeta {
 
   @Override
   public String toString() {
-    return tableMeta.tableName + ":" + name;
+    return tableModel.tableName + ":" + name;
   }
 }

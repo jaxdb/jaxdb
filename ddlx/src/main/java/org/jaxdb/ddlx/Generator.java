@@ -166,9 +166,9 @@ public final class Generator {
     }
   }
 
-  private static void registerColumns(final $Table table, final Set<? super String> tableNames, final Map<? super String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
+  private static void registerColumns(final $Table table, final Set<String> tableNames, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final String tableName = table.getName$().text();
-    final List<String> violations = new ArrayList<>();
+    final ArrayList<String> violations = new ArrayList<>();
     String nameViolation = checkNameViolation(tableName);
     if (nameViolation != null)
       violations.add(nameViolation);
@@ -198,7 +198,7 @@ public final class Generator {
       violations.forEach(logger::warn);
   }
 
-  private LinkedHashSet<CreateStatement> parseTable(final DbVendor vendor, final $Table table, final Set<? super String> tableNames, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
+  private LinkedHashSet<CreateStatement> parseTable(final DbVendor vendor, final $Table table, final Set<String> tableNames, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,ColumnRef> columnNameToColumn = new HashMap<>();
     registerColumns(table, tableNames, columnNameToColumn);

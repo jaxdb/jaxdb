@@ -17,24 +17,8 @@
 package org.jaxdb.jsql.generator;
 
 class OneToOneRelation extends ForeignRelation {
-  OneToOneRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
-    super(schemaClassName, sourceTable, tableMeta, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
-  }
-
-  @Override
-  String writeOnChangeReverse(final String fieldName) {
-//    return "if (" + fieldName + " != null) " + fieldName + "." + this.fieldName + " = null;";
-    return null;
-  }
-
-  @Override
-  String getDeclaredName() {
-    return declarationNameForeign;
-  }
-
-  @Override
-  String getType() {
-    return declarationNameForeign;
+  OneToOneRelation(final String schemaClassName, final TableModel sourceTable, final TableModel tableModel, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+    super(schemaClassName, sourceTable, tableModel, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
   }
 
   @Override

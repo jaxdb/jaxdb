@@ -22,53 +22,12 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.jaxdb.jsql.QueryConfig.Concurrency;
+import org.jaxdb.jsql.QueryConfig.Holdability;
+import org.jaxdb.jsql.QueryConfig.Type;
 import org.libj.sql.exception.SQLExceptions;
 
 public abstract class RowIterator<D extends type.Entity> implements AutoCloseable, Iterable<D> {
-  public enum Type {
-    FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
-    SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
-    SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
-
-    final int index;
-
-    private Type(final int index) {
-      this.index = index;
-    }
-  }
-
-  public enum Concurrency {
-    READ_ONLY(ResultSet.CONCUR_READ_ONLY),
-    UPDATABLE(ResultSet.CONCUR_UPDATABLE);
-
-    final int index;
-
-    private Concurrency(final int index) {
-      this.index = index;
-    }
-  }
-
-  public enum Holdability {
-    HOLD_CURSORS_OVER_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT),
-    CLOSE_CURSORS_AT_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT);
-
-    final int index;
-
-    private Holdability(final int index) {
-      this.index = index;
-    }
-
-    public static Holdability fromInt(final int holdability) {
-      if (holdability == HOLD_CURSORS_OVER_COMMIT.index)
-        return HOLD_CURSORS_OVER_COMMIT;
-
-      if (holdability == CLOSE_CURSORS_AT_COMMIT.index)
-        return CLOSE_CURSORS_AT_COMMIT;
-
-      throw new IllegalArgumentException("Illegal holdability: " + holdability);
-    }
-  }
-
   final ResultSet resultSet;
   private final Type type;
   private final Concurrency concurrency;
@@ -79,22 +38,16 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
   private D[] row;
   private int entityIndex = -1;
 
-  public RowIterator(final ResultSet resultSet, final QueryConfig config) {
+  public RowIterator(final ResultSet resultSet, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
     this.resultSet = resultSet;
-    if (config != null) {
-      this.type = config.getType();
-      this.concurrency = config.getConcurrency();
-    }
-    else {
-      this.type = Type.FORWARD_ONLY;
-      this.concurrency = Concurrency.READ_ONLY;
-    }
+    this.type = QueryConfig.getType(contextQueryConfig, defaultQueryConfig);
+    this.concurrency = QueryConfig.getConcurrency(contextQueryConfig, defaultQueryConfig);
   }
 
   public RowIterator(final ResultSet resultSet) {
     this.resultSet = resultSet;
-    this.type = Type.FORWARD_ONLY;
-    this.concurrency = Concurrency.READ_ONLY;
+    this.type = QueryConfig.defaultType;
+    this.concurrency = QueryConfig.defaultConcurrency;
   }
 
   protected D[] getRow() {
@@ -107,11 +60,11 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
   }
 
   public Type getType() {
-    return this.type;
+    return type;
   }
 
   public Concurrency getConcurrency() {
-    return this.concurrency;
+    return concurrency;
   }
 
   public final Holdability getHoldability() throws SQLException {
@@ -149,12 +102,12 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    *           the result set type} is {@link Type#FORWARD_ONLY}.
    * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
-  public boolean previousRow() throws SQLException {
+  public boolean previousRow() throws SQLException, SQLFeatureNotSupportedException {
     throw new UnsupportedOperationException();
   }
 
   /**
-   * Updates the underlying database with the new contents of the current row of this {@link RowIterator} object. This method cannot
+   * Updates the connected database with the new contents of the current row of this {@link RowIterator} object. This method cannot
    * be called when the cursor is on the insert row.
    *
    * @throws SQLException If a database access error occurs; the {@linkplain #getConcurrency() result set concurrency} is
@@ -162,7 +115,7 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    *           cursor is on the insert row.
    * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
-  public final void updateRow() throws SQLException {
+  public final void updateRow() throws SQLException, SQLFeatureNotSupportedException {
     try {
       resultSet.updateRow();
     }

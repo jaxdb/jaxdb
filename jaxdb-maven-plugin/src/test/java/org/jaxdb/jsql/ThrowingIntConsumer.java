@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 JAX-DB
+/* Copyright (c) 2022 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,25 +14,23 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.runner;
+package org.jaxdb.jsql;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.function.IntConsumer;
 
-import org.jaxdb.jsql.Schema;
-import org.jaxdb.jsql.Transaction;
+import org.libj.util.function.Throwing;
 
-class PreparedTransaction extends Transaction {
-  private final Vendor vendor;
-
-  PreparedTransaction(final Vendor vendor, final Class<? extends Schema> schemaClass) {
-    super(schemaClass);
-    this.vendor = vendor;
-  }
-
+@FunctionalInterface
+public interface ThrowingIntConsumer<E extends Throwable> extends IntConsumer {
   @Override
-  public void close() throws IOException, SQLException {
-   vendor.rollback(getConnection());
-   super.close();
+  default void accept(final int v1) {
+    try {
+      acceptThrows(v1);
+    }
+    catch (final Throwable e) {
+      Throwing.rethrow(e);
+    }
   }
+
+  void acceptThrows(int v1) throws E;
 }

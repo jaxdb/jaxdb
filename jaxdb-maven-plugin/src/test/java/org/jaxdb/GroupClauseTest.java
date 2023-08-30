@@ -16,15 +16,16 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -33,7 +34,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,13 +51,32 @@ public abstract class GroupClauseTest {
   }
 
   @Test
-  public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testPrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product$;
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(p)).
       FROM(p).
-      GROUP_BY(p.vendor, p.productLine)
+      GROUP_BY(p.code)
         .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertEquals(1, rows.nextEntity().getAsLong());
+    }
+  }
+
+  @Test
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product$;
+    try (final RowIterator<data.BIGINT> rows =
+
+      SELECT(COUNT(p)).
+      FROM(p).
+      GROUP_BY(p.vendor, p.code)
+        .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertEquals(1, rows.nextEntity().getAsLong());
     }

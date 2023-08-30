@@ -131,25 +131,25 @@ class MySQLCompiler extends Compiler {
   void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     if (as.cast instanceof data.Temporal || as.cast instanceof data.Textual || as.cast instanceof data.BINARY) {
       super.compileCast(as, compilation);
+      return;
+    }
+
+    final StringBuilder sql = compilation.sql;
+    if (as.cast instanceof data.DECIMAL) {
+      sql.append("CAST((");
+      toSubject(as.column).compile(compilation, true);
+      sql.append(") AS ");
+      as.cast.declare(sql, compilation.vendor).append(')');
+    }
+    else if (as.cast instanceof data.ExactNumeric) {
+      sql.append("CAST((");
+      toSubject(as.column).compile(compilation, true);
+      sql.append(") AS ").append("SIGNED INTEGER)");
     }
     else {
-      final StringBuilder sql = compilation.sql;
-      if (as.cast instanceof data.DECIMAL) {
-        sql.append("CAST((");
-        toSubject(as.column).compile(compilation, true);
-        sql.append(") AS ");
-        as.cast.declare(sql, compilation.vendor).append(')');
-      }
-      else if (as.cast instanceof data.ExactNumeric) {
-        sql.append("CAST((");
-        toSubject(as.column).compile(compilation, true);
-        sql.append(") AS ").append("SIGNED INTEGER)");
-      }
-      else {
-        sql.append('(');
-        toSubject(as.column).compile(compilation, true);
-        sql.append(')');
-      }
+      sql.append('(');
+      toSubject(as.column).compile(compilation, true);
+      sql.append(')');
     }
   }
 
@@ -186,16 +186,16 @@ class MySQLCompiler extends Compiler {
     select.forLockOption = null;
     if (select.forLockStrength == null || select.forLockStrength == Command.Select.untyped.SELECT.LockStrength.UPDATE) {
       super.compileFor(select, compilation);
+      return;
     }
-    else {
-      final StringBuilder sql = compilation.sql;
-      sql.append(" LOCK IN SHARE MODE");
-      if (select.forSubjects != null && select.forSubjects.length > 0)
-        compileForOf(select, compilation);
 
-      if (select.forLockOption != null)
-        sql.append(' ').append(select.forLockOption);
-    }
+    final StringBuilder sql = compilation.sql;
+    sql.append(" LOCK IN SHARE MODE");
+    if (select.forSubjects != null && select.forSubjects.length > 0)
+      compileForOf(select, compilation);
+
+    if (select.forLockOption != null)
+      sql.append(' ').append(select.forLockOption);
   }
 
   @Override
@@ -222,7 +222,7 @@ class MySQLCompiler extends Compiler {
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
-        if (column.primary)
+        if (column.primaryIndexType != null)
           continue;
 
         if (selectCompilation != null) {

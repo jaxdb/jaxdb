@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 public class Generator {
   private static final Logger logger = LoggerFactory.getLogger(Generator.class);
   private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
+  static final Comparator<TableModel> tableModelComparator = (o1, o2) -> o1.table.getName$().text().compareTo(o2.table.getName$().text());
   static final Comparator<$Named> namedComparator = (o1, o2) -> o1.getName$().text().compareTo(o2.getName$().text());
 
   static String enumStringToEnum(final String value) {
@@ -54,7 +55,11 @@ public class Generator {
   }
 
   public static void generate(final URL url, final String name, final File destDir) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
-    new Generator(url, name, destDir).generate();
+    new Generator(new DDLx(url), name, destDir).generate();
+  }
+
+  public static void generate(final DDLx ddlx, final String name, final File destDir) throws GeneratorExecutionException, IOException {
+    new Generator(ddlx, name, destDir).generate();
   }
 
   private final DDLx ddlx;
@@ -62,15 +67,15 @@ public class Generator {
   private final File destDir;
 
   private final String packageName;
-  private final SchemaManifest schemaManifest;
+  private final SchemaModel schemaModel;
 
-  private Generator(final URL url, final String name, final File destDir) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
-    this.ddlx = new DDLx(url);
+  private Generator(final DDLx ddlx, final String name, final File destDir) throws GeneratorExecutionException {
+    this.ddlx = ddlx;
     this.name = name;
     this.destDir = destDir;
 
     this.packageName = data.class.getPackage().getName();
-    this.schemaManifest = new SchemaManifest(packageName, name, ddlx.getNormalizedSchema().getTable());
+    this.schemaModel = new SchemaModel(packageName, name, ddlx.getNormalizedSchema().getTable());
   }
 
   private void generate() throws GeneratorExecutionException, IOException {
@@ -80,8 +85,8 @@ public class Generator {
     if (!dir.exists() && !dir.mkdirs())
       throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
 
-    final String code = schemaManifest.generate(ddlx);
-    final File javaFile = new File(dir, schemaManifest.schemaClassSimpleName + ".java");
+    final String code = schemaModel.generate(ddlx);
+    final File javaFile = new File(dir, schemaModel.schemaClassSimpleName + ".java");
     Files.write(javaFile.toPath(), code.getBytes());
   }
 
@@ -107,7 +112,7 @@ public class Generator {
       out.append(' ').append(enumStringToEnum(names[i])).append(',');
     out.setCharAt(out.length() - 1, ';');
 
-    out.append('\n').append(s).append("  private static final ").append(String.class.getName()).append("[] $values = {");
+    out.append('\n').append(s).append("  private static final ").append(String.class.getName()).append("[] strings = {");
     for (int i = 0, i$ = names.length; i < i$; ++i) // [RA]
       out.append('$').append(enumStringToEnum(names[i])).append(", ");
     out.setCharAt(out.length() - 2, '}');
@@ -122,17 +127,17 @@ public class Generator {
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
 
-    out.append("\n\n").append(s).append("  public static ").append(String.class.getName()).append("[] $values() {");
-    out.append('\n').append(s).append("    return $values;");
+    out.append("\n\n").append(s).append("  public static ").append(String.class.getName()).append("[] strings() {");
+    out.append('\n').append(s).append("    return strings;");
     out.append('\n').append(s).append("  }\n");
     out.append("\n").append(s).append("  public static ").append(className).append("[] values() {");
     out.append('\n').append(s).append("    return values;");
     out.append('\n').append(s).append("  }\n");
-    out.append('\n').append(s).append("  public static ").append(className).append(" valueOf(final ").append(String.class.getName()).append(" string) {");
+    out.append('\n').append(s).append("  public static ").append(className).append(" valueOf(final ").append(CharSequence.class.getName()).append(" string) {");
     out.append('\n').append(s).append("    if (string == null)");
     out.append('\n').append(s).append("      return null;\n");
-    out.append('\n').append(s).append("    for (final ").append(className).append(" value : values()) // [A]");
-    out.append('\n').append(s).append("      if (string.equals(value.name))");
+    out.append('\n').append(s).append("    for (final ").append(className).append(" value : values) // [A]"); // FIXME: Implement binary search here
+    out.append('\n').append(s).append("      if (").append(Strings.class.getName()).append(".equals(string, value.name))");
     out.append('\n').append(s).append("        return value;\n");
     out.append('\n').append(s).append("    return null;");
     out.append('\n').append(s).append("  }\n");
@@ -142,10 +147,10 @@ public class Generator {
     out.append('\n').append(s).append("    this.ordinal = index++;");
     out.append('\n').append(s).append("    this.name = name;");
     out.append('\n').append(s).append("  }\n");
+    out.append('\n').append(s).append("  @").append(Override.class.getName());
     out.append('\n').append(s).append("  public byte ordinal() {");
     out.append('\n').append(s).append("    return ordinal;");
     out.append('\n').append(s).append("  }\n");
-
     out.append('\n').append(s).append("  @").append(Override.class.getName()).append('\n').append(s).append("  public ").append(String.class.getName()).append(" toString() {\n").append(s).append("    return name;\n").append(s).append("  }\n").append(s).append('}');
 
     return out.toString();

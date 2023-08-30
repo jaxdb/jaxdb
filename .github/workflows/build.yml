@@ -55,7 +55,6 @@ jobs:
         ORACLE_PASSWORD: ${{ secrets.ORACLE_PASSWORD }}
       run: |
         if [ "${{ matrix.jdk }}" = "8" ] &&
-           [ "${{ github.ref }}" = "refs/heads/master" ] &&
            [ "${{ github.head_ref }}" = "" ]; then
           echo $GPG | base64 -d | gpg --import --no-tty --batch --yes &> /dev/null &&
           mvn -e -U -B -s settings.xml -DskipRTests -DrepoToken=$REPO_TOKEN deploy -P javadoc,deploy;

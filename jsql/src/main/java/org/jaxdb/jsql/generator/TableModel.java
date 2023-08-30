@@ -32,11 +32,14 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.jsql.CacheMap;
 import org.jaxdb.jsql.GenerateOn;
-import org.jaxdb.jsql.RelationMap;
+import org.jaxdb.jsql.OnModify;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
+import org.jaxdb.jsql.generator.Relation.CurOld;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
@@ -70,24 +73,25 @@ import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Identifiers;
 import org.libj.lang.Strings;
 import org.libj.util.MultiLinkedHashMap;
-import org.libj.util.function.SerializableConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.www._2001.XMLSchema.yAA;
 
-class TableMeta {
-  private static final Logger logger = LoggerFactory.getLogger(TableMeta.class);
+class TableModel {
+  private static final Logger logger = LoggerFactory.getLogger(TableModel.class);
+  private static final String onModifyClassName = OnModify.class.getName();
   private final Set<String> primaryKeyColumnNames;
+  private final IndexType primaryKeyIndexType;
   private final Set<String> keyForUpdateColumnNames;
 
-  private final LinkedHashSet<Columns> uniques;
-  private final LinkedHashSet<Columns> indexes;
-  private final Columns primaryKey;
+  private final LinkedHashSet<ColumnModels> uniques;
+  private final LinkedHashSet<ColumnModels> indexes;
+  final ColumnModels primaryKey;
   private final ForeignKeys foreignKeys;
 
-  private final LinkedHashMap<Columns,IndexType> columnsToIndexType = new LinkedHashMap<Columns,IndexType>() {
+  private final LinkedHashMap<ColumnModels,IndexType> columnsToIndexType = new LinkedHashMap<ColumnModels,IndexType>() {
     @Override
-    public IndexType put(final Columns key, IndexType value) {
+    public IndexType put(final ColumnModels key, IndexType value) {
       final IndexType existing = super.get(key);
       if (existing != null)
         value = existing.merge(value);
@@ -95,26 +99,27 @@ class TableMeta {
       return super.put(key, value);
     }
   };
-  private final MultiLinkedHashMap<Columns,Relation,Relations<Relation>> columnsToRelations = new MultiLinkedHashMap<>(Relations::new);
+  private final MultiLinkedHashMap<ColumnModels,Relation,Relations<Relation>> columnsToRelations = new MultiLinkedHashMap<>(Relations::new);
 
-  final SchemaManifest schemaManifest;
-  final ArrayList<TableMeta> ancestors = new ArrayList<>();
+  final SchemaModel schemaModel;
+  final ArrayList<TableModel> ancestors = new ArrayList<>();
   final boolean isAbstract;
-  final TableMeta superTable;
+  final TableModel superTable;
   final String tableName;
   final String classCase;
   final Table table;
-  private final ColumnMeta[] columns;
-  private final LinkedHashMap<String,ColumnMeta> columnNameToColumnMeta;
+  private final ColumnModel[] columns;
+  private final LinkedHashMap<String,ColumnModel> columnNameToColumnModel;
+  final KeyModels keyModels;
 
   private int totalAutoCount = 0;
   private int totalAutoOffset = 0;
 
   private final String classSimpleName;
-  private final String className;
-  private final String instanceName;
+  final String className;
+  final String singletonInstanceName;
 
-  TableMeta(final Table table, final SchemaManifest schemaManifest) throws GeneratorExecutionException {
+  TableModel(final Table table, final SchemaModel schemaModel) throws GeneratorExecutionException {
     this.isAbstract = table.getAbstract$() != null && table.getAbstract$().text();
     if (table.getExtends$() == null) {
       this.superTable = null;
@@ -123,7 +128,7 @@ class TableMeta {
       this.foreignKeys = new ForeignKeys(1);
     }
     else {
-      this.superTable = assertNotNull(schemaManifest.tableNameToTableMeta.get(table.getExtends$().text()));
+      this.superTable = assertNotNull(schemaModel.tableNameToTableModel.get(table.getExtends$().text()));
       if (!superTable.isAbstract)
         throw new GeneratorExecutionException("Cannot extend non-abstract table");
 
@@ -136,19 +141,19 @@ class TableMeta {
     }
 
     this.table = table;
-    this.schemaManifest = schemaManifest;
+    this.schemaModel = schemaModel;
     this.tableName = table.getName$().text();
+
     this.classCase = Identifiers.toClassCase(tableName, '$');
 
     this.classSimpleName = Identifiers.toClassCase(tableName, '$');
-    this.className = schemaManifest.schemaClassName + "." + classSimpleName;
-    this.instanceName = Identifiers.toInstanceCase(tableName);
+    this.className = schemaModel.schemaClassName + "." + classSimpleName;
+    this.singletonInstanceName = classSimpleName + "$";
 
-    final IndexType primaryKeyIndexType;
     final $Constraints constraints = table.getConstraints();
     final PrimaryKey primaryKey;
     if (constraints != null && (primaryKey = constraints.getPrimaryKey()) != null) {
-      primaryKeyIndexType = IndexType.of(primaryKey.getUsing$(), true);
+      primaryKeyIndexType = IndexType.of(primaryKey.getUsing$(), IndexType.BTREE_UNIQUE);
       final BindingList<? extends $Named> primaryKeyColumns = primaryKey.getColumn();
       final int noColumns = primaryKeyColumns.size();
       primaryKeyColumnNames = new LinkedHashSet<>(noColumns);
@@ -157,12 +162,7 @@ class TableMeta {
     }
     else {
       primaryKeyIndexType = null;
-      if (superTable != null) {
-        primaryKeyColumnNames = superTable.primaryKeyColumnNames;
-      }
-      else {
-        primaryKeyColumnNames = Collections.EMPTY_SET;
-      }
+      primaryKeyColumnNames = superTable != null ? superTable.primaryKeyColumnNames : Collections.EMPTY_SET;
     }
 
     final KeyForUpdate keyForUpdate = table.getJsqlKeyForUpdate();
@@ -173,18 +173,16 @@ class TableMeta {
       for (int i = 0; i < noColumns; ++i) // [RA]
         keyForUpdateColumnNames.add(columns.get(i).getName$().text());
     }
-    else if (superTable != null) {
-      keyForUpdateColumnNames = superTable.keyForUpdateColumnNames;
-    }
     else {
-      keyForUpdateColumnNames = Collections.EMPTY_SET;
+      keyForUpdateColumnNames = superTable != null ? superTable.keyForUpdateColumnNames : Collections.EMPTY_SET;
     }
 
-    this.columns = getColumnMetas(this, primaryKeyColumnNames, 0);
+    this.columns = getColumnModels(this, primaryKeyColumnNames, 0);
 
-    this.columnNameToColumnMeta = new LinkedHashMap<>(columns.length);
-    for (final ColumnMeta column : columns) // [A]
-      columnNameToColumnMeta.put(column.name, column);
+    this.columnNameToColumnModel = new LinkedHashMap<>(columns.length);
+    this.keyModels = new KeyModels(columns.length);
+    for (final ColumnModel column : columns) // [A]
+      columnNameToColumnModel.put(column.name, column);
 
     if (constraints != null) {
       final BindingList<$Columns> uniqueColumns = constraints.getUnique();
@@ -192,12 +190,12 @@ class TableMeta {
         for (int i = 0, i$ = uniqueColumns.size(); i < i$; ++i) { // [RA]
           final BindingList<? extends $Named> columns = uniqueColumns.get(i).getColumn();
           final int noColumns = columns.size();
-          final Columns uniqueColumnMetas = new Columns(this, noColumns);
+          final ColumnModels uniqueColumnModels = new ColumnModels(this, noColumns);
           for (int j = 0; j < noColumns; ++j) // [RA]
-            uniqueColumnMetas.add(assertNotNull(columnNameToColumnMeta.get(columns.get(j).getName$().text())));
+            uniqueColumnModels.add(assertNotNull(columnNameToColumnModel.get(columns.get(j).getName$().text())));
 
-          uniques.add(uniqueColumnMetas);
-          columnsToIndexType.put(uniqueColumnMetas, IndexType.of((String)null, true));
+          uniques.add(uniqueColumnModels);
+          columnsToIndexType.put(uniqueColumnModels, IndexType.of((String)null, IndexType.UNDEFINED_UNIQUE));
         }
       }
 
@@ -205,15 +203,15 @@ class TableMeta {
       if (foreignKeyComposites != null) {
         for (int i = 0, i$ = foreignKeyComposites.size(); i < i$; ++i) { // [RA]
           final $ForeignKeyComposite foreignKeyComposite = foreignKeyComposites.get(i);
-          final TableMeta referenceTable = schemaManifest.tableNameToTableMeta.get(foreignKeyComposite.getReferences$().text());
-          final Columns columns = new Columns(this, 2);
-          final Columns referenceColumns = new Columns(this, 2);
+          final TableModel referenceTable = schemaModel.tableNameToTableModel.get(foreignKeyComposite.getReferences$().text());
+          final ColumnModels columns = new ColumnModels(this, 2);
+          final ColumnModels referenceColumns = new ColumnModels(this, 2);
           final BindingList<Column> foreignKeyColumns = foreignKeyComposite.getColumn();
           final int j$ = foreignKeyColumns.size();
           for (int j = 0; j < j$; ++j) { // [RA]
             final $ForeignKeyComposite.Column foreignKeyColumn = foreignKeyColumns.get(j);
-            columns.add(assertNotNull(columnNameToColumnMeta.get(foreignKeyColumn.getName$().text())));
-            referenceColumns.add(assertNotNull(referenceTable.columnNameToColumnMeta.get(foreignKeyColumn.getReferences$().text())));
+            columns.add(assertNotNull(columnNameToColumnModel.get(foreignKeyColumn.getName$().text())));
+            referenceColumns.add(assertNotNull(referenceTable.columnNameToColumnModel.get(foreignKeyColumn.getReferences$().text())));
           }
 
           foreignKeys.add(new ForeignKey(this, columns, referenceTable, referenceColumns));
@@ -227,14 +225,14 @@ class TableMeta {
     else {
       final int noPrimaryColumns = primaryKeyColumnNames.size();
       if (noPrimaryColumns > 0) {
-        this.primaryKey = new Columns(this, noPrimaryColumns);
+        this.primaryKey = new ColumnModels(this, noPrimaryColumns);
         for (final String primaryKeyColumnName : primaryKeyColumnNames) // [S]
-          this.primaryKey.add(assertNotNull(columnNameToColumnMeta.get(primaryKeyColumnName)));
+          this.primaryKey.add(assertNotNull(columnNameToColumnModel.get(primaryKeyColumnName)));
 
         columnsToIndexType.put(this.primaryKey, primaryKeyIndexType);
       }
       else {
-        this.primaryKey = Columns.EMPTY_SET;
+        this.primaryKey = ColumnModels.EMPTY_SET;
       }
     }
 
@@ -247,44 +245,44 @@ class TableMeta {
           final $Indexes.Index indexColumn = indexColumns.get(i);
           final BindingList<? extends $Named> columns = indexColumn.getColumn();
           final int noColumns = columns.size();
-          final Columns indexColumnMetas = new Columns(this, 1);
+          final ColumnModels indexColumnModels = new ColumnModels(this, 1);
           for (int j = 0; j < noColumns; ++j) // [RA]
-            indexColumnMetas.add(assertNotNull(columnNameToColumnMeta.get(columns.get(j).getName$().text())));
+            indexColumnModels.add(assertNotNull(columnNameToColumnModel.get(columns.get(j).getName$().text())));
 
           final boolean isUnique = indexColumn.getUnique$() != null && indexColumn.getUnique$().text();
-          this.columnsToIndexType.put(indexColumnMetas, IndexType.of(indexColumn.getType$(), isUnique));
-          this.indexes.add(indexColumnMetas);
+          this.columnsToIndexType.put(indexColumnModels, IndexType.of(indexColumn.getType$(), isUnique ? IndexType.HASH_UNIQUE : IndexType.HASH));
+          this.indexes.add(indexColumnModels);
           if (isUnique)
-            this.uniques.add(indexColumnMetas);
+            this.uniques.add(indexColumnModels);
         }
       }
     }
   }
 
   void init() throws GeneratorExecutionException {
-    for (final ColumnMeta column : columns) { // [A]
+    for (final ColumnModel column : columns) { // [A]
       final $Column.Index index = column.column.getIndex();
       if (index != null) {
-        final Columns indexColumnMetas = new Columns(column.tableMeta, column);
-        this.indexes.add(indexColumnMetas);
-        columnsToIndexType.put(indexColumnMetas, IndexType.of(index.getType$(), index.getUnique$().text()));
+        final ColumnModels indexColumnModels = new ColumnModels(column.tableModel, column);
+        this.indexes.add(indexColumnModels);
+        columnsToIndexType.put(indexColumnModels, IndexType.of(index.getType$(), index.getUnique$().text() ? IndexType.HASH_UNIQUE : IndexType.HASH));
         if (index.getUnique$() != null && index.getUnique$().text())
-          uniques.add(indexColumnMetas);
+          uniques.add(indexColumnModels);
       }
 
       final $ForeignKeyUnary foreignKey = column.column.getForeignKey();
       if (foreignKey != null) {
-        final TableMeta referenceTable = assertNotNull(schemaManifest.tableNameToTableMeta.get(foreignKey.getReferences$().text()));
-        final ColumnMeta referenceColumn = assertNotNull(referenceTable.columnNameToColumnMeta.get(foreignKey.getColumn$().text()));
-        foreignKeys.add(new ForeignKey(column.tableMeta, new Columns(column.tableMeta, column), referenceTable, new Columns(referenceColumn.tableMeta, referenceColumn)));
+        final TableModel referenceTable = assertNotNull(schemaModel.tableNameToTableModel.get(foreignKey.getReferences$().text()));
+        final ColumnModel referenceColumn = assertNotNull(referenceTable.columnNameToColumnModel.get(foreignKey.getColumn$().text()));
+        foreignKeys.add(new ForeignKey(column.tableModel, new ColumnModels(column.tableModel, column), referenceTable, new ColumnModels(referenceColumn.tableModel, referenceColumn)));
       }
     }
 
     if (columnsToIndexType.size() > 0) {
-      for (final Map.Entry<Columns,IndexType> entry : columnsToIndexType.entrySet()) { // [S]
+      for (final Map.Entry<ColumnModels,IndexType> entry : columnsToIndexType.entrySet()) { // [S]
         if (entry.getValue() instanceof UNDEFINED) {
           if (logger.isWarnEnabled()) logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
-          entry.setValue(entry.getValue().unique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
+          entry.setValue(entry.getValue().isUnique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
         }
       }
     }
@@ -294,12 +292,12 @@ class TableMeta {
       makeIndexes(primaryKey);
 
     if (uniques.size() > 0)
-      for (final Columns unique : uniques) // [S]
+      for (final ColumnModels unique : uniques) // [S]
         makeIndexes(unique);
 
     // FIXME: Should <index> be CACHED?
     if (indexes.size() > 0)
-      for (final Columns index : indexes) // [S]
+      for (final ColumnModels index : indexes) // [S]
         makeIndexes(index);
 
     if (foreignKeys.size() > 0)
@@ -326,46 +324,44 @@ class TableMeta {
   StringBuilder getClassNameOfEnum(final $Enum column) {
     final StringBuilder out = new StringBuilder();
     if (column.getTemplate$() != null && column.getValues$() == null)
-      return out.append(schemaManifest.schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text(), '$'));
+      return out.append(schemaModel.schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text(), '$'));
 
-    return schemaManifest.getClassNameOfTable(out, table).append('.').append(Identifiers.toClassCase(column.getName$().text(), '$'));
+    return out.append(classCase).append('.').append(Identifiers.toClassCase(column.getName$().text(), '$'));
   }
 
-  private ColumnMeta[] getColumnMetas(final TableMeta tableMeta, final Set<String> primaryKeyColumnNames, final int depth) throws GeneratorExecutionException {
-    final Table table = tableMeta.table;
+  private ColumnModel[] getColumnModels(final TableModel tableModel, final Set<String> primaryKeyColumnNames, final int depth) throws GeneratorExecutionException {
+    final Table table = tableModel.table;
     final List<$Column> columns = table.getColumn();
     final int size = columns == null ? 0 : columns.size();
-    final ColumnMeta[] columnMetas = tableMeta.superTable == null ? new ColumnMeta[depth + size] : getColumnMetas(tableMeta.superTable, primaryKeyColumnNames, depth + size);
+    final ColumnModel[] columnModels = tableModel.superTable == null ? new ColumnModel[depth + size] : getColumnModels(tableModel.superTable, primaryKeyColumnNames, depth + size);
     if (columns != null) {
       final boolean isSuperTable = depth != 0;
 
       for (int c = 1; c <= size; ++c) { // [RA]
         final int i = size - c;
         final $Column column = columns.get(i);
-        final ColumnMeta columnMeta = getColumnMeta(tableMeta, column, primaryKeyColumnNames);
-
+        final int index = columnModels.length - depth - c;
+        columnModels[index] = getColumnModel(index, tableModel, column, primaryKeyColumnNames);
         if (org.jaxdb.ddlx.Generator.isAuto(column)) {
           ++totalAutoCount;
           if (isSuperTable)
             ++totalAutoOffset;
         }
-
-        columnMetas[columnMetas.length - depth - c] = columnMeta;
       }
     }
 
-    return columnMetas;
+    return columnModels;
   }
 
-  private static ColumnMeta getColumnMeta(final TableMeta tableMeta, final $Column column, final Set<String> primaryKeyColumnNames) throws GeneratorExecutionException {
+  private static ColumnModel getColumnModel(final int index, final TableModel tableModel, final $Column column, final Set<String> primaryKeyColumnNames) throws GeneratorExecutionException {
     final String columnName = column.getName$().text();
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
 
     final boolean isPrimary = primaryKeyColumnNames.contains(columnName);
-    final boolean isKeyForUpdate = tableMeta.keyForUpdateColumnNames.contains(columnName);
-    final Object[] commonParams = {THIS, MUTABLE, "\"" + column.getName$().text() + "\"", PRIMARY_KEY, KEY_FOR_UPDATE, COMMIT_UPDATE, isNull(column)};
+    final boolean isKeyForUpdate = tableModel.keyForUpdateColumnNames.contains(columnName);
+    final Object[] commonParams = {THIS, MUTABLE, "\"" + column.getName$().text() + "\"", PRIMARY_KEY, KEY_FOR_UPDATE, COMMIT_UPDATE_CHANGE, isNull(column)};
     if (column instanceof $Char) {
       final $Char col = ($Char)column;
       if (col.getSqlxGenerateOnInsert$() != null) {
@@ -380,22 +376,22 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.CHAR.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.CHAR.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
     }
 
     if (column instanceof $Clob) {
       final $Clob col = ($Clob)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
     }
 
     if (column instanceof $Binary) {
       final $Binary col = ($Binary)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.BINARY.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.BINARY.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
     }
 
     if (column instanceof $Blob) {
       final $Blob col = ($Blob)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, col.getLength$() == null ? null : col.getLength$().text());
     }
 
     if (column instanceof $Integer) {
@@ -413,9 +409,6 @@ class TableMeta {
         final $Tinyint integer = ($Tinyint)column;
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Tinyint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-            if (isPrimary)
-              throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
             generateOnUpdate = GenerateOn.INCREMENT;
           }
           else {
@@ -423,16 +416,13 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Smallint) {
         final $Smallint integer = ($Smallint)column;
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Smallint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-            if (isPrimary)
-              throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
             generateOnUpdate = GenerateOn.INCREMENT;
           }
           else {
@@ -440,7 +430,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Int) {
@@ -467,9 +457,6 @@ class TableMeta {
         }
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
             generateOnUpdate = GenerateOn.INCREMENT;
           }
@@ -490,7 +477,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Bigint) {
@@ -523,9 +510,6 @@ class TableMeta {
         }
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
             generateOnUpdate = GenerateOn.INCREMENT;
           }
@@ -552,7 +536,7 @@ class TableMeta {
           }
         }
 
-        return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
     }
 
@@ -560,19 +544,19 @@ class TableMeta {
       final $Float col = ($Float)column;
       final Number min = col.getMin$() != null ? col.getMin$().text() : null;
       final Number max = col.getMax$() != null ? col.getMax$().text() : null;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.FLOAT.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.FLOAT.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
     }
 
     if (column instanceof $Double) {
       final $Double col = ($Double)column;
       final Number min = col.getMin$() != null ? col.getMin$().text() : null;
       final Number max = col.getMax$() != null ? col.getMax$().text() : null;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.DOUBLE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.DOUBLE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, min, max);
     }
 
     if (column instanceof $Decimal) {
       final $Decimal col = ($Decimal)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.DECIMAL.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue(), col.getScale$() == null ? 0 : col.getScale$().text().intValue(), col.getMin$() == null ? null : col.getMin$().text(), col.getMax$() == null ? null : col.getMax$().text());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.DECIMAL.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue(), col.getScale$() == null ? 0 : col.getScale$().text().intValue(), col.getMin$() == null ? null : col.getMin$().text(), col.getMax$() == null ? null : col.getMax$().text());
     }
 
     if (column instanceof $Date) {
@@ -586,9 +570,6 @@ class TableMeta {
 
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Date.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
         else {
@@ -596,7 +577,7 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.DATE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.DATE.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
     }
 
     if (column instanceof $Time) {
@@ -610,9 +591,6 @@ class TableMeta {
 
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Time.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
         else {
@@ -620,7 +598,7 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.TIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.TIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
     }
 
     if (column instanceof $Datetime) {
@@ -634,9 +612,6 @@ class TableMeta {
 
       if (col.getSqlxGenerateOnUpdate$() != null) {
         if ($Datetime.GenerateOnUpdate$.TIMESTAMP.text().equals(col.getSqlxGenerateOnUpdate$().text())) {
-          if (isPrimary)
-            throw new GeneratorExecutionException("Primary column \"" + tableMeta.table.getName$().text() + "." + column.getName$().text() + "\" cannot specify generateOnUpdate");
-
           generateOnUpdate = GenerateOn.TIMESTAMP;
         }
         else {
@@ -644,33 +619,33 @@ class TableMeta {
         }
       }
 
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.DATETIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.DATETIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
     }
 
     if (column instanceof $Boolean) {
       final $Boolean col = ($Boolean)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.BOOLEAN.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.BOOLEAN.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate);
     }
 
     if (column instanceof $Enum) {
       final $Enum col = ($Enum)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.ENUM.class, commonParams, col.getDefault$() == null ? null : tableMeta.getClassNameOfEnum(col).append('.').append(Generator.enumStringToEnum(col.getDefault$().text())), generateOnInsert, generateOnUpdate);
+      return new ColumnModel(tableModel, index, column, isPrimary, isKeyForUpdate, data.ENUM.class, commonParams, col.getDefault$() == null ? null : tableModel.getClassNameOfEnum(col).append('.').append(Generator.enumStringToEnum(col.getDefault$().text())), generateOnInsert, generateOnUpdate);
     }
 
     throw new IllegalArgumentException("Unknown class: " + cls);
   }
 
-  private boolean isPrimaryKey(final Columns columns) {
+  private boolean isPrimaryKey(final ColumnModels columns) {
     return primaryKey.equals(columns);
   }
 
-  private boolean isUnique(final Columns columns) {
+  private boolean isUnique(final ColumnModels columns) {
     return uniques.contains(columns);
   }
 
   private void makeForeignRelations(final ForeignKey foreignKey) throws GeneratorExecutionException {
     for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
-      final TableMeta ancestor = ancestors.get(i);
+      final TableModel ancestor = ancestors.get(i);
       final IndexType indexTypeForeign = foreignKey.referenceTable.columnsToIndexType.get(foreignKey.referenceColumns);
       if (indexTypeForeign == null)
         throw new GeneratorExecutionException(tableName + ":{" + foreignKey.columns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} is referencing privateKey " + foreignKey.referenceTable.tableName + ":{" + foreignKey.referenceColumns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} which does not have an PRIMARY KEY, UNIQUE, or INDEX definition.");
@@ -688,8 +663,8 @@ class TableMeta {
     }
   }
 
-  boolean isRelated(TableMeta thatTable) {
-    TableMeta thisTable;
+  boolean isRelated(TableModel thatTable) {
+    TableModel thisTable;
     do {
       thisTable = this;
       do {
@@ -708,10 +683,10 @@ class TableMeta {
     if (obj == this)
       return true;
 
-    if (!(obj instanceof TableMeta))
+    if (!(obj instanceof TableModel))
       return false;
 
-    final TableMeta that = (TableMeta)obj;
+    final TableModel that = (TableModel)obj;
     return tableName.equals(that.tableName);
   }
 
@@ -726,11 +701,11 @@ class TableMeta {
     s.append("  \"primaryKey\": ").append(primaryKey).append(",\n");
     s.append("  \"unique\": [");
     if (uniques.size() > 0) {
-      for (final Columns unique : uniques) { // [S]
+      for (final ColumnModels unique : uniques) { // [S]
         s.append("\n    [");
         if (unique.size() > 0)
-          for (final ColumnMeta columnMeta : unique) // [S]
-            s.append(columnMeta.name).append(',');
+          for (final ColumnModel columnModel : unique) // [S]
+            s.append(columnModel.name).append(',');
 
         s.setCharAt(s.length() - 1, ']');
       }
@@ -742,7 +717,7 @@ class TableMeta {
 
     s.append("  \"foreignKey\": [");
     if (columnsToRelations.size() > 0) {
-      for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
+      for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
         s.append("\n    ").append(entry.getKey()).append(" -> ").append(entry.getValue());
 
       s.append("\n  ");
@@ -752,11 +727,11 @@ class TableMeta {
     return s.append('}').toString();
   }
 
-  private Class<?> getConcreteClass() {
+  private String getConcreteClass(final String declarationName) {
     if (primaryKey.size() == 0)
-      return RelationMap.class;
+      return CacheMap.class.getName() + "<" + declarationName + ">";
 
-    return columnsToIndexType.get(primaryKey).getConcreteClass();
+    return columnsToIndexType.get(primaryKey).getConcreteClass(declarationName);
   }
 
   String makeTable() {
@@ -766,113 +741,109 @@ class TableMeta {
     final int noColumnsTotal = columns.length;
 
     final StringBuilder out = new StringBuilder();
-    final Collection<Relations<Relation>> allRelations = columnsToRelations.values();
-    if (!isAbstract) {
-      out.append("\n  private static final ").append(className).append(" $").append(instanceName).append(" = new ").append(className).append("(false, false) {");
-      out.append("\n    @").append(Override.class.getName());
-      final Class<?> primaryCacheMap = getConcreteClass();
-      out.append("\n    final ").append(primaryCacheMap.getName()).append('<').append(className).append("> getCache() {");
-      out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : getInstanceNameForCache(primaryKey)).append(';');
-      out.append("\n    }");
-      out.append("\n  };\n");
-      out.append("\n  public static ").append(className).append(' ').append(classSimpleName).append("() {");
-      out.append("\n    return $").append(instanceName).append(';');
-      out.append("\n  }\n");
+
+    out.append("\n  public interface $").append(classSimpleName).append(" {");
+
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
+      final ColumnModel column = columns[i];
+      if (column.column instanceof $Enum) {
+        final $Enum enumColumn = ($Enum)column.column;
+        if (enumColumn.getTemplate$() == null || enumColumn.getValues$() != null)
+          out.append(Generator.declareEnumClass(classCase, enumColumn, 4));
+      }
     }
+
+    out.append("\n  }\n");
+
+    final Collection<Relations<Relation>> allRelations = columnsToRelations.values();
 
     final String ext = superTable == null ? data.Table.class.getCanonicalName() : Identifiers.toClassCase(table.getExtends$().text(), '$');
 
-    out.append(getDoc(table, 1, '\0', '\n'));
+    final LinkedHashSet<String> keyClauseColumnAssignments = new LinkedHashSet<>();
+    final HashSet<String> declared = new HashSet<>();
+    if (!isAbstract) {
+      out.append("\n  public final ").append(className).append("$ ").append(singletonInstanceName).append(" = new ").append(classSimpleName).append("$();\n");
+      out.append("\n  public final class ").append(classSimpleName).append("$ extends ").append(className).append(" implements ").append(type.Table$.class.getCanonicalName()).append(" {");
+      out.append("\n    private ").append(singletonInstanceName).append("() {");
+      out.append("\n      super(false, false);");
+      out.append("\n    }\n");
+      out.append("\n    private boolean cacheSelectEntity;\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final void setCacheSelectEntity(final boolean cacheSelectEntity) {");
+      out.append("\n      this.cacheSelectEntity = cacheSelectEntity;");
+      out.append("\n    }\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final boolean getCacheSelectEntity() {");
+      out.append("\n      return cacheSelectEntity;");
+      out.append("\n    }\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final ").append(getConcreteClass(className)).append(" getCache() {");
+      out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : "_" + primaryKey.getInstanceNameForCache(classCase) + "Map$").append(';');
+      out.append("\n    }\n");
+
+      {
+        out.append("\n    // CACHE DECLARE");
+        if (allRelations.size() > 0) {
+          for (final Relations<Relation> relations : allRelations) { // [C]
+            for (final Relation relation : relations) { // [S]
+              if (relation.isDeclaredOnSourceTable())
+                write("\n", relation.writeCacheDeclare(keyClauseColumnAssignments, declared), out, declared);
+            }
+          }
+
+          for (final Relations<Relation> relations : allRelations) { // [C]
+            for (final Relation relation : relations) { // [S]
+              if (!relation.isDeclaredOnSourceTable())
+                write("\n", relation.writeCacheDeclare(keyClauseColumnAssignments, declared), out, declared);
+            }
+          }
+        }
+
+        if (declared.size() > 0)
+          out.append('\n');
+      }
+
+      {
+        declared.clear();
+        out.append("\n    boolean _cacheEnabled$;\n");
+
+        out.append("\n    @").append(Override.class.getName());
+        out.append("\n    void _initCache$() {");
+        out.append("\n      if (_cacheEnabled$)");
+        out.append("\n        return;\n");
+        out.append("\n      super._initCache$();");
+        out.append("\n      _cacheEnabled$ = true;\n");
+
+        if (allRelations.size() > 0)
+          for (final Relations<Relation> relations : allRelations) // [C]
+            for (final Relation relation : relations) // [S]
+              write("\n      ", relation.writeCacheInit(), out, declared);
+
+        if (keyClauseColumnAssignments.size() > 0) {
+          for (final String keyClauseColumnAssignment : keyClauseColumnAssignments) // [S]
+            out.append("\n      ").append(keyClauseColumnAssignment).append(';');
+
+          out.append('\n');
+        }
+
+        out.append("    }");
+      }
+
+      out.append("\n  };\n");
+    }
+
+    out.append(getDoc(table, 1, '\0', '\n', "Table", tableName)); // FIXME: Add "\d foo" -like printout of column info into the table's javadoc
     out.append("\n  public");
     if (isAbstract)
       out.append(" abstract");
 
-    out.append(" static class ").append(classSimpleName).append(" extends ").append(ext);
+    out.append(" class ").append(classSimpleName).append(" extends ").append(ext).append(" implements $").append(classSimpleName);
 //    if (!isAbstract)
 //      out.append(" implements ").append(type.Table.class.getCanonicalName()).append('<').append(className).append('>');
 
     out.append(" {");
 
-    final HashSet<String> declared = new HashSet<>();
     final StringBuilder dcl = new StringBuilder();
-
-    if (!isAbstract) {
-      out.append("\n    private static boolean _cacheEnabled$;\n");
-
-      out.append("\n    void _initCache$() {");
-      out.append("\n      if (").append(className).append("._cacheEnabled$)");
-      out.append("\n        return;\n");
-      out.append("\n      super._initCache$();");
-
-      if (allRelations.size() > 0)
-        for (final LinkedHashSet<Relation> relations : allRelations) // [C]
-          for (final Relation relation : relations) // [S]
-            write("\n      ", relation.writeCacheInit(), out, declared);
-
-      out.append("\n      ").append(className).append("._cacheEnabled$ = true;");
-      out.append("\n    }\n");
-
-      declared.clear();
-
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    public ").append(String.class.getName()).append(" getName() {");
-      out.append("\n      return \"").append(tableName).append("\";");
-      out.append("\n    }\n");
-
-      out.append("\n    private static final ").append(String.class.getName()).append("[] _columnName$ = {");
-      for (int i = 0; i < noColumnsTotal; ++i) // [A]
-        columns[i].column.text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
-
-      final ArrayList<$Column> sortedColumns = new ArrayList<>();
-      for (final ColumnMeta columnMeta : columns) // [A]
-        sortedColumns.add(columnMeta.column);
-      sortedColumns.sort(Generator.namedComparator);
-
-      for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) { // [RA]
-        if (i > 0)
-          out.append(", ");
-
-        out.append('"').append(sortedColumns.get(i).getName$().text()).append('"');
-      }
-      out.append("};\n");
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(String.class.getName()).append("[] _columnName$() {");
-      out.append("\n      return _columnName$;");
-      out.append("\n    }\n");
-
-      out.append("\n    private static final byte[] _columnIndex$ = {");
-      final int noColumns = sortedColumns.size();
-      if (noColumns > 0) {
-        for (int i = 0; i < noColumns; ++i) { // [RA]
-          if (i > 0)
-            out.append(", ");
-
-          out.append(sortedColumns.get(i).text());
-        }
-      }
-      out.append("};\n");
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    byte[] _columnIndex$() {");
-      out.append("\n      return _columnIndex$;");
-      out.append("\n    }\n");
-
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(className).append(" newInstance() {");
-      out.append("\n      return new ").append(className).append("(true, true);");
-      out.append("\n    }\n");
-
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    ").append(className).append(" singleton() {");
-      out.append("\n      return $").append(instanceName).append(';');
-      out.append("\n    }\n");
-    }
-
-    if (superTable == null) {
-      out.append("\n    @").append(Override.class.getName());
-      out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() {");
-      out.append("\n      return ").append(schemaManifest.schemaClassName).append(".getSchema();");
-      out.append("\n    }\n");
-    }
 
     if (!isAbstract) {
       {
@@ -880,14 +851,14 @@ class TableMeta {
         declared.clear();
 
         if (allRelations.size() > 0) {
-          for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+          for (final Relations<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
               // Only write the declaration if the source of the relation came from this table, or an unrelated table.
               // This avoids sub-tables overriding the same declaration of super-tables.
               if (relation instanceof ForeignRelation) {
                 final ForeignRelation foreign = (ForeignRelation)relation;
                 if (!foreign.referenceTable.isAbstract)
-                  write("\n", foreign.writeDeclaration(classSimpleName), out, declared);
+                  write("\n", foreign.writeDeclaration(classSimpleName, declared), out, declared);
               }
             }
           }
@@ -898,86 +869,82 @@ class TableMeta {
       }
 
       {
-        out.append("\n    // CACHE DECLARE");
         declared.clear();
-        if (allRelations.size() > 0)
-          for (final LinkedHashSet<Relation> relations : allRelations) // [C]
-            for (final Relation relation : relations) // [S]
-              write("\n", relation.writeCacheDeclare(), out, declared);
+
+        out.append("\n    @").append(Override.class.getName());
+        out.append("\n    void _commitSelectAll$() {");
+        out.append("\n      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+        out.append("\n        return;\n");
+        out.append("\n      getCache().addKey(").append(data.Key.class.getCanonicalName()).append(".ALL);");
+        if (allRelations.size() > 0) {
+          for (final Relations<Relation> relations : allRelations) { // [C]
+            for (final Relation relation : relations) { // [S]
+              write("\n      ", relation.writeCacheSelectAll(), out, declared);
+            }
+          }
+        }
+
+        out.append("\n    }\n");
       }
 
       {
         declared.clear();
 
-        out.append("\n\n    @").append(Override.class.getName());
-        out.append("\n    void _commitInsert$() {");
-        out.append("\n      if (!").append(className).append("._cacheEnabled$)");
-        out.append("\n        return;\n");
-        // out.append("\n super._commitInsert$();\n");
+        out.append("\n    @").append(Override.class.getName());
+        out.append("\n    void _commitInsert$() {\n");
         if (allRelations.size() > 0) {
-          for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+          out.append("      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          out.append("\n        return;\n");
+          for (final Relations<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
-              write("\n      ", relation.writeCacheInsert(classSimpleName, "get"), out, declared);
+              write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur, false, declared), out, declared);
             }
           }
+
+          if (declared.size() > 0)
+            out.append('\n');
         }
 
-        out.append("\n    }\n");
+        out.append("    }\n");
+      }
+
+      {
+        declared.clear();
 
         out.append("\n    @").append(Override.class.getName());
-        out.append("\n    void _commitDelete$() {");
-        out.append("\n      if (!").append(className).append("._cacheEnabled$)");
-        out.append("\n        return;\n");
+        out.append("\n    void _commitDelete$() {\n");
 
         // FIXME: Remove the re-addition of all Relation(s) to ArrayList
         final ArrayList<Relation> onChangeRelations = new ArrayList<>(1);
         if (columnsToRelations.size() > 0)
-          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
+          for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
             onChangeRelations.addAll(entry.getValue());
 
         if (onChangeRelations.size() > 0) {
-          for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
-            final Relation onChangeRelation = onChangeRelations.get(i);
-            if (onChangeRelation instanceof ForeignRelation) {
-              final ForeignRelation relation = (ForeignRelation)onChangeRelation;
-              boolean added = false;
-              final LinkedHashSet<ForeignRelation> reverses = relation.reverses;
-              for (final ForeignRelation reverse : reverses) // [S]
-                added |= write("      ", reverse.writeOnChangeReverse(relation.fieldName), out, declared);
-
-              if (added)
-                out.append('\n');
-
-              write("\n      ", relation.writeOnChangeForward(), out, declared);
-            }
-          }
+          out.append("      if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          out.append("\n        return;\n");
 
           declared.clear();
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
-            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, ""), out, declared);
+            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Cur, false, declared), out, declared);
           }
+
+          if (declared.size() > 0)
+            out.append('\n');
         }
-        out.append("\n    }\n");
+
+        out.append("    }\n");
       }
     }
 
     dcl.setLength(0);
 
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta column = columns[i];
-      if (column.column instanceof $Enum) {
-        final $Enum enumColumn = ($Enum)column.column;
-        if (enumColumn.getTemplate$() == null || enumColumn.getValues$() != null)
-          dcl.append(Generator.declareEnumClass(schemaManifest.getClassNameOfTable(new StringBuilder(), table).toString(), enumColumn, 4));
-      }
-
-      dcl.append(getDoc(column.column, 2, '\n', '\0'));
-      dcl.append("\n    public final ").append(column.declareColumn()).append(';');
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
+      final ColumnModel column = columns[i];
+      out.append(getDoc(column.column, 2, '\n', '\0', "Column", column.column.getName$().text(), "Primary", column.isPrimary, "KeyForUpdate", column.isKeyForUpdate, "NULL", column.column.getNull$() == null || column.column.getNull$().text())); // FIXME: Add DEFAULT
+      out.append("\n    public final ").append(column.declareColumn()).append(";\n");
     }
-
-    if (dcl.length() > 0)
-      out.append(dcl).append('\n');
 
     if (!isAbstract) {
       out.append("\n    /** Creates a new {@link ").append(className).append("}. */");
@@ -991,10 +958,10 @@ class TableMeta {
         out.append("\n    /** Creates a new {@link ").append(className).append("} with the specified primary key. */");
         out.append("\n    public ").append(classSimpleName).append('(');
         final StringBuilder params = new StringBuilder();
-        for (final ColumnMeta columnMeta : columns) { // [A]
-          if (columnMeta.isPrimary) {
-            params.append("final ").append(columnMeta.rawType).append(' ').append(columnMeta.camelCase).append(", ");
-            final String fieldName = Identifiers.toCamelCase(columnMeta.name, '_');
+        for (final ColumnModel columnModel : columns) { // [A]
+          if (columnModel.isPrimary) {
+            params.append("final ").append(columnModel.rawType).append(' ').append(columnModel.camelCase).append(", ");
+            final String fieldName = Identifiers.toCamelCase(columnModel.name, '_');
             set.append("      this.").append(fieldName).append(".set(").append(fieldName).append(");\n");
           }
         }
@@ -1025,21 +992,21 @@ class TableMeta {
       out.append("\n    }\n");
     }
 
-    final String[] commitUpdates;
+    final String[] commitUpdateChanges;
 
     if (isAbstract) {
-      commitUpdates = null;
+      commitUpdateChanges = null;
     }
     else {
-      commitUpdates = new String[columns.length];
+      commitUpdateChanges = new String[noColumnsTotal];
       final StringBuilder ocb = new StringBuilder();
-      for (int i = 0; i < columns.length; ++i) { // [A]
-        final ColumnMeta columnMeta = columns[i];
+      for (int i = 0; i < noColumnsTotal; ++i) { // [A]
+        final ColumnModel columnModel = columns[i];
           // This section executed onChanged() for each column to clear the foreign Key
   //      Map<String,String> foreignKeyColumns = tableToForeignKeyColumns.get(table);
   //      if (foreignKeyColumns == null) {
   //        tableToForeignKeyColumns.put(table, foreignKeyColumns = new HashMap<>());
-  //        for (final ColumnMeta t : columns) { // [?]
+  //        for (final columnModel t : columns) { // [?]
   //          if (t.column.getForeignKey() != null) {
   //            final String privateKeyName = "_foreignKey$" + t.instanceCase;
   //            foreignKeyColumns.put(t.name, privateKeyName);
@@ -1065,81 +1032,96 @@ class TableMeta {
 
         final ArrayList<Relation> onChangeRelationsForColumn = new ArrayList<>(1);
         if (columnsToRelations.size() > 0)
-          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
-            if (entry.getKey().contains(columnMeta))
+          for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
+            if (entry.getKey().contains(columnModel))
               onChangeRelationsForColumn.addAll(entry.getValue());
 
         if (onChangeRelationsForColumn.size() == 0) {
-          commitUpdates[i] = null;
-          continue;
+          commitUpdateChanges[i] = null;
         }
+        else {
+          final HashSet<String> declared2 = new HashSet<>();
 
-        final HashSet<String> declared2 = new HashSet<>();
+          ocb.append("\n        new ").append(onModifyClassName).append('<').append(className).append(">() {");
+          ocb.append("\n          @").append(Override.class.getName());
+          ocb.append("\n          public void update(final ").append(className).append(" self) {");
+          ocb.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          ocb.append("\n              return;\n");
 
-        ocb.append("\n        new ").append(SerializableConsumer.class.getName()).append('<').append(className).append(">() {\n          @").append(Override.class.getName());
-        ocb.append("\n          public void accept(final ").append(className).append(" self) {");
-        ocb.append("\n            if (!").append(className).append("._cacheEnabled$)");
-        ocb.append("\n              return;\n");
-        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          if (onChangeRelation instanceof ForeignRelation) {
-            final ForeignRelation relation = (ForeignRelation)onChangeRelation;
-            boolean added = false;
-            final LinkedHashSet<ForeignRelation> reverses = relation.reverses;
-            for (final ForeignRelation reverse : reverses) // [S]
-              added |= write("\n            ", reverse.writeOnChangeClearCacheForeign(classSimpleName, onChangeRelation.keyClause, "getOld", "get"), ocb, declared2);
-
-            if (added)
-              ocb.append('\n');
-
-            write("\n            ", relation.writeOnChangeForward(), ocb, declared2);
+          for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+            final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+            write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, CurOld.Old, true, declared2), ocb, declared2);
           }
-        }
 
-        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, "Old"), ocb, declared2);
-        }
+          for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+            final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+            write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2), ocb, declared2);
+          }
 
-        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, "get"), ocb, declared2);
-        }
+          if (primaryKeyColumnNames.contains(columnModel.name) && columnsToRelations.size() > 0) {
+            for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
+              final Relations<Relation> relations = entry.getValue();
+              for (final Relation relation : relations) { // [S]
+                if (relation instanceof ForeignRelation) {
+                  final ForeignRelation foreign = (ForeignRelation)relation;
 
-        if (primaryKeyColumnNames.contains(columnMeta.name) && columnsToRelations.size() > 0) {
-          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
-            final LinkedHashSet<Relation> relations = entry.getValue();
-            for (final Relation relation : relations) { // [S]
-              if (relation instanceof ForeignRelation) {
-                final ForeignRelation foreign = (ForeignRelation)relation;
+                  if (entry.getKey().contains(columnModel) || relation instanceof ManyToManyRelation) {
+                    write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, CurOld.Old, true, declared2), ocb, declared2);
+                    write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2), ocb, declared2);
+                  }
 
-                if (entry.getKey().contains(columnMeta) || relation instanceof ManyToManyRelation) {
-                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClause, "Old"), ocb, declared2);
-                  write("\n            ", foreign.writeCacheInsert(classSimpleName, "get"), ocb, declared2);
+    //                    for (final Foreign reverse : relation.reverses) { // [?]
+    //                      if (reverse.referencesColumns.contains(columnModel))
+    //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, CurOld.Old), "\n", ocb, declared);
+    //                    }
                 }
-
-  //                    for (final Foreign reverse : relation.reverses) { // [?]
-  //                      if (reverse.referencesColumns.contains(columnMeta))
-  //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, "Old"), "\n", ocb, declared);
-  //                    }
               }
             }
           }
+          ocb.append("\n          }");
+
+          final StringBuilder changeBuilder = new StringBuilder();
+
+          changeBuilder.append("\n\n          @").append(Override.class.getName());
+          changeBuilder.append("\n          public void changeCur(final ").append(className).append(" self) {");
+          changeBuilder.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          changeBuilder.append("\n              return;\n");
+          for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+            final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+            onChangeRelation.keyModel.writeReset(changeBuilder, CurOld.Cur);
+          }
+          changeBuilder.append("\n          }");
+
+          ocb.append(changeBuilder);
+          changeBuilder.setLength(0);
+
+          changeBuilder.append("\n\n          @").append(Override.class.getName());
+          changeBuilder.append("\n          public void changeOld(final ").append(className).append(" self) {");
+          changeBuilder.append("\n            if (!").append(singletonInstanceName).append('.').append("_cacheEnabled$)");
+          changeBuilder.append("\n              return;\n");
+          for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+            final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+            onChangeRelation.keyModel.writeReset(changeBuilder, CurOld.Old);
+          }
+          changeBuilder.append("\n          }");
+
+          ocb.append(changeBuilder);
+          changeBuilder.setLength(0);
+
+          ocb.append("\n        }");
+
+          // FIXME: Wow, what a hack!
+          Strings.replace(ocb, classSimpleName + ".this", "self");
+          commitUpdateChanges[i] = ocb.toString();
+          ocb.setLength(0);
         }
-
-        ocb.append("\n          }\n        }");
-
-        // FIXME: Wow, what a hack!
-        Strings.replace(ocb, classSimpleName + ".this", "self");
-        commitUpdates[i] = ocb.toString();
-        ocb.setLength(0);
       }
     }
 
     final StringBuilder init = new StringBuilder();
-    newColumnArray(init, noColumnsTotal, primaryKeyColumnNames.isEmpty() && keyForUpdateColumnNames.isEmpty() ? null : i -> {
+    newColumnArray(init, noColumnsTotal, primaryKeyColumnNames.size() == 0 && keyForUpdateColumnNames.size() == 0 ? null : i -> {
       if (primaryKeyColumnNames.contains(columns[i].name))
-        return data.class.getCanonicalName() + ".PRIMARY_KEY";
+        return data.class.getCanonicalName() + (primaryKeyIndexType instanceof IndexType.HASH ? ".HASH" : ".BTREE");
 
       if (keyForUpdateColumnNames.contains(columns[i].name))
         return data.class.getCanonicalName() + ".KEY_FOR_UPDATE";
@@ -1153,18 +1135,20 @@ class TableMeta {
     final String init0 = init.toString();
 
     final StringBuilder parameters = new StringBuilder();
-    for (int i = 0; i < columns.length; ++i) { // [A]
-      final ColumnMeta column = columns[i];
-      parameters.append(", final ").append(SerializableConsumer.class.getName()).append("<? extends ").append(column.tableMeta.className).append("> ").append(column.instanceCase);
-      init.append(", (").append(SerializableConsumer.class.getName()).append(")null");
+    for (int i = 0; i < noColumnsTotal; ++i) { // [A]
+      final ColumnModel column = columns[i];
+      parameters.append(", final ").append(onModifyClassName).append("<? extends ").append(column.tableModel.className).append("> ").append(column.instanceCase);
+      init.append(", (").append(onModifyClassName).append(")null");
     }
 
     final StringBuilder arguments = new StringBuilder();
-    for (int s = columns.length - noColumnsLocal, i = 0; i < s; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = 0; i < s; ++i) { // [A]
       arguments.append(", ").append(columns[i].instanceCase);
-      if (commitUpdates != null && commitUpdates[i] != null)
-        arguments.append(" != null ? ").append(columns[i].instanceCase).append(" : ").append(commitUpdates[i]);
+      if (commitUpdateChanges != null && commitUpdateChanges[i] != null)
+        arguments.append(" != null ? ").append(columns[i].instanceCase).append(" : ").append(commitUpdateChanges[i]);
     }
+
+    keyModels.writeDeclare(out);
 
     out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) {");
     out.append("\n      this(_mutable$, _wasSelected$, ").append(init).append(");");
@@ -1190,21 +1174,21 @@ class TableMeta {
 
       int primaryIndex = 0;
       int keyForUpdateIndex = 0;
-      int autoIndex = totalAutoOffset;
-      for (int s = columns.length - noColumnsLocal, i = 0; i < columns.length; ++i) { // [A]
+      int autoIndex = 0;
+      for (int s = noColumnsTotal - noColumnsLocal, i = 0; i < noColumnsTotal; ++i) { // [A]
         if (i > s)
           out.append('\n');
 
-        final ColumnMeta columnMeta = columns[i];
+        final ColumnModel columnModel = columns[i];
 
         final StringBuilder dec = new StringBuilder();
-        if (primaryKeyColumnNames.contains(columnMeta.name))
+        if (primaryKeyColumnNames.contains(columnModel.name))
           dec.append("_primary$[").append(primaryIndex++).append("] = ");
 
-        if (keyForUpdateColumnNames.contains(columnMeta.name))
+        if (keyForUpdateColumnNames.contains(columnModel.name))
           dec.append("_keyForUpdate$[").append(keyForUpdateIndex++).append("] = ");
 
-        if (org.jaxdb.ddlx.Generator.isAuto(columnMeta.column))
+        if (org.jaxdb.ddlx.Generator.isAuto(columnModel.column))
           dec.append("_auto$[").append(autoIndex++).append("] = ");
 
         if (i >= s || dec.length() > 0) {
@@ -1220,9 +1204,9 @@ class TableMeta {
           out.append(" = this.");
 
           if (x == 0)
-            columnMeta.assignConstructor(out, i, commitUpdates == null ? null : commitUpdates[i]);
+            columnModel.assignConstructor(out, i, commitUpdateChanges == null ? null : commitUpdateChanges[i]);
           else
-            columnMeta.assignCopyConstructor(out);
+            columnModel.assignCopyConstructor(out);
 
           out.append(';');
         }
@@ -1232,21 +1216,19 @@ class TableMeta {
     }
 
     final StringBuilder buf = new StringBuilder();
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta columnMeta = columns[i];
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
+      final ColumnModel columnModel = columns[i];
       if (buf.length() > 0)
         buf.append('\n');
 
-      final String fieldName = Identifiers.toCamelCase(columnMeta.name, '_');
+      final String fieldName = Identifiers.toCamelCase(columnModel.name, '_');
       buf.append("      if (t.").append(fieldName).append(".setByCur != null)\n");
       buf.append("        ").append(fieldName).append(".copy(t.").append(fieldName).append(");\n");
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table) {\n");
-    if (superTable != null)
-      out.append("      super._merge$(table);\n");
-
+    out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table, final boolean checkMutable) {\n");
+    out.append("      super._merge$(table, checkMutable);\n");
     out.append("      final ").append(className).append(" t = (").append(className).append(")table;\n");
     if (buf.length() > 0)
       out.append(buf);
@@ -1259,7 +1241,8 @@ class TableMeta {
 
     if (isAbstract) {
       out.append("\n    @").append(Override.class.getName());
-      out.append("\n    abstract ").append(className).append(" clone(final boolean _mutable$);\n");
+      out.append("\n    abstract ").append(className).append(" clone(boolean _mutable$);\n");
+      out.append("\n    @").append(Override.class.getName());
       out.append("\n    public abstract ").append(className).append(" clone();");
     }
     else {
@@ -1274,9 +1257,9 @@ class TableMeta {
     }
 
     buf.setLength(0);
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta columnMeta = columns[i];
-      buf.append("\n      if (this.").append(columnMeta.instanceCase).append(".isNull() ? !that.").append(columnMeta.instanceCase).append(".isNull() : !").append(columnMeta.getEqualsClause()).append(')');
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
+      final ColumnModel columnModel = columns[i];
+      buf.append("\n      if (this.").append(columnModel.instanceCase).append(".isNull() ? !that.").append(columnModel.instanceCase).append(".isNull() : !").append(columnModel.getEqualsClause()).append(')');
       buf.append("\n        return false;\n");
     }
 
@@ -1299,10 +1282,10 @@ class TableMeta {
     out.append("\n    }\n\n");
 
     buf.setLength(0);
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
-      final ColumnMeta columnMeta = columns[i];
-      buf.append("\n      if (!this.").append(columnMeta.instanceCase).append(".isNull())");
-      buf.append("\n        hashCode = 31 * hashCode + this.").append(columnMeta.instanceCase).append(".get().hashCode();\n");
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
+      final ColumnModel columnModel = columns[i];
+      buf.append("\n      if (!this.").append(columnModel.instanceCase).append(".isNull())");
+      buf.append("\n        hashCode = 31 * hashCode + this.").append(columnModel.instanceCase).append(".get().hashCode();\n");
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
@@ -1318,59 +1301,126 @@ class TableMeta {
 
     buf.setLength(0);
     boolean ifClause = true;
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
+    for (int s = noColumnsTotal - noColumnsLocal, i = s; i < noColumnsTotal; ++i) { // [A]
       if (ifClause)
         buf.append('\n');
-      final ColumnMeta columnMeta = columns[i];
-      ifClause = !columnMeta.isPrimary && !columnMeta.isKeyForUpdate;
+      final ColumnModel columnModel = columns[i];
+      ifClause = !columnModel.isPrimary && !columnModel.isKeyForUpdate;
       if (ifClause)
-        buf.append("      if (!wasSetOnly || this.").append(columnMeta.instanceCase).append(".setByCur != null)\n  ");
+        buf.append("      if (!wasCuedOnly || this.").append(columnModel.instanceCase).append(".setByCur != null)\n  ");
 
-      buf.append("      this.").append(columnMeta.instanceCase).append(".toJson(s.append(\",\\\"").append(columnMeta.name).append("\\\":\"));\n");
+      buf.append("      this.").append(columnModel.instanceCase).append(".toJson(s.append(\",\\\"").append(columnModel.name).append("\\\":\"));\n");
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    protected void toString(final boolean wasSetOnly, final ").append(StringBuilder.class.getName()).append(" s) {");
+    out.append("    protected void toString(final boolean wasCuedOnly, final ").append(StringBuilder.class.getName()).append(" s) {");
     if (superTable != null)
-      out.append("\n      super.toString(wasSetOnly, s);");
+      out.append("\n      super.toString(wasCuedOnly, s);\n");
 
     if (buf.length() > 0)
       out.append(buf);
 
     out.append("    }\n");
 
+    if (!isAbstract) {
+      declared.clear();
+
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    public ").append(String.class.getName()).append(" getName() {");
+      out.append("\n      return \"").append(tableName).append("\";");
+      out.append("\n    }\n");
+
+      out.append("\n    private final ").append(String.class.getName()).append("[] _columnName$ = {");
+      for (int i = 0; i < noColumnsTotal; ++i) // [A]
+        columns[i].column.text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
+
+      final ArrayList<$Column> sortedColumns = new ArrayList<>();
+      for (final ColumnModel columnModel : columns) // [A]
+        sortedColumns.add(columnModel.column);
+      sortedColumns.sort(Generator.namedComparator);
+
+      for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) { // [RA]
+        if (i > 0)
+          out.append(", ");
+
+        out.append('"').append(sortedColumns.get(i).getName$().text()).append('"');
+      }
+      out.append("};\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    ").append(String.class.getName()).append("[] _columnName$() {");
+      out.append("\n      return _columnName$;");
+      out.append("\n    }\n");
+
+      out.append("\n    private final byte[] _columnIndex$ = {");
+      final int noColumns = sortedColumns.size();
+      if (noColumns > 0) {
+        for (int i = 0; i < noColumns; ++i) { // [RA]
+          if (i > 0)
+            out.append(", ");
+
+          out.append(sortedColumns.get(i).text());
+        }
+      }
+      out.append("};\n");
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    byte[] _columnIndex$() {");
+      out.append("\n      return _columnIndex$;");
+      out.append("\n    }\n");
+
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    ").append(className).append(" newInstance() {");
+      out.append("\n      return new ").append(className).append("(true, true);");
+      out.append("\n    }\n");
+
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    ").append(singletonInstanceName).append(" singleton() {");
+      out.append("\n      return ").append(singletonInstanceName).append(';');
+      out.append("\n    }\n");
+    }
+
+    if (superTable == null) {
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() {");
+      out.append("\n      return ").append(schemaModel.schemaClassSimpleName).append(".this;");
+      out.append("\n    }\n");
+    }
+
     out.append("  }");
+
+    // Audit
+    for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
+      for (final Relation relation : entry.getValue()) { // [S]
+        relation.keyModel.audit();
+      }
+    }
+
     return out.toString();
   }
 
-  void makeIndexes(final Columns columns) {
+  void makeIndexes(final ColumnModels columns) {
     for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
-      final TableMeta ancestor = ancestors.get(i);
+      final TableModel ancestor = ancestors.get(i);
       if (!ancestor.isAbstract) {
-        ancestor.columnsToRelations.getOrNew(columns).add(new Relation(schemaManifest.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns))));
+        ancestor.columnsToRelations.getOrNew(columns).add(new Relation(schemaModel.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns)), keyModels));
       }
     }
   }
 
-  private ForeignRelation makeForeignRelation(final TableMeta sourceTable, final TableMeta table, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
-    final boolean primary = table.isPrimaryKey(columns);
-    final boolean unique = primary || table.isUnique(columns);
-    final boolean referencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);
+  private ForeignRelation makeForeignRelation(final TableModel sourceTable, final TableModel table, final ColumnModels columns, final TableModel referenceTable, final ColumnModels referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+    final boolean isPrimary = table.isPrimaryKey(columns);
+    final boolean isUnique = isPrimary || table.isUnique(columns);
+    final boolean isReferencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);
 
-    if (unique && referencesUnique)
-      return new OneToOneRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+    if (isUnique && isReferencesUnique)
+      return new OneToOneRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
-    if (unique && !referencesUnique)
-      return new OneToManyRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+    if (isUnique && !isReferencesUnique)
+      return new OneToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
-    if (!unique && referencesUnique)
-      return new ManyToManyRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
+    if (!isUnique && isReferencesUnique)
+      return new ManyToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     throw new UnsupportedOperationException("Is this even possible?");
-  }
-
-  String getInstanceNameForCache(final Columns columns) {
-    return columns.getInstanceNameForKey() + "To" + classCase;
   }
 
   private static boolean isNull(final $Column column) {

@@ -16,7 +16,7 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -25,11 +25,13 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import org.jaxdb.jsql.Batch;
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Types;
+import org.jaxdb.jsql.Types.$AbstractType.EnumType;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -38,11 +40,9 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libj.io.SerializableReader;
 import org.libj.io.UnsynchronizedStringReader;
 
 @RunWith(SchemaTestRunner.class)
@@ -59,9 +59,10 @@ public abstract class UpdateTest {
   }
 
   @Test
-  public void testSelectForUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<classicmodels.Product> rows =
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  public void testSelectForUpdateEntity(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    Classicmodels.Product p = classicmodels.Product$;
+    try (final RowIterator<Classicmodels.Product> rows =
 
       SELECT(p).
       FROM(p).
@@ -71,6 +72,7 @@ public abstract class UpdateTest {
 
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
+      assertFalse(rows.nextRow());
 
       p.price.set(new BigDecimal(20));
 
@@ -83,9 +85,10 @@ public abstract class UpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Derby.class) // FIXME: ERROR 42Y90: FOR UPDATE is not permitted in this type of statement.
-  public void testSelectForUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    classicmodels.Product p = classicmodels.Product();
-    classicmodels.ProductLine pl = classicmodels.ProductLine();
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  public void testSelectForUpdateEntities(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    Classicmodels.Product p = classicmodels.Product$;
+    Classicmodels.ProductLine pl = classicmodels.ProductLine$;
     try (final RowIterator<data.Table> rows =
 
       SELECT(p, pl).
@@ -96,7 +99,8 @@ public abstract class UpdateTest {
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      p = (classicmodels.Product)rows.nextEntity();
+      p = (Classicmodels.Product)rows.nextEntity();
+      assertFalse(rows.nextRow());
 
       p.price.set(new BigDecimal(20));
 
@@ -108,9 +112,11 @@ public abstract class UpdateTest {
   }
 
   @Test
-  public void testUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<classicmodels.Product> rows1 =
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  public void testUpdateEntities(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    Classicmodels.Product p = classicmodels.Product$;
+    try (final RowIterator<Classicmodels.Product> rows1 =
+
       SELECT(p).
       FROM(p).
       LIMIT(1).
@@ -119,9 +125,11 @@ public abstract class UpdateTest {
 
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
+      assertFalse(rows1.nextRow());
 
-      classicmodels.ProductLine pl = classicmodels.ProductLine();
-      final RowIterator<classicmodels.ProductLine> rows2 =
+      Classicmodels.ProductLine pl = classicmodels.ProductLine$;
+      final RowIterator<Classicmodels.ProductLine> rows2 =
+
         SELECT(pl).
         FROM(pl).
         LIMIT(1).
@@ -130,9 +138,10 @@ public abstract class UpdateTest {
 
       assertTrue(rows2.nextRow());
       pl = rows2.nextEntity();
+      assertFalse(rows2.nextRow());
 
       p.quantityInStock.set((short)300);
-      pl.description.set(new SerializableReader(new UnsynchronizedStringReader("New description")));
+      pl.description.set(new UnsynchronizedStringReader("New description"));
 
       final Batch batch = new Batch();
       final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;
@@ -146,9 +155,10 @@ public abstract class UpdateTest {
   }
 
   @Test
-  public void testUpdateSetWhere(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
-    try (final RowIterator<types.Type> rows =
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  public void testUpdateSetWhere(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type$;
+    try (final RowIterator<Types.Type> rows =
 
       SELECT(t).
       FROM(t).
@@ -159,20 +169,22 @@ public abstract class UpdateTest {
 
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
+      assertFalse(rows.nextRow());
 
       assertTrue(0 <
         UPDATE(t).
-        SET(t.enumType, types.Type.EnumType.FOUR).
-        WHERE(EQ(t.enumType, types.Type.EnumType.ONE))
+        SET(t.enumType, EnumType.FOUR).
+        WHERE(EQ(t.enumType, EnumType.ONE))
           .execute(transaction)
           .getCount());
     }
   }
 
   @Test
-  public void testUpdateSet(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    types.Type t = types.Type();
-    try (final RowIterator<types.Type> rows =
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  public void testUpdateSet(final Types types, final Transaction transaction) throws IOException, SQLException {
+    Types.Type t = types.Type$;
+    try (final RowIterator<Types.Type> rows =
 
       SELECT(t).
       FROM(t).
@@ -183,6 +195,7 @@ public abstract class UpdateTest {
 
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
+      assertFalse(rows.nextRow());
 
       assertTrue(300 <
         UPDATE(t).

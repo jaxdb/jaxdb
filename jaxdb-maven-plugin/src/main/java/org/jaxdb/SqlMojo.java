@@ -31,12 +31,9 @@ import javax.xml.transform.TransformerException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jaxdb.vendor.DbVendor;
-import org.libj.lang.Strings;
-import org.libj.net.URLs;
-import org.libj.util.StringPaths;
 import org.xml.sax.SAXException;
 
-abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
+abstract class SqlMojo<P extends Produce<?,?,?>,T> extends JaxDbMojo<P> {
   @Parameter(property="driverClassName")
   private String driverClassName;
 
@@ -44,10 +41,21 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
   private String dbUrl;
 
   @Parameter(property="rename")
-  private String rename;
+  String rename;
 
   @Parameter(property="vendor")
   private String vendor;
+
+  final Reserve<T> getReserve(final URL schema) throws IOException, SAXException, TransformerException {
+    Reserve<T> reserve = schemaToReserve().get(schema);
+    if (reserve == null) {
+      final Thread thread = Thread.currentThread();
+      thread.setContextClassLoader(new URLClassLoader(new URL[] {new URL("file", "", project.getBuild().getOutputDirectory() + "/")}, thread.getContextClassLoader()));
+      schemaToReserve().put(schema, reserve = newReserve(schema));
+    }
+
+    return reserve;
+  }
 
   final void executeStaged(final JaxDbMojo<?>.Configuration configuration) throws Exception {
     if (vendor == null || vendor.length() == 0)
@@ -60,21 +68,11 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
     final LinkedHashSet<URL> schemas = configuration.getSchemas();
     if (schemas.size() > 0) {
       for (final URL schema : schemas) { // [S]
-        Reserve<T> reserve = schemaToReserve().get(schema);
-        File sqlFile = null;
-        if (reserve == null) {
-          Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[] {new URL("file", "", project.getBuild().getOutputDirectory() + "/")}, Thread.currentThread().getContextClassLoader()));
-          schemaToReserve().put(schema, reserve = newReserve(schema));
-        }
-        else {
-          sqlFile = reserve.renameToFile.get(rename);
-        }
+        final Reserve<T> reserve = getReserve(schema);
+        final String sqlName = reserve.get(schema, rename);
+        final File sqlFile = new File(configuration.getDestDir(), sqlName).getAbsoluteFile();
 
-        if (sqlFile == null) {
-          sqlFile = new File(configuration.getDestDir(), rename == null ? URLs.getSimpleName(schema) + ".sql" : Strings.searchReplace(StringPaths.getName(schema.toString()), rename)).getAbsoluteFile();
-          makeSql(reserve, dbVendor, sqlFile);
-          reserve.renameToFile.put(rename, sqlFile);
-        }
+        makeSql(reserve, dbVendor, sqlFile);
 
         if (dbUrl != null) {
           if (driverClassName == null)

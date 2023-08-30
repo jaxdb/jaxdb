@@ -28,7 +28,7 @@ import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
-import org.jaxdb.runner.DBTestRunner.Spec;
+import org.jaxdb.runner.DBTestRunner.TestSpec;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -61,14 +61,14 @@ public abstract class ClassicModelsTest extends SQLxTest {
   }
 
   @org.junit.Test
-  @Spec(order = 1)
+  @TestSpec(order = 1)
   public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(connection, name);
     assertEquals(3864, loadData(connection, name).length);
   }
 
   @org.junit.Test
-  @Spec(order = 2)
+  @TestSpec(order = 2)
   public void testCreateSql(final Connection connection) throws IOException, SAXException, SQLException {
     createSql(connection, name);
   }

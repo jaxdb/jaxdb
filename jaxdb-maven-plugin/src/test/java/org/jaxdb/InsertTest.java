@@ -16,7 +16,7 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
@@ -30,9 +30,11 @@ import java.time.LocalTime;
 
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
+import org.jaxdb.jsql.Types;
+import org.jaxdb.jsql.Types.$AbstractType.EnumType;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -41,13 +43,12 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libj.io.SerializableInputStream;
-import org.libj.io.SerializableReader;
+import org.libj.io.DelegateInputStream;
+import org.libj.io.DelegateReader;
 import org.libj.io.UnsynchronizedStringReader;
 
 @RunWith(SchemaTestRunner.class)
@@ -63,9 +64,9 @@ public abstract class InsertTest {
   public static class RegressionTest extends InsertTest {
   }
 
-  private static class BlobStream extends SerializableInputStream {
+  private static class BlobStream extends DelegateInputStream {
     public BlobStream(final String s) {
-      super(new ByteArrayInputStream(s.getBytes()));
+      in = new ByteArrayInputStream(s.getBytes());
       mark(Integer.MAX_VALUE);
     }
 
@@ -76,9 +77,9 @@ public abstract class InsertTest {
     }
   }
 
-  private static class ClobStream extends SerializableReader {
+  private static class ClobStream extends DelegateReader {
     public ClobStream(final String s) {
-      super(new UnsynchronizedStringReader(s));
+      in = new UnsynchronizedStringReader(s);
       try {
         mark(Integer.MAX_VALUE);
       }
@@ -99,11 +100,7 @@ public abstract class InsertTest {
     }
   }
 
-  static final types.Type T1 = new types.Type();
-  static final types.Type T2 = new types.Type();
-  static final types.Type T3 = new types.Type();
-
-  public static void init(final types.Type t1, final types.Type t2, final types.Type t3) {
+  public void init(final Types.Type t1, final Types.Type t2, final Types.Type t3) {
     t1.bigintType.set(8493L);
     t1.binaryType.set("abc".getBytes());
     t1.blobType.set(new BlobStream("abc"));
@@ -114,7 +111,7 @@ public abstract class InsertTest {
     t1.dateType.set(LocalDate.now());
     t1.decimalType.set(new BigDecimal("12.34"));
     t1.doubleType.set(32d);
-    t1.enumType.set(types.Type.EnumType.FOUR);
+    t1.enumType.set(EnumType.FOUR);
     t1.floatType.set(42f);
     t1.intType.set(2345);
     t1.smallintType.set((short)32432);
@@ -131,7 +128,7 @@ public abstract class InsertTest {
     t2.dateType.set(LocalDate.now());
     t2.decimalType.set(new BigDecimal("12.334"));
     t2.doubleType.set(322d);
-    t2.enumType.set(types.Type.EnumType.FOUR);
+    t2.enumType.set(EnumType.FOUR);
     t2.floatType.set(32f);
     t2.intType.set(1345);
     t2.smallintType.set((short)22432);
@@ -145,17 +142,30 @@ public abstract class InsertTest {
     t3.timeType.set(LocalTime.now());
   }
 
-  final types.Type t1 = T1.clone();
-  final types.Type t2 = T2.clone();
-  final types.Type t3 = T3.clone();
+  Types.Type T1;
+  Types.Type T2;
+  Types.Type T3;
+
+  Types.Type t1;
+  Types.Type t2;
+  Types.Type t3;
 
   @Before
-  public void before() {
+  public void before(final Types types) {
+    T1 = types.new Type();
+    T2 = types.new Type();
+    T3 = types.new Type();
+
+    t1 = T1.clone();
+    t2 = T2.clone();
+    t3 = T3.clone();
+
     init(t1, t2, t3);
   }
 
-  static int getMaxId(final Transaction transaction, final types.Type t) throws IOException, SQLException {
+  static int selectMaxId(final Transaction transaction, final Types.Type t) throws IOException, SQLException {
     try (final RowIterator<data.INT> rows =
+
       SELECT(MAX(t.id))
         .execute(transaction)) {
 
@@ -163,26 +173,28 @@ public abstract class InsertTest {
     }
   }
 
-  private static void testInsertEntity(final Transaction transaction, final types.Type t) throws IOException, SQLException {
+  private static void testInsertEntity(final Transaction transaction, final Types.Type t) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t)
         .execute(transaction)
         .getCount());
 
     assertFalse(t.id.isNull());
-    assertEquals(getMaxId(transaction, t), t.id.getAsInt());
+    assertEquals(selectMaxId(transaction, t), t.id.getAsInt());
   }
 
   @Test
-  public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testInsertEntity(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInsertEntity(transaction, t1);
     testInsertEntity(transaction, t2);
     testInsertEntity(transaction, t3);
   }
 
   @Test
-  public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.Type t3 = new types.Type();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testInsertColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Type t3 = types.new Type();
     t3.bigintType.set(8493L);
     t3.charType.set("hello");
     t3.doubleType.set(32d);
@@ -196,10 +208,12 @@ public abstract class InsertTest {
 
     final int id;
     try (final RowIterator<data.INT> rows =
+
       SELECT(MAX(t3.id))
         .execute(transaction)) {
 
       id = rows.nextRow() ? rows.nextEntity().getAsInt() : 1;
+      assertFalse(rows.nextRow());
     }
 
     assertFalse(t3.id.isNull());
@@ -207,35 +221,45 @@ public abstract class InsertTest {
   }
 
   @Test
-  public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testInsertBatch(final Types types, final Transaction transaction) throws IOException, SQLException {
     final DbVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DbVendor.ORACLE;
     final Batch batch = new Batch();
-    batch.addStatement(INSERT(t1)
-      .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
-    batch.addStatement(INSERT(t2)
-      .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
-    batch.addStatement(INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-      .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+    batch.addStatement(
+      INSERT(t1)
+        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+
+    batch.addStatement(
+      INSERT(t2)
+        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+
+    batch.addStatement(
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+
     assertEquals(isOracle ? 0 : 3, batch.execute(transaction).getCount());
 
     if (isOracle || vendor == DbVendor.DERBY || vendor == DbVendor.SQLITE)
       return;
 
-    final int id = getMaxId(transaction, t1);
+    final int id = selectMaxId(transaction, t1);
     assertEquals(id - 2, t1.id.getAsInt());
     assertEquals(id - 1, t2.id.getAsInt());
     assertEquals(id - 0, t3.id.getAsInt());
   }
 
   @Test
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.Backup b = new types.Backup();
+  public void testInsertSelectIntoTable(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Backup b = types.new Backup();
+
     DELETE(b)
       .execute(transaction);
 
-    final types.Type t = types.Type();
+    final Types.Type t = types.Type$;
+
     assertEquals(27,
       INSERT(b).
       VALUES(
@@ -247,11 +271,12 @@ public abstract class InsertTest {
   }
 
   @Test
-  public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.Backup b = types.Backup();
-    final types.Type t1 = new types.Type();
-    final types.Type t2 = new types.Type();
-    final types.Type t3 = new types.Type();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testInsertSelectIntoColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Backup b = types.Backup$;
+    final Types.Type t1 = types.new Type();
+    final Types.Type t2 = types.new Type();
+    final Types.Type t3 = types.new Type();
 
     DELETE(b)
       .execute(transaction);

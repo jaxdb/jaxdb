@@ -16,7 +16,7 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -26,8 +26,9 @@ import java.time.LocalTime;
 
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.DML.IS;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.types;
+import org.jaxdb.jsql.Types;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -36,7 +37,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -44,8 +44,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
-public abstract class InsertConflictUpdateTest {
-  @DB(value=Derby.class, parallel=2)
+public abstract class InsertConflictUpdateTest extends InsertTest {
+  @DB(Derby.class)
   @DB(SQLite.class)
   public static class IntegrationTest extends InsertConflictUpdateTest {
   }
@@ -56,13 +56,23 @@ public abstract class InsertConflictUpdateTest {
   public static class RegressionTest extends InsertConflictUpdateTest {
   }
 
-  final types.Type t1 = InsertTest.T1.clone();
-  final types.Type t2 = InsertTest.T2.clone();
-  final types.Type t3 = InsertTest.T3.clone();
+  Types.Type t1;
+  Types.Type t2;
+  Types.Type t3;
 
   @Before
-  public void before() {
-    InsertTest.init(t1, t2, t3);
+  @Override
+  public void before(final Types types) {
+    T1 = types.new Type();
+    T2 = types.new Type();
+    T3 = types.new Type();
+
+    t1 = T1.clone();
+    t2 = T2.clone();
+    t3 = T3.clone();
+
+    init(t1, t2, t3);
+
     t1.id.set(1001);
     t2.id.set(1002);
     t3.id.set(1003);
@@ -74,7 +84,9 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  @Override
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testInsertEntity(final Types types, final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
         .execute(transaction)
@@ -99,6 +111,7 @@ public abstract class InsertConflictUpdateTest {
           .getCount());
 
     t1.doubleType.set(Math.random());
+
     assertTrue(0 <
       INSERT(t1).
         ON_CONFLICT().
@@ -107,11 +120,13 @@ public abstract class InsertConflictUpdateTest {
           .getCount());
 
     assertFalse(t1.id.isNull());
-    assertEquals(InsertTest.getMaxId(transaction, t1), t1.id.getAsInt());
+    assertEquals(selectMaxId(transaction, t1), t1.id.getAsInt());
   }
 
   @Test
-  public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  @Override
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testInsertColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .execute(transaction)
@@ -137,16 +152,19 @@ public abstract class InsertConflictUpdateTest {
           .getCount());
 
     assertFalse(t3.id.isNull());
-    assertEquals(InsertTest.getMaxId(transaction, t3), t3.id.getAsInt());
+    assertEquals(selectMaxId(transaction, t3), t3.id.getAsInt());
   }
 
   @Test
-  public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  @Override
+  public void testInsertBatch(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Batch batch = new Batch();
     final int expectedCount = transaction.getVendor() == DbVendor.ORACLE ? 0 : 1;
+
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .onExecute(c -> assertEquals(expectedCount, c)));
+
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
@@ -158,13 +176,17 @@ public abstract class InsertConflictUpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.Backup b = new types.Backup();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testInsertSelectIntoTable1(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Backup b = types.new Backup();
+
     DELETE(b)
       .execute(transaction);
 
-    final types.Type t = types.Type();
-    assertEquals(10, INSERT(b).
+    final Types.Type t = types.Type$;
+
+    assertEquals(10,
+      INSERT(b).
       VALUES(
         SELECT(t).
         FROM(t).
@@ -172,8 +194,21 @@ public abstract class InsertConflictUpdateTest {
         LIMIT(10))
       .execute(transaction)
       .getCount());
+  }
 
-    assertEquals(1000, INSERT(b).
+  @Test
+  @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testInsertSelectIntoTable2(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Backup b = types.new Backup();
+
+    DELETE(b)
+      .execute(transaction);
+
+    final Types.Type t = types.Type$;
+
+    assertEquals(1000,
+      INSERT(b).
       VALUES(
         SELECT(t).
         FROM(t).
@@ -185,12 +220,14 @@ public abstract class InsertConflictUpdateTest {
         .getCount());
   }
 
+  @Override
+  @Test
   @Ignore("Not sure if this is supported by MERGE")
-  public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.Backup b = types.Backup();
-    final types.Type t1 = new types.Type();
-    final types.Type t2 = new types.Type();
-    final types.Type t3 = new types.Type();
+  public void testInsertSelectIntoColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
+    final Types.Backup b = types.Backup$;
+    final Types.Type t1 = types.new Type();
+    final Types.Type t2 = types.new Type();
+    final Types.Type t3 = types.new Type();
 
     DELETE(b)
       .execute(transaction);

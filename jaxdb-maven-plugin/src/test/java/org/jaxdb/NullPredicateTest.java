@@ -16,16 +16,17 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -34,7 +35,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,9 +52,57 @@ public abstract class NullPredicateTest {
   }
 
   @Test
-  public void testIs(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testPrimaryIs(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer$;
     try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(
+        IS.NULL(c.customerNumber),
+        SELECT(IS.NULL(c.customerNumber)).
+        FROM(c).
+        WHERE(IS.NULL(c.customerNumber)).
+        LIMIT(1)).
+      FROM(c).
+      WHERE(IS.NULL(c.customerNumber))
+        .execute(transaction)) {
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testPrimaryIsNot(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer$;
+    try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(
+        IS.NOT.NULL(c.customerNumber),
+        SELECT(IS.NOT.NULL(c.customerNumber)).
+        FROM(c).
+        WHERE(IS.NOT.NULL(c.customerNumber)).
+        LIMIT(1)).
+      FROM(c).
+      WHERE(IS.NOT.NULL(c.customerNumber))
+        .execute(transaction)) {
+
+      for (int i = 0; i < 122; ++i) { // [N]
+        assertTrue(rows.nextRow());
+        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
+      }
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testNotPrimaryIs(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer$;
+    try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         IS.NULL(c.locality),
         SELECT(IS.NULL(c.locality)).
@@ -70,13 +118,17 @@ public abstract class NullPredicateTest {
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  public void testIsNot(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testNotPrimaryIsNot(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer$;
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         IS.NOT.NULL(c.locality),
         SELECT(IS.NOT.NULL(c.locality)).
@@ -92,6 +144,8 @@ public abstract class NullPredicateTest {
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 }

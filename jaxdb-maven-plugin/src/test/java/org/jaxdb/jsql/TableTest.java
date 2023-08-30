@@ -23,9 +23,10 @@ import org.junit.Test;
 public class TableTest {
   @Test
   public void testAuto() {
-    for (final data.Table table : auto.getTables()) { // [A]
+    final Auto auto = new Auto();
+    for (final type.Table$ table : auto.getTables()) { // [A]
       assertEquals(table.getName(), auto.getTable(table.getName()).getName());
-      for (final data.Column<?> column : table.getTable().getColumns()) { // [A]
+      for (final data.Column<?> column : table.getColumns()) { // [A]
         assertEquals(column.getName(), table.getColumn(column.getName()).getName());
       }
     }
@@ -33,7 +34,8 @@ public class TableTest {
 
   @Test
   public void testClassicModels() {
-    for (final data.Table table : classicmodels.getTables()) { // [A]
+    final Classicmodels classicmodels = new Classicmodels();
+    for (final type.Table$ table : classicmodels.getTables()) { // [A]
       assertEquals(table.getName(), classicmodels.getTable(table.getName()).getName());
       for (final data.Column<?> column : table.getColumns()) { // [A]
         assertEquals(column.getName(), table.getColumn(column.getName()).getName());
@@ -43,7 +45,8 @@ public class TableTest {
 
   @Test
   public void testTypes() {
-    for (final data.Table table : types.getTables()) { // [A]
+    final Types types = new Types();
+    for (final type.Table$ table : types.getTables()) { // [A]
       assertEquals(table.getName(), types.getTable(table.getName()).getName());
       for (final data.Column<?> column : table.getColumns()) { // [A]
         assertEquals(column.getName(), table.getColumn(column.getName()).getName());
@@ -53,7 +56,8 @@ public class TableTest {
 
   @Test
   public void testWorld() {
-    for (final data.Table table : world.getTables()) { // [A]
+    final World world = new World();
+    for (final type.Table$ table : world.getTables()) { // [A]
       assertEquals(table.getName(), world.getTable(table.getName()).getName());
       for (final data.Column<?> column : table.getColumns()) { // [A]
         assertEquals(column.getName(), table.getColumn(column.getName()).getName());

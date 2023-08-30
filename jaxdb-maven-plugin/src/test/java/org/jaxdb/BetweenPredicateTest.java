@@ -16,16 +16,17 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -34,8 +35,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,71 +52,131 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  public void testBetween1(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    try (final RowIterator<data.BOOLEAN> rows =
-      SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
-      FROM(p).
-      WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
-        .execute(transaction)) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
-    }
-  }
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  public void testBetweenPrimary1(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Payment p = classicmodels.Payment$;
+    try (final RowIterator<Classicmodels.Payment> rows =
 
-  @Test
-  public void testBetween1Wrapped(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    try (final RowIterator<data.BOOLEAN> rows =
-      SELECT(
-        SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
-        FROM(p).
-        WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
-          .execute(transaction)) {
-      assertTrue(rows.nextRow());
-      assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
-    }
-  }
-
-  @Test
-  public void testBetween2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<data.BOOLEAN> rows =
-      SELECT(BETWEEN(p.msrp, p.price, 100)).
+      SELECT(p).
       FROM(p).
-      WHERE(BETWEEN(p.msrp, p.price, 100))
+      WHERE(BETWEEN(p.customerNumber, 103, 103))
         .execute(transaction)) {
-      for (int i = 0; i < 59; ++i) { // [N]
+
+      for (int i = 0; i < 3; ++i) { // [N]
         assertTrue(rows.nextRow());
-        assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
+        assertEquals(103, rows.nextEntity().customerNumber.getAsShort());
       }
-    }
-  }
 
-  @Test
-  public void testBetween3(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<data.BOOLEAN> rows =
-      SELECT(BETWEEN(p.scale, "a", "b")).
-      FROM(p).
-      WHERE(BETWEEN(p.scale, "a", "b"))
-        .execute(transaction)) {
       assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  public void testBetween4(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
+  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  public void testBetweenPrimary2(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Payment p = classicmodels.new Payment();
+    try (final RowIterator<Classicmodels.Payment> rows =
+
+      SELECT(p).
+      FROM(p).
+      WHERE(AND(BETWEEN(p.customerNumber, 103, 103),
+        EQ(p.checkNumber, "JM555205")))
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      rows.nextEntity();
+      assertEquals(103, p.customerNumber.getAsShort());
+      assertEquals("JM555205", p.checkNumber.get());
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  public void testBetween1Wrapped(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
     try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(
+        SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
+        FROM(p).
+        WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
+          .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertTrue(rows.nextEntity().getAsBoolean());
+    }
+  }
+
+  @Test
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testBetween1(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Purchase p = classicmodels.Purchase$;
+    try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
+      FROM(p).
+      WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertTrue(rows.nextEntity().getAsBoolean());
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testBetween2(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product$;
+    try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(BETWEEN(p.msrp, p.price, 100)).
+      FROM(p).
+      WHERE(BETWEEN(p.msrp, p.price, 100))
+        .execute(transaction)) {
+
+      for (int i = 0; i < 59; ++i) { // [N]
+        assertTrue(rows.nextRow());
+        assertTrue(rows.nextEntity().getAsBoolean());
+      }
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testBetween3(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product$;
+    try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(BETWEEN(p.scale, "a", "b")).
+      FROM(p).
+      WHERE(BETWEEN(p.scale, "a", "b"))
+        .execute(transaction)) {
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testBetween4(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Product p = classicmodels.Product$;
+    try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(BETWEEN(p.quantityInStock, 500, 1000)).
       FROM(p).
       WHERE(BETWEEN(p.quantityInStock, 500, 1000))
         .execute(transaction)) {
+
       for (int i = 0; i < 7; ++i) { // [N]
         assertTrue(rows.nextRow());
-        assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 }

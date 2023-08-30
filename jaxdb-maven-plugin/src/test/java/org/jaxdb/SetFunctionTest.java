@@ -16,16 +16,18 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
+import org.jaxdb.jsql.Classicmodels.Country;
 import org.jaxdb.jsql.DML.SUM;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -34,7 +36,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,9 +53,11 @@ public abstract class SetFunctionTest {
   }
 
   @Test
-  public void testSetFunctions(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Customer c = classicmodels.Customer();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testSetFunctions(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Customer c = classicmodels.Customer$;
     try (final RowIterator<? extends data.Column<?>> rows =
+
       SELECT(
         AVG(c.phone),
         MAX(c.city),
@@ -66,8 +69,9 @@ public abstract class SetFunctionTest {
       assertTrue(rows.nextRow());
       assertEquals(24367857008L, rows.nextEntity().get());
       assertEquals("White Plains", rows.nextEntity().get());
-      assertEquals(classicmodels.Country.AU, rows.nextEntity().get());
+      assertEquals(Country.AU, rows.nextEntity().get());
       assertEquals(21003, rows.nextEntity().get());
+      assertFalse(rows.nextRow());
     }
   }
 }

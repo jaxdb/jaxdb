@@ -666,7 +666,12 @@ final class function {
     static final Function1 ROUND = new Function1() {
       @Override
       public void compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        compilation.compiler.compileRound(a, compilation);
+        final Subject subject = (Subject)a;
+        final data.Column<?> column = subject.getColumn();
+        if (column instanceof data.ExactNumeric)
+          subject.compile(compilation, true);
+        else
+          compilation.compiler.compileRound(a, compilation);
       }
 
       @Override
@@ -1332,10 +1337,10 @@ final class function {
           return evaluate(a.doubleValue(), b.doubleValue());
 
         final BigDecimal bigDecimal;
-        if (b instanceof BigInt)
-          bigDecimal = new BigDecimal(((BigInt)b).toString()); // FIXME: Bad performance
-        else if (b instanceof BigDecimal)
+        if (b instanceof BigDecimal)
           bigDecimal = (BigDecimal)b;
+        else if (b instanceof BigInt)
+          bigDecimal = ((BigInt)b).toBigDecimal();
         else
           throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
 
@@ -1347,10 +1352,10 @@ final class function {
           return evaluate(a.doubleValue(), b.doubleValue());
 
         final BigDecimal bigDecimal;
-        if (b instanceof BigInt)
-          bigDecimal = new BigDecimal(((BigInt)b).toString()); // FIXME: Bad performance
-        else if (b instanceof BigDecimal)
+        if (b instanceof BigDecimal)
           bigDecimal = (BigDecimal)b;
+        else if (b instanceof BigInt)
+          bigDecimal = ((BigInt)b).toBigDecimal();
         else
           throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
 
@@ -1496,62 +1501,10 @@ final class function {
     abstract LocalTime evaluate(LocalTime a, Interval b);
   }
 
-  abstract static class Logical<D> {
-    static final Logical<data.Column<?>> EQ = new Logical<data.Column<?>>("=") {
-      @Override
-      java.lang.Boolean evaluate(final data.Column<?> a, final data.Column<?> b) {
-        return a == null || b == null ? null : a.equals(b);
-      }
-    };
-    static final Logical<Comparable<Object>> LT = new Logical<Comparable<Object>>("<") {
-      @Override
-      java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
-        return a == null || b == null ? null : a.compareTo(b) < 0;
-      }
-    };
-    static final Logical<Comparable<Object>> LTE = new Logical<Comparable<Object>>("<=") {
-      @Override
-      java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
-        return a != null && a.compareTo(b) <= 0;
-      }
-    };
-    static final Logical<Comparable<Object>> GT = new Logical<Comparable<Object>>(">") {
-      @Override
-      java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
-        return LT.evaluate(b, a);
-      }
-    };
-    static final Logical<Comparable<Object>> GTE = new Logical<Comparable<Object>>(">=") {
-      @Override
-      java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
-        return LTE.evaluate(b, a);
-      }
-    };
-    static final Logical<data.Column<?>> NE = new Logical<data.Column<?>>("!=") {
-      @Override
-      java.lang.Boolean evaluate(final data.Column<?> a, final data.Column<?> b) {
-        return !EQ.evaluate(a, b);
-      }
-    };
-
-    private final java.lang.String symbol;
-
-    Logical(final java.lang.String symbol) {
-      this.symbol = symbol;
-    }
-
-    abstract java.lang.Boolean evaluate(D a, D b);
-
-    @Override
-    public final java.lang.String toString() {
-      return symbol;
-    }
-  }
-
-  static final class String {
+  static final class Varchar {
     static final StringN CONCAT = new StringN() {
       @Override
-      java.lang.String evaluate(final java.lang.String ... strings) {
+      String evaluate(final String ... strings) {
         return ArrayUtil.toString(strings, ' ');
       }
     };
@@ -1563,7 +1516,7 @@ final class function {
       }
 
       @Override
-      public java.lang.String evaluate(final java.lang.String a) {
+      public String evaluate(final String a) {
         return a == null ? null : a.toLowerCase();
       }
     };
@@ -1575,44 +1528,44 @@ final class function {
       }
 
       @Override
-      public java.lang.String evaluate(final java.lang.String a) {
+      public String evaluate(final String a) {
         return a == null ? null : a.toUpperCase();
       }
     };
 
-    static final operation.Operation1<java.lang.String,java.lang.Integer> LENGTH = new operation.Operation1<java.lang.String,java.lang.Integer>() {
+    static final operation.Operation1<String,Integer> LENGTH = new operation.Operation1<String,Integer>() {
       @Override
       public void compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
         compilation.compiler.compileLength(a, compilation);
       }
 
       @Override
-      public java.lang.Integer evaluate(final java.lang.String a) {
+      public Integer evaluate(final String a) {
         return a == null ? null : a.length();
       }
     };
 
-    static final operation.Operation3<java.lang.String,java.lang.Integer,java.lang.Integer> SUBSTRING = new operation.Operation3<java.lang.String,java.lang.Integer,java.lang.Integer>() {
+    static final operation.Operation3<String,Integer,Integer> SUBSTRING = new operation.Operation3<String,Integer,Integer>() {
       @Override
       public void compile(final type.Column<?> a, final type.Column<?> from, final type.Column<?> to, final Compilation compilation) throws IOException, SQLException {
         compilation.compiler.compileSubstring(a, from, to, compilation);
       }
 
       @Override
-      public java.lang.String evaluate(final java.lang.String a, final java.lang.Integer b, final java.lang.Integer c) {
+      public String evaluate(final String a, final Integer b, final Integer c) {
         return a == null ? null : a.substring(b != null ? b - 1 : 0, c != null ? c - 1 : a.length());
       }
     };
   }
 
-  abstract static class String1 implements operation.Operation1<java.lang.String,java.lang.String> {
+  abstract static class String1 implements operation.Operation1<String,String> {
   }
 
-  abstract static class String2 implements operation.Operation2<java.lang.String> {
+  abstract static class String2 implements operation.Operation2<String> {
   }
 
   abstract static class StringN implements operation.Operation {
-    abstract java.lang.String evaluate(java.lang.String ... strings);
+    abstract String evaluate(String ... strings);
   }
 
   abstract static class Set implements operation.Operation {

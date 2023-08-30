@@ -16,10 +16,9 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.Notification.Action.*;
-
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLNonTransientConnectionException;
@@ -32,9 +31,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
-import org.jaxdb.runner.DBTestRunner.Spec;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.jaxdb.runner.Vendor;
+import org.jaxdb.runner.DBTestRunner.TestSpec;
 import org.junit.Test;
 import org.libj.sql.exception.SQLInternalErrorException;
 import org.libj.sql.exception.SQLOperatorInterventionException;
@@ -60,24 +57,25 @@ public abstract class NotificationTest {
   public static boolean sql(final Exception e) {
     // 1. Retry these exceptions by default, and log with level=DEBUG.
     // FIXME: Replace with SQL State codes...
-    if (e.getMessage() != null && (
-        e instanceof SQLTransactionRollbackException && e.getMessage().contains("could not serialize access") ||
-        e instanceof SQLInternalErrorException && e.getMessage().endsWith("tuple concurrently updated") ||
-        e instanceof SQLFeatureNotSupportedException && e.getMessage().endsWith("cached plan must not change result type") ||
-        e instanceof SQLNonTransientConnectionException && e.getMessage().startsWith("Connection Error"))) {
-      if (logger.isDebugEnabled()) logger.debug(e.getMessage());
+    final String message = e.getMessage();
+    if (message != null && (
+        e instanceof SQLTransactionRollbackException && message.contains("could not serialize access") ||
+        e instanceof SQLInternalErrorException && message.endsWith("tuple concurrently updated") ||
+        e instanceof SQLFeatureNotSupportedException && message.endsWith("cached plan must not change result type") ||
+        e instanceof SQLNonTransientConnectionException && message.startsWith("Connection Error"))) {
+      if (logger.isDebugEnabled()) logger.debug(message);
       return true;
     }
 
     // 2. All other SQLTransactionRollbackException(s) and SQLTransientException(s) with level=WARNING.
     if (e instanceof SQLTransactionRollbackException || e instanceof SQLTransientException || e instanceof SQLNonTransientConnectionException || e instanceof SQLOperatorInterventionException) {
-      if (logger.isWarnEnabled()) logger.warn(e.getMessage(), e);
+      if (logger.isWarnEnabled()) logger.warn(message, e);
       return true;
     }
 
     // 3. IOException with level=INFO
     if (e instanceof IOException) {
-      if (logger.isInfoEnabled()) logger.info(e.getMessage(), e);
+      if (logger.isInfoEnabled()) logger.info(message, e);
       return true;
     }
 
@@ -96,28 +94,24 @@ public abstract class NotificationTest {
   static final RetryPolicy<RetryFailureRuntimeException> PERMA_SQL = PERMA.withMaxRetries(Integer.MAX_VALUE).build(NotificationTest::sql);
 
   @Test
-  @Spec(order = 0)
-  public void setUp(@Schema(caching.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+  @TestSpec(order = 0)
+  public void setUp(final Caching caching) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
       System.exit(1);
     };
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
-    DDLxTest.recreateSchema(transaction.getConnection(), "caching");
-    transaction.commit();
 
-    final Connector connector = transaction.getConnector();
-    final Database database = Database.global(transaction.getSchemaClass());
-    database.addNotificationListener(connector, INSERT, UPDATE, DELETE, new DefaultCache() {
-      @Override
-      protected Connector getConnector() {
-        return connector;
-      }
+    final Connector connector = caching.getConnector();
+    try (final Connection connection = connector.getConnection(null)) {
+      DDLxTest.recreateSchema(connection, "caching");
+    }
 
+    caching.configCache(new DefaultCache(caching) {
       @Override
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
-    }, new ConcurrentLinkedQueue<>(), caching.getTables());
+    }, new ConcurrentLinkedQueue<>(), b -> b.with(caching.getTables()));
   }
 }

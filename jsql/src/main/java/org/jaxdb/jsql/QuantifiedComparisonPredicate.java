@@ -17,13 +17,12 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Set;
 
 import org.jaxdb.jsql.keyword.Select;
 
-class QuantifiedComparisonPredicate<V extends Serializable> extends data.Entity {
+class QuantifiedComparisonPredicate<V> extends data.Entity {
   final String qualifier;
   final Subject subQuery;
 
@@ -49,7 +48,7 @@ class QuantifiedComparisonPredicate<V extends Serializable> extends data.Entity 
   }
 
   @Override
-  Serializable evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException("QuantifiedComparisonPredicate cannot be evaluated outside the DB");
   }
 }

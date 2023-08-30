@@ -16,16 +16,17 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.Classicmodels;
 import org.jaxdb.jsql.DML.COUNT;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -34,7 +35,6 @@ import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
-import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,9 +52,11 @@ public abstract class CountFunctionTest {
   }
 
   @Test
-  public void testCount(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  public void testCount(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
+    final Classicmodels.Office o = classicmodels.Office$;
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(
         COUNT(o),
         COUNT(o.territory),
@@ -62,11 +64,13 @@ public abstract class CountFunctionTest {
         COUNT(o.territory)).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertEquals(7, rows.nextEntity().getAsLong());
       assertEquals(7, rows.nextEntity().getAsLong());
       assertEquals(4, rows.nextEntity().getAsLong());
       assertEquals(7, rows.nextEntity().getAsLong());
+      assertFalse(rows.nextRow());
     }
   }
 }

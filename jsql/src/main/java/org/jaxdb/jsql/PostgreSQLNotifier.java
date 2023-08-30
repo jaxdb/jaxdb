@@ -210,36 +210,39 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
     if (action == INSERT) {
       sql.append("BEGIN\n");
-      sql.append(sessionIdTimestamp);
-      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'INSERT', 'cur', row_to_json(NEW))::text);\n");
+      sql.append("  ").append(sessionIdTimestamp);
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', JSON_BUILD_OBJECT('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'INSERT', 'cur', ROW_TO_JSON(NEW))::TEXT);\n");
     }
     else if (action == UPDATE) {
       sql.append("BEGIN\n");
-      sql.append(sessionIdTimestamp);
-      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'UPDATE', 'old', row_to_json(OLD), 'cur', row_to_json(NEW))::text);\n");
+      sql.append("  IF NEW IS DISTINCT FROM OLD THEN\n");
+      sql.append("    ").append(sessionIdTimestamp);
+      sql.append("    PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', JSON_BUILD_OBJECT('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'UPDATE', 'old', ROW_TO_JSON(OLD), 'cur', ROW_TO_JSON(NEW))::TEXT);\n");
+      sql.append("  END IF;\n");
     }
     else if (action == UPGRADE) {
       sql.append("  _old JSON;\n");
       sql.append("  _cur JSON;\n");
       sql.append("BEGIN\n");
-      sql.append(sessionIdTimestamp);
-      sql.append("  _old = row_to_json(OLD);\n");
-      sql.append("  SELECT json_object_agg(COALESCE(old_json.key, new_json.key), new_json.value) INTO _cur\n");
-      sql.append("  FROM json_each_text(_old) old_json\n");
-      sql.append("  FULL OUTER JOIN json_each_text(row_to_json(NEW)) new_json ON new_json.key = old_json.key\n");
-      sql.append("  WHERE new_json.value IS DISTINCT FROM old_json.value");
+      sql.append("  IF NEW IS DISTINCT FROM OLD THEN\n");
+      sql.append("    ").append(sessionIdTimestamp);
+      sql.append("    _old = ROW_TO_JSON(OLD);\n");
+      sql.append("    SELECT JSON_OBJECT_AGG(COALESCE(old_json.key, new_json.key), new_json.value) INTO _cur\n");
+      sql.append("    FROM JSON_EACH_TEXT(_old) old_json\n");
+      sql.append("    FULL OUTER JOIN JSON_EACH_TEXT(ROW_TO_JSON(NEW)) new_json ON new_json.key = old_json.key\n");
+      sql.append("    WHERE new_json.value IS DISTINCT FROM old_json.value");
 
       if (table._primary$.length == 0)
-        throw new IllegalArgumentException("Cannot create UPGRADE trigger on table without primary keys");
+        throw new IllegalArgumentException("Cannot create UPGRADE trigger on table without primary key");
 
       for (final data.Column<?> primary : table._primary$) // [A]
         sql.append(" OR new_json.key = '").append(primary.name).append('\'');
 
       sql.append(";\n");
 
-      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'UPGRADE'");
+      sql.append("    PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', JSON_BUILD_OBJECT('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'UPGRADE'");
       if (hasKeyForUpdate) {
-        sql.append(", 'keyForUpdate', json_build_object(");
+        sql.append(", 'keyForUpdate', JSON_BUILD_OBJECT(");
         for (final data.Column<?> keyForUpdate : table._keyForUpdate$) // [A]
           sql.append('\'').append(keyForUpdate.name).append("',OLD.\"").append(keyForUpdate.name).append("\",");
 
@@ -247,11 +250,12 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       }
 
       sql.append(", 'old', _old, 'cur', _cur)::text);\n");
+      sql.append("  END IF;\n");
     }
     else if (action == DELETE) {
       sql.append("BEGIN\n");
-      sql.append(sessionIdTimestamp);
-      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'DELETE', 'old', row_to_json(OLD))::text);\n");
+      sql.append("  ").append(sessionIdTimestamp);
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', JSON_BUILD_OBJECT('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'DELETE', 'old', ROW_TO_JSON(OLD))::TEXT);\n");
     }
     else {
       throw new UnsupportedOperationException("Unsupported Action: " + action);
@@ -281,7 +285,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   void checkCreateTriggers(final Statement statement, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
     if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+    final int noTables = tables.length;
+    for (int i = 0; i < noTables; ++i) { // [A]
       final Action[] actionSet = actionSets[i];
       if (actionSet == null)
         continue;
@@ -299,7 +304,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     StringBuilder selectTriggers = null;
     HashSet<String> functionNames = null;
     HashSet<String> triggerNames = null;
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+    for (int i = 0; i < noTables; ++i) { // [A]
       final Action[] actionSet = actionSets[i];
       if (actionSet == null)
         continue;
@@ -309,10 +314,10 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
         final Action action = actionSet[j];
         if (action != null) {
           if (functionNameByActions == null) {
-            functionNameByActions = new String[tables.length][];
+            functionNameByActions = new String[noTables][];
             selectFunctions = new StringBuilder("SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name IN ");
             selectTriggers = new StringBuilder("SELECT trigger_name FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name IN ");
-            functionNames = new HashSet<>(tables.length * 3);
+            functionNames = new HashSet<>(noTables * 3);
             triggerNames = new HashSet<>(functionNames.size());
           }
 
@@ -367,7 +372,6 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   @Override
   void listenTriggers(final Statement statement) throws SQLException {
     if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.listenTriggers", "%?", this, statement.getConnection());
-
     statement.addBatch("LISTEN \"" + channelName + "\"");
   }
 

@@ -17,7 +17,6 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
 
 final class expression {
@@ -31,7 +30,7 @@ final class expression {
     return table != null ? table : ((Subject)b).getColumn();
   }
 
-  abstract static class Expression<T extends type.Column<V>,D extends data.Column<V>,V extends Serializable> extends Evaluable implements exp.Expression<T,D,V> {
+  abstract static class Expression<T extends type.Column<V>,D extends data.Column<V>,V> extends Evaluable implements exp.Expression<T,D,V> {
     @Override
     public D AS(final D column) {
       column.wrap(new As<>(this, column));
@@ -44,7 +43,7 @@ final class expression {
     }
   }
 
-  abstract static class Expression1<O extends operation.Operation1<? super V,?>,T extends type.Column<V>,D extends data.Column<V>,V extends Serializable> extends Expression<T,D,V> {
+  abstract static class Expression1<O extends operation.Operation1<? super V,?>,T extends type.Column<V>,D extends data.Column<V>,V> extends Expression<T,D,V> {
     final O o;
     final T a;
 
@@ -64,7 +63,7 @@ final class expression {
     }
   }
 
-  abstract static class Expression3<O extends operation.Operation3<? super V,?,?>,T extends type.Column<V>,T2 extends type.Column<?>,T3 extends type.Column<?>,D extends data.Column<V>,V extends Serializable> extends Expression<T,D,V> {
+  abstract static class Expression3<O extends operation.Operation3<? super V,?,?>,T extends type.Column<V>,T2 extends type.Column<?>,T3 extends type.Column<?>,D extends data.Column<V>,V> extends Expression<T,D,V> {
     final O o;
     final T a;
     final T2 b;
@@ -111,26 +110,6 @@ final class expression {
     @Override
     final Number evaluate(final java.util.Set<Evaluable> visited) {
       return a instanceof Evaluable ? (Number)o.evaluate((V)((Evaluable)a).evaluate(visited)) : null;
-    }
-  }
-
-  abstract static class Temporal extends data.Entity {
-    // FIXME: Rename this... or redo this weak pattern
-    final String function;
-
-    Temporal(final String function) {
-      super(false);
-      this.function = function;
-    }
-
-    @Override
-    final data.Table getTable() {
-      return null;
-    }
-
-    @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      compilation.compiler.compileTemporal(this, compilation);
     }
   }
 
