@@ -138,10 +138,6 @@
               <xs:field xpath="@name"/>
             </xs:key>
 
-            <xs:keyref name="foreignKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
-              <xs:selector xpath="ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
-              <xs:field xpath="@name"/>
-            </xs:keyref>
             <xs:keyref name="check_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
               <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
               <xs:field xpath="@column"/>

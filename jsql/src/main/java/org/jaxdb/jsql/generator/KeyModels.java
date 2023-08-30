@@ -191,7 +191,7 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
       return;
 
     out.append('\n');
-    for (final Map.Entry<String,Runnable> entry : declarations.entrySet()) {
+    for (final Map.Entry<String,Runnable> entry : declarations.entrySet()) { // [S]
       out.append(entry.getKey()).append('\n');
       entry.getValue().run();
     }
