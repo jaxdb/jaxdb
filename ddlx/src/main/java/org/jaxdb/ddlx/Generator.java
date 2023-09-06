@@ -58,11 +58,10 @@ public final class Generator {
   }
 
   private static void trapPrintUsage() {
-    final String vendors = ArrayUtil.toString(DbVendor.values(), "|");
     System.err.println("Usage: Generator <-d DEST_DIR> <-v VENDOR> <SCHEMA.ddlx>");
     System.err.println();
     System.err.println("Mandatory arguments:");
-    System.err.println("  -v <VENDOR>        One of: <" + vendors + ">");
+    System.err.println("  -v <VENDOR>        One of: <" + ArrayUtil.toString(DbVendor.values(), "|") + ">");
     System.err.println("  -d <DEST_DIR>      Specify the destination directory.");
     System.exit(1);
   }

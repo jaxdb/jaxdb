@@ -1386,14 +1386,6 @@ class TableModel {
     }
 
     out.append("  }");
-
-    // Audit
-    for (final Map.Entry<ColumnModels,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
-      for (final Relation relation : entry.getValue()) { // [S]
-        relation.keyModel.audit();
-      }
-    }
-
     return out.toString();
   }
 

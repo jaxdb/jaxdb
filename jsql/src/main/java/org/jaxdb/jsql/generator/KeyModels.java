@@ -37,6 +37,7 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
     private final String fromArgs;
     private final String toArgs;
 
+    @SuppressWarnings("unchecked")
     private final LinkedHashSet<String>[] resets = new LinkedHashSet[] {new LinkedHashSet<>(), new LinkedHashSet<>()};
 
     private KeyModel(final String singletonInstanceName, final String cacheMethodName, final String toTableRefName, final ColumnModels columns, final IndexType indexType) {
@@ -88,22 +89,8 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
     }
 
     void writeReset(final StringBuilder b, final CurOld curlOld) {
-      for (final String reset : this.resets[curlOld.ordinal()])
+      for (final String reset : resets[curlOld.ordinal()])
         b.append("\n            ").append(reset);
-    }
-
-    void audit() {
-//      if (this.declare[0] != null && !this.declareCalled[0])
-//        throw new IllegalStateException();
-
-//      if (this.declare[1] != null && !this.declareCalled[1])
-//        throw new IllegalStateException();
-
-//      if (this.reset[0] != null && !this.resetCalled[0])
-//        throw new IllegalStateException();
-
-//      if (this.reset[1] != null && !this.resetCalled[1])
-//        throw new IllegalStateException();
     }
 
     String keyArgsExternal(final HashSet<String> declared) {
@@ -144,15 +131,10 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
       if (!declared.add(cacheColumnsRef + ":" + args))
         return null;
 
-      final String key = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsRef + ", " + args + ")";
-
-//      if (isForeign)
-//        return key;
-
       final String args2 = keyClauseValues.replace("{1}.this.", "").replace("{2}", curlOld.toString());
       final String args3 = args2.replace(".get" + curlOld, "").replace("()", "_").replace(", ", "");
       final String name = "_" + ColumnModels.getInstanceNameForCache(cacheMethodName, args3) + "ON_" + toTableRefName + curlOld + "_Key$";
-      return "assertKey(" + (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, args2, curlOld) + ", " + key + ")";
+      return (addSelfRef ? "self." : "") + include(cacheColumnsRef, name, args2, curlOld);
     }
 
     @Override

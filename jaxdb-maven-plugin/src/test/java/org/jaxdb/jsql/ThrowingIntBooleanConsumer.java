@@ -20,7 +20,7 @@ import org.libj.util.function.IntBooleanConsumer;
 import org.libj.util.function.Throwing;
 
 @FunctionalInterface
-public interface ThrowingIntBooleanConsumer<E extends Throwable> extends IntBooleanConsumer {
+interface ThrowingIntBooleanConsumer<E extends Throwable> extends IntBooleanConsumer {
   @Override
   default void accept(final int v1, final boolean v2) {
     try {

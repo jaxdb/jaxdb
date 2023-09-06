@@ -154,13 +154,4 @@ public abstract class Schema {
     if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".getSession(" + sessionId + "): " + ObjectUtil.simpleIdentityString(onNotifyCallbackList));
     return onNotifyCallbackList;
   }
-
-  // FIXME: Remove this when confidence is high
-  static data.Key assertKey(final data.Key k1, final data.Key k2) {
-    if (k1.equals(k2))
-      return k1;
-
-    if (logger.isErrorEnabled()) logger.error("ASYNCDB key mismatch: " + k1 + " " + k2, new Exception());
-    return k2;
-  }
 }

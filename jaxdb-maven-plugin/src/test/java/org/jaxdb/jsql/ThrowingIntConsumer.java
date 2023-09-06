@@ -21,7 +21,7 @@ import java.util.function.IntConsumer;
 import org.libj.util.function.Throwing;
 
 @FunctionalInterface
-public interface ThrowingIntConsumer<E extends Throwable> extends IntConsumer {
+interface ThrowingIntConsumer<E extends Throwable> extends IntConsumer {
   @Override
   default void accept(final int v1) {
     try {

@@ -43,7 +43,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-public abstract class CachingTest {
+abstract class CachingTest {
   private static final int sleepCascade = 5;
 
   static final int iterations = 8;
