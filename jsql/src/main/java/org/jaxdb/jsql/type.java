@@ -25,9 +25,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
-
 public interface type {
   abstract static interface Key extends Serializable {
     Object value(int i);
