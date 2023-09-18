@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb</artifactId>
-    <version>0.5.1-SNAPSHOT</version>
+    <version>0.5.1</version>
   </parent>
   <artifactId>jaxdb-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
@@ -192,7 +192,7 @@
     <dependency>
       <groupId>org.openjax.maven</groupId>
       <artifactId>mojo</artifactId>
-      <version>0.4.3-SNAPSHOT</version>
+      <version>0.4.3</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
