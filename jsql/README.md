@@ -31,7 +31,7 @@
    <dependency>
      <groupId>org.jaxdb</groupId>
      <artifactId>jsql</artifactId>
-     <version>0.4.1</version>
+     <version>0.5.1</version>
    </dependency>
    ```
 
@@ -41,7 +41,7 @@
    <plugin>
      <groupId>org.jaxdb</groupId>
      <artifactId>jaxdb-maven-plugin</artifactId>
-     <version>0.4.1</version>
+     <version>0.5.1</version>
      <executions>
        <!-- [...] the ddlx <execution> is here -->
        <execution>
@@ -141,7 +141,7 @@
    <dependency>
      <groupId>org.openjax</groupId>
      <artifactId>dbcp</artifactId>
-     <version>1.1.0</version>
+     <version>1.2.0</version>
    </dependency>
    ```
 

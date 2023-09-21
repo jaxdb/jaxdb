@@ -29,7 +29,7 @@
    <plugin>
      <groupId>org.jaxdb</groupId>
      <artifactId>jaxdb-maven-plugin</artifactId>
-     <version>0.4.1</version>
+     <version>0.5.1</version>
      <executions>
        <execution>
          <goals>
