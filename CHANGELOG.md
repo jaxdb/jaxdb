@@ -2,7 +2,7 @@
 
 ## [v0.6.0-SNAPSHOT](https://github.com/libj/util/compare/d0f0ae913a7617b14a6be5a0cc42c28ad588eb76..HEAD)
 
-## [v0.4.2](https://github.com/jaxdb/jaxdb/compare/7218be9c6d299f66753a9a3943f4cefc433b733e..d0f0ae913a7617b14a6be5a0cc42c28ad588eb76) (2023-09-20)
+## [v0.5.1](https://github.com/jaxdb/jaxdb/compare/7218be9c6d299f66753a9a3943f4cefc433b733e..d0f0ae913a7617b14a6be5a0cc42c28ad588eb76) (2023-09-20)
 * #81 Notifier.flushQueues() IllegalStateException: index (1) > count (0)
 * #76 Support enum templates in sqlx.xsl
 * #75 Make JAX-DB entities Serializable
