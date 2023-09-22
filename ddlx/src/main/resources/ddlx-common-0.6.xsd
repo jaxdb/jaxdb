@@ -1,0 +1,1408 @@
+<!--
+  Copyright (c) 2016 JAX-DB
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  vc:minVersion="1.1"
+  elementFormDefault="qualified"
+  targetNamespace="http://www.jaxdb.org/ddlx-0.6.xsd"
+  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.6.xsd"
+  xmlns:dt="http://www.jaxdb.org/datatypes-0.6.xsd"
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://www.jaxdb.org/datatypes-0.6.xsd" schemaLocation="http://www.jaxdb.org/datatypes-0.6.xsd"/>
+
+  <xs:simpleType name="name">
+    <xs:restriction base="xs:NCName">
+      <xs:maxLength value="64"/> <!-- http://wiki.ispirer.com/sqlways/postgresql/identifiers -->
+      <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/> <!-- https://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="precision">
+    <xs:restriction base="xs:byte">
+      <xs:annotation>
+        <xs:documentation>
+          The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".
+        </xs:documentation>
+      </xs:annotation>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="assert">
+    <xs:complexContent>
+      <xs:extension base="ddlx:documented">
+        <xs:assert test="true()"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="documented">
+    <xs:sequence>
+      <xs:element name="documentation" minOccurs="0" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="named">
+    <xs:complexContent>
+      <xs:extension base="ddlx:documented">
+        <xs:attribute name="name" type="ddlx:name" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="changeRule">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="RESTRICT"/>
+      <xs:enumeration value="CASCADE"/>
+      <xs:enumeration value="SET NULL"/>
+      <xs:enumeration value="SET DEFAULT"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:attributeGroup name="foreignKey">
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="references" type="ddlx:name" use="required"/>
+    <xs:attribute name="onDelete" type="ddlx:changeRule"/>
+    <xs:attribute name="onUpdate" type="ddlx:changeRule"/>
+  </xs:attributeGroup>
+
+  <!--xs:assert test="not('deep equals of column to its foreign column') or
+    not(../@references) or not(@references) or not(@name) or (some $name in @name satisfies ../../../ddlx:column[@name=$name] and
+    (some $foreignTable in ../@references, $foreignColumn in @references, $this in ../../../ddlx:column[@name=$name], $thisTemplate in $this/@template satisfies (
+      (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn] and (some $that in root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn], $thatTemplate in $that/@template satisfies (
+        $this/@xsi:type = $that/@xsi:type and
+        string(if ($this/@length) then $this/@length else root()/ddlx:template[@name=$thisTemplate]/@length) = string(if ($that/@length) then $that/@length else root()/ddlx:template[@name=$thatTemplate]/@length) and
+        string(if ($this/@precision) then $this/@precision else root()/ddlx:template[@name=$thisTemplate]/@precision) = string(if ($that/@precision) then $that/@precision else root()/ddlx:template[@name=$thatTemplate]/@precision) and
+        string(if ($this/@scale) then $this/@scale else root()/ddlx:template[@name=$thisTemplate]/@scale) = string(if ($that/@scale) then $that/@scale else root()/ddlx:template[@name=$thatTemplate]/@scale)
+      ))) or
+      ((some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and (some $that in root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn], $thatTemplate in $that/@template satisfies (
+        $this/@xsi:type = $that/@xsi:type and
+        string(if ($this/@length) then $this/@length else root()/ddlx:template[@name=$thisTemplate]/@length) = string(if ($that/@length) then $that/@length else root()/ddlx:template[@name=$thatTemplate]/@length) and
+        string(if ($this/@precision) then $this/@precision else root()/ddlx:template[@name=$thisTemplate]/@precision) = string(if ($that/@precision) then $that/@precision else root()/ddlx:template[@name=$thatTemplate]/@precision) and
+        string(if ($this/@scale) then $this/@scale else root()/ddlx:template[@name=$thisTemplate]/@scale) = string(if ($that/@scale) then $that/@scale else root()/ddlx:template[@name=$thatTemplate]/@scale)
+      )))))
+    ))"/-->
+
+  <xs:complexType name="foreignKeyUnary">
+    <xs:attributeGroup ref="ddlx:foreignKey"/>
+    <xs:attribute name="column" type="ddlx:name" use="required"/>
+    <xs:assert test="not('[fk0] foreignKey cannot be specified on template') or ../name() != 'template'"/>
+    <xs:assert test="not('[fk2] @name and @xsi:type must match that of foreign column') or
+      not(@references) or not(@column) or not(../@xsi:type) or
+      (some $foreignTable in @references, $foreignColumn in @column, $type in ../@xsi:type satisfies
+        (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+        (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+      )"/>
+  </xs:complexType>
+
+  <xs:complexType name="foreignKeyComposite">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="column">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:named">
+              <xs:attribute name="references" type="ddlx:name" use="required"/>
+              <xs:assert test="not('[fk3] @name and @xsi:type must match that of foreign column') or
+                not(../@references) or not(@references) or not(@name) or
+                (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $type in ../../../ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $type in root()/ddlx:table[@name=$ext1]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $ext2 in root()/ddlx:table[@name=$ext1]/@extends, $type in root()/ddlx:table[@name=$ext2]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $ext2 in root()/ddlx:table[@name=$ext1]/@extends, $ext3 in root()/ddlx:table[@name=$ext2]/@extends, $type in root()/ddlx:table[@name=$ext3]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $ext2 in root()/ddlx:table[@name=$ext1]/@extends, $ext3 in root()/ddlx:table[@name=$ext2]/@extends, $ext4 in root()/ddlx:table[@name=$ext3]/@extends, $type in root()/ddlx:table[@name=$ext4]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $ext2 in root()/ddlx:table[@name=$ext1]/@extends, $ext3 in root()/ddlx:table[@name=$ext2]/@extends, $ext4 in root()/ddlx:table[@name=$ext3]/@extends, $ext5 in root()/ddlx:table[@name=$ext4]/@extends, $type in root()/ddlx:table[@name=$ext5]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $ext2 in root()/ddlx:table[@name=$ext1]/@extends, $ext3 in root()/ddlx:table[@name=$ext2]/@extends, $ext4 in root()/ddlx:table[@name=$ext3]/@extends, $ext5 in root()/ddlx:table[@name=$ext4]/@extends, $ext6 in root()/ddlx:table[@name=$ext5]/@extends, $type in root()/ddlx:table[@name=$ext6]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $ext2 in root()/ddlx:table[@name=$ext1]/@extends, $ext3 in root()/ddlx:table[@name=$ext2]/@extends, $ext4 in root()/ddlx:table[@name=$ext3]/@extends, $ext5 in root()/ddlx:table[@name=$ext4]/@extends, $ext6 in root()/ddlx:table[@name=$ext5]/@extends, $ext7 in root()/ddlx:table[@name=$ext6]/@extends, $type in root()/ddlx:table[@name=$ext7]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $ext2 in root()/ddlx:table[@name=$ext1]/@extends, $ext3 in root()/ddlx:table[@name=$ext2]/@extends, $ext4 in root()/ddlx:table[@name=$ext3]/@extends, $ext5 in root()/ddlx:table[@name=$ext4]/@extends, $ext6 in root()/ddlx:table[@name=$ext5]/@extends, $ext7 in root()/ddlx:table[@name=$ext6]/@extends, $ext8 in root()/ddlx:table[@name=$ext7]/@extends, $type in root()/ddlx:table[@name=$ext8]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                )) or (some $name in @name, $foreignTable in ../@references, $foreignColumn in @references, $ext1 in ../../../@extends, $ext2 in root()/ddlx:table[@name=$ext1]/@extends, $ext3 in root()/ddlx:table[@name=$ext2]/@extends, $ext4 in root()/ddlx:table[@name=$ext3]/@extends, $ext5 in root()/ddlx:table[@name=$ext4]/@extends, $ext6 in root()/ddlx:table[@name=$ext5]/@extends, $ext7 in root()/ddlx:table[@name=$ext6]/@extends, $ext8 in root()/ddlx:table[@name=$ext7]/@extends, $ext9 in root()/ddlx:table[@name=$ext8]/@extends, $type in root()/ddlx:table[@name=$ext9]/ddlx:column[@name=$name]/@xsi:type satisfies (
+                  (root()/ddlx:table[@name=$foreignTable]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$foreignColumn and @xsi:type=$type])))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))) or
+                  (some $extends in root()/ddlx:table[@name=$foreignTable]/@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies (root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn] and root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$foreignColumn and @xsi:type=$type]))))))))))
+                ))"/>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attributeGroup ref="ddlx:foreignKey"/>
+    <xs:assert test="not('[fk1] foreignKey must reference non-abstract table') or
+      not(@references) or
+      (some $references in @references satisfies root()/ddlx:table[@name=$references and (not(@abstract) or @abstract=boolean(false))])"/>
+  </xs:complexType>
+
+  <xs:simpleType name="indexType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="BTREE"/>
+      <xs:enumeration value="HASH"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:attributeGroup name="index">
+    <xs:attribute name="unique" type="xs:boolean" default="false"/>
+    <xs:attribute name="type" type="ddlx:indexType" default="BTREE"/>
+  </xs:attributeGroup>
+
+  <xs:simpleType name="equalityOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="eq"/>
+      <xs:enumeration value="ne"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="rangeOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="eq"/>
+      <xs:enumeration value="ne"/>
+      <xs:enumeration value="gt"/>
+      <xs:enumeration value="gte"/>
+      <xs:enumeration value="lt"/>
+      <xs:enumeration value="lte"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="check" abstract="true">
+    <xs:attribute name="column" type="ddlx:name" use="required"/>
+    <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+    <xs:attribute name="value" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="checkReference">
+    <xs:complexContent>
+      <xs:extension base="ddlx:check">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="and" type="ddlx:checkReference"/>
+            <xs:element name="or" type="ddlx:checkReference"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="reference" type="ddlx:name"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="columns">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="column">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:named">
+              <xs:assert test="not('[c0] column must belong to existing table') or
+                (some $name in @name satisfies ../../../ddlx:column[@name=$name]) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name])) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name]))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name])))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name]))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name])))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name]))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name])))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name]))))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name]))))))))))
+                "/>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="constraints">
+    <xs:sequence>
+      <xs:element name="primaryKey" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence maxOccurs="unbounded">
+            <xs:element name="column">
+              <xs:complexType>
+                <xs:complexContent>
+                  <xs:extension base="ddlx:named">
+                    <xs:assert test="not('[pk0] column must belong to existing table, and must be NOT NULL') or (
+                      (some $name in @name satisfies (../../../ddlx:column[@name=$name] and (some $column in ../../../ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))))) or
+                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))))))
+                    )"/>
+                    <xs:assert test="not('[pk1] primaryKey is specified in parent table') or
+                      not(../../../@extends) or (some $extends in ../../../@extends satisfies not(root()/ddlx:table[@name=$extends]/ddlx:constraints/ddlx:primaryKey) and (
+                        not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/ddlx:constraints/ddlx:primaryKey) and (
+                          not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/ddlx:constraints/ddlx:primaryKey) and (
+                            not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/ddlx:constraints/ddlx:primaryKey) and (
+                              not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/ddlx:constraints/ddlx:primaryKey) and (
+                                not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/ddlx:constraints/ddlx:primaryKey) and (
+                                  not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/ddlx:constraints/ddlx:primaryKey) and (
+                                    not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/ddlx:constraints/ddlx:primaryKey) and (
+                                      not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/ddlx:constraints/ddlx:primaryKey))
+                                    ))
+                                  ))
+                                ))
+                              ))
+                            ))
+                          ))
+                        ))
+                      ))"/>
+                    <xs:assert test="not('[kfu2] Column name exists in keyForUpdate') or (some $name in @name satisfies
+                      not(../../../*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                        not(../../../@extends) or (some $extends in ../../../@extends satisfies not(root()/ddlx:table[@name=$extends]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                          not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                            not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                              not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                  not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                    not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                      not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                        not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]))
+                                      ))
+                                    ))
+                                  ))
+                                ))
+                              ))
+                            ))
+                          ))
+                        ))
+                      ))"/>
+                  </xs:extension>
+                </xs:complexContent>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:attribute name="using" type="ddlx:indexType"/>
+        </xs:complexType>
+        <xs:unique name="primaryKey_column_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
+      <xs:element name="foreignKey" type="ddlx:foreignKeyComposite" minOccurs="0" maxOccurs="unbounded">
+        <xs:unique name="foreignKey_column_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:unique name="foreignKey_reference_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
+          <xs:field xpath="@references"/>
+        </xs:unique>
+      </xs:element>
+      <xs:element name="unique" type="ddlx:columns" minOccurs="0" maxOccurs="unbounded">
+        <xs:unique name="unique_column_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
+      <xs:element name="check" minOccurs="0" maxOccurs="unbounded" type="ddlx:checkReference"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="triggers">
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="trigger">
+        <xs:complexType mixed="true">
+          <xs:attribute name="time" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:token">
+                <xs:enumeration value="BEFORE"/>
+                <xs:enumeration value="AFTER"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="actions" use="required">
+            <xs:simpleType>
+              <xs:list>
+                <xs:simpleType>
+                  <xs:restriction base="xs:token">
+                    <xs:enumeration value="INSERT"/>
+                    <xs:enumeration value="UPDATE"/>
+                    <xs:enumeration value="DELETE"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:list>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="indexes">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="index">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:columns">
+              <xs:attributeGroup ref="ddlx:index"/>
+              <xs:assert test="not('[i0] Duplicate index') or count(ddlx:column) != 1 or (some $name in ddlx:column/@name satisfies not(exists(../../ddlx:column[@name=$name]/ddlx:index)))"/>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+        <xs:unique name="index_column_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
+    </xs:sequence>
+    <xs:assert test="not('[i1] Duplicate index') or (some $name in ../@name satisfies
+      count(ddlx:index) lt 2 or (some $c1 in count(distinct-values(ddlx:index[position()=1]/ddlx:column/@name)), $c2 in count(distinct-values(ddlx:index[position()=2]/ddlx:column/@name)) satisfies $c1 != $c2 or (count(distinct-values(ddlx:index[position()=(1,2)]/ddlx:column/@name)) != $c1 and (
+        count(ddlx:index) lt 3 or (some $c3 in count(distinct-values(ddlx:index[position()=3]/ddlx:column/@name)) satisfies $c2 != $c3 or (count(distinct-values(ddlx:index[position()=(1,3)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,3)]/ddlx:column/@name)) != $c2 and (
+          count(ddlx:index) lt 4 or (some $c4 in count(distinct-values(ddlx:index[position()=4]/ddlx:column/@name)) satisfies $c3 != $c4 or (count(distinct-values(ddlx:index[position()=(1,4)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,4)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,4)]/ddlx:column/@name)) != $c3 and (
+            count(ddlx:index) lt 5 or (some $c5 in count(distinct-values(ddlx:index[position()=5]/ddlx:column/@name)) satisfies $c4 != $c5 or (count(distinct-values(ddlx:index[position()=(1,5)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,5)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,5)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,5)]/ddlx:column/@name)) != $c4 and (
+              count(ddlx:index) lt 6 or (some $c6 in count(distinct-values(ddlx:index[position()=6]/ddlx:column/@name)) satisfies $c5 != $c6 or (count(distinct-values(ddlx:index[position()=(1,6)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,6)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,6)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,6)]/ddlx:column/@name)) != $c4 and count(distinct-values(ddlx:index[position()=(5,6)]/ddlx:column/@name)) != $c5 and (
+                count(ddlx:index) lt 7 or (some $c7 in count(distinct-values(ddlx:index[position()=7]/ddlx:column/@name)) satisfies $c6 != $c7 or (count(distinct-values(ddlx:index[position()=(1,7)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,7)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,7)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,7)]/ddlx:column/@name)) != $c4 and count(distinct-values(ddlx:index[position()=(5,7)]/ddlx:column/@name)) != $c5 and count(distinct-values(ddlx:index[position()=(6,7)]/ddlx:column/@name)) != $c6 and (
+                  count(ddlx:index) lt 8 or (some $c8 in count(distinct-values(ddlx:index[position()=8]/ddlx:column/@name)) satisfies $c7 != $c8 or (count(distinct-values(ddlx:index[position()=(1,8)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,8)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,8)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,8)]/ddlx:column/@name)) != $c4 and count(distinct-values(ddlx:index[position()=(5,8)]/ddlx:column/@name)) != $c5 and count(distinct-values(ddlx:index[position()=(6,8)]/ddlx:column/@name)) != $c6 and count(distinct-values(ddlx:index[position()=(7,8)]/ddlx:column/@name)) != $c7 and (
+                    count(ddlx:index) lt 9 or (some $c9 in count(distinct-values(ddlx:index[position()=9]/ddlx:column/@name)) satisfies $c8 != $c9 or (count(distinct-values(ddlx:index[position()=(1,9)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,9)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,9)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,9)]/ddlx:column/@name)) != $c4 and count(distinct-values(ddlx:index[position()=(5,9)]/ddlx:column/@name)) != $c5 and count(distinct-values(ddlx:index[position()=(6,9)]/ddlx:column/@name)) != $c6 and count(distinct-values(ddlx:index[position()=(7,9)]/ddlx:column/@name)) != $c7 and count(distinct-values(ddlx:index[position()=(8,9)]/ddlx:column/@name)) != $c8)
+                  )))
+                )))
+              )))
+            )))
+          )))
+        )))
+      )))
+    ))"/>
+  </xs:complexType>
+
+  <xs:complexType name="checkColumn"/>
+
+  <xs:complexType name="integer" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute name="generateOnInsert">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="AUTO_INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- Start: TINYINT -->
+
+  <xs:attributeGroup name="tinyint">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="ddlx:precision">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="3"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="min" type="dt:tinyint"/>
+    <xs:attribute name="max" type="dt:tinyint"/>
+    <xs:attribute name="default" type="dt:tinyint"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="tinyintCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:tinyintCheck"/>
+          <xs:element name="or" type="ddlx:tinyintCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:tinyint" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="tinyintAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check" type="ddlx:tinyintCheck"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:tinyint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: TINYINT -->
+  <!-- Start: SMALLINT -->
+
+  <xs:attributeGroup name="smallint">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="ddlx:precision">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="5"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="min" type="dt:smallint"/>
+    <xs:attribute name="max" type="dt:smallint"/>
+    <xs:attribute name="default" type="dt:smallint"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="smallintCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:smallintCheck"/>
+          <xs:element name="or" type="ddlx:smallintCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:smallint" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="smallintAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check" type="ddlx:smallintCheck"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:smallint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: SMALLINT -->
+  <!-- Start: INT -->
+
+  <xs:attributeGroup name="int">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="ddlx:precision">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="10"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="min" type="dt:int"/>
+    <xs:attribute name="max" type="dt:int"/>
+    <xs:attribute name="default" type="dt:int"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="intCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:intCheck"/>
+          <xs:element name="or" type="ddlx:intCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:int" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="intAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check" type="ddlx:intCheck"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:int"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: INT -->
+  <!-- Start: BIGINT -->
+
+  <xs:attributeGroup name="bigint">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="ddlx:precision">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="19"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="min" type="dt:bigint"/>
+    <xs:attribute name="max" type="dt:bigint"/>
+    <xs:attribute name="default" type="dt:bigint"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="bigintCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:bigintCheck"/>
+          <xs:element name="or" type="ddlx:bigintCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:bigint" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="bigintAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check" type="ddlx:bigintCheck"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:bigint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: BIGINT -->
+  <!-- Start: FLOAT -->
+
+  <xs:attributeGroup name="float">
+    <xs:attribute name="min" type="dt:float"/>
+    <xs:attribute name="max" type="dt:float"/>
+    <xs:attribute name="default" type="dt:float"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="floatCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:floatCheck"/>
+          <xs:element name="or" type="ddlx:floatCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:float" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="float">
+    <xs:sequence>
+      <xs:element name="check" type="ddlx:floatCheck"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="floatAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:float" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: FLOAT -->
+  <!-- Start: DOUBLE -->
+
+  <xs:attributeGroup name="double">
+    <xs:attribute name="min" type="dt:double"/>
+    <xs:attribute name="max" type="dt:double"/>
+    <xs:attribute name="default" type="dt:double"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="doubleCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:doubleCheck"/>
+          <xs:element name="or" type="ddlx:doubleCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:double" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="double">
+    <xs:sequence>
+      <xs:element name="check" type="ddlx:doubleCheck"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="doubleAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:double" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:double"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: DOUBLE -->
+  <!-- Start: DECIMAL -->
+
+  <xs:attributeGroup name="decimal">
+    <xs:attribute name="precision">
+      <xs:annotation>
+        <xs:documentation>
+          The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:int">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="147455"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="scale">
+      <xs:annotation>
+        <xs:documentation>
+          The number of digits to the right of the decimal point. Default: 0.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:int">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="16383"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="min" type="dt:decimal"/>
+    <xs:attribute name="max" type="dt:decimal"/>
+    <xs:attribute name="default" type="dt:decimal"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="decimalCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:decimalCheck"/>
+          <xs:element name="or" type="ddlx:decimalCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:decimal" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="decimal">
+    <xs:sequence>
+      <xs:element name="check" type="ddlx:decimalCheck"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="decimalAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:decimal" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:decimal"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: DECIMAL -->
+  <!-- Start: BINARY -->
+
+  <xs:attributeGroup name="binary">
+    <xs:attribute name="varying" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>
+          Default: false
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="length">
+      <xs:simpleType>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="2000000000"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="dt:binary"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="binaryAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:binary"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: BINARY -->
+  <!-- Start: BLOB -->
+
+  <xs:attributeGroup name="blob">
+    <xs:attribute name="length">
+      <xs:simpleType>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="blobAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:blob"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: BLOB -->
+  <!-- Start: CHAR -->
+
+  <xs:attributeGroup name="char">
+    <xs:attribute name="varying" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>
+          Default: false
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="length">
+      <xs:simpleType>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="dt:char"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="charCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:charCheck"/>
+          <xs:element name="or" type="ddlx:charCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+        <xs:attribute name="value" type="dt:char" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="char">
+    <xs:sequence>
+      <xs:element name="check" type="ddlx:charCheck"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="charAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:char" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:char"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: CHAR -->
+  <!-- Start CLOB -->
+
+  <xs:attributeGroup name="clob">
+    <xs:attribute name="length">
+      <xs:simpleType>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="clobCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:clobCheck"/>
+          <xs:element name="or" type="ddlx:clobCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+        <xs:attribute name="value" type="dt:clob" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="clob">
+    <xs:sequence>
+      <xs:element name="check" type="ddlx:clobCheck"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="clobAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:clob" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:clob"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: CLOB -->
+  <!-- Start: ENUM -->
+
+  <xs:attributeGroup name="enum">
+    <xs:attribute name="values">
+      <xs:simpleType>
+        <!-- Is there a way to ensure no duplicates occur? -->
+        <xs:restriction base="xs:string">
+          <xs:pattern value="(\S+(\\ )? )*\S+"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default">
+      <xs:simpleType>
+        <xs:restriction base="xs:normalizedString">
+          <xs:pattern value="([^ ]|(\\ ))+"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="enumAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:enum"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: ENUM -->
+  <!-- Start: DATE -->
+
+  <xs:attributeGroup name="date">
+    <xs:attribute name="default" type="dt:date"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="dateAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:date"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: DATE -->
+  <!-- Start: TMIME -->
+
+  <xs:attributeGroup name="time">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="9"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="dt:time"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="timeAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:time"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: TIME -->
+  <!-- Start: DATETIME -->
+
+  <xs:attributeGroup name="datetime">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="9"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="dt:datetime"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="datetimeAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:datetime"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: DATETIME -->
+  <!-- Start: BOOLEAN -->
+
+  <xs:attributeGroup name="boolean">
+    <xs:attribute name="default" type="dt:boolean"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="booleanAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: BOOLEAN -->
+
+  <xs:complexType name="column" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:named">
+        <xs:sequence minOccurs="0">
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
+          <xs:element name="index" minOccurs="0">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:documented">
+                  <xs:attributeGroup ref="ddlx:index"/>
+                  <xs:assert test="not('index cannot be specified on template') or ../name()!='template'"/>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="template" type="ddlx:name"/>
+        <xs:attribute name="null" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation>
+              Default: true
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+
+        <xs:assert test="not('[i1] Column name exists in parent table') or
+          not(../@extends) or (some $name in @name, $extends in ../@extends satisfies not(root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name]) and (
+            not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name]) and (
+              not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name]) and (
+                not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name]) and (
+                  not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name]) and (
+                    not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name]) and (
+                      not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name]) and (
+                        not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name]) and (
+                          not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name]))
+                        ))
+                      ))
+                    ))
+                  ))
+                ))
+              ))
+            ))
+          ))"/>
+
+        <xs:assert test="not('[0] @name and @xsi:type must match on column and on template') or not(@template) or not(@xsi:type) or (some $name in @template, $type in @xsi:type satisfies ../../ddlx:template[@name=$name and @xsi:type=$type])"/>
+        <xs:assert test="not('[1] @null cannot be specified both on column and on template') or not(@template) or not(@null) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @null]))"/>
+        <xs:assert test="not('[2] @default cannot be specified both on column and on template') or not(@template) or not(@default) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @default]))"/>
+        <xs:assert test="not('[3] @varying cannot be specified both on column and on template') or not(@template) or not(@varying) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @varying]))"/>
+        <xs:assert test="not('[4] @length cannot be specified both on column and on template') or not(@template) or not(@length) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @length]))"/>
+        <xs:assert test="not('[5] @precision cannot be specified both on column and on template') or not(@template) or not(@precision) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @precision]))"/>
+        <xs:assert test="not('[6] @scale cannot be specified both on column and on template') or not(@template) or not(@scale) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @scale]))"/>
+        <xs:assert test="not('[7] @min cannot be specified both on column and on template') or not(@template) or not(@min) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @min]))"/>
+        <xs:assert test="not('[8] @max cannot be specified both on column and on template') or not(@template) or not(@max) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @max]))"/>
+
+        <xs:assert test="not('[9] @generateOnUpdate cannot be specified both on column and on template') or
+          not(@template) or
+          not(@*[local-name()='generateOnUpdate']) or
+          (some $name in @template satisfies
+            not(../../ddlx:template[@name=$name]) or
+            not(exists(../../ddlx:template[@name=$name and @*[local-name()='generateOnUpdate']])))"/>
+
+        <xs:assert test="not('[10] @generateOnInsert cannot be specified both on column and on template') or
+          not(@template) or
+          not(@*[local-name()='generateOnInsert']) or
+          (some $name in @template satisfies
+            not(../../ddlx:template[@name=$name]) or
+            not(../../ddlx:template[@name=$name and @*[local-name()='generateOnInsert']]))"/>
+
+        <xs:assert test="not('[11] @generateOnInsert cannot be specified twice') or 1 >= count(@*[local-name()='generateOnInsert'])"/>
+
+        <xs:assert test="not('[12] @length must be specified') or
+          @length or
+          local-name() != 'column' or
+          (local-name-from-QName(@xsi:type) != 'binary' and local-name-from-QName(@xsi:type) != 'blob' and local-name-from-QName(@xsi:type) != 'char' and local-name-from-QName(@xsi:type) != 'clob') or
+          (some $name in @template, $template in ../../ddlx:template[@name=$name] satisfies ($template/@length))"/>
+
+        <xs:assert test="not('[23] @precision must be specified') or
+          @precision or
+          local-name() != 'column' or
+          (local-name-from-QName(@xsi:type) != 'tinyint' and local-name-from-QName(@xsi:type) != 'smallint' and local-name-from-QName(@xsi:type) != 'int' and local-name-from-QName(@xsi:type) != 'bigint' and local-name-from-QName(@xsi:type) != 'decimal') or
+          (some $name in @template, $template in ../../ddlx:template[@name=$name] satisfies ($template/@precision))"/>
+
+        <xs:assert test="not('[14] @min precision must satisfy @precision and @scale') or
+          @template or
+          not(@min) or (some $min in replace(string(number(@min)), '^-?0*', '') satisfies (sum(@precision, 1000) - sum(@scale) >= string-length(replace($min, '\.', '')) - string-length(substring-after($min, '.'))))"/>
+
+        <xs:assert test="not('[15] @min precision must satisfy @precision and @scale') or
+          not(@template) or
+          not(@min) or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $min in replace(string(number(@min)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies
+              ((if (@precision) then @precision else sum($template/@precision, 1000)) - sum(@scale) - sum($template/@scale) >= string-length(replace($min, '\.', '')) - string-length(substring-after($min, '.'))))"/>
+
+        <xs:assert test="not('[16] @min scale must satisfy @precision and @scale') or
+          @template or
+          not(@min) or
+          not(contains(string(@min), '.')) or
+          (some $min in replace(string(number(@min)), '^-?0*', '') satisfies (sum(@scale, if (@precision) then 0 else 1000) >= string-length(substring-after($min, '.'))))"/>
+
+        <xs:assert test="not('[17] @min scale must satisfy @precision and @scale') or
+          not(@template) or
+          not(@min) or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $min in replace(string(number(@min)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $zero in if (@precision or $template/@precision) then 0 else 1000 satisfies
+              (sum(@scale, $zero) + sum($template/@scale, $zero) >= string-length(substring-after($min, '.'))))"/>
+
+        <xs:assert test="not('[18] @max precision must satisfy @precision and @scale') or
+          @template or
+          not(@max) or
+          (some $max in replace(string(number(@max)), '^-?0*', '') satisfies (sum(@precision, 1000) - sum(@scale) >= string-length(replace($max, '\.', '')) - string-length(substring-after($max, '.'))))"/>
+
+        <xs:assert test="not('[19] @max precision must satisfy @precision and @scale') or
+          not(@template) or
+          not(@max) or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $max in replace(string(number(@max)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies
+            ((if (@precision) then @precision else sum($template/@precision, 1000)) - sum(@scale) - sum($template/@scale) >= string-length(replace($max, '\.', '')) - string-length(substring-after($max, '.'))))"/>
+
+        <xs:assert test="not('[20] @max scale must satisfy @precision and @scale') or
+          @template or
+          not(@max) or
+          (some $max in replace(string(number(@max)), '^-?0*', '') satisfies (sum(@scale, if (@precision) then 0 else 1000) >= string-length(substring-after($max, '.'))))"/>
+
+        <xs:assert test="not('[21] @max scale must satisfy @precision and @scale') or
+          not(@template) or
+          not(@max) or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some $max in replace(string(number(@max)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies (
+              sum(@scale, if (@precision) then 0 else 1000) - sum($template/@scale) >= string-length(substring-after($max, '.'))))"/>
+
+        <xs:assert test="not('[22] @default precision must satisfy @precision and @scale') or
+          @template or
+          not(@default) or
+          local-name-from-QName(@xsi:type) = 'time' or
+          local-name-from-QName(@xsi:type) = 'datetime' or
+          (some$default in replace(string(number(@default)), '^-?0*', '') satisfies (sum(@precision, 1000) - sum(@scale) >= string-length(replace($default, '\.', '')) - string-length(substring-after($default, '.'))))"/>
+
+        <xs:assert test="not('[23] @default precision must satisfy @precision and @scale') or
+          not(@template) or
+          not(@default) or
+          local-name-from-QName(@xsi:type) = 'time' or
+          local-name-from-QName(@xsi:type) = 'datetime' or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $default in replace(string(number(@default)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies (
+              (if (@precision) then @precision else sum($template/@precision, 1000)) - sum(@scale) - sum($template/@scale) >= string-length(replace($default, '\.', '')) - string-length(substring-after($default, '.'))))"/>
+
+        <xs:assert test="not('[24] @default scale must satisfy @precision and @scale') or
+          @template or
+          not(@default) or
+          (some $default in replace(string(number(@default)), '^0*|-', '') satisfies (sum(@scale, if (@precision) then 0 else 1000) >= string-length(substring-after($default, '.'))))"/>
+
+        <xs:assert test="not('[25] @default scale must satisfy @precision and @scale') or
+          not(@template) or
+          not(@default) or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $default in replace(string(number(@default)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies (
+              sum(@scale, if (@precision) then 0 else 1000) - sum($template/@scale) >= string-length(substring-after($default, '.'))))"/>
+
+        <xs:assert test="not('[26] @default must satisfy @length') or
+          local-name-from-QName(@xsi:type) != 'binary' or
+          not(@default) or
+          not(@length) or
+          @length * 2 >= string-length(string(@default))"/>
+
+        <xs:assert test="not('[27] @default must satisfy @length') or
+          not(@template) or
+          local-name() != 'column' or
+          local-name-from-QName(@xsi:type) != 'binary' or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $length in if (@length) then @length else $template/@length,
+            $default in if (@default) then string(@default) else string($template/@default) satisfies
+              $length * 2 >= string-length($default))"/>
+
+        <xs:assert test="not('[28] @default must satisfy @length') or
+          local-name-from-QName(@xsi:type) != 'char' or
+          not(@default) or
+          not(@length) or
+          @length >= string-length(string(@default))"/>
+
+        <xs:assert test="not('[29] @default must satisfy @length') or
+          not(@template) or
+          local-name() != 'column' or
+          local-name-from-QName(@xsi:type) != 'char' or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $length in if (@length) then @length else $template/@length,
+            $default in if (@default) then string(@default) else string($template/@default) satisfies
+              $length >= string-length($default))"/>
+
+        <xs:assert test="not('[30] @scale must be less than or equal to @precision') or
+          local-name-from-QName(@xsi:type) != 'decimal' or
+          not(@scale) or
+          not(@precision) or
+          @precision >= @scale"/>
+
+        <xs:assert test="not('[31] @scale must be less than or equal to @precision') or
+          not(@template) or
+          local-name() != 'column' or
+          local-name-from-QName(@xsi:type) != 'decimal' or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $precision in if (@precision) then @precision else $template/@precision,
+            $scale in if (@scale) then @scale else sum($template/@scale) satisfies
+              $precision >= $scale)"/>
+
+        <xs:assert test="not('[32] @min must be less or equal to @max') or not(@min) or not(@max) or @max >= @min"/>
+
+        <xs:assert test="not('[33] @min must be less or equal to @max') or
+          not(@template) or
+          local-name() != 'column' or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $min in if (@min) then number(@min) else if ($template/@min) then number($template/@min) else 'NaN',
+            $max in if (@max) then number(@max) else if ($template/@max) then number($template/@max) else 'NaN' satisfies
+              $min = 'NaN' or $max = 'NaN' or $max >= $min)"/>
+
+        <xs:assert test="not('[34] @default must be less or equal to @max') or not(@default) or not(@max) or @max >= @default"/>
+
+        <xs:assert test="not('[35] @default must be less or equal to @max') or
+          not(@template) or
+          local-name() != 'column' or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $default in if (@default) then number(@default) else if ($template/@default) then number($template/@default) else 'NaN',
+            $max in if (@max) then number(@max) else if ($template/@max) then number($template/@max) else 'NaN' satisfies
+              $default = 'NaN' or $max = 'NaN' or $max >= $default)"/>
+
+        <xs:assert test="not('[36] @min must be less or equal to @default') or not(@min) or not(@default) or @default >= @min"/>
+
+        <xs:assert test="not('[37] @min must be less or equal to @default') or
+          not(@template) or
+          local-name() != 'column' or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $min in if (@min) then number(@min) else if ($template/@min) then number($template/@min) else 'NaN',
+            $default in if (@default) then number(@default) else if ($template/@default) then number($template/@default) else 'NaN' satisfies
+              $min = 'NaN' or $default = 'NaN' or $default >= $min)"/>
+
+        <xs:assert test="not('[38] @default must exist in @values') or local-name-from-QName(@xsi:type) != 'enum' or not(@default) or not(@values) or @values = @default or starts-with(@values, concat(@default, ' ')) or contains(@values, concat(' ', @default, ' ')) or ends-with(@values, concat(' ', @default))"/>
+
+        <xs:assert test="not('[39] @default must exist in @values') or
+          not(@template) or
+          local-name() != 'column' or
+          local-name-from-QName(@xsi:type) != 'enum' or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $values in if (@values) then @values else $template/@values,
+            $default in if (@default) then @default else string($template/@default) satisfies
+              not($default) or not($values) or $values = $default or starts-with($values, concat($default, ' ')) or contains($values, concat(' ', $default, ' ')) or ends-with($values, concat(' ', $default)))"/>
+
+        <xs:assert test="not('[40] @default precision must satisfy @precision') or (local-name-from-QName(@xsi:type) != 'datetime' and local-name-from-QName(@xsi:type) != 'time') or not(@default) or not(@precision) or @precision >= string-length(substring-after(string(@default), '.'))"/>
+
+        <xs:assert test="not('[41] @default precision must satisfy @precision') or
+          not(@template) or
+          local-name() != 'column' or
+          (local-name-from-QName(@xsi:type) != 'datetime' and local-name-from-QName(@xsi:type) != 'time') or
+          (some $name in @template satisfies not(../../ddlx:template[@name=$name])) or
+          (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $precision in if (@precision) then @precision else sum($template/@precision),
+            $default in if (@default) then string(@default) else if ($template/@default) then string($template/@default) else '' satisfies
+              $precision >= string-length(substring-after($default, '.')))"/>
+
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="table">
+    <xs:complexContent>
+      <xs:extension base="ddlx:named">
+        <xs:sequence>
+          <xs:element name="column" type="ddlx:column" minOccurs="0" maxOccurs="unbounded">
+            <xs:unique name="cannot_specify_both_value_and_null_on_check_column">
+              <xs:selector xpath=".//ddlx:check|.//and|.//or"/>
+              <xs:field xpath="@value|@null"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_value_and_reference_on_check_column">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@value|@reference"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_reference_and_null_on_check_column">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@reference|@null"/>
+            </xs:unique>
+            <xs:key name="must_specify_either_value_or_reference_or_null_on_check_column">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@value|@reference|@null"/>
+            </xs:key>
+          </xs:element>
+          <xs:element name="constraints" type="ddlx:constraints" minOccurs="0">
+            <xs:unique name="cannot_specify_both_value_and_null_on_check_constraint">
+              <xs:selector xpath=".//ddlx:check|.//and|.//or"/>
+              <xs:field xpath="@value|@null"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_value_and_reference_on_check_constraint">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@value|@reference"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_reference_and_null_on_check_constraint">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@reference|@null"/>
+            </xs:unique>
+            <xs:key name="must_specify_either_value_or_reference_or_null_on_check_constraint">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@value|@reference|@null"/>
+            </xs:key>
+          </xs:element>
+          <xs:element name="triggers" type="ddlx:triggers" minOccurs="0"/>
+          <xs:element name="indexes" type="ddlx:indexes" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="abstract" type="xs:boolean" default="false"/>
+        <xs:attribute name="extends" type="ddlx:name"/>
+        <xs:attribute name="skip" type="xs:boolean" default="false"/>
+        
+        <xs:assert test="not('[t1] name of table must not equal name of template enum') or
+          not(some $name in @name satisfies exists(root()/ddlx:template[@name=$name and local-name-from-QName(@xsi:type)='enum']))"/>
+        <xs:assert test="not('[t2] table must extend abstract table') or
+          not(@extends) or
+          (some $extends in @extends satisfies exists(root()/ddlx:table[@name=$extends and @abstract=true()]))"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

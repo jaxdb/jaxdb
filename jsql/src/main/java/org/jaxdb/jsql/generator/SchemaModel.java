@@ -33,9 +33,9 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.type;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema.Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Schema.Table;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Identifiers;
 

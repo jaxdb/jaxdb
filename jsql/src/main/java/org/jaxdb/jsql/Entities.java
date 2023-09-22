@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql;
 
-import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
+import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Database;
 
 public final class Entities {
   public static data.Table[] toEntities(final $Database database, final String className) {

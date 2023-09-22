@@ -1,0 +1,183 @@
+<!--
+  Copyright (c) 2016 JAX-DB
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  vc:minVersion="1.1"
+  elementFormDefault="qualified"
+  targetNamespace="http://www.jaxdb.org/ddlx-0.6.xsd"
+  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.6.xsd"
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.6.xsd"
+  xmlns:jsql="http://www.jaxdb.org/jsql-0.6.xsd"
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://www.jaxdb.org/jsql-0.6.xsd" schemaLocation="jsql-0.6.xsd"/>
+  <xs:include schemaLocation="http://www.jaxdb.org/ddlx-common-0.6.xsd"/>
+
+  <xs:complexType name="tinyint">
+    <xs:complexContent>
+      <xs:extension base="jsql:tinyint"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="smallint">
+    <xs:complexContent>
+      <xs:extension base="jsql:smallint"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="int">
+    <xs:complexContent>
+      <xs:extension base="jsql:int"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="bigint">
+    <xs:complexContent>
+      <xs:extension base="jsql:bigint"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="float">
+    <xs:complexContent>
+      <xs:extension base="jsql:float"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="double">
+    <xs:complexContent>
+      <xs:extension base="jsql:double"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="decimal">
+    <xs:complexContent>
+      <xs:extension base="jsql:decimal"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="binary">
+    <xs:complexContent>
+      <xs:extension base="jsql:binary"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="blob">
+    <xs:complexContent>
+      <xs:extension base="jsql:blob"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="char">
+    <xs:complexContent>
+      <xs:extension base="jsql:char"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="clob">
+    <xs:complexContent>
+      <xs:extension base="jsql:clob"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="enum">
+    <xs:complexContent>
+      <xs:extension base="jsql:enum"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="date">
+    <xs:complexContent>
+      <xs:extension base="jsql:date"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="time">
+    <xs:complexContent>
+      <xs:extension base="jsql:time"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="datetime">
+    <xs:complexContent>
+      <xs:extension base="jsql:datetime"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="boolean">
+    <xs:complexContent>
+      <xs:extension base="jsql:boolean"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="schema">
+    <xs:complexContent>
+      <xs:extension base="ddlx:assert">
+        <xs:sequence>
+          <xs:element name="template" type="ddlx:column" minOccurs="0" maxOccurs="unbounded">
+            <xs:unique name="cannot_specify_template_attribute_on_template_element">
+              <xs:selector xpath="."/>
+              <xs:field xpath="@name|@template"/>
+            </xs:unique>
+          </xs:element>
+          <xs:element name="table" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:table">
+                  <xs:sequence minOccurs="0">
+                    <xs:element ref="jsql:keyForUpdate"/>
+                  </xs:sequence>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+            <xs:key name="keyColumnName">
+              <xs:selector xpath="ddlx:column"/>
+              <xs:field xpath="@name"/>
+            </xs:key>
+            <xs:keyref name="check_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@column"/>
+            </xs:keyref>
+            <xs:keyref name="check_reference_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@reference"/>
+            </xs:keyref>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="schema" type="ddlx:schema">
+    <xs:key name="keyTemplateName">
+      <xs:selector xpath="ddlx:template"/>
+      <xs:field xpath="@name"/>
+    </xs:key>
+    <xs:key name="keyTableName">
+      <xs:selector xpath="ddlx:table"/>
+      <xs:field xpath="@name"/>
+    </xs:key>
+    <xs:keyref name="keyrefExtendsTableName" refer="ddlx:keyTableName">
+      <xs:selector xpath="./ddlx:table"/>
+      <xs:field xpath="@extends"/>
+    </xs:keyref>
+    <xs:keyref name="references_attribute_must_match_name_of_table_element" refer="ddlx:keyTableName">
+      <xs:selector xpath="ddlx:table/ddlx:column/ddlx:foreignKey|ddlx:table/ddlx:constraints/ddlx:foreignKey"/>
+      <xs:field xpath="@references"/>
+    </xs:keyref>
+  </xs:element>
+
+</xs:schema>

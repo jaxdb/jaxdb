@@ -26,7 +26,7 @@ import org.jaxdb.jsql.OneToOneHashMap;
 import org.jaxdb.jsql.OneToOneHashTreeMap;
 import org.jaxdb.jsql.OneToOneTreeMap;
 import org.jaxdb.jsql.data;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 
 @SuppressWarnings("rawtypes")
 abstract class IndexType {

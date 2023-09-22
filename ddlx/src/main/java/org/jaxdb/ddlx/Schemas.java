@@ -28,7 +28,7 @@ import java.util.LinkedHashSet;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.vendor.DbVendor;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.libj.util.ArrayUtil;
 import org.xml.sax.SAXException;
 

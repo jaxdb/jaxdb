@@ -25,10 +25,10 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.libj.net.MemoryURLStreamHandler;
 import org.xml.sax.SAXException;

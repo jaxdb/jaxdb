@@ -26,9 +26,9 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.Map;
 
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Schema;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Binding;
 import org.libj.lang.Hexadecimal;
 import org.libj.lang.Strings;

@@ -15,9 +15,9 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns="http://www.jaxdb.org/ddlx-0.6.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.5.xsd http://www.jaxdb.org/ddlx.xsd">
+  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.6.xsd http://www.jaxdb.org/ddlx.xsd">
   <documentation>Schema to test the SQL types</documentation>
 
   <table name="abstractType" abstract="true">

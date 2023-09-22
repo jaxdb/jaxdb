@@ -25,10 +25,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jaxdb.sqlx.SQL;
-import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Binary;
-import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Blob;
-import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
-import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Row;
+import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Binary;
+import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Blob;
+import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Database;
+import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Row;
 import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
 import org.libj.lang.Classes;

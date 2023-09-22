@@ -15,11 +15,11 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <xsl:stylesheet
-  xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns="http://www.jaxdb.org/ddlx-0.6.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.6.xsd"
   exclude-result-prefixes="ddlx"
   version="2.0">
 

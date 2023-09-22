@@ -1,9 +1,9 @@
 <schema
-  xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
-  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.5.xsd"
-  xmlns:jsql="http://www.jaxdb.org/jsql-0.5.xsd"
+  xmlns="http://www.jaxdb.org/ddlx-0.6.xsd"
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.6.xsd"
+  xmlns:jsql="http://www.jaxdb.org/jsql-0.6.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.jaxdb.org/jsql-0.5.xsd http://www.jaxdb.org/jsql.xsd">
+  xsi:schemaLocation="http://www.jaxdb.org/jsql-0.6.xsd http://www.jaxdb.org/jsql.xsd">
 
   <template name="created_on" xsi:type="datetime"/>
   <template name="modified_on" xsi:type="datetime"/>

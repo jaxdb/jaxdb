@@ -22,8 +22,8 @@ import java.util.Arrays;
 
 import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.data;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
 import org.libj.lang.Classes;
 import org.libj.lang.Identifiers;
 

@@ -22,11 +22,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.jaxdb.vendor.DbVendor;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.BindingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

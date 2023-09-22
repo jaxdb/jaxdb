@@ -25,7 +25,7 @@ import java.time.LocalTime;
 
 import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.data;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Documented;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Documented;
 import org.libj.lang.Strings;
 import org.libj.math.BigInt;
 import org.openjax.xml.datatype.HexBinary;

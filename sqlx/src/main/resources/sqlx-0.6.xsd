@@ -1,0 +1,239 @@
+<!--
+  Copyright (c) 2016 JAX-DB
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  vc:minVersion="1.1"
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified"
+  targetNamespace="http://www.jaxdb.org/sqlx-0.6.xsd"
+  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.6.xsd"
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.6.xsd"
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://www.jaxdb.org/ddlx-0.6.xsd" schemaLocation="sqlx-ddlx-0.6.xsd"/>
+  <xs:include schemaLocation="sqlx-common-0.6.xsd"/>
+
+  <xs:complexType name="tinyint" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:tinyintAbstract">
+        <xs:attributeGroup ref="sqlx:tinyint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="smallint" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:smallintAbstract">
+        <xs:attributeGroup ref="sqlx:smallint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="int" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:intAbstract">
+        <xs:attributeGroup ref="sqlx:int"/>
+        <xs:assert test="not('[1][sqlx] @precision must satisfy @generateOnInsert') or
+          not(@precision) or
+          not(@*[local-name() = 'generateOnInsert']) or
+          @*[local-name() = 'generateOnInsert'] = 'AUTO_INCREMENT' or
+          (@*[local-name() = 'generateOnInsert'] = 'EPOCH_MINUTES' and @precision >= 8) or
+          (@*[local-name() = 'generateOnInsert'] = 'EPOCH_SECONDS' and @precision >= 10)"/>
+        <xs:assert test="not('[2][sqlx] @precision must satisfy @generateOnInsert') or
+          not(@template) or
+          local-name() != 'column' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $precision in if (@precision) then @precision else $template/@precision satisfies
+              (not(@*[local-name() = 'generateOnInsert']) and not($template/@*[local-name() = 'generateOnInsert'])) or
+              (if (@*[local-name() = 'generateOnInsert']) then @*[local-name() = 'generateOnInsert'] else $template/@*[local-name() = 'generateOnInsert']) = 'AUTO_INCREMENT' or
+              ((if (@*[local-name() = 'generateOnInsert']) then @*[local-name() = 'generateOnInsert'] else $template/@*[local-name() = 'generateOnInsert']) = 'EPOCH_MINUTES' and $precision >= 8) or
+              ((if (@*[local-name() = 'generateOnInsert']) then @*[local-name() = 'generateOnInsert'] else $template/@*[local-name() = 'generateOnInsert']) = 'EPOCH_SECONDS' and $precision >= 10))"/>
+        <xs:assert test="not('[3][sqlx] @precision must satisfy @generateOnUpdate') or
+          not(@precision) or
+          not(@*[local-name() = 'generateOnUpdate']) or
+          @*[local-name() = 'generateOnUpdate'] = 'INCREMENT' or
+          (@*[local-name() = 'generateOnUpdate'] = 'EPOCH_MINUTES' and @precision >= 8) or
+          (@*[local-name() = 'generateOnUpdate'] = 'EPOCH_SECONDS' and @precision >= 10)"/>
+        <xs:assert test="not('[4][sqlx] @precision must satisfy @generateOnUpdate') or
+          not(@template) or
+          local-name() != 'column' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $precision in if (@precision) then @precision else $template/@precision satisfies
+              (not(@*[local-name() = 'generateOnUpdate']) and not($template/@*[local-name() = 'generateOnUpdate'])) or
+              (if (@*[local-name() = 'generateOnUpdate']) then @*[local-name() = 'generateOnUpdate'] else $template/@*[local-name() = 'generateOnUpdate']) = 'INCREMENT' or
+              ((if (@*[local-name() = 'generateOnUpdate']) then @*[local-name() = 'generateOnUpdate'] else $template/@*[local-name() = 'generateOnUpdate']) = 'EPOCH_MINUTES' and $precision >= 8) or
+              ((if (@*[local-name() = 'generateOnUpdate']) then @*[local-name() = 'generateOnUpdate'] else $template/@*[local-name() = 'generateOnUpdate']) = 'EPOCH_SECONDS' and $precision >= 10))"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="bigint" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:bigintAbstract">
+        <xs:attributeGroup ref="sqlx:bigint"/>
+        <xs:assert test="not('[5][sqlx] @precision must satisfy @generateOnInsert') or
+          not(@precision) or
+          not(@*[local-name() = 'generateOnInsert']) or
+          @*[local-name() = 'generateOnInsert'] = 'AUTO_INCREMENT' or
+          (@*[local-name() = 'generateOnInsert'] = 'EPOCH_MINUTES' and @precision >= 8) or
+          (@*[local-name() = 'generateOnInsert'] = 'EPOCH_SECONDS' and @precision >= 10) or
+          (@*[local-name() = 'generateOnInsert'] = 'EPOCH_MILLIS' and @precision >= 13)"/>
+        <xs:assert test="not('[6][sqlx] @precision must satisfy @generateOnInsert') or
+          not(@template) or
+          local-name() != 'column' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $precision in if (@precision) then @precision else $template/@precision satisfies
+              (not(@*[local-name() = 'generateOnInsert']) and not($template/@*[local-name() = 'generateOnInsert'])) or
+              (if (@*[local-name() = 'generateOnInsert']) then @*[local-name() = 'generateOnInsert'] else $template/@*[local-name() = 'generateOnInsert']) = 'AUTO_INCREMENT' or
+              ((if (@*[local-name() = 'generateOnInsert']) then @*[local-name() = 'generateOnInsert'] else $template/@*[local-name() = 'generateOnInsert']) = 'EPOCH_MINUTES' and $precision >= 8) or
+              ((if (@*[local-name() = 'generateOnInsert']) then @*[local-name() = 'generateOnInsert'] else $template/@*[local-name() = 'generateOnInsert']) = 'EPOCH_SECONDS' and $precision >= 10) or
+              ((if (@*[local-name() = 'generateOnInsert']) then @*[local-name() = 'generateOnInsert'] else $template/@*[local-name() = 'generateOnInsert']) = 'EPOCH_MILLIS' and $precision >= 13))"/>
+        <xs:assert test="not('[7][sqlx] @precision must satisfy @generateOnUpdate') or
+          not(@precision) or
+          not(@*[local-name() = 'generateOnUpdate']) or
+          @*[local-name() = 'generateOnUpdate'] = 'INCREMENT' or
+          (@*[local-name() = 'generateOnUpdate'] = 'EPOCH_MINUTES' and @precision >= 8) or
+          (@*[local-name() = 'generateOnUpdate'] = 'EPOCH_SECONDS' and @precision >= 10) or
+          (@*[local-name() = 'generateOnUpdate'] = 'EPOCH_MILLIS' and @precision >= 13)"/>
+        <xs:assert test="not('[8][sqlx] @precision must satisfy @generateOnUpdate') or
+          not(@template) or
+          local-name() != 'column' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $precision in if (@precision) then @precision else $template/@precision satisfies
+              (not(@*[local-name() = 'generateOnUpdate']) and not($template/@*[local-name() = 'generateOnUpdate'])) or
+              (if (@*[local-name() = 'generateOnUpdate']) then @*[local-name() = 'generateOnUpdate'] else $template/@*[local-name() = 'generateOnUpdate']) = 'INCREMENT' or
+              ((if (@*[local-name() = 'generateOnUpdate']) then @*[local-name() = 'generateOnUpdate'] else $template/@*[local-name() = 'generateOnUpdate']) = 'EPOCH_MINUTES' and $precision >= 8) or
+              ((if (@*[local-name() = 'generateOnUpdate']) then @*[local-name() = 'generateOnUpdate'] else $template/@*[local-name() = 'generateOnUpdate']) = 'EPOCH_SECONDS' and $precision >= 10) or
+              ((if (@*[local-name() = 'generateOnUpdate']) then @*[local-name() = 'generateOnUpdate'] else $template/@*[local-name() = 'generateOnUpdate']) = 'EPOCH_MILLIS' and $precision >= 13))"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="float" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:floatAbstract"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="double" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:doubleAbstract"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="decimal" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:decimalAbstract"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="binary" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:binaryAbstract"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="blob" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:blobAbstract"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="char" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:charAbstract">
+        <xs:attributeGroup ref="sqlx:char"/>
+        <xs:assert test="not('[9][sqlx] @length must satisfy @generateOnInsert') or
+          not(@length) or
+          not(@*[local-name() = 'generateOnInsert']) or
+          (@*[local-name() = 'generateOnInsert'] = 'UUID' and @length >= 32)"/>
+        <xs:assert test="not('[10][sqlx] @length must satisfy @generateOnInsert') or
+          not(@template) or
+          local-name() != 'column' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $length in if (@length) then @length else $template/@length satisfies
+              (not(@*[local-name() = 'generateOnInsert']) and not($template/@*[local-name() = 'generateOnInsert'])) or
+              ((if (@*[local-name() = 'generateOnInsert']) then @*[local-name() = 'generateOnInsert'] else $template/@*[local-name() = 'generateOnInsert']) = 'UUID') and $length >= 32)"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="clob" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:clobAbstract"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="enum" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:enumAbstract"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="date" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:dateAbstract">
+        <xs:attributeGroup ref="sqlx:date"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="time" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:timeAbstract">
+        <xs:attributeGroup ref="sqlx:time"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="datetime" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:datetimeAbstract">
+        <xs:attributeGroup ref="sqlx:datetime"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="boolean" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:booleanAbstract"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="table">
+    <xs:complexContent>
+      <xs:extension base="ddlx:table"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="row" abstract="true"/>
+
+  <xs:complexType name="database" abstract="true">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="sqlx:database"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="http://www.w3.org/XML/1998/namespace" processContents="skip"/>
+  </xs:complexType>
+
+  <xs:element name="database" type="sqlx:database"/>
+
+</xs:schema>

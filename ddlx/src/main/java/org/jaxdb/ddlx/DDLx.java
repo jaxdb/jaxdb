@@ -25,16 +25,16 @@ import java.util.Comparator;
 
 import javax.xml.transform.TransformerException;
 
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyComposite;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes.Index;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table.Extends$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Columns;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyComposite;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Indexes;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Indexes.Index;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table.Extends$;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.jaxsb.runtime.Bindings;
 import org.libj.util.CollectionUtil;

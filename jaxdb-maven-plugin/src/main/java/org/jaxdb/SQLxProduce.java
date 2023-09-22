@@ -16,7 +16,7 @@
 
 package org.jaxdb;
 
-import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
+import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Database;
 
 abstract class SQLxProduce extends Produce<JaxDbMojo<?>.Configuration,SQLxProduce,$Database> {
   private static int index;

@@ -31,12 +31,12 @@ import java.util.Set;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.vendor.DbVendor;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$EnumAbstract;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$EnumAbstract;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;

@@ -39,7 +39,7 @@ import org.jaxdb.jsql.generator.Generator;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.sqlx.SQLxTest;
 import org.jaxdb.vendor.DbVendor;
-import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
+import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;

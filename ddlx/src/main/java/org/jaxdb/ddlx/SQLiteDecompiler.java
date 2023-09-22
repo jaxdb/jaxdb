@@ -7,25 +7,25 @@ import java.util.Map;
 import java.util.RandomAccess;
 
 import org.jaxdb.vendor.DbVendor;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Boolean;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Char;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CheckReference;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Clob;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Date;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Datetime;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Double;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Smallint;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Time;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Binary;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Blob;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Boolean;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Char;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$CheckReference;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Clob;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Date;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Datetime;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Double;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Float;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Tinyint;
 
 class SQLiteDecompiler extends Decompiler {
   @Override

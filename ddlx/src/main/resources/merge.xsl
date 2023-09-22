@@ -18,7 +18,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.6.xsd"
   xmlns:function="http://www.jaxdb.org/merge.xsl"
   exclude-result-prefixes="ddlx function xs"
   version="2.0">

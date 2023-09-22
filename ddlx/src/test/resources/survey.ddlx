@@ -15,9 +15,9 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns="http://www.jaxdb.org/ddlx-0.6.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.5.xsd ../../../src/main/resources/ddlx-0.5.xsd">
+  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.6.xsd ../../../src/main/resources/ddlx-0.6.xsd">
 
   <template name="id" xsi:type="smallint" precision="5" min="0" null="false" generateOnInsert="AUTO_INCREMENT">
     <check operator="lt" value="7">

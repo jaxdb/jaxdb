@@ -22,12 +22,12 @@ import java.sql.Statement;
 import java.util.LinkedHashSet;
 
 import org.jaxdb.vendor.DbVendor;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ChangeRule;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
