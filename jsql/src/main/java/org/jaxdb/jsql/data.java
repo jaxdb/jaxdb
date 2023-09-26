@@ -5627,9 +5627,23 @@ public final class data {
       return depth == 0 ? null : new String[depth];
     }
 
+    /**
+     * Returns a JSON string representation of <u>all</u> {@link Column}s in this {@link Table}.
+     *
+     * @return A JSON string representation of <u>all</u> {@link Column}s in this {@link Table}.
+     */
     @Override
     public final String toString() {
       return toString(false);
+    }
+
+    /**
+     * Returns a JSON string representation of <u>only the cued</u> {@link Column}s in this {@link Table}.
+     *
+     * @return A JSON string representation of <u>only the cued</u> {@link Column}s in this {@link Table}.
+     */
+    public final String toStringCued() {
+      return toString(true);
     }
 
     protected final String toString(final boolean wasCuedOnly) {
