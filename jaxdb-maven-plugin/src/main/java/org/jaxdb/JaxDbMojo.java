@@ -34,6 +34,7 @@ import org.openjax.maven.mojo.GeneratorMojo;
 
 abstract class JaxDbMojo<P extends Produce<?,?,?>> extends GeneratorMojo {
   static final Pattern EXTENSION_PATTERN = Pattern.compile("\\.\\S+$");
+
   class Configuration extends GeneratorMojo.Configuration {
     private final LinkedHashSet<URL> schemas;
     private final P[] produce;
@@ -57,11 +58,11 @@ abstract class JaxDbMojo<P extends Produce<?,?,?>> extends GeneratorMojo {
     }
   }
 
-  @Parameter(property="produce", required=true)
+  @Parameter(property = "produce", required = true)
   private String produce;
 
   @FilterParameter(FilterType.URL)
-  @Parameter(property="schemas", required=true)
+  @Parameter(property = "schemas", required = true)
   private List<String> schemas;
 
   @Override

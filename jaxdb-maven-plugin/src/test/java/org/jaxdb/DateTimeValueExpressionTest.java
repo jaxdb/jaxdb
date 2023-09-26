@@ -49,7 +49,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class DateTimeValueExpressionTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends DateTimeValueExpressionTest {
   }
@@ -76,7 +76,6 @@ public abstract class DateTimeValueExpressionTest {
     final Condition<?> notNull = AND(IS.NOT.NULL(p.datetimeType), IS.NOT.NULL(p.dateType), IS.NOT.NULL(p.timeType));
     try (
       final RowIterator<type.Entity> rows =
-
         SELECT(
           p,
           ADD(p.datetimeType, interval),
@@ -84,12 +83,11 @@ public abstract class DateTimeValueExpressionTest {
           ADD(p.dateType, interval),
           SUB(p.dateType, interval),
           ADD(p.timeType, interval),
-          SUB(p.timeType, interval)).
-        FROM(p).
-        WHERE(condition != null ? AND(condition, notNull) : notNull).
-        LIMIT(1)
+          SUB(p.timeType, interval))
+          .FROM(p)
+          .WHERE(condition != null ? AND(condition, notNull) : notNull)
+          .LIMIT(1)
           .execute(transaction);
-
     ) {
       assertTrue(rows.nextRow());
       p = (Types.Type)rows.nextEntity();
@@ -159,100 +157,100 @@ public abstract class DateTimeValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testMicrosDate(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.MICROS), true);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   @SchemaTestRunner.Unsupported({Derby.class, SQLite.class, PostgreSQL.class})
   public void testMicrosTime(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.MICROS), false);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testMillisDate(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.MILLIS), true);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   @SchemaTestRunner.Unsupported({Derby.class, SQLite.class})
   public void testMillisTime(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.MILLIS), false);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testSeconds(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.SECONDS));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testMinutes(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.MINUTES));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testHours(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.HOURS));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testDays(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.DAYS));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testWeeks(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInterval(types, transaction, new Interval(2, Unit.WEEKS));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testMonths(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(12, Unit.MONTHS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testQuarters(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(4, Unit.QUARTERS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testYears(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(2, Unit.YEARS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testDecades(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(2, Unit.DECADES), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testCenturies(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type p = types.Type$;
     testInterval(transaction, new Interval(2, Unit.CENTURIES), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   @SchemaTestRunner.Unsupported(PostgreSQL.class)
   public void testMillenia(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type p = types.Type$;
@@ -260,16 +258,16 @@ public abstract class DateTimeValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testInWhere(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(1, rows.nextEntity().getAsLong());
       assertFalse(rows.nextRow());

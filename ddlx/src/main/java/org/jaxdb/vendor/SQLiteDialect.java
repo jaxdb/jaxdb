@@ -200,7 +200,8 @@ public class SQLiteDialect extends Dialect {
     return b.append(varying ? "VARCHAR(" : "CHARACTER(").append(length).append(')');
   }
 
-  // QLite does not impose any length restrictions (other than the large global SQLITE_MAX_LENGTH limit) on the length of strings, BLOBs or numeric values.
+  // QLite does not impose any length restrictions (other than the large global SQLITE_MAX_LENGTH limit) on the length of strings,
+  // BLOBs or numeric values.
   @Override
   Integer charMaxLength() {
     return null;

@@ -48,7 +48,7 @@ public abstract class ClassicModelsTest extends SQLxTest {
   }
 
   @RunWith(DBTestRunner.class)
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends ClassicModelsTest {
   }

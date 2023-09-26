@@ -44,7 +44,7 @@ import org.junit.runner.RunWith;
 
 public abstract class NumericValueExpressionTest {
   @RunWith(SchemaTestRunner.class)
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends NumericValueExpressionTest {
   }
@@ -57,30 +57,29 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
     final data.BIGINT b = new data.BIGINT();
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(
-        COUNT(p),
-        ADD(COUNT(p), COUNT(p)).AS(b),
-        ADD(COUNT(p), 5),
-        SUB(COUNT(p), COUNT(p)),
-        SUB(COUNT(p), 5),
-        MUL(COUNT(p), COUNT(p)),
-        MUL(COUNT(p), 2),
-        DIV(COUNT(p), COUNT(p)),
-        DIV(COUNT(p), 2)).
-      FROM(p).
-      WHERE(OR(
-        LT(ADD(p.msrp, p.price), 20),
-        GT(SUB(p.msrp, p.quantityInStock), 10),
-        EQ(MUL(p.msrp, ADD(p.msrp, p.price)), 40),
-        EQ(DIV(p.msrp, SUB(p.msrp, p.quantityInStock)), 7)))
-          .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(
+          COUNT(p),
+          ADD(COUNT(p), COUNT(p)).AS(b),
+          ADD(COUNT(p), 5),
+          SUB(COUNT(p), COUNT(p)),
+          SUB(COUNT(p), 5),
+          MUL(COUNT(p), COUNT(p)),
+          MUL(COUNT(p), 2),
+          DIV(COUNT(p), COUNT(p)),
+          DIV(COUNT(p), 2)).FROM(p)
+          .WHERE(OR(
+            LT(ADD(p.msrp, p.price), 20),
+            GT(SUB(p.msrp, p.quantityInStock), 10),
+            EQ(MUL(p.msrp, ADD(p.msrp, p.price)), 40),
+            EQ(DIV(p.msrp, SUB(p.msrp, p.quantityInStock)), 7)))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       do {
         final long count = rows.nextEntity().getAsLong();
@@ -99,22 +98,21 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testAdd(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(0,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        LTE(t.tinyintType, 0),
-        LTE(t.smallintType, 0),
-        LTE(t.intType, 0),
-        LTE(t.bigintType, 0),
-        LTE(t.floatType, 0),
-        LTE(t.doubleType, 0),
-        LTE(t.decimalType, 0)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          LTE(t.tinyintType, 0),
+          LTE(t.smallintType, 0),
+          LTE(t.intType, 0),
+          LTE(t.bigintType, 0),
+          LTE(t.floatType, 0),
+          LTE(t.doubleType, 0),
+          LTE(t.decimalType, 0)))
+        .execute(transaction));
 
     final Types.Type clone = t.clone();
 
@@ -141,22 +139,21 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testSubtract(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(0,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.tinyintType, 0),
-        GTE(t.smallintType, 0),
-        GTE(t.intType, 0),
-        GTE(t.bigintType, 0),
-        GTE(t.floatType, 0),
-        GTE(t.doubleType, 0),
-        GTE(t.decimalType, 0)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.tinyintType, 0),
+          GTE(t.smallintType, 0),
+          GTE(t.intType, 0),
+          GTE(t.bigintType, 0),
+          GTE(t.floatType, 0),
+          GTE(t.doubleType, 0),
+          GTE(t.decimalType, 0)))
+        .execute(transaction));
 
     final Types.Type clone = t.clone();
 
@@ -183,22 +180,21 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testMultiply(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(0,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.tinyintType, -10), LTE(t.tinyintType, 10),
-        GTE(t.smallintType, -100), LTE(t.smallintType, 100),
-        GTE(t.intType, -1000), LTE(t.intType, 1000),
-        GTE(t.bigintType, -10000), LTE(t.bigintType, 10000),
-        IS.NOT.NULL(t.floatType),
-        IS.NOT.NULL(t.doubleType),
-        GTE(t.decimalType, -100000), LTE(t.decimalType, 100000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.tinyintType, -10), LTE(t.tinyintType, 10),
+          GTE(t.smallintType, -100), LTE(t.smallintType, 100),
+          GTE(t.intType, -1000), LTE(t.intType, 1000),
+          GTE(t.bigintType, -10000), LTE(t.bigintType, 10000),
+          IS.NOT.NULL(t.floatType),
+          IS.NOT.NULL(t.doubleType),
+          GTE(t.decimalType, -100000), LTE(t.decimalType, 100000)))
+        .execute(transaction));
 
     final Types.Type clone = t.clone();
 
@@ -225,22 +221,21 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testDivide(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(0,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        NE(t.tinyintType, 0),
-        NE(t.smallintType, 0),
-        NE(t.intType, 0),
-        NE(t.bigintType, 0),
-        NE(t.floatType, 0),
-        NE(t.doubleType, 0),
-        NE(t.decimalType, 0)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          NE(t.tinyintType, 0),
+          NE(t.smallintType, 0),
+          NE(t.intType, 0),
+          NE(t.bigintType, 0),
+          NE(t.floatType, 0),
+          NE(t.doubleType, 0),
+          NE(t.decimalType, 0)))
+        .execute(transaction));
 
     final Types.Type clone = t.clone();
 
@@ -267,15 +262,15 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testUpdateVersion(final World world, final Transaction transaction) throws IOException, SQLException {
     World.City c = world.City$;
-    try (final RowIterator<World.City> rows =
-
-      SELECT(c).
-      FROM(c)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<World.City> rows =
+        SELECT(c)
+          .FROM(c)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       c = rows.nextEntity();
 

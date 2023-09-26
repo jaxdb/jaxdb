@@ -111,7 +111,13 @@ class KeyModels extends LinkedHashSet<KeyModels.KeyModel> {
     }
 
     private String include(final String fieldName, final String name, final String args, final CurOld curOld) {
-      final String declare = "    private " + data.Key.class.getCanonicalName() + " " + name + ";\n\n    " + data.Key.class.getCanonicalName() + " " + name + "() {\n      return " + name + " == null ? " + name + " = " + data.Key.class.getCanonicalName() + ".with(" + fieldName + ", " + args + ") : " + name + ";\n    }\n";
+      final String declare =
+        "    private " + data.Key.class.getCanonicalName() + " " + name + ";" +
+          "\n\n    " + data.Key.class.getCanonicalName() + " " + name + "() {" +
+          "\n      final " + data.Key.class.getCanonicalName() + " key = " + name + ";" +
+          "\n      return key == null ? " + name + " = " + data.Key.class.getCanonicalName() + ".with(" + fieldName + ", " + args + ") : key;" +
+          "\n    }\n";
+
       if (curOld == null) { // Means that resetting the key is not supported (i.e. it is a MutableKey)
         declarations.put(declare, () -> {});
       }

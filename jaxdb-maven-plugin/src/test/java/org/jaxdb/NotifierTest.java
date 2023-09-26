@@ -58,14 +58,14 @@ import org.xml.sax.SAXException;
 @RunWith(SchemaTestRunner.class)
 @Config(sync = true, deferLog = false, failFast = true)
 public abstract class NotifierTest {
-//  @DB(Derby.class)
-//  @DB(SQLite.class)
-//  public static class IntegrationTest extends NotifierTest {
-//  }
+  // @DB(Derby.class)
+  // @DB(SQLite.class)
+  // public static class IntegrationTest extends NotifierTest {
+  // }
 
-//  @DB(MySQL.class)
+  // @DB(MySQL.class)
   @DB(PostgreSQL.class)
-//  @DB(Oracle.class)
+  // @DB(Oracle.class)
   public static class RegressionTest extends NotifierTest {
   }
 
@@ -136,7 +136,7 @@ public abstract class NotifierTest {
       System.err.println("[PG] " + calledFrom + "(): " + this + " INSERT: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.INSERT, row);
       return null;
-//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onInsert(sessionId, timestamp, row);
+      // return vendor == null ? null : (T)vendorToTableCache.get(vendor).onInsert(sessionId, timestamp, row);
     }
 
     @Override
@@ -144,7 +144,7 @@ public abstract class NotifierTest {
       System.err.println("[PG] " + calledFrom + "(): " + this + " UPDATE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(keyForUpdate != null ? Action.UPGRADE : Action.UPDATE, row);
       return null;
-//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onUpdate(sessionId, timestamp, row, keyForUpdate);
+      // return vendor == null ? null : (T)vendorToTableCache.get(vendor).onUpdate(sessionId, timestamp, row, keyForUpdate);
     }
 
     @Override
@@ -152,7 +152,7 @@ public abstract class NotifierTest {
       System.err.println("[PG] " + calledFrom + "(): " + this + " DELETE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.DELETE, row);
       return null;
-//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onDelete(sessionId, timestamp, row);
+      // return vendor == null ? null : (T)vendorToTableCache.get(vendor).onDelete(sessionId, timestamp, row);
     }
   }
 
@@ -196,8 +196,7 @@ public abstract class NotifierTest {
       final int value = r.nextInt();
       pre.values().forEach(c -> ((Types.Type)c).intType.set(value));
 
-      UPDATE(t).
-      SET(t.intType, value)
+      UPDATE(t).SET(t.intType, value)
         .execute(connector);
 
       Thread.sleep(sleep);
@@ -373,8 +372,8 @@ public abstract class NotifierTest {
 
     final Types.Type t = types.new Type();
 
-    DELETE(t).
-    WHERE(BETWEEN(t.id, id, id + count))
+    DELETE(t)
+      .WHERE(BETWEEN(t.id, id, id + count))
       .execute(connector);
 
     Thread.sleep(sleep);
@@ -440,8 +439,8 @@ public abstract class NotifierTest {
     final Connector connector = types.getConnector();
     final Types.Type t = types.Type$;
 
-    DELETE(t).
-    WHERE(BETWEEN(t.id, id, id + 200))
+    DELETE(t)
+      .WHERE(BETWEEN(t.id, id, id + 200))
       .execute(connector);
   }
 }

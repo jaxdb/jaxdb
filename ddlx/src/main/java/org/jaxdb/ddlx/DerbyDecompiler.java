@@ -72,7 +72,7 @@ final class DerbyDecompiler extends Decompiler {
     final $Column column;
     if ("BIGINT".equals(typeName)) {
       final $Bigint type = newColumn($Bigint.class);
-//      type.setPrecision$(new $Bigint.Precision$((byte)size));
+      // type.setPrecision$(new $Bigint.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
         type.setDefault$(new $Bigint.Default$(Long.valueOf(getDefault(_default))));
 
@@ -126,7 +126,7 @@ final class DerbyDecompiler extends Decompiler {
     }
     else if ("TIMESTAMP".equals(typeName)) {
       final $Datetime type = newColumn($Datetime.class);
-//      type.setPrecision$(new $Datetime.Precision$((byte)size));
+      // type.setPrecision$(new $Datetime.Precision$((byte)size));
       if (_default != null)
         type.setDefault$(new $Datetime.Default$(_default.substring(1, _default.length() - 1)));
 
@@ -149,13 +149,13 @@ final class DerbyDecompiler extends Decompiler {
 
       column = type;
     }
-//    else if ("ENUM".equals(typeName)) {
-//      final $Enum type = newColumn($Enum.class);
-//      if (_default != null)
-//        type.setDefault$(new $Enum.Default$(_default));
-//
-//      column = type;
-//    }
+    // else if ("ENUM".equals(typeName)) {
+    // final $Enum type = newColumn($Enum.class);
+    // if (_default != null)
+    // type.setDefault$(new $Enum.Default$(_default));
+    //
+    // column = type;
+    // }
     else if ("FLOAT".equals(typeName)) {
       final $Float type = newColumn($Float.class);
       if (_default != null)
@@ -193,17 +193,17 @@ final class DerbyDecompiler extends Decompiler {
 
       column = type;
     }
-//    else if ("TINYINT".equals(typeName)) {
-//      final $Tinyint type = newColumn($Tinyint.class);
-//      type.setPrecision$(new $Tinyint.Precision$((byte)size));
-//      if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-//        type.setDefault$(new $Tinyint.setDefault$(new BigInteger(getDefault(_default))));
-//
-//      if (autoIncrement != null && autoIncrement)
-//        type.GenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
-//
-//      column = type;
-//    }
+    // else if ("TINYINT".equals(typeName)) {
+    // final $Tinyint type = newColumn($Tinyint.class);
+    // type.setPrecision$(new $Tinyint.Precision$((byte)size));
+    // if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
+    // type.setDefault$(new $Tinyint.setDefault$(new BigInteger(getDefault(_default))));
+    //
+    // if (autoIncrement != null && autoIncrement)
+    // type.GenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
+    //
+    // column = type;
+    // }
     else {
       throw new UnsupportedOperationException("Unsupported column type: " + typeName);
     }
@@ -215,13 +215,13 @@ final class DerbyDecompiler extends Decompiler {
     return column;
   }
 
-  private static final String tablesSql = new StringBuilder()
-    .append("SELECT s.schemaname, t.tablename, c.columnnumber, c.columnname ")
-    .append("FROM sys.syscolumns c ")
-    .append("JOIN sys.systables t ON t.tableid = c.referenceid ")
-    .append("JOIN sys.sysschemas s ON t.schemaid = s.schemaid ")
-    .append("WHERE s.schemaname = CURRENT SCHEMA ")
-    .append("ORDER BY s.schemaname, t.tablename, c.columnnumber").toString();
+  private static final String tablesSql =
+    "SELECT s.schemaname, t.tablename, c.columnnumber, c.columnname " +
+      "FROM sys.syscolumns c " +
+      "JOIN sys.systables t ON t.tableid = c.referenceid " +
+      "JOIN sys.sysschemas s ON t.schemaid = s.schemaid " +
+      "WHERE s.schemaname = CURRENT SCHEMA " +
+      "ORDER BY s.schemaname, t.tablename, c.columnnumber";
 
   @SuppressWarnings("null")
   private static Map<String,List<String>> getTables(final Connection connection) throws SQLException {
@@ -244,50 +244,51 @@ final class DerbyDecompiler extends Decompiler {
     return tableNameToColumns;
   }
 
-//  private static final String tablesSql = new StringBuilder()
-//    .append("SELECT s.schemaname, t.tablename, c.columnnumber, c.columnname, CAST(c.columndatatype AS VARCHAR(255)) ")
-//    .append("FROM sys.syscolumns c ")
-//    .append("JOIN sys.systables t ON t.tableid = c.referenceid ")
-//    .append("JOIN sys.sysschemas s ON s.schemaid = t.schemaid ")
-//    .append("WHERE t.tabletype = 'T' ")
-//    .append("ORDER BY s.schemaname, t.tablename, c.columnnumber ").toString();
-//
-//  Map<String,List<$Column>> getColumns(final Connection connection) throws SQLException {
-//    final Map<String,List<$Column>> nameToColumn = new HashMap<String,List<$Column>>();
-//    final PreparedStatement statement = connection.prepareStatement(tablesSql);
-//    final ResultSet rows = statement.executeQuery();
-//    final List<AbstractMap.SimpleEntry<Integer,$Column>> columns = new ArrayList<AbstractMap.SimpleEntry<Integer,$Column>>();
-//    while (rows.next()) {
-//      final String schemaName = rows.getString(1).toLowerCase();
-//      final String tableName = rows.getString(2).toLowerCase();
-//      final String columnName = rows.getString(4).toLowerCase();
-//      final String columnType = rows.getString(5).toLowerCase();
-//      final int notNull = columnType.indexOf("not null");
-//      final boolean nullable = notNull == -1;
-//      final String typeName = nullable ? columnType : columnType.substring(0, notNull - 1);
-//
-//      final $Column column = makeColumn(columnName.toLowerCase(), typeName, null, decimalDigits, _default, nullable.length() == 0 ? null : "YES".equals(nullable), autoIncrement.length() == 0 ? null : "YES".equals(autoIncrement));
-//      columns.add(new AbstractMap.SimpleEntry<Integer,$Column>(columnNumber, column));
-//
-//    }
-//  }
+  // private static final String tablesSql =
+  // "SELECT s.schemaname, t.tablename, c.columnnumber, c.columnname, CAST(c.columndatatype AS VARCHAR(255)) " +
+  // "FROM sys.syscolumns c " +
+  // "JOIN sys.systables t ON t.tableid = c.referenceid " +
+  // "JOIN sys.sysschemas s ON s.schemaid = t.schemaid " +
+  // "WHERE t.tabletype = 'T' " +
+  // "ORDER BY s.schemaname, t.tablename, c.columnnumber ";
+  //
+  // Map<String,List<$Column>> getColumns(final Connection connection) throws SQLException {
+  // final Map<String,List<$Column>> nameToColumn = new HashMap<String,List<$Column>>();
+  // final PreparedStatement statement = connection.prepareStatement(tablesSql);
+  // final ResultSet rows = statement.executeQuery();
+  // final List<AbstractMap.SimpleEntry<Integer,$Column>> columns = new ArrayList<AbstractMap.SimpleEntry<Integer,$Column>>();
+  // while (rows.next()) {
+  // final String schemaName = rows.getString(1).toLowerCase();
+  // final String tableName = rows.getString(2).toLowerCase();
+  // final String columnName = rows.getString(4).toLowerCase();
+  // final String columnType = rows.getString(5).toLowerCase();
+  // final int notNull = columnType.indexOf("not null");
+  // final boolean nullable = notNull == -1;
+  // final String typeName = nullable ? columnType : columnType.substring(0, notNull - 1);
+  //
+  // final $Column column = makeColumn(columnName.toLowerCase(), typeName, null, decimalDigits, _default, nullable.length() == 0 ?
+  // null : "YES".equals(nullable), autoIncrement.length() == 0 ? null : "YES".equals(autoIncrement));
+  // columns.add(new AbstractMap.SimpleEntry<Integer,$Column>(columnNumber, column));
+  //
+  // }
+  // }
 
-  private static final String constraintsSql = new StringBuilder()
-    .append("SELECT s.schemaname, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) ")
-    .append("FROM sys.sysconstraints c ")
-    .append("JOIN sys.systables t ON c.tableid = t.tableid ")
-    .append("JOIN sys.sysschemas s ON s.schemaid = c.schemaid ")
-    .append("JOIN sys.syskeys k ON k.constraintid = c.constraintid ")
-    .append("JOIN sys.sysconglomerates cg ON k.conglomerateid = cg.conglomerateid ")
-    .append("WHERE c.state = 'E' ")
-    .append("AND c.type = 'U' ")
-    .append("AND cg.isconstraint = true ")
-    .append("AND s.schemaname = CURRENT SCHEMA ")
-    .append("ORDER BY s.schemaname, t.tablename").toString();
+  private static final String constraintsSql =
+    "SELECT s.schemaname, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) " +
+      "FROM sys.sysconstraints c " +
+      "JOIN sys.systables t ON c.tableid = t.tableid " +
+      "JOIN sys.sysschemas s ON s.schemaid = c.schemaid " +
+      "JOIN sys.syskeys k ON k.constraintid = c.constraintid " +
+      "JOIN sys.sysconglomerates cg ON k.conglomerateid = cg.conglomerateid " +
+      "WHERE c.state = 'E' " +
+      "AND c.type = 'U' " +
+      "AND cg.isconstraint = true " +
+      "AND s.schemaname = CURRENT SCHEMA " +
+      "ORDER BY s.schemaname, t.tablename";
 
   @Override
   @SuppressWarnings({"null", "unchecked"})
-  <L extends List<$Table.Constraints.Unique> & RandomAccess>Map<String,L> getUniqueConstraints(final Connection connection) throws SQLException {
+  <L extends List<$Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(constraintsSql);
     final ResultSet rows = statement.executeQuery();
@@ -368,16 +369,16 @@ final class DerbyDecompiler extends Decompiler {
     return check;
   }
 
-  private static final String checkSql = new StringBuilder()
-    .append("SELECT s.schemaname, t.tablename, ch.checkdefinition, ch.referencedcolumns ")
-    .append("FROM sys.syschecks ch ")
-    .append("JOIN sys.sysconstraints co ON ch.constraintid = co.constraintid ")
-    .append("JOIN sys.sysschemas s ON s.schemaid = co.schemaid ")
-    .append("JOIN sys.systables t ON t.tableid = co.tableid ")
-    .append("WHERE co.state = 'E' ")
-    .append("AND co.type = 'C' ")
-    .append("AND s.schemaname = CURRENT SCHEMA ")
-    .append("ORDER BY s.schemaname, t.tablename ").toString();
+  private static final String checkSql =
+    "SELECT s.schemaname, t.tablename, ch.checkdefinition, ch.referencedcolumns " +
+      "FROM sys.syschecks ch " +
+      "JOIN sys.sysconstraints co ON ch.constraintid = co.constraintid " +
+      "JOIN sys.sysschemas s ON s.schemaid = co.schemaid " +
+      "JOIN sys.systables t ON t.tableid = co.tableid " +
+      "WHERE co.state = 'E' " +
+      "AND co.type = 'C' " +
+      "AND s.schemaname = CURRENT SCHEMA " +
+      "ORDER BY s.schemaname, t.tablename ";
 
   @Override
   @SuppressWarnings("null")
@@ -405,15 +406,15 @@ final class DerbyDecompiler extends Decompiler {
     return tableNameToChecks;
   }
 
-  private static final String indexSql = new StringBuilder()
-    .append("SELECT s.schemaname, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) ")
-    .append("FROM sys.sysconglomerates cg ")
-    .append("JOIN sys.sysschemas s ON s.schemaid = cg.schemaid ")
-    .append("JOIN sys.systables t ON t.tableid = cg.tableid ")
-    .append("WHERE cg.isindex = true ")
-    .append("AND cg.isconstraint = false ")
-    .append("AND s.schemaname = CURRENT SCHEMA ")
-    .append("ORDER BY s.schemaname, t.tablename ").toString();
+  private static final String indexSql =
+    "SELECT s.schemaname, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) " +
+      "FROM sys.sysconglomerates cg " +
+      "JOIN sys.sysschemas s ON s.schemaid = cg.schemaid " +
+      "JOIN sys.systables t ON t.tableid = cg.tableid " +
+      "WHERE cg.isindex = true " +
+      "AND cg.isconstraint = false " +
+      "AND s.schemaname = CURRENT SCHEMA " +
+      "ORDER BY s.schemaname, t.tablename ";
 
   @Override
   @SuppressWarnings("null")
@@ -457,22 +458,22 @@ final class DerbyDecompiler extends Decompiler {
     return tableNameToIndexes;
   }
 
-  private static final String foreignKeySql = new StringBuilder()
-    .append("SELECT s.schemaname, ft.tablename, CAST(fcg.descriptor AS VARCHAR(255)), fk.deleterule, fk.updaterule, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) ")
-    .append("FROM sys.sysconstraints fc ")
-    .append("JOIN sys.systables ft ON fc.tableid = ft.tableid ")
-    .append("JOIN sys.sysschemas s ON s.schemaid = fc.schemaid ")
-    .append("JOIN sys.sysforeignkeys fk ON fk.constraintid = fc.constraintid ")
-    .append("JOIN sys.sysconglomerates fcg ON fk.conglomerateid = fcg.conglomerateid ")
-    .append("JOIN sys.syskeys k ON k.constraintid = fk.keyconstraintid ")
-    .append("JOIN sys.sysconstraints c ON c.constraintid = k.constraintid ")
-    .append("JOIN sys.systables t ON c.tableid = t.tableid ")
-    .append("JOIN sys.sysconglomerates cg ON k.conglomerateid = cg.conglomerateid ")
-    .append("WHERE fc.state = 'E' ")
-    .append("AND fc.type = 'F' ")
-    .append("AND fcg.isconstraint = true ")
-    .append("AND s.schemaname = CURRENT SCHEMA ")
-    .append("ORDER BY s.schemaname, ft.tablename").toString();
+  private static final String foreignKeySql =
+    "SELECT s.schemaname, ft.tablename, CAST(fcg.descriptor AS VARCHAR(255)), fk.deleterule, fk.updaterule, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) " +
+      "FROM sys.sysconstraints fc " +
+      "JOIN sys.systables ft ON fc.tableid = ft.tableid " +
+      "JOIN sys.sysschemas s ON s.schemaid = fc.schemaid " +
+      "JOIN sys.sysforeignkeys fk ON fk.constraintid = fc.constraintid " +
+      "JOIN sys.sysconglomerates fcg ON fk.conglomerateid = fcg.conglomerateid " +
+      "JOIN sys.syskeys k ON k.constraintid = fk.keyconstraintid " +
+      "JOIN sys.sysconstraints c ON c.constraintid = k.constraintid " +
+      "JOIN sys.systables t ON c.tableid = t.tableid " +
+      "JOIN sys.sysconglomerates cg ON k.conglomerateid = cg.conglomerateid " +
+      "WHERE fc.state = 'E' " +
+      "AND fc.type = 'F' " +
+      "AND fcg.isconstraint = true " +
+      "AND s.schemaname = CURRENT SCHEMA " +
+      "ORDER BY s.schemaname, ft.tablename";
 
   @Override
   @SuppressWarnings("null")

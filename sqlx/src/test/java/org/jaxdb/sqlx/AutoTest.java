@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 
 @RunWith(DBTestRunner.class)
 public abstract class AutoTest extends SQLxTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends AutoTest {
   }

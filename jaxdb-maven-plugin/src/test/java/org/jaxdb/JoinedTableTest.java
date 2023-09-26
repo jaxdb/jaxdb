@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class JoinedTableTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends JoinedTableTest {
   }
@@ -51,52 +51,55 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testCrossJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      CROSS_JOIN(c)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .CROSS_JOIN(c)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 3900);
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testNaturalJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      NATURAL_JOIN(c)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .NATURAL_JOIN(c)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInnerJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Employee e = classicmodels.Employee$;
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
-      JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
-        .execute(transaction)) {
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .JOIN(c)
+          .ON(EQ(p.customerNumber, c.customerNumber))
+          .JOIN(e)
+          .ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
+          .execute(transaction)
+    ) {
 
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
@@ -104,53 +107,56 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testLeftOuterJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .LEFT_JOIN(c)
+          .ON(EQ(p.purchaseNumber, c.customerNumber))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testRightOuterJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .RIGHT_JOIN(c)
+          .ON(EQ(p.purchaseNumber, c.customerNumber))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 100);
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   @SchemaTestRunner.Unsupported({Derby.class, SQLite.class, MySQL.class})
   public void testFullOuterJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .FULL_JOIN(c)
+          .ON(EQ(p.purchaseNumber, c.customerNumber))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }

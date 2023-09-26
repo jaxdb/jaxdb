@@ -35,14 +35,14 @@ import org.junit.runner.RunWith;
 @RunWith(SchemaTestRunner.class)
 @Config(sync = true, deferLog = false, failFast = true)
 public abstract class CachingUqTest extends CachingTest {
-  //@DB(Derby.class)
-  //@DB(SQLite.class)
-  //public static class IntegrationTest extends CachingUqTest {
-  //}
+  // @DB(Derby.class)
+  // @DB(SQLite.class)
+  // public static class IntegrationTest extends CachingUqTest {
+  // }
 
-  //@DB(MySQL.class)
+  // @DB(MySQL.class)
   @DB(PostgreSQL.class)
-  //@DB(Oracle.class)
+  // @DB(Oracle.class)
   public static class RegressionTest extends CachingUqTest {
   }
 
@@ -270,8 +270,7 @@ public abstract class CachingUqTest extends CachingTest {
           assertFalse(oa.idu_TO_oneAIdu_ON_ManyManyIdu_CACHED().containsValue(mm));
           assertFalse(ob.idu_TO_oneBIdu_ON_ManyManyIdu_CACHED().containsValue(mm));
         },
-        (j, as) -> {
-        });
+        (j, as) -> {});
     }
   }
 }

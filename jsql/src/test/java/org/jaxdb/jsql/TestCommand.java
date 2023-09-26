@@ -33,6 +33,7 @@ public abstract class TestCommand<E> extends Command<E> {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface AssertSelect {
       boolean cacheSelectEntity();
+
       boolean rowIteratorFullConsume();
     }
 

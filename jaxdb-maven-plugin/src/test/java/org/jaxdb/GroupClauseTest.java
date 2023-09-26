@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class GroupClauseTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends GroupClauseTest {
   }
@@ -51,32 +51,32 @@ public abstract class GroupClauseTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testPrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      GROUP_BY(p.code)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .GROUP_BY(p.code)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(1, rows.nextEntity().getAsLong());
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      GROUP_BY(p.vendor, p.code)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .GROUP_BY(p.vendor, p.code)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(1, rows.nextEntity().getAsLong());
     }

@@ -27,9 +27,9 @@ import org.openjax.json.JSON;
 
 public final class Notification<T extends data.Table> {
   public abstract static class Action implements Comparable<Action>, Serializable {
-    abstract <T extends data.Table>void action(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
+    abstract <T extends data.Table> void action(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
 
-    final <T extends data.Table>void invoke(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+    final <T extends data.Table> void invoke(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
       if (!listenerClass.isInstance(listener))
         throw new UnsupportedOperationException("Unsupported action: " + name);
 
@@ -42,7 +42,7 @@ public final class Notification<T extends data.Table> {
       }
 
       @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      <T extends data.Table> void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         ((InsertListener<T>)listener).onInsert(sessionId, timestamp, row);
       }
     }
@@ -55,7 +55,7 @@ public final class Notification<T extends data.Table> {
       }
 
       @Override
-      final <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      final <T extends data.Table> void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
       }
     }
@@ -79,14 +79,14 @@ public final class Notification<T extends data.Table> {
       }
 
       @Override
-      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      <T extends data.Table> void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         ((DeleteListener<T>)listener).onDelete(sessionId, timestamp, row);
       }
     }
 
     static final UP UP = new UP("UP");
 
-    static <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row) {
+    static <T extends data.Table> void onSelect(final Notification.Listener<T> listener, final T row) {
       if (!(listener instanceof Notification.SelectListener))
         throw new UnsupportedOperationException("Unsupported action: SELECT");
 

@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class ExistsPredicateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends ExistsPredicateTest {
   }
@@ -51,33 +51,33 @@ public abstract class ExistsPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testExistsPredicate(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(EXISTS(
-        SELECT(p).
-        FROM(p).
-        WHERE(EQ(c.customerNumber, p.customerNumber))),
+    try (
+      final RowIterator<data.BOOLEAN> rows =
         SELECT(EXISTS(
-          SELECT(p).
-          FROM(p).
-          WHERE(EQ(c.customerNumber, p.customerNumber)))).
-        FROM(c).
-        WHERE(EXISTS(
-          SELECT(p).
-          FROM(p).
-          WHERE(EQ(c.customerNumber, p.customerNumber)))).
-          LIMIT(1)).
-      FROM(c).
-      WHERE(EXISTS(
-        SELECT(p).
-        FROM(p).
-        WHERE(EQ(c.customerNumber, p.customerNumber))))
-          .execute(transaction)) {
-
+          SELECT(p)
+            .FROM(p)
+            .WHERE(EQ(c.customerNumber, p.customerNumber))),
+          SELECT(EXISTS(
+            SELECT(p)
+              .FROM(p)
+              .WHERE(EQ(c.customerNumber, p.customerNumber))))
+            .FROM(c)
+            .WHERE(EXISTS(
+              SELECT(p)
+                .FROM(p)
+                .WHERE(EQ(c.customerNumber, p.customerNumber))))
+            .LIMIT(1))
+          .FROM(c)
+          .WHERE(EXISTS(
+            SELECT(p)
+              .FROM(p)
+              .WHERE(EQ(c.customerNumber, p.customerNumber))))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 98; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());

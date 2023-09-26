@@ -42,7 +42,7 @@ public abstract class TestTest {
   private static final Logger logger = LoggerFactory.getLogger(TestTest.class);
 
   @Ignore("Intended for hands-on dev")
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends TestTest {
   }
@@ -56,32 +56,32 @@ public abstract class TestTest {
 
   @BeforeClass
   public static void beforeClass1() {
-    if (logger.isDebugEnabled()) logger.debug("before class1:");
+    if (logger.isDebugEnabled()) { logger.debug("before class1:"); }
   }
 
   @BeforeClass
   public static void beforeClass2() {
-    if (logger.isDebugEnabled()) logger.debug("before class2:");
+    if (logger.isDebugEnabled()) { logger.debug("before class2:"); }
   }
 
   @Before
   public void before() {
-    if (logger.isDebugEnabled()) logger.debug("before0:");
+    if (logger.isDebugEnabled()) { logger.debug("before0:"); }
   }
 
   @Before
   public void before(final Connection connection) throws SQLException {
-    if (logger.isDebugEnabled()) logger.debug("before: " + DbVendor.valueOf(connection.getMetaData()));
+    if (logger.isDebugEnabled()) { logger.debug("before: " + DbVendor.valueOf(connection.getMetaData())); }
   }
 
   @Test
   public void test1() {
-    if (logger.isDebugEnabled()) logger.debug("test1:");
+    if (logger.isDebugEnabled()) { logger.debug("test1:"); }
   }
 
   @Test
   public void test2(final Connection connection) throws SQLException {
-    if (logger.isDebugEnabled()) logger.debug("test2: " + DbVendor.valueOf(connection.getMetaData()));
+    if (logger.isDebugEnabled()) { logger.debug("test2: " + DbVendor.valueOf(connection.getMetaData())); }
   }
 
   @Ignore("Should be ignored")

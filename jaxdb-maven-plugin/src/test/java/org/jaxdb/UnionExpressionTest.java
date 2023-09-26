@@ -38,7 +38,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class UnionExpressionTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends UnionExpressionTest {
   }
@@ -50,21 +50,24 @@ public abstract class UnionExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testUnion(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
 
-    try (final RowIterator<?> rows =
-      SELECT(p, c).
-      FROM(p).
-      LEFT_JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
-      UNION(
-        SELECT(p, c).
-        FROM(p).
-        LEFT_JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)))
-      .execute(transaction)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(p, c)
+          .FROM(p)
+          .LEFT_JOIN(c)
+          .ON(EQ(p.customerNumber, c.customerNumber))
+          .UNION(
+            SELECT(p, c)
+              .FROM(p)
+              .LEFT_JOIN(c)
+              .ON(EQ(p.customerNumber, c.customerNumber)))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
     }
   }

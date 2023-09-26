@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class BetweenPredicateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends BetweenPredicateTest {
   }
@@ -52,16 +52,16 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testBetweenPrimary1(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Payment p = classicmodels.Payment$;
-    try (final RowIterator<Classicmodels.Payment> rows =
-
-      SELECT(p).
-      FROM(p).
-      WHERE(BETWEEN(p.customerNumber, 103, 103))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Classicmodels.Payment> rows =
+        SELECT(p)
+          .FROM(p)
+          .WHERE(BETWEEN(p.customerNumber, 103, 103))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 3; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertEquals(103, rows.nextEntity().customerNumber.getAsShort());
@@ -72,17 +72,17 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testBetweenPrimary2(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Payment p = classicmodels.new Payment();
-    try (final RowIterator<Classicmodels.Payment> rows =
-
-      SELECT(p).
-      FROM(p).
-      WHERE(AND(BETWEEN(p.customerNumber, 103, 103),
-        EQ(p.checkNumber, "JM555205")))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Classicmodels.Payment> rows =
+        SELECT(p)
+          .FROM(p)
+          .WHERE(AND(BETWEEN(p.customerNumber, 103, 103),
+            EQ(p.checkNumber, "JM555205")))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       rows.nextEntity();
       assertEquals(103, p.customerNumber.getAsShort());
@@ -92,33 +92,33 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testBetween1Wrapped(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
-        FROM(p).
-        WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
-          .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
+            .FROM(p)
+            .WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsBoolean());
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testBetween1(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
-      FROM(p).
-      WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
+          .FROM(p)
+          .WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsBoolean());
       assertFalse(rows.nextRow());
@@ -126,16 +126,16 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testBetween2(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(BETWEEN(p.msrp, p.price, 100)).
-      FROM(p).
-      WHERE(BETWEEN(p.msrp, p.price, 100))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(BETWEEN(p.msrp, p.price, 100))
+          .FROM(p)
+          .WHERE(BETWEEN(p.msrp, p.price, 100))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 59; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -146,31 +146,31 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testBetween3(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(BETWEEN(p.scale, "a", "b")).
-      FROM(p).
-      WHERE(BETWEEN(p.scale, "a", "b"))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(BETWEEN(p.scale, "a", "b"))
+          .FROM(p)
+          .WHERE(BETWEEN(p.scale, "a", "b"))
+          .execute(transaction)
+    ) {
       assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testBetween4(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(BETWEEN(p.quantityInStock, 500, 1000)).
-      FROM(p).
-      WHERE(BETWEEN(p.quantityInStock, 500, 1000))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(BETWEEN(p.quantityInStock, 500, 1000))
+          .FROM(p)
+          .WHERE(BETWEEN(p.quantityInStock, 500, 1000))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 7; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());

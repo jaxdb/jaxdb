@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class QuantifiedComparisonPredicateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends QuantifiedComparisonPredicateTest {
   }
@@ -52,21 +52,21 @@ public abstract class QuantifiedComparisonPredicateTest {
 
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testAll(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
 
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(c)).
-      FROM(c).
-      WHERE(LT(c.creditLimit, ALL(
-        SELECT(COUNT(p)).
-        FROM(p).
-        WHERE(NE(p.purchaseDate, p.shippedDate)))))
-          .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(c))
+          .FROM(c)
+          .WHERE(LT(c.creditLimit, ALL(
+            SELECT(COUNT(p))
+              .FROM(p)
+              .WHERE(NE(p.purchaseDate, p.shippedDate)))))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(24, rows.nextEntity().getAsLong());
       assertFalse(rows.nextRow());
@@ -75,21 +75,21 @@ public abstract class QuantifiedComparisonPredicateTest {
 
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testAny(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
 
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(c)).
-      FROM(c).
-      WHERE(GT(c.customerNumber, ANY(
-        SELECT(COUNT(p)).
-        FROM(p).
-        WHERE(GT(p.purchaseDate, p.shippedDate)))))
-          .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(c))
+          .FROM(c)
+          .WHERE(GT(c.customerNumber, ANY(
+            SELECT(COUNT(p))
+              .FROM(p)
+              .WHERE(GT(p.purchaseDate, p.shippedDate)))))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 100);
       assertFalse(rows.nextRow());
@@ -98,21 +98,20 @@ public abstract class QuantifiedComparisonPredicateTest {
 
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testSome(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.Customer$;
 
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(c)).
-      FROM(c).
-      WHERE(GT(c.customerNumber, SOME(
-        SELECT(COUNT(p)).
-        FROM(p).
-        WHERE(LT(p.purchaseDate, p.shippedDate)))))
-          .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(c)).FROM(c)
+          .WHERE(GT(c.customerNumber, SOME(
+            SELECT(COUNT(p))
+              .FROM(p)
+              .WHERE(LT(p.purchaseDate, p.shippedDate)))))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 50);
       assertFalse(rows.nextRow());

@@ -148,7 +148,7 @@ public final class Interval extends data.Entity implements TemporalAmount {
     }
 
     @Override
-    public <R extends Temporal>R addTo(final R temporal, final long amount) {
+    public <R extends Temporal> R addTo(final R temporal, final long amount) {
       return unit.addTo(temporal, amount);
     }
 

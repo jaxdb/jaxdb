@@ -52,7 +52,7 @@ class SQLiteDecompiler extends Decompiler {
 
       // FIXME: Add min check?
       // if (typeName.endsWith("UNSIGNED"))
-      //   type.setUnsigned$(new $Integer.Unsigned$(true));
+      // type.setUnsigned$(new $Integer.Unsigned$(true));
 
       if (_default != null)
         type.setDefault$(new $Bigint.Default$(Long.valueOf(_default)));
@@ -152,13 +152,13 @@ class SQLiteDecompiler extends Decompiler {
 
       column = type;
     }
-//    else if ("ENUM".equals(typeName)) {
-//      final $Enum type = newColumn($Enum.class);
-//      if (_default != null)
-//        type.Default$(new $Enum.Default$(_default));
-//
-//      column = type;
-//    }
+    // else if ("ENUM".equals(typeName)) {
+    // final $Enum type = newColumn($Enum.class);
+    // if (_default != null)
+    // type.Default$(new $Enum.Default$(_default));
+    //
+    // column = type;
+    // }
     else if ("FLOAT".equals(typeName)) {
       final $Float type = newColumn($Float.class);
       if (_default != null)
@@ -227,12 +227,12 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  <L extends List<$Table.Constraints.Unique> & RandomAccess>Map<String,L> getUniqueConstraints(final Connection connection) {
+  <L extends List<$Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  <L extends List<$CheckReference> & RandomAccess>Map<String,L> getCheckConstraints(final Connection connection) {
+  <L extends List<$CheckReference> & RandomAccess> Map<String,L> getCheckConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 

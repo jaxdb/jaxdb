@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class HavingClauseTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends HavingClauseTest {
   }
@@ -52,60 +52,62 @@ public abstract class HavingClauseTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testPrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      HAVING(IS.NOT.NULL(p.code))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .HAVING(IS.NOT.NULL(p.code))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(1, rows.nextEntity().getAsLong());
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testNotPrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p).
-      HAVING(OR(IS.NOT.NULL(p.msrp), IS.NOT.NULL(p.code)))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .HAVING(OR(
+            IS.NOT.NULL(p.msrp),
+            IS.NOT.NULL(p.code)))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(1, rows.nextEntity().getAsLong());
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.new Product();
     final data.DECIMAL d = p.msrp.clone();
-    try (final RowIterator<data.DECIMAL> rows =
-
-      SELECT(
-        SIN(p.msrp).AS(d),
-        SELECT(SIN(p.msrp).AS(d)).
-        FROM(p).
-        WHERE(GT(p.price, 10)).
-        GROUP_BY(p).
-        HAVING(LT(d, 10)).
-        ORDER_BY(DESC(d)).
-        LIMIT(1)).
-      FROM(p).
-      WHERE(GT(p.price, 10)).
-      GROUP_BY(p).
-      HAVING(LT(d, 10)).
-      ORDER_BY(DESC(d))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DECIMAL> rows =
+        SELECT(
+          SIN(p.msrp).AS(d),
+          SELECT(SIN(p.msrp).AS(d))
+            .FROM(p)
+            .WHERE(GT(p.price, 10))
+            .GROUP_BY(p)
+            .HAVING(LT(d, 10))
+            .ORDER_BY(DESC(d))
+            .LIMIT(1))
+          .FROM(p)
+          .WHERE(GT(p.price, 10))
+          .GROUP_BY(p)
+          .HAVING(LT(d, 10))
+          .ORDER_BY(DESC(d))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(0.9995201585807313, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(0.9995201585807313, rows.nextEntity().get().doubleValue(), 0.0000000001);

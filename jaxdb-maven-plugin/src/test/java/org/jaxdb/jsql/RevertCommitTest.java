@@ -35,7 +35,7 @@ public class RevertCommitTest {
   private static final String OLD = "old";
   private static final String UPD = "upd";
 
-  public <V>void test(final data.Column<V> c, final V v1, final V v2, final V v3) {
+  public <V> void test(final data.Column<V> c, final V v1, final V v2, final V v3) {
     final String name = c.getClass().getSimpleName();
     assertTrue(name, c.isNull());
     assertNull(name, c.get());

@@ -34,8 +34,8 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.vendor.DbVendor;
 import org.xml.sax.SAXException;
 
-@Mojo(name="ddlx", defaultPhase=LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution=ResolutionScope.TEST)
-@Execute(goal="ddlx")
+@Mojo(name = "ddlx", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Execute(goal = "ddlx")
 public class DDLxMojo extends SqlMojo<DDLxProduce,DDLx> {
   private static final HashMap<URL,Reserve<DDLx>> schemaToReserve = new HashMap<>();
 

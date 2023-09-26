@@ -148,8 +148,9 @@ public abstract class Dialect extends DbVendorCompiler {
   /**
    * Quote a named identifier.
    *
+   * @param b The {@link StringBuilder} in which to quote the provided {@code identifier}.
    * @param identifier The identifier.
-   * @return The quoted identifier.
+   * @return The provided {@link StringBuilder}.
    */
   public abstract StringBuilder quoteIdentifier(StringBuilder b, CharSequence identifier);
 
@@ -172,6 +173,7 @@ public abstract class Dialect extends DbVendorCompiler {
 
   abstract StringBuilder declareBinary(StringBuilder b, boolean varying, long length);
   abstract Integer binaryMaxLength();
+
   // FIXME: Change long to Long, and declare a default value if null
   public StringBuilder compileBinary(final StringBuilder b, final boolean varying, final long length) {
     if (binaryMaxLength() != null && length > binaryMaxLength())
@@ -182,6 +184,7 @@ public abstract class Dialect extends DbVendorCompiler {
 
   abstract StringBuilder declareBlob(StringBuilder b, Long length);
   abstract Long blobMaxLength();
+
   public StringBuilder compileBlob(final StringBuilder b, final Long length) {
     if (length != null && blobMaxLength() != null && length > blobMaxLength())
       throw new IllegalArgumentException("BLOB length (" + length + ") is greater than maximum (" + blobMaxLength() + ") allowed by " + getVendor());
@@ -193,6 +196,7 @@ public abstract class Dialect extends DbVendorCompiler {
 
   abstract StringBuilder declareChar(StringBuilder b, boolean varying, long length);
   abstract Integer charMaxLength();
+
   public StringBuilder compileChar(final StringBuilder b, final boolean varying, final Long length) {
     if (length != null && charMaxLength() != null && length > charMaxLength())
       throw new IllegalArgumentException("CHAR length (" + length + ") is greater than maximum (" + charMaxLength() + ") allowed by " + getVendor());
@@ -202,6 +206,7 @@ public abstract class Dialect extends DbVendorCompiler {
 
   abstract StringBuilder declareClob(StringBuilder b, Long length);
   abstract Long clobMaxLength();
+
   public StringBuilder compileClob(final StringBuilder b, final Long length) {
     if (length != null && clobMaxLength() != null && length > clobMaxLength())
       throw new IllegalArgumentException("CLOB length (" + length + ") is greater than maximum (" + clobMaxLength() + ") allowed by " + getVendor());
@@ -222,7 +227,9 @@ public abstract class Dialect extends DbVendorCompiler {
   public abstract StringBuilder declareDouble(StringBuilder b, Double min);
 
   abstract StringBuilder declareInt8(StringBuilder b, Byte precision, Byte min);
+
   static final byte int8SignedMaxPrecision = 3;
+
   public StringBuilder compileInt8(final StringBuilder b, final Byte precision, final Byte min) {
     if (precision != null && precision > Dialect.int8SignedMaxPrecision)
       throw new IllegalArgumentException("TINYINT precision (" + precision + ") is greater than maximum (" + Dialect.int8SignedMaxPrecision + ")");
@@ -231,7 +238,9 @@ public abstract class Dialect extends DbVendorCompiler {
   }
 
   abstract StringBuilder declareInt16(StringBuilder b, Byte precision, Short min);
+
   static final byte int16SignedMaxPrecision = 5;
+
   public StringBuilder compileInt16(final StringBuilder b, final Byte precision, final Short min) {
     if (precision != null && precision > Dialect.int16SignedMaxPrecision)
       throw new IllegalArgumentException("SMALLINT precision (" + precision + ") is greater than maximum (" + Dialect.int16SignedMaxPrecision + ")");
@@ -240,7 +249,9 @@ public abstract class Dialect extends DbVendorCompiler {
   }
 
   abstract StringBuilder declareInt32(StringBuilder b, Byte precision, Integer min);
+
   static final byte int32SignedMaxPrecision = 10;
+
   public StringBuilder compileInt32(final StringBuilder b, final Byte precision, final Integer min) {
     if (precision != null && precision > Dialect.int32SignedMaxPrecision)
       throw new IllegalArgumentException("INT precision (" + precision + ") is greater than maximum (" + Dialect.int32SignedMaxPrecision + ")");
@@ -249,7 +260,9 @@ public abstract class Dialect extends DbVendorCompiler {
   }
 
   abstract StringBuilder declareInt64(StringBuilder b, Byte precision, Long min);
+
   static final byte int64SignedMaxPrecision = 19;
+
   public StringBuilder compileInt64(final StringBuilder b, Byte precision, final Long min) {
     if (precision != null && precision > Dialect.int64SignedMaxPrecision)
       throw new IllegalArgumentException("BIGINT precision (" + precision + ") is greater than maximum (" + Dialect.int64SignedMaxPrecision + ")");

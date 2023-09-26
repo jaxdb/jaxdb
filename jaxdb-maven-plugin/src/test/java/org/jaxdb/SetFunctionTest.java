@@ -41,7 +41,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class SetFunctionTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends SetFunctionTest {
   }
@@ -53,19 +53,19 @@ public abstract class SetFunctionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testSetFunctions(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<? extends data.Column<?>> rows =
-
-      SELECT(
-        AVG(c.phone),
-        MAX(c.city),
-        MIN(c.country),
-        SUM.DISTINCT(c.salesEmployeeNumber)).
-      FROM(c)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<? extends data.Column<?>> rows =
+        SELECT(
+          AVG(c.phone),
+          MAX(c.city),
+          MIN(c.country),
+          SUM.DISTINCT(c.salesEmployeeNumber))
+          .FROM(c)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(24367857008L, rows.nextEntity().get());
       assertEquals("White Plains", rows.nextEntity().get());

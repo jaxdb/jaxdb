@@ -100,7 +100,7 @@ public class KeyTest {
     }
   };
 
-  private static <V>void test(final data.Table t, final data.Column<V> c, final V v, final Runnable setNull1, final Runnable setNull2, final Runnable setNull3, final Runnable set1, final Runnable set2, final Runnable set3, final Runnable set4, final Runnable set5, final Runnable set6) {
+  private static <V> void test(final data.Table t, final data.Column<V> c, final V v, final Runnable setNull1, final Runnable setNull2, final Runnable setNull3, final Runnable set1, final Runnable set2, final Runnable set3, final Runnable set4, final Runnable set5, final Runnable set6) {
     assertNull(t._primaryKeyImmutable$);
     assertNull(t._primaryKeyOldImmutable$);
 
@@ -192,7 +192,7 @@ public class KeyTest {
     assertEquals(data.Column.SetBy.USER, c.setByOld);
   }
 
-  private static <V>void test(final data.Table t, final data.Column<V> c, final V v, final boolean isFirst, final Runnable set) {
+  private static <V> void test(final data.Table t, final data.Column<V> c, final V v, final boolean isFirst, final Runnable set) {
     if (set == null)
       return;
 

@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class DeleteTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends DeleteTest {
   }
@@ -97,8 +97,8 @@ public abstract class DeleteTest {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
 
     assertEquals(1,
-      DELETE(p).
-      WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
+      DELETE(p)
+        .WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
         .execute(transaction)
         .getCount());
   }
@@ -108,8 +108,8 @@ public abstract class DeleteTest {
     final Classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail$;
 
     assertTrue(2985 <
-      DELETE(p)
-        .execute(transaction)
-        .getCount());
+        DELETE(p)
+          .execute(transaction)
+          .getCount());
   }
 }

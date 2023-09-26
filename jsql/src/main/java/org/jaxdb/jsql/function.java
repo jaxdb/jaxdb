@@ -865,7 +865,7 @@ final class function {
 
         if (a instanceof Byte) {
           if (b instanceof Float)
-            return(a.byteValue() % b.floatValue());
+            return (a.byteValue() % b.floatValue());
 
           if (b instanceof Double)
             return a.byteValue() % b.doubleValue();

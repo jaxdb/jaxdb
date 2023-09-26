@@ -74,9 +74,13 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Config {
     boolean sync() default false;
+
     boolean deferLog() default false;
+
     boolean failFast() default false;
+
     boolean cache() default false;
+
     boolean prepared() default false;
   }
 
@@ -84,6 +88,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   @Retention(RetentionPolicy.RUNTIME)
   public @interface TestSpec {
     int order() default 1;
+
     int cardinality() default 1;
   }
 
@@ -92,6 +97,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   @Repeatable(DBs.class)
   public @interface DB {
     Class<? extends Vendor> value();
+
     int parallel() default 1;
   }
 
@@ -403,12 +409,12 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     final Class<? extends Vendor> vendor = executor.getDB().value();
     if (method.getParameterTypes().length == 1) {
       try (final Connection connection = executor.getConnection()) {
-        if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
+        if (logger.isInfoEnabled()) { logger.info(toString(method) + " [" + vendor.getSimpleName() + "]"); }
         return frameworkMethod.invokeExplosively$(target, connection);
       }
     }
 
-    if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
+    if (logger.isInfoEnabled()) { logger.info(toString(method) + " [" + vendor.getSimpleName() + "]"); }
     return frameworkMethod.invokeExplosively$(target);
   }
 
@@ -469,14 +475,14 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
         if (unsupported != null) {
           for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) { // [A]
             if (unsupportedVendor == db.value()) {
-              if (logger.isWarnEnabled()) logger.warn("[" + db.value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + DBTestRunner.toString(getMethod()));
+              if (logger.isWarnEnabled()) { logger.warn("[" + db.value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + DBTestRunner.toString(getMethod())); }
               return null;
             }
           }
         }
 
         DeferredLogger.flush();
-        if (logger.isErrorEnabled()) logger.error("[ERROR] " + db.value().getSimpleName());
+        if (logger.isErrorEnabled()) { logger.error("[ERROR] " + db.value().getSimpleName()); }
         throw t instanceof SQLException ? flatten((SQLException)t) : t;
       }
       finally {

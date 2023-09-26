@@ -47,7 +47,7 @@ import org.libj.io.UnsynchronizedStringReader;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class UpdateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends UpdateTest {
   }
@@ -59,17 +59,17 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testSelectForUpdateEntity(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<Classicmodels.Product> rows =
-
-      SELECT(p).
-      FROM(p).
-      LIMIT(1).
-      FOR_UPDATE()
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Classicmodels.Product> rows =
+        SELECT(p)
+          .FROM(p)
+          .LIMIT(1)
+          .FOR_UPDATE()
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
       assertFalse(rows.nextRow());
@@ -85,19 +85,19 @@ public abstract class UpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Derby.class) // FIXME: ERROR 42Y90: FOR UPDATE is not permitted in this type of statement.
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testSelectForUpdateEntities(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     Classicmodels.Product p = classicmodels.Product$;
     Classicmodels.ProductLine pl = classicmodels.ProductLine$;
-    try (final RowIterator<data.Table> rows =
-
-      SELECT(p, pl).
-      FROM(p, pl).
-      WHERE(EQ(p.productLine, pl.productLine)).
-      LIMIT(1).
-      FOR_UPDATE(p)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.Table> rows =
+        SELECT(p, pl)
+          .FROM(p, pl)
+          .WHERE(EQ(p.productLine, pl.productLine))
+          .LIMIT(1)
+          .FOR_UPDATE(p)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       p = (Classicmodels.Product)rows.nextEntity();
       assertFalse(rows.nextRow());
@@ -112,33 +112,34 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testUpdateEntities(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<Classicmodels.Product> rows1 =
-
-      SELECT(p).
-      FROM(p).
-      LIMIT(1).
-      FOR_SHARE()
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Classicmodels.Product> rows1 =
+        SELECT(p)
+          .FROM(p)
+          .LIMIT(1)
+          .FOR_SHARE()
+          .execute(transaction)
+    ) {
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
       assertFalse(rows1.nextRow());
 
       Classicmodels.ProductLine pl = classicmodels.ProductLine$;
-      final RowIterator<Classicmodels.ProductLine> rows2 =
-
-        SELECT(pl).
-        FROM(pl).
-        LIMIT(1).
-        FOR_UPDATE(pl)
-          .execute(transaction);
-
-      assertTrue(rows2.nextRow());
-      pl = rows2.nextEntity();
-      assertFalse(rows2.nextRow());
+      try (
+        final RowIterator<Classicmodels.ProductLine> rows2 =
+          SELECT(pl)
+            .FROM(pl)
+            .LIMIT(1)
+            .FOR_UPDATE(pl)
+            .execute(transaction)
+      ) {
+        assertTrue(rows2.nextRow());
+        pl = rows2.nextEntity();
+        assertFalse(rows2.nextRow());
+      }
 
       p.quantityInStock.set((short)300);
       pl.description.set(new UnsynchronizedStringReader("New description"));
@@ -155,53 +156,51 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testUpdateSetWhere(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
-    try (final RowIterator<Types.Type> rows =
-
-      SELECT(t).
-      FROM(t).
-      LIMIT(1).
-      FOR_SHARE(t).
-      SKIP_LOCKED()
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Types.Type> rows =
+        SELECT(t)
+          .FROM(t)
+          .LIMIT(1)
+          .FOR_SHARE(t)
+          .SKIP_LOCKED()
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
       assertFalse(rows.nextRow());
 
       assertTrue(0 <
-        UPDATE(t).
-        SET(t.enumType, EnumType.FOUR).
-        WHERE(EQ(t.enumType, EnumType.ONE))
-          .execute(transaction)
-          .getCount());
+          UPDATE(t).SET(t.enumType, EnumType.FOUR)
+            .WHERE(EQ(t.enumType, EnumType.ONE))
+            .execute(transaction)
+            .getCount());
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testUpdateSet(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
-    try (final RowIterator<Types.Type> rows =
-
-      SELECT(t).
-      FROM(t).
-      LIMIT(1).
-      FOR_UPDATE(t).
-      NOWAIT()
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Types.Type> rows =
+        SELECT(t)
+          .FROM(t)
+          .LIMIT(1)
+          .FOR_UPDATE(t)
+          .NOWAIT()
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
       assertFalse(rows.nextRow());
 
       assertTrue(300 <
-        UPDATE(t).
-        SET(t.datetimeType, LocalDateTime.now())
-          .execute(transaction)
-          .getCount());
+          UPDATE(t).SET(t.datetimeType, LocalDateTime.now())
+            .execute(transaction)
+            .getCount());
     }
   }
 }

@@ -43,7 +43,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class StringValueExpressionTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends StringValueExpressionTest {
   }
@@ -55,64 +55,64 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testConcatStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Office o = classicmodels.Office$;
-    try (final RowIterator<data.CHAR> rows =
+    try (
+      final RowIterator<data.CHAR> rows =
+        SELECT(
+          // Char/Enum
+          CONCAT(o.city, o.country),
+          CONCAT("-", o.city, o.country),
+          CONCAT(o.city, "-", o.country),
+          CONCAT(o.city, o.country, "-"),
+          CONCAT("-", o.city, o.country, "-"),
+          CONCAT("-", o.city, "-", o.country, "-"),
+          CONCAT(o.city, "-", o.country, "-"),
+          CONCAT("-", o.city, "-", o.country),
 
-      SELECT(
-        // Char/Enum
-        CONCAT(o.city, o.country),
-        CONCAT("-", o.city, o.country),
-        CONCAT(o.city, "-", o.country),
-        CONCAT(o.city, o.country, "-"),
-        CONCAT("-", o.city, o.country, "-"),
-        CONCAT("-", o.city, "-", o.country, "-"),
-        CONCAT(o.city, "-", o.country, "-"),
-        CONCAT("-", o.city, "-", o.country),
+          // Enum/Char
+          CONCAT(o.country, o.city),
+          CONCAT("-", o.country, o.city),
+          CONCAT(o.country, "-", o.city),
+          CONCAT(o.country, o.city, "-"),
+          CONCAT("-", o.country, o.city, "-"),
+          CONCAT("-", o.country, "-", o.city, "-"),
+          CONCAT(o.country, "-", o.city, "-"),
+          CONCAT("-", o.country, "-", o.city),
 
-        // Enum/Char
-        CONCAT(o.country, o.city),
-        CONCAT("-", o.country, o.city),
-        CONCAT(o.country, "-", o.city),
-        CONCAT(o.country, o.city, "-"),
-        CONCAT("-", o.country, o.city, "-"),
-        CONCAT("-", o.country, "-", o.city, "-"),
-        CONCAT(o.country, "-", o.city, "-"),
-        CONCAT("-", o.country, "-", o.city),
+          // Char/Char
+          CONCAT(o.city, o.city),
+          CONCAT("-", o.city, o.city),
+          CONCAT(o.city, "-", o.city),
+          CONCAT(o.city, o.city, "-"),
+          CONCAT("-", o.city, o.city, "-"),
+          CONCAT("-", o.city, "-", o.city, "-"),
+          CONCAT(o.city, "-", o.city, "-"),
+          CONCAT("-", o.city, "-", o.city),
 
-        // Char/Char
-        CONCAT(o.city, o.city),
-        CONCAT("-", o.city, o.city),
-        CONCAT(o.city, "-", o.city),
-        CONCAT(o.city, o.city, "-"),
-        CONCAT("-", o.city, o.city, "-"),
-        CONCAT("-", o.city, "-", o.city, "-"),
-        CONCAT(o.city, "-", o.city, "-"),
-        CONCAT("-", o.city, "-", o.city),
+          // Enum/Enum
+          CONCAT(o.country, o.country),
+          CONCAT("-", o.country, o.country),
+          CONCAT(o.country, "-", o.country),
+          CONCAT(o.country, o.country, "-"),
+          CONCAT("-", o.country, o.country, "-"),
+          CONCAT("-", o.country, "-", o.country, "-"),
+          CONCAT(o.country, "-", o.country, "-"),
+          CONCAT("-", o.country, "-", o.country),
 
-        // Enum/Enum
-        CONCAT(o.country, o.country),
-        CONCAT("-", o.country, o.country),
-        CONCAT(o.country, "-", o.country),
-        CONCAT(o.country, o.country, "-"),
-        CONCAT("-", o.country, o.country, "-"),
-        CONCAT("-", o.country, "-", o.country, "-"),
-        CONCAT(o.country, "-", o.country, "-"),
-        CONCAT("-", o.country, "-", o.country),
+          // Char
+          CONCAT(o.city, "-"),
+          CONCAT("-", o.city),
+          CONCAT("-", o.city, "-"),
 
-        // Char
-        CONCAT(o.city, "-"),
-        CONCAT("-", o.city),
-        CONCAT("-", o.city, "-"),
-
-        // Enum
-        CONCAT(o.country, "-"),
-        CONCAT("-", o.country),
-        CONCAT("-", o.country, "-")).
-      FROM(o)
-        .execute(transaction)) {
-
+          // Enum
+          CONCAT(o.country, "-"),
+          CONCAT("-", o.country),
+          CONCAT("-", o.country, "-"))
+          .FROM(o)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
 
       // Char/Enum
@@ -168,16 +168,15 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testConcatDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(0,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-      IS.NOT.NULL(t.charType),
-      IS.NOT.NULL(t.enumType)))
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          IS.NOT.NULL(t.charType),
+          IS.NOT.NULL(t.enumType)))
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -213,19 +212,19 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testChangeCaseStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Office o = classicmodels.Office$;
-    try (final RowIterator<data.CHAR> rows =
-
-      SELECT(
-        LOWER(o.city),
-        UPPER(o.city),
-        LOWER("CITY"),
-        UPPER("city")).
-      FROM(o)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.CHAR> rows =
+        SELECT(
+          LOWER(o.city),
+          UPPER(o.city),
+          LOWER("CITY"),
+          UPPER("city"))
+          .FROM(o)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals("san francisco", rows.nextEntity().get());
       assertEquals("SAN FRANCISCO", rows.nextEntity().get());
@@ -235,14 +234,13 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testChangeCaseDynamic(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(0,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(IS.NOT.NULL(t.charType))
+      SELECT(t)
+        .FROM(t)
+        .WHERE(IS.NOT.NULL(t.charType))
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -268,21 +266,20 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @Ignore
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testLengthStatic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Office o = classicmodels.Office$;
-    try (final RowIterator<data.INT> rows =
-
-      SELECT(
-        // Char
-        LENGTH(o.city),
-        // Enum
-        LENGTH(o.country),
-        // String
-        LENGTH("hello")).
-      FROM(o)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.INT> rows =
+        SELECT(
+          // Char
+          LENGTH(o.city),
+          // Enum
+          LENGTH(o.country),
+          // String
+          LENGTH("hello")).FROM(o)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
 
       // Char/Enum
@@ -294,15 +291,15 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @Ignore
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testLengthDynamic(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Office o = classicmodels.Office$;
-    try (final RowIterator<data.INT> rows =
-
-      SELECT(LENGTH(CONCAT("-", o.country, "-", o.city, "-"))).
-      FROM(o)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.INT> rows =
+        SELECT(LENGTH(CONCAT("-", o.country, "-", o.city, "-")))
+          .FROM(o)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
 
       // Char/Enum

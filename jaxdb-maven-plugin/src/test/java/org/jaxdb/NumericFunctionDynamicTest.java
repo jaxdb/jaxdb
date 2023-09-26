@@ -64,7 +64,7 @@ public abstract class NumericFunctionDynamicTest {
   private static final MathContext mc = new MathContext(65, RoundingMode.DOWN);
   private int rowNum;
 
-  static <D extends data.Table>D getNthRow(final int rowNum, final RowIterator<D> rows) throws SQLException {
+  static <D extends data.Table> D getNthRow(final int rowNum, final RowIterator<D> rows) throws SQLException {
     D row = null;
     for (int i = 0; i <= rowNum && rows.nextRow(); ++i) // [I]
       row = rows.nextEntity();
@@ -74,7 +74,6 @@ public abstract class NumericFunctionDynamicTest {
 
   private void testUpdateRoundN(final Types types, final Transaction transaction, final int n) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -103,22 +102,21 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testUpdateRound0(final Types types, final Transaction transaction) throws IOException, SQLException {
     testUpdateRoundN(types, transaction, 0);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testUpdateRound1(final Types types, final Transaction transaction) throws IOException, SQLException {
     testUpdateRoundN(types, transaction, 1);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testSign(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -147,10 +145,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testFloor(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -179,10 +176,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testCeil(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -211,22 +207,21 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testSqrt(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.tinyintType, 0),
-        GTE(t.smallintType, 0),
-        GTE(t.intType, 0),
-        GTE(t.bigintType, 0),
-        GTE(t.floatType, 0),
-        GTE(t.doubleType, 0),
-        GTE(t.decimalType, 0)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.tinyintType, 0),
+          GTE(t.smallintType, 0),
+          GTE(t.intType, 0),
+          GTE(t.bigintType, 0),
+          GTE(t.floatType, 0),
+          GTE(t.doubleType, 0),
+          GTE(t.decimalType, 0)))
+        .execute(transaction));
 
     final Types.Type clone = t.clone();
 
@@ -253,22 +248,21 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testDegrees(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        LT(ABS(t.tinyintType), MUL(PI(), 127d / 360d)),
-        LT(ABS(t.smallintType), MUL(PI(), 50)),
-        LT(ABS(t.intType), MUL(PI(), 100)),
-        LT(ABS(t.bigintType), MUL(PI(), 1000000000)),
-        NE(t.floatType, 0),
-        NE(t.doubleType, 0),
-        NE(t.decimalType, 0)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          LT(ABS(t.tinyintType), MUL(PI(), 127d / 360d)),
+          LT(ABS(t.smallintType), MUL(PI(), 50)),
+          LT(ABS(t.intType), MUL(PI(), 100)),
+          LT(ABS(t.bigintType), MUL(PI(), 1000000000)),
+          NE(t.floatType, 0),
+          NE(t.doubleType, 0),
+          NE(t.decimalType, 0)))
+        .execute(transaction));
 
     final Types.Type clone = t.clone();
 
@@ -295,22 +289,21 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testRadians(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        NE(t.tinyintType, 0),
-        NE(t.smallintType, 0),
-        NE(t.intType, 0),
-        NE(t.bigintType, 0),
-        NE(t.floatType, 0),
-        NE(t.doubleType, 0),
-        NE(t.decimalType, 0)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          NE(t.tinyintType, 0),
+          NE(t.smallintType, 0),
+          NE(t.intType, 0),
+          NE(t.bigintType, 0),
+          NE(t.floatType, 0),
+          NE(t.doubleType, 0),
+          NE(t.decimalType, 0)))
+        .execute(transaction));
 
     final Types.Type clone = t.clone();
 
@@ -337,10 +330,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testSin(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -369,17 +361,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testAsin(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.tinyintType, -1),
-        LTE(t.tinyintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.tinyintType, -1),
+          LTE(t.tinyintType, 1)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -394,13 +385,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.smallintType, -1),
-        LTE(t.smallintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.smallintType, -1),
+          LTE(t.smallintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -415,13 +405,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.intType, -1),
-        LTE(t.intType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.intType, -1),
+          LTE(t.intType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -436,13 +425,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.bigintType, -1),
-        LTE(t.bigintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.bigintType, -1),
+          LTE(t.bigintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -457,13 +445,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.floatType, -1),
-        LTE(t.floatType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.floatType, -1),
+          LTE(t.floatType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -478,13 +465,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.doubleType, -1),
-        LTE(t.doubleType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.doubleType, -1),
+          LTE(t.doubleType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -499,13 +485,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.decimalType, -1),
-        LTE(t.decimalType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.decimalType, -1),
+          LTE(t.decimalType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -520,10 +505,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testCos(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -552,17 +536,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testAcos(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.tinyintType, -1),
-        LTE(t.tinyintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.tinyintType, -1),
+          LTE(t.tinyintType, 1)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -577,13 +560,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.smallintType, -1),
-        LTE(t.smallintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.smallintType, -1),
+          LTE(t.smallintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -598,13 +580,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.intType, -1),
-        LTE(t.intType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.intType, -1),
+          LTE(t.intType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -619,13 +600,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.bigintType, -1),
-        LTE(t.bigintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.bigintType, -1),
+          LTE(t.bigintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -640,13 +620,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.floatType, -1),
-        LTE(t.floatType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.floatType, -1),
+          LTE(t.floatType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -661,13 +640,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.doubleType, -1),
-        LTE(t.doubleType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.doubleType, -1),
+          LTE(t.doubleType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -682,13 +660,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.decimalType, -1),
-        LTE(t.decimalType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.decimalType, -1),
+          LTE(t.decimalType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -703,10 +680,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testTan(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -735,10 +711,9 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testAtan(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -768,7 +743,6 @@ public abstract class NumericFunctionDynamicTest {
 
   private void testMod(final Types types, final Transaction transaction, final int integer) throws IOException, SQLException {
     final Types.Type t = getNthRow(rowNum++,
-
       SELECT(types.Type$)
         .execute(transaction));
 
@@ -797,34 +771,33 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testModIntPos(final Types types, final Transaction transaction) throws IOException, SQLException {
     testMod(types, transaction, 3);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testModIntNeg(final Types types, final Transaction transaction) throws IOException, SQLException {
     testMod(types, transaction, -3);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testModX(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        NE(t.tinyintType, 0),
-        NE(t.smallintType, 0),
-        NE(t.intType, 0),
-        NE(t.bigintType, 0),
-        NE(t.floatType, 0),
-        NE(t.doubleType, 0),
-        NE(t.decimalType, 0)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          NE(t.tinyintType, 0),
+          NE(t.smallintType, 0),
+          NE(t.intType, 0),
+          NE(t.bigintType, 0),
+          NE(t.floatType, 0),
+          NE(t.doubleType, 0),
+          NE(t.decimalType, 0)))
+        .execute(transaction));
 
     final Types.Type clone = t.clone();
 
@@ -851,17 +824,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testExp(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.tinyintType, -1),
-        LTE(t.tinyintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.tinyintType, -1),
+          LTE(t.tinyintType, 1)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -876,13 +848,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.smallintType, -1),
-        LTE(t.smallintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.smallintType, -1),
+          LTE(t.smallintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -897,13 +868,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.intType, -1),
-        LTE(t.intType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.intType, -1),
+          LTE(t.intType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -918,13 +888,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.bigintType, -1),
-        LTE(t.bigintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.bigintType, -1),
+          LTE(t.bigintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -939,13 +908,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.floatType, -1),
-        LTE(t.floatType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.floatType, -1),
+          LTE(t.floatType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -960,13 +928,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.doubleType, -1),
-        LTE(t.doubleType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.doubleType, -1),
+          LTE(t.doubleType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -981,13 +948,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.decimalType, -1),
-        LTE(t.decimalType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.decimalType, -1),
+          LTE(t.decimalType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1004,14 +970,13 @@ public abstract class NumericFunctionDynamicTest {
   private void testPow(final Types types, final Transaction transaction, final int integer) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.tinyintType, -1),
-        NE(t.tinyintType, 0),
-        LTE(t.tinyintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.tinyintType, -1),
+          NE(t.tinyintType, 0),
+          LTE(t.tinyintType, 1)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -1026,14 +991,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.smallintType, -1),
-        NE(t.smallintType, 0),
-        LTE(t.smallintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.smallintType, -1),
+          NE(t.smallintType, 0),
+          LTE(t.smallintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1048,14 +1012,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.intType, -1),
-        NE(t.intType, 0),
-        LTE(t.intType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.intType, -1),
+          NE(t.intType, 0),
+          LTE(t.intType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1070,14 +1033,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.bigintType, -1),
-        NE(t.bigintType, 0),
-        LTE(t.bigintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.bigintType, -1),
+          NE(t.bigintType, 0),
+          LTE(t.bigintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1092,14 +1054,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.floatType, -1),
-        NE(t.floatType, 0),
-        LTE(t.floatType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.floatType, -1),
+          NE(t.floatType, 0),
+          LTE(t.floatType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1114,14 +1075,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.doubleType, -1),
-        NE(t.doubleType, 0),
-        LTE(t.doubleType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.doubleType, -1),
+          NE(t.doubleType, 0),
+          LTE(t.doubleType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1136,14 +1096,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.decimalType, -1),
-        NE(t.decimalType, 0),
-        LTE(t.decimalType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.decimalType, -1),
+          NE(t.decimalType, 0),
+          LTE(t.decimalType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1158,13 +1117,13 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testPowIntPow(final Types types, final Transaction transaction) throws IOException, SQLException {
     testPow(types, transaction, 3);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testPowIntNeg(final Types types, final Transaction transaction) throws IOException, SQLException {
     testPow(types, transaction, -3);
   }
@@ -1172,14 +1131,13 @@ public abstract class NumericFunctionDynamicTest {
   private void testPow2(final Types types, final Transaction transaction, final double value) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.tinyintType, -1),
-        NE(t.tinyintType, 0),
-        LTE(t.tinyintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.tinyintType, -1),
+          NE(t.tinyintType, 0),
+          LTE(t.tinyintType, 1)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -1194,14 +1152,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.smallintType, -1),
-        NE(t.smallintType, 0),
-        LTE(t.smallintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.smallintType, -1),
+          NE(t.smallintType, 0),
+          LTE(t.smallintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1216,14 +1173,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.intType, -1),
-        NE(t.intType, 0),
-        LTE(t.intType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.intType, -1),
+          NE(t.intType, 0),
+          LTE(t.intType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1238,14 +1194,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.bigintType, -1),
-        NE(t.bigintType, 0),
-        LTE(t.bigintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.bigintType, -1),
+          NE(t.bigintType, 0),
+          LTE(t.bigintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1260,14 +1215,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.floatType, -1),
-        NE(t.floatType, 0),
-        LTE(t.floatType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.floatType, -1),
+          NE(t.floatType, 0),
+          LTE(t.floatType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1282,14 +1236,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.doubleType, -1),
-        NE(t.doubleType, 0),
-        LTE(t.doubleType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.doubleType, -1),
+          NE(t.doubleType, 0),
+          LTE(t.doubleType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1304,14 +1257,13 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GTE(t.decimalType, -1),
-        NE(t.decimalType, 0),
-        LTE(t.decimalType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GTE(t.decimalType, -1),
+          NE(t.decimalType, 0),
+          LTE(t.decimalType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1326,23 +1278,22 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testPow3X(final Types types, final Transaction transaction) throws IOException, SQLException {
     testPow2(types, transaction, .2);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testPowXX(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.tinyintType, 0),
-        LTE(t.tinyintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.tinyintType, 0),
+          LTE(t.tinyintType, 1)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -1357,13 +1308,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.smallintType, 0),
-        LTE(t.smallintType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.smallintType, 0),
+          LTE(t.smallintType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1378,13 +1328,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.intType, 0),
-        LTE(t.intType, 1)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.intType, 0),
+          LTE(t.intType, 1)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1399,13 +1348,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.bigintType, 0),
-        LTE(t.bigintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.bigintType, 0),
+          LTE(t.bigintType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1420,13 +1368,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.floatType, 0),
-        LTE(t.floatType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.floatType, 0),
+          LTE(t.floatType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1441,13 +1388,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.doubleType, 0),
-        LTE(t.doubleType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.doubleType, 0),
+          LTE(t.doubleType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1462,13 +1408,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.decimalType, 0),
-        LTE(t.decimalType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.decimalType, 0),
+          LTE(t.decimalType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1483,17 +1428,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testLogX3(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.tinyintType, 1),
-        LTE(t.tinyintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.tinyintType, 1),
+          LTE(t.tinyintType, 10)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -1508,13 +1452,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.smallintType, 1),
-        LTE(t.smallintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.smallintType, 1),
+          LTE(t.smallintType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1529,13 +1472,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.intType, 1),
-        LTE(t.intType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.intType, 1),
+          LTE(t.intType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1550,13 +1492,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.bigintType, 1),
-        LTE(t.bigintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.bigintType, 1),
+          LTE(t.bigintType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1571,13 +1512,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.floatType, 1),
-        LTE(t.floatType, 100)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.floatType, 1),
+          LTE(t.floatType, 100)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1592,13 +1532,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.doubleType, 1),
-        LTE(t.doubleType, 100)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.doubleType, 1),
+          LTE(t.doubleType, 100)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1613,13 +1552,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.decimalType, 1),
-        LTE(t.decimalType, 100)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.decimalType, 1),
+          LTE(t.decimalType, 100)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1634,17 +1572,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testLog3X(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.tinyintType, 0),
-        LTE(t.tinyintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.tinyintType, 0),
+          LTE(t.tinyintType, 10)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -1659,13 +1596,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.smallintType, 0),
-        LTE(t.smallintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.smallintType, 0),
+          LTE(t.smallintType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1680,13 +1616,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.intType, 0),
-        LTE(t.intType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.intType, 0),
+          LTE(t.intType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1701,13 +1636,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.bigintType, 0),
-        LTE(t.bigintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.bigintType, 0),
+          LTE(t.bigintType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1722,13 +1656,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.floatType, 0),
-        LTE(t.floatType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.floatType, 0),
+          LTE(t.floatType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1743,13 +1676,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.doubleType, 0),
-        LTE(t.doubleType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.doubleType, 0),
+          LTE(t.doubleType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1764,13 +1696,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.decimalType, 0),
-        LTE(t.decimalType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.decimalType, 0),
+          LTE(t.decimalType, 10)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1785,17 +1716,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testLogXX(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.tinyintType, 1),
-        LTE(t.tinyintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.tinyintType, 1),
+          LTE(t.tinyintType, 10)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -1810,13 +1740,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.smallintType, 1),
-        LTE(t.smallintType, 100)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.smallintType, 1),
+          LTE(t.smallintType, 100)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1831,13 +1760,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.intType, 1),
-        LTE(t.intType, 1000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.intType, 1),
+          LTE(t.intType, 1000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1852,13 +1780,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.bigintType, 1),
-        LTE(t.bigintType, 10000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.bigintType, 1),
+          LTE(t.bigintType, 10000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1873,13 +1800,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.floatType, 1),
-        LTE(t.floatType, 100000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.floatType, 1),
+          LTE(t.floatType, 100000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1894,13 +1820,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.doubleType, 1),
-        LTE(t.doubleType, 1000000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.doubleType, 1),
+          LTE(t.doubleType, 1000000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1915,13 +1840,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.decimalType, 1),
-        LTE(t.decimalType, 10000000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.decimalType, 1),
+          LTE(t.decimalType, 10000000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1936,17 +1860,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testLn(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.tinyintType, 0),
-        LTE(t.tinyintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.tinyintType, 0),
+          LTE(t.tinyintType, 10)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -1961,13 +1884,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.smallintType, 0),
-        LTE(t.smallintType, 100)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.smallintType, 0),
+          LTE(t.smallintType, 100)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -1982,13 +1904,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.intType, 0),
-        LTE(t.intType, 1000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.intType, 0),
+          LTE(t.intType, 1000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2003,13 +1924,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.bigintType, 0),
-        LTE(t.bigintType, 10000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.bigintType, 0),
+          LTE(t.bigintType, 10000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2024,13 +1944,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.floatType, 0),
-        LTE(t.floatType, 100000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.floatType, 0),
+          LTE(t.floatType, 100000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2045,13 +1964,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.doubleType, 0),
-        LTE(t.doubleType, 1000000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.doubleType, 0),
+          LTE(t.doubleType, 1000000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2066,13 +1984,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.decimalType, 0),
-        LTE(t.decimalType, 10000000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.decimalType, 0),
+          LTE(t.decimalType, 10000000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2087,17 +2004,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testLog2(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.tinyintType, 0),
-        LTE(t.tinyintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.tinyintType, 0),
+          LTE(t.tinyintType, 10)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -2112,13 +2028,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.smallintType, 0),
-        LTE(t.smallintType, 100)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.smallintType, 0),
+          LTE(t.smallintType, 100)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2133,13 +2048,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.intType, 0),
-        LTE(t.intType, 1000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.intType, 0),
+          LTE(t.intType, 1000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2154,13 +2068,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.bigintType, 0),
-        LTE(t.bigintType, 10000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.bigintType, 0),
+          LTE(t.bigintType, 10000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2175,13 +2088,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.floatType, 0),
-        LTE(t.floatType, 100000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.floatType, 0),
+          LTE(t.floatType, 100000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2196,13 +2108,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.doubleType, 0),
-        LTE(t.doubleType, 1000000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.doubleType, 0),
+          LTE(t.doubleType, 1000000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2218,13 +2129,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.decimalType, 0),
-        LTE(t.decimalType, 10000000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.decimalType, 0),
+          LTE(t.decimalType, 10000000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2239,17 +2149,16 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testLog10(final Types types, final Transaction transaction) throws IOException, SQLException {
     Types.Type t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.tinyintType, 0),
-        LTE(t.tinyintType, 10)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.tinyintType, 0),
+          LTE(t.tinyintType, 10)))
+        .execute(transaction));
 
     Types.Type clone = t.clone();
 
@@ -2264,13 +2173,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.smallintType, 0),
-        LTE(t.smallintType, 100)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.smallintType, 0),
+          LTE(t.smallintType, 100)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2285,13 +2193,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.intType, 0),
-        LTE(t.intType, 1000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.intType, 0),
+          LTE(t.intType, 1000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2306,13 +2213,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.bigintType, 0),
-        LTE(t.bigintType, 10000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.bigintType, 0),
+          LTE(t.bigintType, 10000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2327,13 +2233,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.floatType, 0),
-        LTE(t.floatType, 100000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.floatType, 0),
+          LTE(t.floatType, 100000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2348,13 +2253,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.doubleType, 0),
-        LTE(t.doubleType, 1000000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.doubleType, 0),
+          LTE(t.doubleType, 1000000)))
+        .execute(transaction));
 
     clone = t.clone();
 
@@ -2369,13 +2273,12 @@ public abstract class NumericFunctionDynamicTest {
 
     t = types.Type$;
     t = getNthRow(rowNum++,
-
-      SELECT(t).
-      FROM(t).
-      WHERE(AND(
-        GT(t.decimalType, 0),
-        LTE(t.decimalType, 10000000)))
-          .execute(transaction));
+      SELECT(t)
+        .FROM(t)
+        .WHERE(AND(
+          GT(t.decimalType, 0),
+          LTE(t.decimalType, 10000000)))
+        .execute(transaction));
 
     clone = t.clone();
 

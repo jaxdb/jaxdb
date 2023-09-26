@@ -58,24 +58,23 @@ public abstract class NotificationTest {
     // 1. Retry these exceptions by default, and log with level=DEBUG.
     // FIXME: Replace with SQL State codes...
     final String message = e.getMessage();
-    if (message != null && (
-        e instanceof SQLTransactionRollbackException && message.contains("could not serialize access") ||
+    if (message != null && (e instanceof SQLTransactionRollbackException && message.contains("could not serialize access") ||
         e instanceof SQLInternalErrorException && message.endsWith("tuple concurrently updated") ||
         e instanceof SQLFeatureNotSupportedException && message.endsWith("cached plan must not change result type") ||
         e instanceof SQLNonTransientConnectionException && message.startsWith("Connection Error"))) {
-      if (logger.isDebugEnabled()) logger.debug(message);
+      if (logger.isDebugEnabled()) { logger.debug(message); }
       return true;
     }
 
     // 2. All other SQLTransactionRollbackException(s) and SQLTransientException(s) with level=WARNING.
     if (e instanceof SQLTransactionRollbackException || e instanceof SQLTransientException || e instanceof SQLNonTransientConnectionException || e instanceof SQLOperatorInterventionException) {
-      if (logger.isWarnEnabled()) logger.warn(message, e);
+      if (logger.isWarnEnabled()) { logger.warn(message, e); }
       return true;
     }
 
     // 3. IOException with level=INFO
     if (e instanceof IOException) {
-      if (logger.isInfoEnabled()) logger.info(message, e);
+      if (logger.isInfoEnabled()) { logger.info(message, e); }
       return true;
     }
 
@@ -83,13 +82,11 @@ public abstract class NotificationTest {
     return false;
   }
 
-  private static final RetryPolicy.Builder<RetryFailureRuntimeException> PERMA = new RetryPolicy
-    .Builder<>((final Exception lastException, final List<Exception> suppressedExceptions, final int attemptNo, final long delayMs)
-      -> new RetryFailureRuntimeException(lastException, attemptNo, delayMs))
-        .withStartDelay(10)
-        .withMaxRetries(Integer.MAX_VALUE)
-        .withBackoffFactor(1.5)
-        .withMaxDelayMs(1000);
+  private static final RetryPolicy.Builder<RetryFailureRuntimeException> PERMA = new RetryPolicy.Builder<>((final Exception lastException, final List<Exception> suppressedExceptions, final int attemptNo, final long delayMs) -> new RetryFailureRuntimeException(lastException, attemptNo, delayMs))
+    .withStartDelay(10)
+    .withMaxRetries(Integer.MAX_VALUE)
+    .withBackoffFactor(1.5)
+    .withMaxDelayMs(1000);
 
   static final RetryPolicy<RetryFailureRuntimeException> PERMA_SQL = PERMA.withMaxRetries(Integer.MAX_VALUE).build(NotificationTest::sql);
 

@@ -197,6 +197,6 @@ public abstract class Condition<V> extends data.Primitive<V> {
   }
 
   abstract void collectColumns(ArrayList<data.Column<?>> list);
-//  abstract void andIntervalSet(IntervalSet<data.Key> intervalSet);
-//  abstract void orIntervalSet(IntervalSet<data.Key> intervalSet);
+  // abstract void andIntervalSet(IntervalSet<data.Key> intervalSet);
+  // abstract void orIntervalSet(IntervalSet<data.Key> intervalSet);
 }

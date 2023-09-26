@@ -281,7 +281,7 @@ class TableModel {
     if (columnsToIndexType.size() > 0) {
       for (final Map.Entry<ColumnModels,IndexType> entry : columnsToIndexType.entrySet()) { // [S]
         if (entry.getValue() instanceof UNDEFINED) {
-          if (logger.isWarnEnabled()) logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
+          if (logger.isWarnEnabled()) { logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE."); }
           entry.setValue(entry.getValue().isUnique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
         }
       }
@@ -304,7 +304,7 @@ class TableModel {
       for (final ForeignKey foreignKey : foreignKeys) // [S]
         makeForeignRelations(foreignKey);
 
-//    print();
+    // print();
   }
 
   private void print() {
@@ -313,7 +313,7 @@ class TableModel {
     System.err.println("keyForUpdateColumnNames: " + keyForUpdateColumnNames);
 
     System.err.println("uniques: " + uniques);
-//    System.err.println(indexes);
+    // System.err.println(indexes);
     System.err.println("primaryKey: " + primaryKey);
     System.err.println("foreignKeys: " + foreignKeys);
 
@@ -838,8 +838,8 @@ class TableModel {
       out.append(" abstract");
 
     out.append(" class ").append(classSimpleName).append(" extends ").append(ext).append(" implements $").append(classSimpleName);
-//    if (!isAbstract)
-//      out.append(" implements ").append(type.Table.class.getCanonicalName()).append('<').append(className).append('>');
+    // if (!isAbstract)
+    // out.append(" implements ").append(type.Table.class.getCanonicalName()).append('<').append(className).append('>');
 
     out.append(" {");
 
@@ -986,7 +986,6 @@ class TableModel {
       out.append("\n      this(true, copy);");
       out.append("\n    }\n");
 
-
       out.append("\n    ").append(classSimpleName).append("(final boolean _mutable$) {");
       out.append("\n      this(_mutable$, false);");
       out.append("\n    }\n");
@@ -1002,33 +1001,33 @@ class TableModel {
       final StringBuilder ocb = new StringBuilder();
       for (int i = 0; i < noColumnsTotal; ++i) { // [A]
         final ColumnModel columnModel = columns[i];
-          // This section executed onChanged() for each column to clear the foreign Key
-  //      Map<String,String> foreignKeyColumns = tableToForeignKeyColumns.get(table);
-  //      if (foreignKeyColumns == null) {
-  //        tableToForeignKeyColumns.put(table, foreignKeyColumns = new HashMap<>());
-  //        for (final columnModel t : columns) { // [?]
-  //          if (t.column.getForeignKey() != null) {
-  //            final String privateKeyName = "_foreignKey$" + t.instanceCase;
-  //            foreignKeyColumns.put(t.name, privateKeyName);
-  //          }
-  //        }
-  //
-  //        if (table.getConstraints() != null && table.getConstraints().getForeignKey() != null) {
-  //          for (final $ForeignKeyComposite foreignKey : table.getConstraints().getForeignKey()) { // [?]
-  //            final StringBuilder foreignKeyName = new StringBuilder();
-  //            for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
-  //              final String camelCase = Identifiers.toCamelCase(column.getName$().text(), '_');
-  //              foreignKeyName.append(camelCase).append('$');
-  //            }
-  //
-  //            foreignKeyName.setLength(foreignKeyName.length() - 1);
-  //            final String privateKeyName = "_foreignKey$" + foreignKeyName;
-  //            for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
-  //              foreignKeyColumns.put(column.getName$().text(), privateKeyName);
-  //            }
-  //          }
-  //        }
-  //      }
+        // This section executed onChanged() for each column to clear the foreign Key
+        // Map<String,String> foreignKeyColumns = tableToForeignKeyColumns.get(table);
+        // if (foreignKeyColumns == null) {
+        // tableToForeignKeyColumns.put(table, foreignKeyColumns = new HashMap<>());
+        // for (final columnModel t : columns) { // [?]
+        // if (t.column.getForeignKey() != null) {
+        // final String privateKeyName = "_foreignKey$" + t.instanceCase;
+        // foreignKeyColumns.put(t.name, privateKeyName);
+        // }
+        // }
+        //
+        // if (table.getConstraints() != null && table.getConstraints().getForeignKey() != null) {
+        // for (final $ForeignKeyComposite foreignKey : table.getConstraints().getForeignKey()) { // [?]
+        // final StringBuilder foreignKeyName = new StringBuilder();
+        // for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
+        // final String camelCase = Identifiers.toCamelCase(column.getName$().text(), '_');
+        // foreignKeyName.append(camelCase).append('$');
+        // }
+        //
+        // foreignKeyName.setLength(foreignKeyName.length() - 1);
+        // final String privateKeyName = "_foreignKey$" + foreignKeyName;
+        // for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
+        // foreignKeyColumns.put(column.getName$().text(), privateKeyName);
+        // }
+        // }
+        // }
+        // }
 
         final ArrayList<Relation> onChangeRelationsForColumn = new ArrayList<>(1);
         if (columnsToRelations.size() > 0)
@@ -1070,10 +1069,10 @@ class TableModel {
                     write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur, true, declared2), ocb, declared2);
                   }
 
-    //                    for (final Foreign reverse : relation.reverses) { // [?]
-    //                      if (reverse.referencesColumns.contains(columnModel))
-    //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, CurOld.Old), "\n", ocb, declared);
-    //                    }
+                  // for (final Foreign reverse : relation.reverses) { // [?]
+                  // if (reverse.referencesColumns.contains(columnModel))
+                  // write(" ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, CurOld.Old), "\n", ocb, declared);
+                  // }
                 }
               }
             }
@@ -1234,10 +1233,10 @@ class TableModel {
       out.append(buf);
     out.append("    }\n");
 
-//    out.append("    @").append(Override.class.getName()).append('\n');
-//    out.append("    protected ").append(TableCache.class.getName()).append(" getRowCache() {\n");
-//    out.append("      return ").append(schemaClassSimpleName).append(".getRowCache();\n");
-//    out.append("    }\n\n");
+    // out.append(" @").append(Override.class.getName()).append('\n');
+    // out.append(" protected ").append(TableCache.class.getName()).append(" getRowCache() {\n");
+    // out.append(" return ").append(schemaClassSimpleName).append(".getRowCache();\n");
+    // out.append(" }\n\n");
 
     if (isAbstract) {
       out.append("\n    @").append(Override.class.getName());

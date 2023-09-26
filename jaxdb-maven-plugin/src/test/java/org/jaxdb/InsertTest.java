@@ -53,7 +53,7 @@ import org.libj.io.UnsynchronizedStringReader;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class InsertTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends InsertTest {
   }
@@ -164,11 +164,11 @@ public abstract class InsertTest {
   }
 
   static int selectMaxId(final Transaction transaction, final Types.Type t) throws IOException, SQLException {
-    try (final RowIterator<data.INT> rows =
-
-      SELECT(MAX(t.id))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.INT> rows =
+        SELECT(MAX(t.id))
+          .execute(transaction)
+    ) {
       return rows.nextRow() ? rows.nextEntity().getAsInt() : 1;
     }
   }
@@ -184,7 +184,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInsertEntity(final Types types, final Transaction transaction) throws IOException, SQLException {
     testInsertEntity(transaction, t1);
     testInsertEntity(transaction, t2);
@@ -192,7 +192,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testInsertColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t3 = types.new Type();
     t3.bigintType.set(8493L);
@@ -207,11 +207,11 @@ public abstract class InsertTest {
         .getCount());
 
     final int id;
-    try (final RowIterator<data.INT> rows =
-
-      SELECT(MAX(t3.id))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.INT> rows =
+        SELECT(MAX(t3.id))
+          .execute(transaction)
+    ) {
       id = rows.nextRow() ? rows.nextEntity().getAsInt() : 1;
       assertFalse(rows.nextRow());
     }
@@ -221,7 +221,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInsertBatch(final Types types, final Transaction transaction) throws IOException, SQLException {
     final DbVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DbVendor.ORACLE;
@@ -250,7 +250,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Backup b = types.new Backup();
@@ -261,17 +261,14 @@ public abstract class InsertTest {
     final Types.Type t = types.Type$;
 
     assertEquals(27,
-      INSERT(b).
-      VALUES(
-        SELECT(t).
-        FROM(t).
-        LIMIT(27))
-          .execute(transaction)
-          .getCount());
+      INSERT(b).VALUES(
+        SELECT(t).FROM(t).LIMIT(27))
+        .execute(transaction)
+        .getCount());
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInsertSelectIntoColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Backup b = types.Backup$;
     final Types.Type t1 = types.new Type();
@@ -282,16 +279,15 @@ public abstract class InsertTest {
       .execute(transaction);
 
     assertEquals(27,
-      INSERT(b.binaryType, b.charType, b.enumType).
-        VALUES(
-          SELECT(t1.binaryType, t2.charType, t3.enumType).
-          FROM(t1, t2, t3).
-          WHERE(AND(
+      INSERT(b.binaryType, b.charType, b.enumType).VALUES(
+        SELECT(t1.binaryType, t2.charType, t3.enumType)
+          .FROM(t1, t2, t3)
+          .WHERE(AND(
             EQ(t1.charType, t2.charType),
             EQ(t2.tinyintType, t3.tinyintType),
-            EQ(t3.booleanType, t1.booleanType))).
-            LIMIT(27))
-          .execute(transaction)
-          .getCount());
+            EQ(t3.booleanType, t1.booleanType)))
+          .LIMIT(27))
+        .execute(transaction)
+        .getCount());
   }
 }

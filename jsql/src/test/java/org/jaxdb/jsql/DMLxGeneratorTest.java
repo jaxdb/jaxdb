@@ -226,7 +226,7 @@ public class DMLxGeneratorTest {
   private static String toStringArg(final Object[] stringArgs, final Class<?> type, final int index, String generic) {
     stringArgs[index] = getCanonicalCompositeName(type, true);
     if (type.getDeclaringClass() != type.class) {
-//      generic = "<V extends " + stringArgs[index] + ">";
+      // generic = "<V extends " + stringArgs[index] + ">";
       stringArgs[index] = stringArgs[index];
     }
 
@@ -320,7 +320,7 @@ public class DMLxGeneratorTest {
       .replace("/** DMLx.NOT **/", not.toString().trim());
 
     assertMatch(source, DML.class, true);
-    assertMatch(source.replace(" DML",  " TestDML").replace("new Command.", "new TestCommand."), TestDML.class, false);
+    assertMatch(source.replace(" DML", " TestDML").replace("new Command.", "new TestCommand."), TestDML.class, false);
   }
 
   private static void assertMatch(final String source, final Class<?> c, final boolean mainOrTest) throws IOException {

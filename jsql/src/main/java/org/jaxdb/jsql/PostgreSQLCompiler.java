@@ -388,7 +388,8 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   LocalDateTime getParameter(final data.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    // FIXME: For some reason, the ResultSet.getTimestamp() or ResultSet.getObject() way to get this returns incorrect values for the `-(INTERVAL '200 years')` query
+    // FIXME: For some reason, the ResultSet.getTimestamp() or ResultSet.getObject() way to get this returns
+    // FIXME: incorrect values for the `-(INTERVAL '200 years')` query.
     final String value = resultSet.getString(columnIndex);
     return resultSet.wasNull() || value == null ? null : Dialect.dateTimeFromString(value);
   }

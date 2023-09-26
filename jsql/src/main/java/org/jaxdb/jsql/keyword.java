@@ -82,8 +82,8 @@ public final class keyword {
     }
 
     interface _SET extends UPDATE {
-      <T>SET SET(data.Column<? extends T> column, type.Column<? extends T> to);
-      <T>SET SET(data.Column<T> column, T to);
+      <T> SET SET(data.Column<? extends T> column, type.Column<? extends T> to);
+      <T> SET SET(data.Column<T> column, T to);
     }
 
     interface SET extends _SET {

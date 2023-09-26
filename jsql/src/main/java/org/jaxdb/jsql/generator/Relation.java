@@ -102,8 +102,8 @@ class Relation {
       return "";
 
     final String rangeArgs = keyModel.keyArgsRange();
-    return
-      "\n    public " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "_CACHED(" + rangeParams + ") {" +
+    return "\n    public " +
+      SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "_CACHED(" + rangeParams + ") {" +
       "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".subMap(" + rangeArgs + ");" +
       "\n    }\n" +
       "\n    public " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheMethodName + "_SELECT(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
@@ -141,8 +141,8 @@ class Relation {
       return null;
 
     final String returnType = indexType.isUnique ? declarationName : indexType.getInterfaceClass(declarationName);
-    return
-      "\n    private " + data.Column.class.getCanonicalName() + "<?>[] " + cacheIndexFieldName + ";" +
+    return "\n    private " +
+      data.Column.class.getCanonicalName() + "<?>[] " + cacheIndexFieldName + ";" +
       "\n    " + indexType.getConcreteClass(declarationName) + " " + cacheMapFieldName + ";\n" +
       "\n    public " + returnType + " " + cacheMethodName + "_CACHED(" + keyParams + ") {" +
       "\n      return " + tableModel.singletonInstanceName + "." + cacheMapFieldName + ".get(" + keyArgs + ");" +

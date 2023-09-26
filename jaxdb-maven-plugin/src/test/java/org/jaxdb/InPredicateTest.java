@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class InPredicateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends InPredicateTest {
   }
@@ -52,21 +52,21 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testInList(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        IN(p.productLine, "Ships", "Planes", "Trains"),
-        SELECT(IN(p.productLine, "Ships", "Planes", "Trains")).
-        FROM(p).
-        WHERE(IN(p.productLine, "Ships", "Planes", "Trains")).
-        LIMIT(1)).
-      FROM(p).
-      WHERE(IN(p.productLine, "Ships", "Planes", "Trains"))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          IN(p.productLine, "Ships", "Planes", "Trains"),
+          SELECT(IN(p.productLine, "Ships", "Planes", "Trains"))
+            .FROM(p)
+            .WHERE(IN(p.productLine, "Ships", "Planes", "Trains"))
+            .LIMIT(1))
+          .FROM(p)
+          .WHERE(IN(p.productLine, "Ships", "Planes", "Trains"))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 24; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -78,21 +78,21 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testNotInList(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        NOT.IN(p.productLine, "Ships", "Planes", "Trains"),
-        SELECT(NOT.IN(p.productLine, "Ships", "Planes", "Trains")).
-        FROM(p).
-        WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains")).
-        LIMIT(1)).
-      FROM(p).
-      WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          NOT.IN(p.productLine, "Ships", "Planes", "Trains"),
+          SELECT(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
+            .FROM(p)
+            .WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
+            .LIMIT(1))
+          .FROM(p)
+          .WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 86; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -104,21 +104,17 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testInSubQuery(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        IN(p.productLine, SELECT(p.productLine).FROM(p)),
-        SELECT(IN(p.productLine, SELECT(p.productLine).FROM(p))).
-        FROM(p).
-        WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p))).
-        LIMIT(1)).
-      FROM(p).
-      WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p)))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          IN(p.productLine, SELECT(p.productLine).FROM(p)),
+          SELECT(IN(p.productLine, SELECT(p.productLine).FROM(p))).FROM(p).WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p))).LIMIT(1)).FROM(p)
+          .WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p)))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 110; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -130,21 +126,21 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testNotInSubQuery(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        NOT.IN(p.code, SELECT(p.productLine).FROM(p)),
-        SELECT(NOT.IN(p.code, SELECT(p.productLine).FROM(p))).
-        FROM(p).
-        WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p))).
-        LIMIT(1)).
-      FROM(p).
-      WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          NOT.IN(p.code, SELECT(p.productLine).FROM(p)),
+          SELECT(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
+            .FROM(p)
+            .WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
+            .LIMIT(1))
+          .FROM(p)
+          .WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 110; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());

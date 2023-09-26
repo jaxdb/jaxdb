@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class UncorrelatedSubQueryTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends UncorrelatedSubQueryTest {
   }
@@ -51,23 +51,21 @@ public abstract class UncorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testAdd(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
-    try (final RowIterator<? extends data.Numeric<?>> rows =
-
-      SELECT(
-        ADD(t.tinyintType, SELECT(MIN(t.tinyintType)).FROM(t)),
-        SUB(t.smallintType, SELECT(MIN(t.tinyintType)).FROM(t)),
-        ADD(t.intType, SELECT(MIN(t.smallintType)).FROM(t)),
-        SUB(t.floatType, SELECT(MAX(t.bigintType)).FROM(t)),
-        ADD(t.doubleType, SELECT(MIN(t.decimalType)).FROM(t)),
-        SUB(t.decimalType, SELECT(AVG(t.intType)).FROM(t)),
-        ADD(t.bigintType, SELECT(MAX(t.floatType)).FROM(t))
-      ).
-      FROM(t)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<? extends data.Numeric<?>> rows =
+        SELECT(
+          ADD(t.tinyintType, SELECT(MIN(t.tinyintType)).FROM(t)),
+          SUB(t.smallintType, SELECT(MIN(t.tinyintType)).FROM(t)),
+          ADD(t.intType, SELECT(MIN(t.smallintType)).FROM(t)),
+          SUB(t.floatType, SELECT(MAX(t.bigintType)).FROM(t)),
+          ADD(t.doubleType, SELECT(MIN(t.decimalType)).FROM(t)),
+          SUB(t.decimalType, SELECT(AVG(t.intType)).FROM(t)),
+          ADD(t.bigintType, SELECT(MAX(t.floatType)).FROM(t))).FROM(t)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
     }
   }

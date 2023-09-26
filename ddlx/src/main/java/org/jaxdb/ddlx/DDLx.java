@@ -111,7 +111,7 @@ public class DDLx {
   private final Schema mergedSchema;
 
   public DDLx(final URL url) throws IOException, SAXException, TransformerException {
-    if (logger.isDebugEnabled()) logger.debug("new DDLx(\"" + url + "\")");
+    if (logger.isDebugEnabled()) { logger.debug("new DDLx(\"" + url + "\")"); }
 
     this.url = url;
 

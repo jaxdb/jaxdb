@@ -66,12 +66,12 @@ public interface GenerateOn<T> extends Serializable {
         integer.ref = integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max);
       }
       // FIXME: Support FLOAT, DOUBLE, and DECIMAL?
-//      else if (numberType instanceof type.FLOAT)
-//        ((type.FLOAT)numberType).ref = ADD((type.FLOAT)numberType, 1f);
-//      else if (numberType instanceof type.DOUBLE)
-//        ((type.DOUBLE)numberType).ref = ADD((type.DOUBLE)numberType, 1f);
-//      else if (numberType instanceof type.DECIMAL)
-//        ((type.DECIMAL)numberType).ref = ADD((type.DECIMAL)numberType, 1f);
+      // else if (numberType instanceof type.FLOAT)
+      // ((type.FLOAT)numberType).ref = ADD((type.FLOAT)numberType, 1f);
+      // else if (numberType instanceof type.DOUBLE)
+      // ((type.DOUBLE)numberType).ref = ADD((type.DOUBLE)numberType, 1f);
+      // else if (numberType instanceof type.DECIMAL)
+      // ((type.DECIMAL)numberType).ref = ADD((type.DECIMAL)numberType, 1f);
       else {
         throw new UnsupportedOperationException("Unsupported type: " + numberType.getClass().getName());
       }

@@ -63,7 +63,15 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 
 abstract class Decompiler {
-  private static final Decompiler[] decompilers = {/*new DB2Decompiler()*/null, new DerbyDecompiler(), /*new MariaDBDecompiler()*/null, /*new MySQLDecompiler()*/null, /*new OracleDecompiler()*/null, /*new PostgreSQLDecompiler()*/null, new SQLiteDecompiler()};
+  private static final Decompiler[] decompilers = {
+    /* new DB2Decompiler() */null,
+    new DerbyDecompiler(),
+    /* new MariaDBDecompiler() */null,
+    /* new MySQLDecompiler() */null,
+    /* new OracleDecompiler() */null,
+    /* new PostgreSQLDecompiler() */null,
+    new SQLiteDecompiler()
+  };
 
   static Decompiler getDecompiler(final DbVendor vendor) {
     final Decompiler decompiler = decompilers[vendor.ordinal()];
@@ -241,8 +249,8 @@ abstract class Decompiler {
 
   abstract DbVendor getVendor();
   abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
-  abstract <L extends List<$CheckReference> & RandomAccess>Map<String,L> getCheckConstraints(Connection connection) throws SQLException;
-  abstract <L extends List<$Table.Constraints.Unique> & RandomAccess>Map<String,L> getUniqueConstraints(Connection connection) throws SQLException;
+  abstract <L extends List<$CheckReference> & RandomAccess> Map<String,L> getCheckConstraints(Connection connection) throws SQLException;
+  abstract <L extends List<$Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(Connection connection) throws SQLException;
   abstract Map<String,$Table.Indexes> getIndexes(Connection connection) throws SQLException;
 
   private static $ChangeRule.Enum toBinding(final short rule) {
@@ -304,7 +312,7 @@ abstract class Decompiler {
   }
 
   @SuppressWarnings("unchecked")
-  static <T extends $Column>T newColumn(final Class<T> type) {
+  static <T extends $Column> T newColumn(final Class<T> type) {
     if (type == $Bigint.class)
       return (T)new $Bigint() {
         @Override
@@ -369,13 +377,13 @@ abstract class Decompiler {
         }
       };
 
-      if (type == $Decimal.class)
-        return (T)new $Decimal() {
-          @Override
-          protected $Named inherits() {
-            return null;
-          }
-        };
+    if (type == $Decimal.class)
+      return (T)new $Decimal() {
+        @Override
+        protected $Named inherits() {
+          return null;
+        }
+      };
 
     if (type == $Double.class)
       return (T)new $Double() {

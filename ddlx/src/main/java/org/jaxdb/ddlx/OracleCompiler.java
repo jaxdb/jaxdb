@@ -103,7 +103,8 @@ final class OracleCompiler extends Compiler {
 
   @Override
   String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
-    // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements, and nothing is needed in the CREATE TABLE statement
+    // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements,
+    // and nothing is needed in the CREATE TABLE statement
     return null;
   }
 
@@ -195,7 +196,8 @@ final class OracleCompiler extends Compiler {
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
-    if ($IndexType.HASH.text().equals(type.text()) && logger.isWarnEnabled()) logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
+    if ($IndexType.HASH.text().equals(type.text()) && logger.isWarnEnabled())
+      logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
 
     final StringBuilder b = new StringBuilder("CREATE ");
     if (unique)
@@ -217,7 +219,7 @@ final class OracleCompiler extends Compiler {
 
   @Override
   StringBuilder onUpdate(final StringBuilder b, final $ChangeRule onUpdate) {
-    if (logger.isWarnEnabled()) logger.warn("ON UPDATE is not supported");
+    if (logger.isWarnEnabled()) { logger.warn("ON UPDATE is not supported"); }
     return b;
   }
 

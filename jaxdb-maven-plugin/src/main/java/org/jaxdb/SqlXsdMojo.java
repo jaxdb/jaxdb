@@ -27,8 +27,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.libj.net.URLs;
 
-@Mojo(name="sqlxsd", defaultPhase=LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution=ResolutionScope.TEST)
-@Execute(goal="sqlxsd")
+@Mojo(name = "sqlxsd", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Execute(goal = "sqlxsd")
 public class SqlXsdMojo extends JaxDbMojo<SqlXsdProduce> {
   class Configuration extends JaxDbMojo<SqlXsdProduce>.Configuration {
     private final LinkedHashSet<URL> xsds;

@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
 @RunWith(DBTestRunner.class)
 public abstract class ReverseTest extends DDLxTest {
   @Ignore("FIXME")
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   // @VendorRunner.Vendor(SQLite.class) // FIXME: Enable SQLite
   public static class IntegrationTest extends ReverseTest {
   }
@@ -81,25 +81,23 @@ public abstract class ReverseTest extends DDLxTest {
         "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='SET DEFAULT']/@onUpdate",
         "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='SET NULL']/@onUpdate",
         "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='RESTRICT']/@onUpdate",
-        "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='CASCADE']/@onUpdate"
-      )
+        "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='CASCADE']/@onUpdate")
 
-      .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:float']/@xsi:type", "ddlx:double")
-      .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:tinyint']/@xsi:type", "ddlx:smallint")
-      .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum' and @values='SEVEN EIGHT NINE']/@values", "length", "5")
-      .addAttrToControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']", "varying", "true")
-      .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']/@xsi:type", "ddlx:char")
+        .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:float']/@xsi:type", "ddlx:double")
+        .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:tinyint']/@xsi:type", "ddlx:smallint")
+        .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum' and @values='SEVEN EIGHT NINE']/@values", "length", "5")
+        .addAttrToControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']", "varying", "true")
+        .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']/@xsi:type", "ddlx:char")
 
-      .removeFromTest(
-        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:binary' and @length='2147483647']/@length",
-        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:blob' and @length='2147483647']/@length",
-        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:clob' and @length='2147483647']/@length",
-        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and not(@length)]/@length",
-        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and @name='c_implicit']/@precision",
-        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and @name='c_implicit']/@scale",
-        "//ddlx:schema/ddlx:table[@name='t_enum']",
-        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:time']/@precision"
-      );
+        .removeFromTest(
+          "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:binary' and @length='2147483647']/@length",
+          "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:blob' and @length='2147483647']/@length",
+          "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:clob' and @length='2147483647']/@length",
+          "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and not(@length)]/@length",
+          "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and @name='c_implicit']/@precision",
+          "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and @name='c_implicit']/@scale",
+          "//ddlx:schema/ddlx:table[@name='t_enum']",
+          "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:time']/@precision");
     }
 
     builder.assertEqual(true);
@@ -123,7 +121,7 @@ public abstract class ReverseTest extends DDLxTest {
   public void testRecreateSchema(final Connection connection) throws GeneratorExecutionException, IOException, MarshalException, SAXException, SQLException, TransformerException, XPathExpressionException {
     final Schema expected = recreateSchema(connection, "reverse", true);
     sort(expected);
-//    if (logger.isInfoEnabled()) logger.info(expected);
+    // if (logger.isInfoEnabled()) { logger.info(expected); }
     Schema actual = Decompiler.createDDL(connection);
     // FIXME: Need to restrict which database/schema/tablespace we're looking at.
     final Iterator<$Table> iterator = actual.getTable().iterator();
@@ -132,9 +130,10 @@ public abstract class ReverseTest extends DDLxTest {
         iterator.remove();
 
     sort(actual);
-//    if (logger.isInfoEnabled()) logger.info(actual);
+    // if (logger.isInfoEnabled()) { logger.info(actual); }
 
     assertEqual(DbVendor.valueOf(connection.getMetaData()), expected, actual);
-//    if (logger.isInfoEnabled()) logger.info(DOMs.domToString(actual.marshal(), Collections.singletonMap("http://www.jaxdb.org/ddlx.xsd", "http://www.jaxdb.org/ddlx.xsd"), DOMStyle.INDENT));
+    // if (logger.isInfoEnabled()) { logger.info(DOMs.domToString(actual.marshal(),
+    // Collections.singletonMap("http://www.jaxdb.org/ddlx.xsd", "http://www.jaxdb.org/ddlx.xsd"), DOMStyle.INDENT)); }
   }
 }

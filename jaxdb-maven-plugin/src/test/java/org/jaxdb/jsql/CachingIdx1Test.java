@@ -35,14 +35,14 @@ import org.junit.runner.RunWith;
 @RunWith(SchemaTestRunner.class)
 @Config(sync = true, deferLog = false, failFast = true)
 public abstract class CachingIdx1Test extends CachingTest {
-  //@DB(Derby.class)
-  //@DB(SQLite.class)
-  //public static class IntegrationTest extends CachingIdx1Test {
-  //}
+  // @DB(Derby.class)
+  // @DB(SQLite.class)
+  // public static class IntegrationTest extends CachingIdx1Test {
+  // }
 
-  //@DB(MySQL.class)
+  // @DB(MySQL.class)
   @DB(PostgreSQL.class)
-  //@DB(Oracle.class)
+  // @DB(Oracle.class)
   public static class RegressionTest extends CachingIdx1Test {
   }
 
@@ -268,8 +268,7 @@ public abstract class CachingIdx1Test extends CachingTest {
           assertFalse(oa.idx1_TO_oneAIdx1_ON_ManyManyIdx1_CACHED().containsValue(mm));
           assertFalse(ob.idx1_TO_oneBIdx1_ON_ManyManyIdx1_CACHED().containsValue(mm));
         },
-        (j, as) -> {
-        });
+        (j, as) -> {});
     }
   }
 }

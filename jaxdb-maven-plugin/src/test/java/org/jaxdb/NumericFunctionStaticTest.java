@@ -45,9 +45,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(SchemaTestRunner.class)
-//@DBTestRunner.Config(deferLog=false)
+// @DBTestRunner.Config(deferLog=false)
 public abstract class NumericFunctionStaticTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends NumericFunctionStaticTest {
   }
@@ -76,21 +76,17 @@ public abstract class NumericFunctionStaticTest {
         MUL(MUL(
           COS(DIV(MUL(latitude, PI()), 180)),
           COS(DIV(MUL(c.latitude, PI()), 180))),
-          POW(SIN(DIV(MUL(SUB(c.longitude, longitude), PI()), 360)), 2)))))).
-        AS(d)).
-      FROM(c).
-      GROUP_BY(c).
-      HAVING(LT(d, distance)).
-      ORDER_BY(DESC(d)).
-      LIMIT(limit);
+          POW(SIN(DIV(MUL(SUB(c.longitude, longitude), PI()), 360)), 2)))))).AS(d)).FROM(c).GROUP_BY(c).HAVING(LT(d, distance)).ORDER_BY(DESC(d)).LIMIT(limit);
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testVicinity(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
-    try (final RowIterator<type.Entity> rows =
-      selectVicinity(classicmodels, 37.78536811469731, -122.3931884765625, 10, 1)
-        .execute(transaction)) {
+    try (
+      final RowIterator<type.Entity> rows =
+        selectVicinity(classicmodels, 37.78536811469731, -122.3931884765625, 10, 1)
+          .execute(transaction)
+    ) {
       while (rows.nextRow()) {
         final Classicmodels.Customer c = (Classicmodels.Customer)rows.nextEntity();
         assertEquals("Mini Wheels Co.", c.companyName.get());
@@ -101,21 +97,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testRound0(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        ROUND(t.doubleType, 0).AS(b)).
-      FROM(t).
-      WHERE(GT(t.doubleType, 10)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          ROUND(t.doubleType, 0).AS(b))
+          .FROM(t)
+          .WHERE(GT(t.doubleType, 10))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -126,21 +122,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testRound1(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        ROUND(t.doubleType, 1).AS(b)).
-      FROM(t).
-      WHERE(GT(t.doubleType, 10)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          ROUND(t.doubleType, 1).AS(b))
+          .FROM(t)
+          .WHERE(GT(t.doubleType, 10))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -151,16 +147,16 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testRound2(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<Classicmodels.Customer> rows =
-
-      SELECT(c).
-      FROM(c).
-      WHERE(NE(ROUND(c.customerNumber, c.customerNumber), 0))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Classicmodels.Customer> rows =
+        SELECT(c)
+          .FROM(c)
+          .WHERE(NE(ROUND(c.customerNumber, c.customerNumber), 0))
+          .execute(transaction)
+    ) {
       // FIXME: https://github.com/jaxdb/jaxdb/issues/79
       int i = 0;
       while (rows.nextRow())
@@ -171,21 +167,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testSign(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        SIGN(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(IS.NOT.NULL(t.doubleType)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          SIGN(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(IS.NOT.NULL(t.doubleType))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -195,21 +191,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testFloor(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        FLOOR(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(IS.NOT.NULL(t.doubleType)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          FLOOR(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(IS.NOT.NULL(t.doubleType))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -220,21 +216,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testCeil(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        CEIL(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(IS.NOT.NULL(t.doubleType)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          CEIL(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(IS.NOT.NULL(t.doubleType))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -245,21 +241,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testSqrt(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        SQRT(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(GT(t.doubleType, 10)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          SQRT(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(GT(t.doubleType, 10))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -270,21 +266,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testDegrees(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        DEGREES(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(NE(t.doubleType, 0)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          DEGREES(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(NE(t.doubleType, 0))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -295,21 +291,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testRadians(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        RADIANS(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(NE(t.doubleType, 0)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          RADIANS(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(NE(t.doubleType, 0))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -320,21 +316,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testSin(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        SIN(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          SIN(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.doubleType, 0),
+            LT(t.doubleType, 1)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -345,21 +343,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testAsin(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        ASIN(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          ASIN(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.doubleType, 0),
+            LT(t.doubleType, 1)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -370,21 +370,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testCos(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        COS(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          COS(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.doubleType, 0),
+            LT(t.doubleType, 1)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -395,21 +397,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testAcos(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        ACOS(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          ACOS(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.doubleType, 0),
+            LT(t.doubleType, 1)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -420,21 +424,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testTan(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        TAN(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          TAN(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.doubleType, 0),
+            LT(t.doubleType, 1)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -445,21 +451,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testAtan(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        ATAN(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          ATAN(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.doubleType, 0),
+            LT(t.doubleType, 1)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -470,21 +478,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testModInt1(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.INT a = new data.INT();
     final data.INT b = new data.INT();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
-
-      SELECT(
-        t.intType.AS(a),
-        MOD(t.intType, 3).AS(b)).
-      FROM(t).
-      WHERE(IS.NOT.NULL(t.intType)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<? extends data.Numeric<?>> rows =
+        SELECT(
+          t.intType.AS(a),
+          MOD(t.intType, 3).AS(b))
+          .FROM(t)
+          .WHERE(IS.NOT.NULL(t.intType))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -494,21 +502,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testModInt2(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.INT a = new data.INT();
     final data.INT b = new data.INT();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
-
-      SELECT(
-        t.intType.AS(a),
-        MOD(t.intType, -3).AS(b)).
-      FROM(t).
-      WHERE(IS.NOT.NULL(t.intType)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<? extends data.Numeric<?>> rows =
+        SELECT(
+          t.intType.AS(a),
+          MOD(t.intType, -3).AS(b))
+          .FROM(t)
+          .WHERE(IS.NOT.NULL(t.intType))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -518,23 +526,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testModInt3(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.INT b = new data.INT();
     final data.DOUBLE c = new data.DOUBLE();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        t.intType.AS(b),
-        MOD(t.doubleType, t.intType).AS(c)).
-      FROM(t).
-      WHERE(AND(IS.NOT.NULL(t.doubleType), NE(t.intType, 0))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<? extends data.Numeric<?>> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          t.intType.AS(b),
+          MOD(t.doubleType, t.intType).AS(c))
+          .FROM(t)
+          .WHERE(AND(IS.NOT.NULL(t.doubleType), NE(t.intType, 0)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -545,22 +553,24 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testModDouble1(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        MOD(t.doubleType, 1.2).AS(b)).
-      FROM(t).
-      WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          MOD(t.doubleType, 1.2).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            IS.NOT.NULL(t.doubleType),
+            LT(ABS(t.doubleType), 100)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -572,21 +582,23 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @SchemaTestRunner.Unsupported(SQLite.class)
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testModDouble2(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        MOD(t.doubleType, -1.2).AS(b)).
-      FROM(t).
-      WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          MOD(t.doubleType, -1.2).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            IS.NOT.NULL(t.doubleType),
+            LT(ABS(t.doubleType), 100)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -598,27 +610,28 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testModDouble3(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.FLOAT b = new data.FLOAT();
     final data.DOUBLE c = new data.DOUBLE();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
-      SELECT(
-        t.doubleType.AS(a),
-        t.floatType.AS(b),
-        MOD(t.doubleType, t.floatType).AS(c)).
-      FROM(t).
-      WHERE(AND(
-        IS.NOT.NULL(t.doubleType),
-        GT(ABS(t.floatType), 10),
-        LT(ABS(t.floatType), 100),
-        GT(ABS(t.doubleType), 10),
-        LT(ABS(t.doubleType), 100))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<? extends data.Numeric<?>> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          t.floatType.AS(b),
+          MOD(t.doubleType, t.floatType).AS(c))
+          .FROM(t)
+          .WHERE(AND(
+            IS.NOT.NULL(t.doubleType),
+            GT(ABS(t.floatType), 10),
+            LT(ABS(t.floatType), 100),
+            GT(ABS(t.doubleType), 10),
+            LT(ABS(t.doubleType), 100)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -626,30 +639,31 @@ public abstract class NumericFunctionStaticTest {
       // FIXME: Is there something wrong with DMOD() for Derby?
       final double expected = a.getAsDouble() % b.get().floatValue();
       final double actual = c.getAsDouble();
-      if (Math.abs(expected - actual) > 0.000001 && logger.isWarnEnabled()) logger.warn("Math.abs(expected - actual) > 0.000001: " + Math.abs(expected - actual));
+      if (Math.abs(expected - actual) > 0.000001 && logger.isWarnEnabled())
+        logger.warn("Math.abs(expected - actual) > 0.000001: " + Math.abs(expected - actual));
       assertEquals(expected, actual, 0.003);
       assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testExp(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        EXP(MUL(t.doubleType, -1)).AS(b)).
-      FROM(t).
-      WHERE(AND(
-        IS.NOT.NULL(t.doubleType),
-        LT(ABS(t.doubleType), 100))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          EXP(MUL(t.doubleType, -1)).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            IS.NOT.NULL(t.doubleType),
+            LT(ABS(t.doubleType), 100)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -660,21 +674,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testPowX3(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        POW(t.doubleType, 3).AS(b)).
-      FROM(t).
-      WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          POW(t.doubleType, 3).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.doubleType, 0),
+            LT(t.doubleType, 10)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -685,21 +701,23 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testPow3X(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        POW(3, MUL(t.doubleType, -1)).AS(b)).
-      FROM(t).
-      WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          POW(3, MUL(t.doubleType, -1)).AS(b))
+          .FROM(t)
+          .WHERE(AND(
+            IS.NOT.NULL(t.doubleType),
+            LT(ABS(t.doubleType), 100)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -710,23 +728,25 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testPowXX(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     final data.DOUBLE c = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        t.doubleType.AS(b),
-        POW(t.doubleType, t.doubleType).AS(c)).
-      FROM(t).
-      WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          t.doubleType.AS(b),
+          POW(t.doubleType, t.doubleType).AS(c))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.doubleType, 0),
+            LT(t.doubleType, 10)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -738,21 +758,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testLog3X(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        LOG(3, t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(GT(t.doubleType, 0)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          LOG(3, t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(GT(t.doubleType, 0))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -763,21 +783,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testLogX3(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.FLOAT b = new data.FLOAT();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        LOG(t.doubleType, 3).AS(b)).
-      FROM(t).
-      WHERE(GT(t.doubleType, 0)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<? extends data.Numeric<?>> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          LOG(t.doubleType, 3).AS(b))
+          .FROM(t)
+          .WHERE(GT(t.doubleType, 0))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -788,23 +808,27 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testLogXX(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.INT b = new data.INT();
     final data.DOUBLE c = new data.DOUBLE();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        t.intType.AS(b),
-        LOG(t.intType, t.doubleType).AS(c)).
-      FROM(t).
-      WHERE(AND(GT(t.intType, 1), GT(t.doubleType, 0), GT(t.doubleType, 1), LT(t.doubleType, 10))).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<? extends data.Numeric<?>> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          t.intType.AS(b),
+          LOG(t.intType, t.doubleType).AS(c))
+          .FROM(t)
+          .WHERE(AND(
+            GT(t.intType, 1),
+            GT(t.doubleType, 0),
+            GT(t.doubleType, 1),
+            LT(t.doubleType, 10)))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -816,21 +840,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testLn(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        LN(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(GT(t.doubleType, 0)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          LN(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(GT(t.doubleType, 0))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -841,21 +865,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testLog2(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        LOG2(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(GT(t.doubleType, 0)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          LOG2(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(GT(t.doubleType, 0))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -866,21 +890,21 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testLog10(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
-    try (final RowIterator<data.DOUBLE> rows =
-
-      SELECT(
-        t.doubleType.AS(a),
-        LOG10(t.doubleType).AS(b)).
-      FROM(t).
-      WHERE(GT(t.doubleType, 0)).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DOUBLE> rows =
+        SELECT(
+          t.doubleType.AS(a),
+          LOG10(t.doubleType).AS(b))
+          .FROM(t)
+          .WHERE(GT(t.doubleType, 0))
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());

@@ -236,52 +236,52 @@ final class ExpressionImpl {
       this.table = expression.getTable(a, b);
     }
 
-    <T extends CharSequence>Concat(final type.Textual<?> a, final type.Textual<?> b, final T c) {
+    <T extends CharSequence> Concat(final type.Textual<?> a, final type.Textual<?> b, final T c) {
       this.a = new type.Textual<?>[] {a, b, data.wrap(c)};
       this.table = expression.getTable(a, b);
     }
 
-    <T extends CharSequence>Concat(final type.Textual<?> a, final T b) {
+    <T extends CharSequence> Concat(final type.Textual<?> a, final T b) {
       this.a = new type.Textual<?>[] {a, data.wrap(b)};
       this.table = ((Subject)a).getTable();
     }
 
-    <T extends CharSequence>Concat(final type.Textual<?> a, final T b, final type.Textual<?> c) {
+    <T extends CharSequence> Concat(final type.Textual<?> a, final T b, final type.Textual<?> c) {
       this.a = new type.Textual<?>[] {a, data.wrap(b), c};
       this.table = expression.getTable(a, c);
     }
 
-    <T extends CharSequence>Concat(final type.Textual<?> a, final T b, final type.Textual<?> c, final T d) {
+    <T extends CharSequence> Concat(final type.Textual<?> a, final T b, final type.Textual<?> c, final T d) {
       this.a = new type.Textual<?>[] {a, data.wrap(b), c, data.wrap(d)};
       this.table = expression.getTable(a, c);
     }
 
-    <T extends CharSequence>Concat(final T a, final type.Textual<?> b) {
+    <T extends CharSequence> Concat(final T a, final type.Textual<?> b) {
       this.a = new type.Textual<?>[] {data.wrap(a), b};
       this.table = ((Subject)b).getTable();
     }
 
-    <T extends CharSequence>Concat(final T a, final type.Textual<?> b, final type.Textual<?> c) {
+    <T extends CharSequence> Concat(final T a, final type.Textual<?> b, final type.Textual<?> c) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, c};
       this.table = ((Subject)b).getTable();
     }
 
-    <T extends CharSequence>Concat(final T a, final type.Textual<?> b, final T c) {
+    <T extends CharSequence> Concat(final T a, final type.Textual<?> b, final T c) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c)};
       this.table = ((Subject)b).getTable();
     }
 
-    <T extends CharSequence>Concat(final T a, final type.Textual<?> b, final type.Textual<?> c, final T d) {
+    <T extends CharSequence> Concat(final T a, final type.Textual<?> b, final type.Textual<?> c, final T d) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, c, data.wrap(d)};
       this.table = expression.getTable(b, c);
     }
 
-    <T extends CharSequence>Concat(final T a, final type.Textual<?> b, final T c, final type.Textual<?> d) {
+    <T extends CharSequence> Concat(final T a, final type.Textual<?> b, final T c, final type.Textual<?> d) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c), d};
       this.table = expression.getTable(b, d);
     }
 
-    <T extends CharSequence>Concat(final T a, final type.Textual<?> b, final T c, final type.Textual<?> d, final T e) {
+    <T extends CharSequence> Concat(final T a, final type.Textual<?> b, final T c, final type.Textual<?> d, final T e) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c), d, data.wrap(e)};
       this.table = expression.getTable(b, d);
     }

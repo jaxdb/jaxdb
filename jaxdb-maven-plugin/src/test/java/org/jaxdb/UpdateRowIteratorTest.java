@@ -48,17 +48,17 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   @SchemaTestRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
   public void testEnum(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.enumType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.enumType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.ENUM<Types.AbstractType.EnumType> value = (data.ENUM<Types.AbstractType.EnumType>)rows.nextEntity();
@@ -68,13 +68,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.enumType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.enumType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(Types.AbstractType.EnumType.SIX, ((data.ENUM<Types.AbstractType.EnumType>)rows.nextEntity()).get());
     }
@@ -82,17 +82,17 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testDate(final Types types, final Transaction transaction) throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.dateType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.dateType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.DATE value = (data.DATE)rows.nextEntity();
@@ -102,13 +102,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.dateType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.dateType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(now, ((data.DATE)rows.nextEntity()).get());
     }
@@ -116,17 +116,17 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testTime(final Types types, final Transaction transaction) throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.timeType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.timeType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.TIME value = (data.TIME)rows.nextEntity();
@@ -136,13 +136,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.timeType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.timeType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(ChronoUnit.SECONDS.between(now, ((data.TIME)rows.nextEntity()).get()) <= 1);
     }
@@ -150,17 +150,17 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testDateTime(final Types types, final Transaction transaction) throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.datetimeType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.datetimeType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.DATETIME value = (data.DATETIME)rows.nextEntity();
@@ -170,13 +170,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.datetimeType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.datetimeType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertTrue(ChronoUnit.SECONDS.between(now, ((data.DATETIME)rows.nextEntity()).get()) <= 1);
     }
@@ -184,17 +184,17 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testChar(final Types types, final Transaction transaction) throws IOException, SQLException {
     final String str = "123helloxyz";
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.charType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.charType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.CHAR value = (data.CHAR)rows.nextEntity();
@@ -204,13 +204,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.charType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.charType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(str, ((data.CHAR)rows.nextEntity()).get());
     }
@@ -218,16 +218,16 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testBoolean(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.booleanType, t.id).
-      FROM(t).
-      WHERE(EQ(t.booleanType, false))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.booleanType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.booleanType, false))
+          .execute(transaction, queryConfig)
+    ) {
       while (rows.nextRow()) {
         final data.BOOLEAN value = (data.BOOLEAN)rows.nextEntity();
         value.set(true);
@@ -236,13 +236,13 @@ public abstract class UpdateRowIteratorTest {
       }
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.booleanType, t.id).
-      FROM(t).
-      WHERE(IS.NOT.NULL(t.booleanType))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.booleanType, t.id)
+          .FROM(t)
+          .WHERE(IS.NOT.NULL(t.booleanType))
+          .execute(transaction, queryConfig)
+    ) {
       while (rows.nextRow())
         assertTrue(((data.BOOLEAN)rows.nextEntity()).getAsBoolean());
     }
@@ -250,17 +250,17 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testBinary(final Types types, final Transaction transaction) throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.binaryType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.binaryType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.BINARY value = (data.BINARY)rows.nextEntity();
@@ -270,13 +270,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.binaryType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.binaryType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertArrayEquals(bytes, ((data.BINARY)rows.nextEntity()).get());
     }
@@ -284,16 +284,16 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testDecimal(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.decimalType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.decimalType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.DECIMAL value = (data.DECIMAL)rows.nextEntity();
@@ -303,13 +303,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.decimalType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.decimalType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(0, BigDecimal.TEN.compareTo(((data.DECIMAL)rows.nextEntity()).get()));
     }
@@ -317,7 +317,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testTinyInt(final Types types, final Transaction transaction) throws IOException, SQLException {
     byte value = 0;
     boolean testing = false;
@@ -326,14 +326,14 @@ public abstract class UpdateRowIteratorTest {
       if (!testing)
         value = (byte)random.nextInt();
 
-      try (final RowIterator<?> rows =
-
-        SELECT(t.tinyintType, t.id).
-        FROM(t).
-        WHERE(EQ(t.tinyintType, value)).
-        LIMIT(100)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(t.tinyintType, t.id)
+            .FROM(t)
+            .WHERE(EQ(t.tinyintType, value))
+            .LIMIT(100)
+            .execute(transaction, queryConfig)
+      ) {
         if (testing) {
           assertTrue(rows.nextRow());
           assertEquals(value, ((data.TINYINT)rows.nextEntity()).get().shortValue());
@@ -346,13 +346,13 @@ public abstract class UpdateRowIteratorTest {
         }
       }
 
-      try (final RowIterator<?> rows =
-
-        SELECT(t.tinyintType, t.id).
-        FROM(t).
-        LIMIT(1)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(t.tinyintType, t.id)
+            .FROM(t)
+            .LIMIT(1)
+            .execute(transaction, queryConfig)
+      ) {
         assertTrue(rows.nextRow());
 
         final data.TINYINT col = (data.TINYINT)rows.nextEntity();
@@ -369,7 +369,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testSmallInt(final Types types, final Transaction transaction) throws IOException, SQLException {
     short value = 0;
     boolean testing = false;
@@ -378,14 +378,14 @@ public abstract class UpdateRowIteratorTest {
       if (!testing)
         value = (short)random.nextInt();
 
-      try (final RowIterator<?> rows =
-
-        SELECT(t.smallintType, t.id).
-        FROM(t).
-        WHERE(EQ(t.smallintType, value)).
-        LIMIT(100)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(t.smallintType, t.id)
+            .FROM(t)
+            .WHERE(EQ(t.smallintType, value))
+            .LIMIT(100)
+            .execute(transaction, queryConfig)
+      ) {
         if (testing) {
           assertTrue(rows.nextRow());
           assertEquals(value, ((data.SMALLINT)rows.nextEntity()).get().shortValue());
@@ -398,13 +398,13 @@ public abstract class UpdateRowIteratorTest {
         }
       }
 
-      try (final RowIterator<?> rows =
-
-        SELECT(t.smallintType, t.id).
-        FROM(t).
-        LIMIT(1)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(t.smallintType, t.id)
+            .FROM(t)
+            .LIMIT(1)
+            .execute(transaction, queryConfig)
+      ) {
         assertTrue(rows.nextRow());
 
         final data.SMALLINT col = (data.SMALLINT)rows.nextEntity();
@@ -421,16 +421,16 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInt(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.intType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.intType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.INT value = (data.INT)rows.nextEntity();
@@ -440,13 +440,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.intType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.intType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(919, ((data.INT)rows.nextEntity()).getAsInt());
     }
@@ -454,16 +454,16 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testBigInt(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Type t = types.Type$;
     final int id;
-    try (final RowIterator<?> rows =
-
-      SELECT(t.bigintType, t.id).
-      FROM(t)
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.bigintType, t.id)
+          .FROM(t)
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
 
       final data.BIGINT value = (data.BIGINT)rows.nextEntity();
@@ -473,13 +473,13 @@ public abstract class UpdateRowIteratorTest {
       rows.updateRow();
     }
 
-    try (final RowIterator<?> rows =
-
-      SELECT(t.bigintType, t.id).
-      FROM(t).
-      WHERE(EQ(t.id, id))
-        .execute(transaction, queryConfig)) {
-
+    try (
+      final RowIterator<?> rows =
+        SELECT(t.bigintType, t.id)
+          .FROM(t)
+          .WHERE(EQ(t.id, id))
+          .execute(transaction, queryConfig)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(919L, ((data.BIGINT)rows.nextEntity()).get().longValue());
     }
@@ -487,7 +487,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testFloat(final Types types, final Transaction transaction) throws IOException, SQLException {
     Float value = 0f;
     boolean testing = false;
@@ -497,14 +497,16 @@ public abstract class UpdateRowIteratorTest {
         value = random.nextFloat();
 
       final float ulp = Math.ulp(value);
-      try (final RowIterator<?> rows =
-
-        SELECT(t.floatType, t.id).
-        FROM(t).
-        WHERE(AND(GT(t.floatType, value - ulp * 100), LT(t.floatType, value + ulp * 100))).
-        LIMIT(100)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(t.floatType, t.id)
+            .FROM(t)
+            .WHERE(AND(
+              GT(t.floatType, value - ulp * 100),
+              LT(t.floatType, value + ulp * 100)))
+            .LIMIT(100)
+            .execute(transaction, queryConfig)
+      ) {
         if (testing) {
           assertTrue(rows.nextRow());
           assertEquals(value, ((data.FLOAT)rows.nextEntity()).get(), ulp * 100);
@@ -517,13 +519,13 @@ public abstract class UpdateRowIteratorTest {
         }
       }
 
-      try (final RowIterator<?> rows =
-
-        SELECT(t.floatType, t.id).
-        FROM(t).
-        LIMIT(1)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(t.floatType, t.id)
+            .FROM(t)
+            .LIMIT(1)
+            .execute(transaction, queryConfig)
+      ) {
         assertTrue(rows.nextRow());
 
         final data.FLOAT col = (data.FLOAT)rows.nextEntity();
@@ -540,7 +542,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testDouble(final Types types, final Transaction transaction) throws IOException, SQLException {
     Double value = 0d;
     boolean testing = false;
@@ -550,14 +552,16 @@ public abstract class UpdateRowIteratorTest {
         value = random.nextDouble();
 
       final double ulp = Math.ulp(value);
-      try (final RowIterator<?> rows =
-
-        SELECT(t.doubleType, t.id).
-        FROM(t).
-        WHERE(AND(GT(t.doubleType, value - ulp * 100), LT(t.doubleType, value + ulp * 100))).
-        LIMIT(100)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(t.doubleType, t.id)
+            .FROM(t)
+            .WHERE(AND(
+              GT(t.doubleType, value - ulp * 100),
+              LT(t.doubleType, value + ulp * 100)))
+            .LIMIT(100)
+            .execute(transaction, queryConfig)
+      ) {
         if (testing) {
           assertTrue(rows.nextRow());
           assertEquals(value, ((data.DOUBLE)rows.nextEntity()).get(), ulp * 100);
@@ -570,13 +574,13 @@ public abstract class UpdateRowIteratorTest {
         }
       }
 
-      try (final RowIterator<?> rows =
-
-        SELECT(t.doubleType, t.id).
-        FROM(t).
-        LIMIT(1)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(t.doubleType, t.id)
+            .FROM(t)
+            .LIMIT(1)
+            .execute(transaction, queryConfig)
+      ) {
         assertTrue(rows.nextRow());
 
         final data.DOUBLE col = (data.DOUBLE)rows.nextEntity();

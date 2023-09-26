@@ -73,8 +73,8 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
 
   /**
    * Moves the cursor forward one row from its current position. A {@link RowIterator}'s cursor is initially positioned before the
-   * first row; the first call to {@link #nextRow()} method next makes the first row the current row; the second call makes the
-   * second row the current row, and so on.
+   * first row; the first call to {@link #nextRow()} method next makes the first row the current row; the second call makes the second
+   * row the current row, and so on.
    * <p>
    * When a call to this method returns {@code false}, the cursor is positioned after the last row. Any invocation of a
    * {@link RowIterator}'s method which requires a current row will result in a {@link SQLException} to be thrown. If
@@ -107,12 +107,12 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
   }
 
   /**
-   * Updates the connected database with the new contents of the current row of this {@link RowIterator} object. This method cannot
-   * be called when the cursor is on the insert row.
+   * Updates the connected database with the new contents of the current row of this {@link RowIterator} object. This method cannot be
+   * called when the cursor is on the insert row.
    *
    * @throws SQLException If a database access error occurs; the {@linkplain #getConcurrency() result set concurrency} is
-   *           {@link Concurrency#READ_ONLY}; this method is called on a closed result set or if this method is called when the
-   *           cursor is on the insert row.
+   *           {@link Concurrency#READ_ONLY}; this method is called on a closed result set or if this method is called when the cursor
+   *           is on the insert row.
    * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
   public final void updateRow() throws SQLException, SQLFeatureNotSupportedException {

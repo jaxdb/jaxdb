@@ -137,13 +137,13 @@ public abstract class CacheMap<V> implements Map<data.Key,V> {
       return;
 
     final Connector connector = schema.getConnector();
-    try (final RowIterator<? extends data.Table> rows =
-
-      SELECT(table).
-      FROM(table).
-      WHERE(condition)
-        .execute(connector)) {
-
+    try (
+      final RowIterator<? extends data.Table> rows =
+        SELECT(table)
+          .FROM(table)
+          .WHERE(condition)
+          .execute(connector)
+    ) {
       while (rows.nextRow())
         notifier.onSelect(rows.nextEntity());
     }

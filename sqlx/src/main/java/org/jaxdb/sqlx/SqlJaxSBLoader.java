@@ -177,7 +177,7 @@ final class SqlJaxSBLoader extends SqlLoader {
 
     @Override
     public int hashCode() {
-      return weight * 31 + sql.hashCode() ;
+      return weight * 31 + sql.hashCode();
     }
 
     @Override

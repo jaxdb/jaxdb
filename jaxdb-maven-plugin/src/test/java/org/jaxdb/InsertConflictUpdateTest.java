@@ -85,7 +85,7 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
 
   @Test
   @Override
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInsertEntity(final Types types, final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
@@ -104,18 +104,18 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
     transaction.rollback();
 
     assertEquals(1,
-      INSERT(t1).
-        ON_CONFLICT().
-        DO_UPDATE()
-          .execute(transaction)
-          .getCount());
+      INSERT(t1)
+        .ON_CONFLICT()
+        .DO_UPDATE()
+        .execute(transaction)
+        .getCount());
 
     t1.doubleType.set(Math.random());
 
     assertTrue(0 <
-      INSERT(t1).
-        ON_CONFLICT().
-        DO_UPDATE()
+        INSERT(t1)
+          .ON_CONFLICT()
+          .DO_UPDATE()
           .execute(transaction)
           .getCount());
 
@@ -125,7 +125,7 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
 
   @Test
   @Override
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInsertColumns(final Types types, final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
@@ -145,11 +145,11 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
 
     t3.charType.set("hi");
     assertEquals(1,
-      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
-        ON_CONFLICT().
-        DO_UPDATE()
-          .execute(transaction)
-          .getCount());
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+        .ON_CONFLICT()
+        .DO_UPDATE()
+        .execute(transaction)
+        .getCount());
 
     assertFalse(t3.id.isNull());
     assertEquals(selectMaxId(transaction, t3), t3.id.getAsInt());
@@ -166,9 +166,9 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
         .onExecute(c -> assertEquals(expectedCount, c)));
 
     batch.addStatement(
-      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
-      ON_CONFLICT().
-      DO_UPDATE()
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+        .ON_CONFLICT()
+        .DO_UPDATE()
         .onExecute(c -> assertEquals(expectedCount, c)));
 
     assertEquals(2 * expectedCount, batch.execute(transaction).getCount());
@@ -176,7 +176,7 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
 
   @Test
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInsertSelectIntoTable1(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Backup b = types.new Backup();
 
@@ -186,19 +186,18 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
     final Types.Type t = types.Type$;
 
     assertEquals(10,
-      INSERT(b).
-      VALUES(
-        SELECT(t).
-        FROM(t).
-        WHERE(IS.NOT.NULL(t.id)).
-        LIMIT(10))
-      .execute(transaction)
-      .getCount());
+      INSERT(b).VALUES(
+        SELECT(t)
+          .FROM(t)
+          .WHERE(IS.NOT.NULL(t.id))
+          .LIMIT(10))
+        .execute(transaction)
+        .getCount());
   }
 
   @Test
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testInsertSelectIntoTable2(final Types types, final Transaction transaction) throws IOException, SQLException {
     final Types.Backup b = types.new Backup();
 
@@ -208,14 +207,11 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
     final Types.Type t = types.Type$;
 
     assertEquals(1000,
-      INSERT(b).
-      VALUES(
-        SELECT(t).
-        FROM(t).
-        WHERE(IS.NOT.NULL(t.id))).
-      // FIXME: LIMIT is not supported by Derby (and neither is JOIN)
-      ON_CONFLICT().
-      DO_UPDATE()
+      INSERT(b).VALUES(
+        SELECT(t).FROM(t).WHERE(IS.NOT.NULL(t.id)))
+        // FIXME: LIMIT is not supported by Derby (and neither is JOIN)
+        .ON_CONFLICT()
+        .DO_UPDATE()
         .execute(transaction)
         .getCount());
   }
@@ -233,17 +229,16 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
       .execute(transaction);
 
     final int results =
-      INSERT(b.binaryType, b.charType, b.enumType).
-      VALUES(
-        SELECT(t1.binaryType, t2.charType, t3.enumType).
-        FROM(t1, t2, t3).
-        WHERE(AND(
-          EQ(t1.charType, t2.charType),
-          EQ(t2.tinyintType, t3.tinyintType),
-          EQ(t3.booleanType, t1.booleanType))).
-          LIMIT(27))
-      .execute(transaction)
-      .getCount();
+      INSERT(b.binaryType, b.charType, b.enumType)
+        .VALUES(
+          SELECT(t1.binaryType, t2.charType, t3.enumType).FROM(t1, t2, t3)
+            .WHERE(AND(
+              EQ(t1.charType, t2.charType),
+              EQ(t2.tinyintType, t3.tinyintType),
+              EQ(t3.booleanType, t1.booleanType)))
+            .LIMIT(27))
+        .execute(transaction)
+        .getCount();
     assertEquals(27, results);
   }
 }

@@ -79,7 +79,7 @@ public class Generator {
   }
 
   private void generate() throws GeneratorExecutionException, IOException {
-    if (logger.isInfoEnabled()) logger.info("Generating jSQL: " + name);
+    if (logger.isInfoEnabled()) { logger.info("Generating jSQL: " + name); }
 
     final File dir = new File(destDir, packageName.replace('.', '/'));
     if (!dir.exists() && !dir.mkdirs())

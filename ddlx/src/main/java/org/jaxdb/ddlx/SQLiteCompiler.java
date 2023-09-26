@@ -60,14 +60,14 @@ final class SQLiteCompiler extends Compiler {
 
     final PrimaryKey primaryKey;
     if (table.getConstraints() == null || (primaryKey = table.getConstraints().getPrimaryKey()) == null) {
-      if (logger.isWarnEnabled()) logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec.");
+      if (logger.isWarnEnabled()) { logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec."); }
       return null;
     }
 
     final BindingList<? extends $Named> primaryColumns = primaryKey.getColumn();
     final int i$ = primaryColumns.size();
     if (i$ > 1) {
-      if (logger.isWarnEnabled()) logger.warn("AUTO_INCREMENT is not allowed for tables with composite primary keys -- Ignoring AUTO_INCREMENT spec.");
+      if (logger.isWarnEnabled()) { logger.warn("AUTO_INCREMENT is not allowed for tables with composite primary keys -- Ignoring AUTO_INCREMENT spec."); }
       return null;
     }
 
@@ -75,19 +75,22 @@ final class SQLiteCompiler extends Compiler {
       final $Named primaryColumn = primaryColumns.get(i);
       if (primaryColumn.getName$().text().equals(column.getName$().text())) {
         final String min = getAttr("min", column);
-        if (min != null && logger.isWarnEnabled()) logger.warn("AUTO_INCREMENT does not consider min=\"" + min + "\" -- Ignoring min spec.");
+        if (min != null && logger.isWarnEnabled())
+          logger.warn("AUTO_INCREMENT does not consider min=\"" + min + "\" -- Ignoring min spec.");
 
         final String max = getAttr("max", column);
-        if (max != null && logger.isWarnEnabled()) logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
+        if (max != null && logger.isWarnEnabled())
+          logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
 
         final String _default = getAttr("default", column);
-        if (_default != null && logger.isWarnEnabled()) logger.warn("AUTO_INCREMENT does not consider default=\"" + _default + "\" -- Ignoring default spec.");
+        if (_default != null && logger.isWarnEnabled())
+          logger.warn("AUTO_INCREMENT does not consider default=\"" + _default + "\" -- Ignoring default spec.");
 
         return "PRIMARY KEY";
       }
     }
 
-    if (logger.isWarnEnabled()) logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec.");
+    if (logger.isWarnEnabled()) { logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec."); }
     return null;
   }
 
@@ -99,7 +102,9 @@ final class SQLiteCompiler extends Compiler {
   @Override
   StringBuilder createIntegerColumn(final StringBuilder b, final $Integer column) {
     if (Generator.isAuto(column)) {
-      if (!(column instanceof $Int) && logger.isWarnEnabled()) logger.warn("AUTOINCREMENT is only allowed on an INT column type -- Overriding to INT.");
+      if (!(column instanceof $Int) && logger.isWarnEnabled())
+        logger.warn("AUTOINCREMENT is only allowed on an INT column type -- Overriding to INT.");
+
       return b.append("INTEGER");
     }
 
@@ -125,7 +130,8 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
-    if ($IndexType.HASH.text().equals(type.text()) && logger.isWarnEnabled()) logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
+    if ($IndexType.HASH.text().equals(type.text()) && logger.isWarnEnabled())
+      logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
 
     final StringBuilder b = new StringBuilder("CREATE ");
     if (unique)

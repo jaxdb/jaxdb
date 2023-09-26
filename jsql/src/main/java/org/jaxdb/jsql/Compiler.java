@@ -50,7 +50,14 @@ import org.libj.io.Streams;
 import org.libj.util.IdentityHashSet;
 
 abstract class Compiler extends DbVendorCompiler {
-  private static final Compiler[] compilers = {/*new DB2Compiler(),*/null, new DerbyCompiler(), new MariaDBCompiler(), new MySQLCompiler(), new OracleCompiler(), new PostgreSQLCompiler(), new SQLiteCompiler()};
+  private static final Compiler[] compilers = {
+    /* new DB2Compiler(), */null,
+    new DerbyCompiler(),
+    new MariaDBCompiler(),
+    new MySQLCompiler(),
+    new OracleCompiler(),
+    new PostgreSQLCompiler(),
+    new SQLiteCompiler()};
 
   static Compiler getCompiler(final DbVendor vendor) {
     final Compiler compiler = compilers[vendor.ordinal()];
@@ -148,7 +155,7 @@ abstract class Compiler extends DbVendorCompiler {
   abstract void onRegister(Connection connection) throws SQLException;
   abstract void onConnect(Connection connection) throws SQLException;
 
-  static <T extends type.Entity>Subject toSubject(final T entity) {
+  static <T extends type.Entity> Subject toSubject(final T entity) {
     return (Subject)entity;
   }
 
@@ -190,8 +197,7 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   /**
-   * Compile the specified parameters, and append to the provided
-   * {@link Compilation}.
+   * Compile the specified parameters, and append to the provided {@link Compilation}.
    *
    * @param when The {@link Command.CaseImpl.WHEN}.
    * @param compilation The target {@link Compilation}.
@@ -349,7 +355,7 @@ abstract class Compiler extends DbVendorCompiler {
           // FIXME: This code is commented-out, because Derby complains when this is done.
           // final Alias alias = compilation.getAlias(((As<?>)column.wrapper()).getVariable());
           // if (alias != null) {
-          //   alias.compile(compilation);
+          // alias.compile(compilation);
           // }
           // else {
           unwrapAlias(column).compile(compilation, false);
@@ -664,7 +670,7 @@ abstract class Compiler extends DbVendorCompiler {
     where.compile(compilation, false);
   }
 
-  <D extends data.Entity>void compile(final data.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  <D extends data.Entity> void compile(final data.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Evaluable wrapped = table.wrapped();
     if (wrapped != null) {
       wrapped.compile(compilation, isExpression);
@@ -752,7 +758,7 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   // FIXME: Move this to a Util class or something
-  private static <D extends data.Entity>void compileCondition(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
+  private static <D extends data.Entity> void compileCondition(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
     if (!(condition instanceof BooleanTerm) || and == condition instanceof BooleanTerm.And) {
       condition.compile(compilation, false);
     }
@@ -794,9 +800,10 @@ abstract class Compiler extends DbVendorCompiler {
       // FIXME: This code is commented-out, because Derby complains when this is done.
       // final Alias alias;
       // if (predicate.a.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)predicate.a.wrapper()).getVariable())) != null)
-      //   alias.compile(compilation);
+      // alias.compile(compilation);
       // else
-      // FIXME: The braces are really only needed for inner SELECTs. Add the complexity to save the compiled SQL from having an extra couple of braces?!
+      // FIXME: The braces are really only needed for inner SELECTs. Add the complexity to save the compiled SQL from having an extra
+      // couple of braces?!
       final boolean isSelect = predicate.a instanceof Select.untyped.SELECT;
 
       if (isSelect) {
@@ -818,8 +825,9 @@ abstract class Compiler extends DbVendorCompiler {
       // final Alias alias;
       // if (predicate.b.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)predicate.b.wrapper()).getVariable())) != null)
       // alias.compile(compilation);
-      //   else
-      // FIXME: The braces are really only needed for inner SELECTs. Add the complexity to save the compiled SQL from having an extra couple of braces?!
+      // else
+      // FIXME: The braces are really only needed for inner SELECTs. Add the complexity to save the compiled SQL from having an extra
+      // couple of braces?!
       final boolean isSelect = predicate.b instanceof Select.untyped.SELECT;
 
       if (isSelect) {
@@ -1354,7 +1362,7 @@ abstract class Compiler extends DbVendorCompiler {
     compilation.sql.append(' ').append(spec.ascending ? "ASC" : "DESC");
   }
 
-  <V>StringBuilder compileArray(final StringBuilder b, final data.ARRAY<? extends V> array, final data.Column<V> column, final boolean isForUpdateWhere) throws IOException {
+  <V> StringBuilder compileArray(final StringBuilder b, final data.ARRAY<? extends V> array, final data.Column<V> column, final boolean isForUpdateWhere) throws IOException {
     b.append('(');
     final data.Column<V> clone = column.clone();
     final V[] items = array.get();
@@ -1493,8 +1501,7 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param statement The {@link PreparedStatement}.
@@ -1538,8 +1545,7 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param statement The {@link PreparedStatement}.
@@ -1666,14 +1672,12 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   /**
-   * Returns the parameter of the specified {@link data.Column} from the
-   * provided {@link ResultSet} at the given column index.
+   * Returns the parameter of the specified {@link data.Column} from the provided {@link ResultSet} at the given column index.
    *
    * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code column} from the provided
-   *         {@link ResultSet} at the given column index.
+   * @return The parameter of the specified {@code column} from the provided {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   @SuppressWarnings("deprecation")

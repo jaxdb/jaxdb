@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class BooleanValueExpressionTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends BooleanValueExpressionTest {
   }
@@ -51,25 +51,30 @@ public abstract class BooleanValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void test(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        EQ(p.price, p.msrp),
-        LT(p.price, p.msrp),
-        AND(EQ(p.price, p.msrp),
-          GT(p.price, p.msrp)),
-        OR(EQ(p.price, p.msrp),
-          GT(p.price, p.msrp)),
-        SELECT(EQ(p.price, p.msrp)).
-          FROM(p).
-          WHERE(AND(LIKE(p.name, "%Ford%"), GT(p.quantityInStock, 100))).LIMIT(1)).
-      FROM(p).
-      WHERE(AND(LIKE(p.name, "%Ford%"), GT(p.quantityInStock, 100)))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          EQ(p.price, p.msrp),
+          LT(p.price, p.msrp),
+          AND(EQ(p.price, p.msrp),
+            GT(p.price, p.msrp)),
+          OR(EQ(p.price, p.msrp),
+            GT(p.price, p.msrp)),
+          SELECT(EQ(p.price, p.msrp))
+            .FROM(p)
+            .WHERE(AND(
+              LIKE(p.name, "%Ford%"),
+              GT(p.quantityInStock, 100)))
+            .LIMIT(1))
+          .FROM(p)
+          .WHERE(AND(
+            LIKE(p.name, "%Ford%"),
+            GT(p.quantityInStock, 100)))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertFalse(rows.nextEntity().getAsBoolean());
       assertTrue(rows.nextEntity().getAsBoolean());

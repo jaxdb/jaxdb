@@ -263,7 +263,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    public <T>SET SET(final data.Column<? extends T> column, final type.Column<? extends T> to) {
+    public <T> SET SET(final data.Column<? extends T> column, final type.Column<? extends T> to) {
       initSets();
       sets.add(column);
       sets.add((Subject)to);
@@ -271,7 +271,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    public <T>SET SET(final data.Column<T> column, final T to) {
+    public <T> SET SET(final data.Column<T> column, final T to) {
       initSets();
       sets.add(column);
       // FIXME: data.ENUM.NULL

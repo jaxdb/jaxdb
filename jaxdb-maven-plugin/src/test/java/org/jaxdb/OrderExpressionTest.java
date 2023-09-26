@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class OrderExpressionTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends OrderExpressionTest {
   }
@@ -51,32 +51,37 @@ public abstract class OrderExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testOrderExpressionError(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.new Product();
-    try (final RowIterator<Classicmodels.Product> rows =
-      SELECT(p).
-      FROM(p).
-      ORDER_BY(ASC(p.code))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Classicmodels.Product> rows =
+        SELECT(p)
+          .FROM(p)
+          .ORDER_BY(ASC(p.code))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals("S10_1678", rows.nextEntity().code.get());
-      int i = 0; do ++i; while (rows.nextRow());
+      int i = 0;
+      do
+        ++i;
+      while (rows.nextRow());
       assertEquals(110, i);
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testOrderExpression(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.new Product();
-    try (final RowIterator<data.DECIMAL> rows =
-      SELECT(p.msrp, p.price).
-      FROM(p).
-      ORDER_BY(DESC(p.price), p.msrp)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DECIMAL> rows =
+        SELECT(p.msrp, p.price)
+          .FROM(p)
+          .ORDER_BY(DESC(p.price), p.msrp)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(147.74, rows.nextEntity().get().doubleValue(), 0.0000000001);
     }

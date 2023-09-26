@@ -27,9 +27,9 @@ public class Oracle extends Vendor {
     // NOTE: ORA-00604: error occurred at recursive SQL level 1
     // NOTE: ORA-01882: timezone region not found
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-//  ALTER SYSTEM SET open_cursors=10000 SCOPE=BOTH;
-//  ALTER SYSTEM SET processes=150 SCOPE=spfile;
-//  GRANT ALL PRIVILEGES TO jaxdb IDENTIFIED BY jaxdb;
+    // ALTER SYSTEM SET open_cursors=10000 SCOPE=BOTH;
+    // ALTER SYSTEM SET processes=150 SCOPE=spfile;
+    // GRANT ALL PRIVILEGES TO jaxdb IDENTIFIED BY jaxdb;
   }
 
   @Override

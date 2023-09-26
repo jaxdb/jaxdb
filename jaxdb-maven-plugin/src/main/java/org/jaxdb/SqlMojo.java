@@ -34,16 +34,16 @@ import org.jaxdb.vendor.DbVendor;
 import org.xml.sax.SAXException;
 
 abstract class SqlMojo<P extends Produce<?,?,?>,T> extends JaxDbMojo<P> {
-  @Parameter(property="driverClassName")
+  @Parameter(property = "driverClassName")
   private String driverClassName;
 
-  @Parameter(property="dbUrl")
+  @Parameter(property = "dbUrl")
   private String dbUrl;
 
-  @Parameter(property="rename")
+  @Parameter(property = "rename")
   String rename;
 
-  @Parameter(property="vendor")
+  @Parameter(property = "vendor")
   private String vendor;
 
   final Reserve<T> getReserve(final URL schema) throws IOException, SAXException, TransformerException {

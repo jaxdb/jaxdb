@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class CountFunctionTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends CountFunctionTest {
   }
@@ -52,19 +52,19 @@ public abstract class CountFunctionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testCount(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Office o = classicmodels.Office$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(
-        COUNT(o),
-        COUNT(o.territory),
-        COUNT.DISTINCT(o.territory),
-        COUNT(o.territory)).
-      FROM(o)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(
+          COUNT(o),
+          COUNT(o.territory),
+          COUNT.DISTINCT(o.territory),
+          COUNT(o.territory))
+          .FROM(o)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(7, rows.nextEntity().getAsLong());
       assertEquals(7, rows.nextEntity().getAsLong());

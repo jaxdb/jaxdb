@@ -712,20 +712,21 @@ abstract class Compiler extends DbVendorCompiler {
   final LinkedHashSet<DropStatement> dropTable(final $Table table) {
     final LinkedHashSet<DropStatement> statements = new LinkedHashSet<>();
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
-//    if (table.getIndexes() != null)
-//      for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex()) // [L]
-//        statements.add(dropIndexIfExists(getIndexName(table, index, ???) + dropIndexOnClause(table)));
+    // if (table.getIndexes() != null)
+    // for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex()) // [L]
+    // statements.add(dropIndexIfExists(getIndexName(table, index, ???) + dropIndexOnClause(table)));
 
-//    if (table.getColumn() != null)
-//      for (final $Column column : table.getColumn()) // [L]
-//        if (column.getIndex() != null)
-//          statements.add(dropIndexIfExists(getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
+    // if (table.getColumn() != null)
+    // for (final $Column column : table.getColumn()) // [L]
+    // if (column.getIndex() != null)
+    // statements.add(dropIndexIfExists(getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
 
     // FIXME: Explicitly dropping triggers on tables that may not exist will throw errors!
-//    if (table.getTriggers() != null)
-//      for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger()) // [L]
-//        for (final String action : trigger.getActions$().text()) // [L]
-//          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(getTriggerName(table.getName$().text(), trigger, action)) + " ON " + q(table.getName$().text())));
+    // if (table.getTriggers() != null)
+    // for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger()) // [L]
+    // for (final String action : trigger.getActions$().text()) // [L]
+    // statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(getTriggerName(table.getName$().text(), trigger, action)) + " ON "
+    // + q(table.getName$().text())));
 
     final DropStatement dropTable = dropTableIfExists(table);
     if (dropTable != null)

@@ -192,8 +192,8 @@ public final class data {
       this.changed = !equal(valueOld, valueCur);
       final boolean changed = !equal(this.valueCur, valueCur);
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -445,8 +445,8 @@ public final class data {
       this.changed = isNullOld != isNullCur || valueOld != valueCur;
       final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-//    if (!changed)
-//      return;
+      // if (!changed)
+      // return;
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
@@ -766,8 +766,8 @@ public final class data {
       this.changed = !Arrays.equals(valueOld, valueCur);
       final boolean changed = !equal(this.valueCur, valueCur);
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -964,8 +964,8 @@ public final class data {
       this.changed = valueOld != valueCur;
       final boolean changed = this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -1183,8 +1183,8 @@ public final class data {
       this.changed = isNullOld != isNullCur || valueOld != valueCur;
       final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
@@ -1494,8 +1494,8 @@ public final class data {
       this.changed = !equal(valueOld, valueCur);
       final boolean changed = !equal(this.valueCur, valueCur);
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -1658,8 +1658,8 @@ public final class data {
       this.changed = valueOld != valueCur;
       final boolean changed = this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -1872,12 +1872,12 @@ public final class data {
     abstract int valueHashCode();
     abstract void write(Compiler compiler, PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
 
-    public final <C extends Column<V>>C AS(final C column) {
+    public final <C extends Column<V>> C AS(final C column) {
       column.wrap(new As<>(this, column));
       return column;
     }
 
-    public final <E extends EntityEnum>ENUM<E> AS(final ENUM<E> column) {
+    public final <E extends EntityEnum> ENUM<E> AS(final ENUM<E> column) {
       column.wrap(new As<>(this, column));
       return column;
     }
@@ -2059,11 +2059,11 @@ public final class data {
     }
 
     /**
-     * Returns {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT},
-     * {@code UPDATE}, and {@code DELETE} statements, otherwise {@code false}.
+     * Returns {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE},
+     * and {@code DELETE} statements, otherwise {@code false}.
      *
-     * @return {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT},
-     *         {@code UPDATE}, and {@code DELETE} statements., otherwise {@code false}.
+     * @return {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE},
+     *         and {@code DELETE} statements., otherwise {@code false}.
      * @implNote A {@link Column}'s value may be cued by either the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system}.
      */
     public final boolean cued() {
@@ -2137,8 +2137,8 @@ public final class data {
       this.changed = !equal(valueOld, valueCur);
       final boolean changed = !equal(this.valueCur, valueCur);
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -2305,8 +2305,8 @@ public final class data {
       this.changed = !equal(valueOld, valueCur);
       final boolean changed = !equal(this.valueCur, valueCur);
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -2563,8 +2563,8 @@ public final class data {
       this.changed = !equal(valueOld, valueCur);
       final boolean changed = !equal(this.valueCur, valueCur);
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -2927,8 +2927,8 @@ public final class data {
       this.changed = isNullOld != isNullCur || valueOld != valueCur;
       final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
@@ -3269,8 +3269,9 @@ public final class data {
       typeToLength.put(constants.getClass().getComponentType(), length);
       return length;
     }
+
     @SuppressWarnings("unchecked")
-    private static <E extends EntityEnum>E[] getConstants(final Class<E> enumType) {
+    private static <E extends EntityEnum> E[] getConstants(final Class<E> enumType) {
       try {
         return (E[])enumType.getMethod("values").invoke(null);
       }
@@ -3413,8 +3414,8 @@ public final class data {
       this.changed = !equal(valueOld, valueCur);
       final boolean changed = !equal(this.valueCur, valueCur);
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -3710,8 +3711,8 @@ public final class data {
       this.changed = isNullOld != isNullCur || valueOld != valueCur;
       final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
@@ -4082,8 +4083,8 @@ public final class data {
       this.changed = isNullOld != isNullCur || valueOld != valueCur;
       final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
@@ -4706,7 +4707,7 @@ public final class data {
 
   public abstract static class Numeric<V extends Number> extends Primitive<V> implements Comparable<Column<? extends Number>>, type.Numeric<V> {
     @SuppressWarnings("unchecked")
-    static <T extends Number>T valueOf(final Number number, final Class<T> as) {
+    static <T extends Number> T valueOf(final Number number, final Class<T> as) {
       if (float.class == as || Float.class == as)
         return (T)Float.valueOf(number.floatValue());
 
@@ -4884,7 +4885,8 @@ public final class data {
 
     @Override
     public final void revert() {
-      // FIXME: Optimize this to only revert if `changed == true`. But that means it must absolutely be the case that `changed = true` when `valueCur` is modified.
+      // FIXME: Optimize this to only revert if `changed == true`. But that means it must absolutely be the case that `changed = true`
+      // when `valueCur` is modified.
       valueCur = valueOld;
       setByCur = setByOld;
       changed = false;
@@ -5127,8 +5129,8 @@ public final class data {
       this.changed = isNullOld != isNullCur || valueOld != valueCur;
       final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
@@ -5427,6 +5429,7 @@ public final class data {
 
     /**
      * Returns the table name.
+     *
      * @return The table name.
      */
     public abstract String getName();
@@ -5495,12 +5498,10 @@ public final class data {
     }
 
     /**
-     * Returns the {@link Column} in {@code this} {@link Table} matching the specified {@code name}, or {@code null} there is no
-     * match.
+     * Returns the {@link Column} in {@code this} {@link Table} matching the specified {@code name}, or {@code null} there is no match.
      *
      * @param name The name of the {@link Column}.
-     * @return The {@link Column} in {@code this} {@link Table} matching the specified {@code name}, or {@code null} there is no
-     *         match.
+     * @return The {@link Column} in {@code this} {@link Table} matching the specified {@code name}, or {@code null} there is no match.
      * @throws NullPointerException If {@code name} is null.
      */
     public final Column<?> getColumn(final String name) {
@@ -5826,8 +5827,8 @@ public final class data {
       this.changed = !equal(valueOld, valueCur);
       final boolean changed = !equal(this.valueCur, valueCur);
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.valueCur = valueCur;
       this.setByCur = copy.setByCur;
@@ -6059,8 +6060,8 @@ public final class data {
       this.changed = isNullOld != isNullCur || valueOld != valueCur;
       final boolean changed = this.isNullCur != isNullCur || this.valueCur != valueCur;
 
-//      if (!changed)
-//        return;
+      // if (!changed)
+      // return;
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
@@ -6414,7 +6415,7 @@ public final class data {
     return Classes.getConstructor(cls, genericType);
   }
 
-  private static <T>T newInstance(final Constructor<T> constructor, final Object ... initargs) {
+  private static <T> T newInstance(final Constructor<T> constructor, final Object ... initargs) {
     try {
       return constructor.newInstance(initargs);
     }
@@ -6445,7 +6446,7 @@ public final class data {
   }
 
   @SuppressWarnings("unchecked")
-  private static <E>ARRAY<E> wrap(final E[] value) {
+  private static <E> ARRAY<E> wrap(final E[] value) {
     final ARRAY<E> array;
     if (value.getClass().getComponentType().isEnum())
       array = new ARRAY<>((Class<? extends Column<E>>)value.getClass().getComponentType());
@@ -6457,7 +6458,7 @@ public final class data {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static <V,C extends Column<V>>C wrap(final V value) {
+  static <V,C extends Column<V>> C wrap(final V value) {
     if (EntityEnum.class.isAssignableFrom(value.getClass()))
       return (C)new ENUM((EntityEnum)value);
 

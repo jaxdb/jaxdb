@@ -53,48 +53,50 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   }
 
   // list all LISTEN channels: SELECT * FROM pg_listening_channels()
-  // list all triggers: SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE 'jaxdb_notify_%';
+  // list all triggers: SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND
+  // trigger_name LIKE 'jaxdb_notify_%';
   // drop all triggers: SELECT "jaxdb_notify_drop_all"();
-  // list all functions: SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE 'jaxdb_notify_%';
+  // list all functions: SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema =
+  // 'public' AND routine_name LIKE 'jaxdb_notify_%';
   // drop all functions: list the functions, then execute DROP FUNCTION %;
   private static final String createDropAllFunction =
     "BEGIN;\n" +
-    "SELECT pg_advisory_xact_lock(2142616474639426746);\n" +
-    "CREATE OR REPLACE FUNCTION " + dropAllFunction + "() RETURNS TEXT AS $$ DECLARE\n" +
-    "  triggerNameRecord RECORD;\n" +
-    "  triggerTableRecord RECORD;\n" +
-    "  functionName TEXT;\n" +
-    "BEGIN\n" +
-    "  FOR triggerNameRecord IN SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE '" + channelName + "_%' LOOP\n" +
-    "    FOR triggerTableRecord IN SELECT DISTINCT(event_object_table) FROM information_schema.triggers WHERE trigger_name = triggerNameRecord.trigger_name LOOP\n" +
-    "      RAISE NOTICE 'DROP TRIGGER \"%\" ON \"%\"', triggerNameRecord.trigger_name, triggerTableRecord.event_object_table;\n" +
-    "      EXECUTE 'DROP TRIGGER \"' || triggerNameRecord.trigger_name || '\" ON \"' || triggerTableRecord.event_object_table || '\";';\n" +
-    "    END LOOP;\n" +
-    "  END LOOP;\n" +
-    "  FOR functionName IN SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE '" + channelName + "_%' LOOP\n" +
-    "    EXECUTE 'DROP FUNCTION \"' || functionName || '\";';\n" +
-    "  END LOOP;\n" +
-    "  RETURN 'done';\n" +
-    "END;\n" +
-    "$$ LANGUAGE plpgsql SECURITY DEFINER;\n" +
-    "END;";
+      "SELECT pg_advisory_xact_lock(2142616474639426746);\n" +
+      "CREATE OR REPLACE FUNCTION " + dropAllFunction + "() RETURNS TEXT AS $$ DECLARE\n" +
+      "  triggerNameRecord RECORD;\n" +
+      "  triggerTableRecord RECORD;\n" +
+      "  functionName TEXT;\n" +
+      "BEGIN\n" +
+      "  FOR triggerNameRecord IN SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE '" + channelName + "_%' LOOP\n" +
+      "    FOR triggerTableRecord IN SELECT DISTINCT(event_object_table) FROM information_schema.triggers WHERE trigger_name = triggerNameRecord.trigger_name LOOP\n" +
+      "      RAISE NOTICE 'DROP TRIGGER \"%\" ON \"%\"', triggerNameRecord.trigger_name, triggerTableRecord.event_object_table;\n" +
+      "      EXECUTE 'DROP TRIGGER \"' || triggerNameRecord.trigger_name || '\" ON \"' || triggerTableRecord.event_object_table || '\";';\n" +
+      "    END LOOP;\n" +
+      "  END LOOP;\n" +
+      "  FOR functionName IN SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE '" + channelName + "_%' LOOP\n" +
+      "    EXECUTE 'DROP FUNCTION \"' || functionName || '\";';\n" +
+      "  END LOOP;\n" +
+      "  RETURN 'done';\n" +
+      "END;\n" +
+      "$$ LANGUAGE plpgsql SECURITY DEFINER;\n" +
+      "END;";
 
   private static final String createPgNotifyPageFunction =
     "BEGIN;\n" +
-    "SELECT pg_advisory_xact_lock(2142616474639426746);\n" +
-    "CREATE OR REPLACE FUNCTION " + pgNotifyPageFunction + "(channel TEXT, message TEXT) RETURNS INTEGER AS $$ DECLARE\n" +
-    "  pages INTEGER;\n" +
-    "  hash TEXT;\n" +
-    "BEGIN\n" +
-    "  SELECT (char_length(message) / 7950) + 1 INTO pages;\n" +
-    "  SELECT md5(message) INTO hash;\n" +
-    "  FOR page IN 1..pages LOOP\n" +
-    "    PERFORM pg_notify(channel, hash || ':' || pages || ':' || page || ':' || substr(message, ((page - 1) * 7950) + 1, 7950));\n" +
-    "  END LOOP;\n" +
-    "  RETURN 0;\n" +
-    "END;\n" +
-    "$$ LANGUAGE plpgsql SECURITY DEFINER;\n" +
-    "END;";
+      "SELECT pg_advisory_xact_lock(2142616474639426746);\n" +
+      "CREATE OR REPLACE FUNCTION " + pgNotifyPageFunction + "(channel TEXT, message TEXT) RETURNS INTEGER AS $$ DECLARE\n" +
+      "  pages INTEGER;\n" +
+      "  hash TEXT;\n" +
+      "BEGIN\n" +
+      "  SELECT (char_length(message) / 7950) + 1 INTO pages;\n" +
+      "  SELECT md5(message) INTO hash;\n" +
+      "  FOR page IN 1..pages LOOP\n" +
+      "    PERFORM pg_notify(channel, hash || ':' || pages || ':' || page || ':' || substr(message, ((page - 1) * 7950) + 1, 7950));\n" +
+      "  END LOOP;\n" +
+      "  RETURN 0;\n" +
+      "END;\n" +
+      "$$ LANGUAGE plpgsql SECURITY DEFINER;\n" +
+      "END;";
 
   private PGNotificationListener listener;
   private final Map<String,StringBuilder> hashToPages = new ConcurrentHashMap<>();
@@ -171,7 +173,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
               connection.close();
           }
           catch (final SQLException e) {
-            if (logger.isWarnEnabled()) logger.warn("Failed to disconnect listener from PGConnection", e);
+            if (logger.isWarnEnabled()) { logger.warn("Failed to disconnect listener from PGConnection", e); }
           }
 
           if (isClosed())
@@ -181,7 +183,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
             reconnect(getConnection(null), this);
           }
           catch (final IOException | SQLException e) {
-            if (logger.isErrorEnabled()) logger.error("Failed getConnection()", e);
+            if (logger.isErrorEnabled()) { logger.error("Failed getConnection()", e); }
           }
         }
       });
@@ -283,7 +285,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   @Override
   @SuppressWarnings("null")
   void checkCreateTriggers(final Statement statement, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
-    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
+    if (logger.isTraceEnabled()) { logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets)); }
 
     final int noTables = tables.length;
     for (int i = 0; i < noTables; ++i) { // [A]
@@ -371,7 +373,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
   @Override
   void listenTriggers(final Statement statement) throws SQLException {
-    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.listenTriggers", "%?", this, statement.getConnection());
+    if (logger.isTraceEnabled()) { logm(logger, TRACE, "%?.listenTriggers", "%?", this, statement.getConnection()); }
     statement.addBatch("LISTEN \"" + channelName + "\"");
   }
 

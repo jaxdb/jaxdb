@@ -88,8 +88,7 @@ public abstract class Vendor implements Closeable {
    *          {@link Connection#TRANSACTION_READ_COMMITTED}>,<br>
    *          {@link Connection#TRANSACTION_REPEATABLE_READ}, or<br>
    *          {@link Connection#TRANSACTION_SERIALIZABLE}>.<br>
-   *          (Note that {@link Connection#TRANSACTION_NONE} cannot be used because it
-   *          specifies that transactions are not supported.)
+   *          (Note that {@link Connection#TRANSACTION_NONE} cannot be used because it specifies that transactions are not supported.)
    * @return The {@link Connection} for this {@link Vendor} instance.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.

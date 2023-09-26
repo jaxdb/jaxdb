@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class CorrelatedSubQueryTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends CorrelatedSubQueryTest {
   }
@@ -52,24 +52,24 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testWhereEntity(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.new Purchase();
     final Classicmodels.Customer c1 = classicmodels.new Customer();
     final Classicmodels.Customer c2 = classicmodels.new Customer();
-    try (final RowIterator<data.Table> rows =
-
-      SELECT(p, c2).
-      FROM(p,
-        SELECT(c1).
-        FROM(c1).
-        WHERE(GT(c1.creditLimit, 10)).
-        AS(c2)).
-      WHERE(AND(
-        LT(p.purchaseDate, p.requiredDate),
-        EQ(p.customerNumber, c2.customerNumber)))
-          .execute(transaction)) {
-
+    try (
+      final RowIterator<data.Table> rows =
+        SELECT(p, c2)
+          .FROM(p,
+            SELECT(c1)
+              .FROM(c1)
+              .WHERE(GT(c1.creditLimit, 10))
+              .AS(c2))
+          .WHERE(AND(
+            LT(p.purchaseDate, p.requiredDate),
+            EQ(p.customerNumber, c2.customerNumber)))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       do {
         assertSame(p, rows.nextEntity());
@@ -80,25 +80,25 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testWhereColumn(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.new Purchase();
     final Classicmodels.Customer c1 = classicmodels.new Customer();
     final Classicmodels.Customer c2 = classicmodels.new Customer();
     final data.CHAR cn = new data.CHAR();
-    try (final RowIterator<type.Entity> rows =
-
-      SELECT(p, c2.companyName.AS(cn)).
-      FROM(p,
-        SELECT(c1).
-        FROM(c1).
-        WHERE(GT(c1.creditLimit, 10)).
-        AS(c2)).
-      WHERE(AND(
-        LT(p.purchaseDate, p.requiredDate),
-        EQ(p.customerNumber, c2.customerNumber)))
-          .execute(transaction)) {
-
+    try (
+      final RowIterator<type.Entity> rows =
+        SELECT(p, c2.companyName.AS(cn))
+          .FROM(p,
+            SELECT(c1)
+              .FROM(c1)
+              .WHERE(GT(c1.creditLimit, 10))
+              .AS(c2))
+          .WHERE(AND(
+            LT(p.purchaseDate, p.requiredDate),
+            EQ(p.customerNumber, c2.customerNumber)))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       do {
         assertSame(p, rows.nextEntity());
@@ -109,21 +109,22 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testSelect(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.new Purchase();
     final Classicmodels.Customer c = classicmodels.Customer$;
     final data.INT n = new data.INT();
-    try (final RowIterator<type.Entity> rows =
-
-      SELECT(p,
-        SELECT(MAX(c.salesEmployeeNumber)).
-        FROM(c).
-        WHERE(GT(c.creditLimit, 11)).AS(n)).
-      FROM(p).
-      WHERE(LT(p.purchaseDate, p.requiredDate))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<type.Entity> rows =
+        SELECT(p,
+          SELECT(MAX(c.salesEmployeeNumber))
+            .FROM(c)
+            .WHERE(GT(c.creditLimit, 11))
+            .AS(n))
+          .FROM(p)
+          .WHERE(LT(p.purchaseDate, p.requiredDate))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       do {
         assertSame(p, rows.nextEntity());
@@ -134,28 +135,28 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testJoin(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     final Classicmodels.Customer c = classicmodels.new Customer();
 
     final data.BIGINT pd = new data.BIGINT();
     final data.SMALLINT pn = new data.SMALLINT();
-    try (final RowIterator<type.Entity> rows =
-
-      SELECT(c, pd).
-      FROM(c).
-      JOIN(
-        SELECT(
-          p.customerNumber.AS(pn),
-          COUNT(p.purchaseDate).AS(pd)).
-        FROM(p).
-        GROUP_BY(p.customerNumber).
-        HAVING(NE(p.customerNumber, 10))).
-      ON(EQ(c.customerNumber, pn)).
-      WHERE(NE(c.customerNumber, 10))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<type.Entity> rows =
+        SELECT(c, pd)
+          .FROM(c)
+          .JOIN(
+            SELECT(
+              p.customerNumber.AS(pn),
+              COUNT(p.purchaseDate).AS(pd))
+              .FROM(p)
+              .GROUP_BY(p.customerNumber)
+              .HAVING(NE(p.customerNumber, 10)))
+          .ON(EQ(c.customerNumber, pn))
+          .WHERE(NE(c.customerNumber, 10))
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       do {
         assertSame(c, rows.nextEntity());

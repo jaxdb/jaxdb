@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class LimitExpressionTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends LimitExpressionTest {
   }
@@ -51,17 +51,17 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testLimitPrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.new Product();
-    try (final RowIterator<Classicmodels.Product> rows =
-
-      SELECT(p).
-      FROM(p).
-      ORDER_BY(p.code).
-      LIMIT(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Classicmodels.Product> rows =
+        SELECT(p)
+          .FROM(p)
+          .ORDER_BY(p.code)
+          .LIMIT(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals("S10_1678", rows.nextEntity().code.get());
       assertFalse(rows.nextRow());
@@ -69,17 +69,17 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testLimit(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.new Product();
-    try (final RowIterator<data.DECIMAL> rows =
-
-      SELECT(p.msrp, p.price).
-      FROM(p).
-      ORDER_BY(p.msrp, p.price).
-      LIMIT(3)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DECIMAL> rows =
+        SELECT(p.msrp, p.price)
+          .FROM(p)
+          .ORDER_BY(p.msrp, p.price)
+          .LIMIT(3)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(33.19, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(22.57, rows.nextEntity().get().doubleValue(), 0.0000000001);
@@ -94,18 +94,18 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testLimitOffset(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.new Product();
-    try (final RowIterator<data.DECIMAL> rows =
-
-      SELECT(p.msrp, p.price).
-      FROM(p).
-      ORDER_BY(p.msrp, p.price).
-      LIMIT(2).
-      OFFSET(1)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.DECIMAL> rows =
+        SELECT(p.msrp, p.price)
+          .FROM(p)
+          .ORDER_BY(p.msrp, p.price)
+          .LIMIT(2)
+          .OFFSET(1)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(35.36, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(15.91, rows.nextEntity().get().doubleValue(), 0.0000000001);

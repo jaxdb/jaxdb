@@ -93,10 +93,10 @@ public class SQLite extends Vendor {
       connection.rollback();
     }
     catch (final SQLException e) {
-      if ("database connection closed".equals(e.getMessage()))
-        if (logger.isWarnEnabled()) logger.warn(e.getMessage());
-      else
+      if (!"database connection closed".equals(e.getMessage()))
         throw e;
+
+      if (logger.isWarnEnabled()) { logger.warn(e.getMessage()); }
     }
   }
 

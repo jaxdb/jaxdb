@@ -27,7 +27,7 @@ import org.libj.util.Temporals;
 
 final class BetweenPredicates {
   abstract static class BetweenPredicate<V> extends ComparisonPredicate<V> {
-//    private final Supplier<Segment<V>> toInterval;
+    // private final Supplier<Segment<V>> toInterval;
     final boolean positive;
     final type.Column<?> column;
 
@@ -35,28 +35,28 @@ final class BetweenPredicates {
       super(column, a, b);
       this.column = column;
       this.positive = positive;
-//      this.toInterval = null;
+      // this.toInterval = null;
     }
 
     BetweenPredicate(final type.Column<?> column, final V a, final V b, final boolean positive) {
       super(column, data.wrap(a), data.wrap(b));
       this.column = column;
       this.positive = positive;
-//      this.toInterval = toInterval(column, a, b, ((data.Column<V>)a).getDiscreteTopology(), positive);
+      // this.toInterval = toInterval(column, a, b, ((data.Column<V>)a).getDiscreteTopology(), positive);
     }
 
     BetweenPredicate(final V a, final type.Column<?> column, final V b, final boolean positive) {
       super(column, data.wrap(a), data.wrap(b));
       this.column = column;
       this.positive = positive;
-//      this.toInterval = toInterval(a, column, b, ((data.Column<V>)a).getDiscreteTopology(), positive);
+      // this.toInterval = toInterval(a, column, b, ((data.Column<V>)a).getDiscreteTopology(), positive);
     }
 
     BetweenPredicate(final V a, final V b, final type.Column<?> column, final boolean positive) {
       super(column, data.wrap(a), data.wrap(b));
       this.column = column;
       this.positive = positive;
-//      this.toInterval = toInterval(a, b, column, ((data.Column<V>)a).getDiscreteTopology(), positive);
+      // this.toInterval = toInterval(a, b, column, ((data.Column<V>)a).getDiscreteTopology(), positive);
     }
 
     @Override
@@ -124,28 +124,28 @@ final class BetweenPredicates {
       super(column, (Subject)a, (Subject)b, positive);
     }
 
-    <T extends Temporal>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal> TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final type.Temporal<?> b, final boolean positive) {
       this(column, (type.Temporal<?>)data.wrap(a), b, positive);
     }
 
-    <T extends Temporal>TemporalBetweenPredicate(final type.Temporal<?> column, final type.Temporal<?> a, final T b, final boolean positive) {
+    <T extends Temporal> TemporalBetweenPredicate(final type.Temporal<?> column, final type.Temporal<?> a, final T b, final boolean positive) {
       this(column, a, (type.Temporal<?>)data.wrap(b), positive);
     }
 
-    <T extends Temporal>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal> TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
       this((type.Temporal<?>)data.wrap(value), a, b, positive);
     }
 
-    <T extends Temporal>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final T b, final boolean positive) {
+    <T extends Temporal> TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final T b, final boolean positive) {
       super(column, (V)a, (V)b, positive);
     }
 
-    <T extends Temporal>TemporalBetweenPredicate(final T value, final T a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal> TemporalBetweenPredicate(final T value, final T a, final type.Temporal<?> b, final boolean positive) {
       super((V)value, (V)a, b, positive);
     }
 
-    <T extends Temporal>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final T b, final boolean positive) {
-     super((V)value, a,  (V)b, positive);
+    <T extends Temporal> TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final T b, final boolean positive) {
+      super((V)value, a, (V)b, positive);
     }
 
     @Override
@@ -196,7 +196,7 @@ final class BetweenPredicates {
     }
 
     TimeBetweenPredicate(final V value, final type.TIME a, final V b, final boolean positive) {
-      super(value, a,  b, positive);
+      super(value, a, b, positive);
     }
 
     @Override
@@ -226,27 +226,27 @@ final class BetweenPredicates {
       super(column, (Subject)a, (Subject)b, positive);
     }
 
-    <T extends CharSequence>TextualBetweenPredicate(final type.Textual<?> column, final T a, final type.Textual<?> b, final boolean positive) {
+    <T extends CharSequence> TextualBetweenPredicate(final type.Textual<?> column, final T a, final type.Textual<?> b, final boolean positive) {
       this(column, (type.Textual<?>)data.wrap(a), b, positive);
     }
 
-    <T extends CharSequence>TextualBetweenPredicate(final type.Textual<?> column, final type.Textual<?> a, final T b, final boolean positive) {
+    <T extends CharSequence> TextualBetweenPredicate(final type.Textual<?> column, final type.Textual<?> a, final T b, final boolean positive) {
       this(column, a, (type.Textual<?>)data.wrap(b), positive);
     }
 
-    <T extends CharSequence>TextualBetweenPredicate(final T value, final type.Textual<?> a, final type.Textual<?> b, final boolean positive) {
+    <T extends CharSequence> TextualBetweenPredicate(final T value, final type.Textual<?> a, final type.Textual<?> b, final boolean positive) {
       this((type.Textual<?>)data.wrap(value), a, b, positive);
     }
 
-    <T extends CharSequence>TextualBetweenPredicate(final type.Textual<?> column, final T a, final T b, final boolean positive) {
+    <T extends CharSequence> TextualBetweenPredicate(final type.Textual<?> column, final T a, final T b, final boolean positive) {
       super(column, (V)a, (V)b, positive);
     }
 
-    <T extends CharSequence>TextualBetweenPredicate(final T value, final T a, final type.Textual<?> b, final boolean positive) {
+    <T extends CharSequence> TextualBetweenPredicate(final T value, final T a, final type.Textual<?> b, final boolean positive) {
       super((V)value, (V)a, b, positive);
     }
 
-    <T extends CharSequence>TextualBetweenPredicate(final T value, final type.Textual<?> a, final T b, final boolean positive) {
+    <T extends CharSequence> TextualBetweenPredicate(final T value, final type.Textual<?> a, final T b, final boolean positive) {
       super((V)value, a, (V)b, positive);
     }
 
@@ -268,7 +268,7 @@ final class BetweenPredicates {
       final String a = (String)((Evaluable)this.a).evaluate(visited);
       final String b = (String)((Evaluable)this.b).evaluate(visited);
       final String c = (String)((Evaluable)this.column).evaluate(visited);
-      return a.compareTo(c) >= 0 && c.compareTo(b) <= 0  == positive;
+      return a.compareTo(c) >= 0 && c.compareTo(b) <= 0 == positive;
     }
   }
 

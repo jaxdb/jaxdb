@@ -90,7 +90,7 @@ public abstract class Schema {
     return cacheNotifier;
   }
 
-  <T extends data.Table & type.Table$,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>>void initCache(final L notificationListener, final Queue<Notification<T>> queue, final Set<T> tables, final ArrayList<OnConnectPreLoad> onConnectPreLoads) throws IOException, SQLException {
+  <T extends data.Table & type.Table$,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>> void initCache(final L notificationListener, final Queue<Notification<T>> queue, final Set<T> tables, final ArrayList<OnConnectPreLoad> onConnectPreLoads) throws IOException, SQLException {
     if (this.cacheNotifier != null)
       throw new IllegalStateException("Cache was already initialized");
 
@@ -131,7 +131,7 @@ public abstract class Schema {
   ConcurrentHashMap<String,OnNotifyCallbackList> notifyListeners;
 
   void awaitNotify(final String sessionId, final OnNotifyCallbackList onNotifyCallbackList) {
-    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".awaitNotify(" + sessionId + "," + ObjectUtil.simpleIdentityString(onNotifyCallbackList) + ")");
+    if (logger.isTraceEnabled()) { logger.trace(getClass().getSimpleName() + ".awaitNotify(" + sessionId + "," + ObjectUtil.simpleIdentityString(onNotifyCallbackList) + ")"); }
 
     if (notifyListeners == null) {
       synchronized (this) {
@@ -146,12 +146,12 @@ public abstract class Schema {
 
   void removeSession(final String sessionId) {
     final OnNotifyCallbackList onNotifyCallbackList = notifyListeners.remove(sessionId);
-    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".removeSession(" + sessionId + "): " + ObjectUtil.simpleIdentityString(onNotifyCallbackList));
+    if (logger.isTraceEnabled()) { logger.trace(getClass().getSimpleName() + ".removeSession(" + sessionId + "): " + ObjectUtil.simpleIdentityString(onNotifyCallbackList)); }
   }
 
   OnNotifyCallbackList getSession(final String sessionId) {
     final OnNotifyCallbackList onNotifyCallbackList = notifyListeners == null ? null : notifyListeners.get(sessionId);
-    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".getSession(" + sessionId + "): " + ObjectUtil.simpleIdentityString(onNotifyCallbackList));
+    if (logger.isTraceEnabled()) { logger.trace(getClass().getSimpleName() + ".getSession(" + sessionId + "): " + ObjectUtil.simpleIdentityString(onNotifyCallbackList)); }
     return onNotifyCallbackList;
   }
 }

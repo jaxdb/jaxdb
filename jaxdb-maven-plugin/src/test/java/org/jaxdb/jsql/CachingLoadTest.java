@@ -42,15 +42,15 @@ import org.libj.util.function.Throwing;
 @RunWith(SchemaTestRunner.class)
 @Config(sync = true, deferLog = false, failFast = true, prepared = false)
 public abstract class CachingLoadTest extends NotificationTest {
-  //@DB(Derby.class)
-  //@DB(SQLite.class)
-  //@Ignore("Need to finish implementing this")
-  //public static class IntegrationTest extends CachingLoadTest {
-  //}
+  // @DB(Derby.class)
+  // @DB(SQLite.class)
+  // @Ignore("Need to finish implementing this")
+  // public static class IntegrationTest extends CachingLoadTest {
+  // }
 
-  //@DB(MySQL.class)
+  // @DB(MySQL.class)
   @DB(PostgreSQL.class)
-  //@DB(Oracle.class)
+  // @DB(Oracle.class)
   public static class RegressionTest extends CachingLoadTest {
   }
 
@@ -137,35 +137,32 @@ public abstract class CachingLoadTest extends NotificationTest {
   }
 
   private static CONFLICT_ACTION_NOTIFY insert(final data.Table t, final AtomicInteger count) {
-    return
-      INSERT(t)
-        .onNotify((e, idx, cnt) -> {
-          if (e != null)
-            throw e;
+    return INSERT(t)
+      .onNotify((e, idx, cnt) -> {
+        if (e != null)
+          throw e;
 
-          if (cnt == 0)
-            throw new IllegalArgumentException();
+        if (cnt == 0)
+          throw new IllegalArgumentException();
 
-          count.getAndAdd(cnt);
-          return false;
-        });
+        count.getAndAdd(cnt);
+        return false;
+      });
   }
 
   private static UPDATE_NOTIFY update(final Caching.OneOneId oo, final Condition<?> condition, final AtomicInteger count) {
-    return
-      UPDATE(oo).
-      SET(oo.version, ADD(oo.version, 1)).
-      WHERE(condition)
-        .onNotify((e, idx, cnt) -> {
-          if (e != null)
-            throw e;
+    return UPDATE(oo).SET(oo.version, ADD(oo.version, 1))
+      .WHERE(condition)
+      .onNotify((e, idx, cnt) -> {
+        if (e != null)
+          throw e;
 
-          if (cnt == 0)
-            throw new IllegalArgumentException();
+        if (cnt == 0)
+          throw new IllegalArgumentException();
 
-          count.getAndAdd(cnt);
-          return false;
-        });
+        count.getAndAdd(cnt);
+        return false;
+      });
   }
 
   private static void exec(final Supplier<statement.NotifiableModification> update, final AtomicInteger count, final Connector connector) {

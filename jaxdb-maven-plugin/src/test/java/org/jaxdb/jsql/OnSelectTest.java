@@ -54,14 +54,14 @@ import org.xml.sax.SAXException;
 @RunWith(SchemaTestRunner.class)
 @Config(sync = true, deferLog = false, failFast = true)
 public abstract class OnSelectTest {
-  //@DB(Derby.class)
-  //@DB(SQLite.class)
-  //public static class IntegrationTest extends OnSelectTest {
-  //}
+  // @DB(Derby.class)
+  // @DB(SQLite.class)
+  // public static class IntegrationTest extends OnSelectTest {
+  // }
 
-  //@DB(MySQL.class)
+  // @DB(MySQL.class)
   @DB(PostgreSQL.class)
-  //@DB(Oracle.class)
+  // @DB(Oracle.class)
   public static class RegressionTest extends OnSelectTest {
   }
 
@@ -111,13 +111,13 @@ public abstract class OnSelectTest {
   public void testTreeSingle(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     Classicmodels.Customer c = classicmodels.Customer$;
     final ArrayList<Short> customerNumbers = new ArrayList<>();
-    try (final RowIterator<data.SMALLINT> rows =
-
-      SELECT(c.customerNumber).
-      FROM(c).
-      ORDER_BY(c.customerNumber)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.SMALLINT> rows =
+        SELECT(c.customerNumber)
+          .FROM(c)
+          .ORDER_BY(c.customerNumber)
+          .execute(transaction)
+    ) {
       while (rows.nextRow())
         customerNumbers.add(rows.nextEntity().get());
     }
@@ -222,12 +222,12 @@ public abstract class OnSelectTest {
   @TestSpec(order = 4)
   public void testOnConnectPreLoadAllHash(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(p)).
-      FROM(p)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(p))
+          .FROM(p)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().getAsLong(), classicmodels.Product$.code_TO_Product_SELECT().size());
 
@@ -240,12 +240,12 @@ public abstract class OnSelectTest {
   @TestSpec(order = 5)
   public void testOnConnectPreLoadAllTree(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Employee e = classicmodels.Employee$;
-    try (final RowIterator<data.BIGINT> rows =
-
-      SELECT(COUNT(e)).
-      FROM(e)
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BIGINT> rows =
+        SELECT(COUNT(e))
+          .FROM(e)
+          .execute(transaction)
+    ) {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().getAsLong(), classicmodels.Employee$.employeeNumber_TO_Employee_SELECT().size());
 

@@ -33,8 +33,8 @@ import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.xml.sax.SAXException;
 
-@Mojo(name="sqlx", defaultPhase=LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution=ResolutionScope.TEST)
-@Execute(goal="sqlx")
+@Mojo(name = "sqlx", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Execute(goal = "sqlx")
 public class SQLxMojo extends SqlMojo<SQLxProduce,$Database> {
   private static final HashMap<URL,Reserve<$Database>> schemaToReserve = new HashMap<>();
 

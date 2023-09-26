@@ -25,10 +25,12 @@ public class CacheConfig {
       final Schema schema = table.getSchema();
       final Connector connector = schema.getConnector();
       final Notifier<?> notifier = schema.getCacheNotifier();
-      try (final RowIterator<data.Table> rows =
-        SELECT(table).
-        FROM(table)
-          .execute(connector, withoutCacheSelectEntity)) {
+      try (
+        final RowIterator<data.Table> rows =
+          SELECT(table)
+            .FROM(table)
+            .execute(connector, withoutCacheSelectEntity)
+      ) {
         while (rows.nextRow())
           notifier.onSelect(rows.nextEntity());
 
@@ -52,7 +54,7 @@ public class CacheConfig {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends type.Table$>CacheConfig with(final T table) {
+  public <T extends type.Table$> CacheConfig with(final T table) {
     final data.Table t = (data.Table)table;
     onConnectPreLoads.add(null);
     t.setCacheSelectEntity(true);
@@ -76,7 +78,7 @@ public class CacheConfig {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends type.Table$>CacheConfig with(final OnConnectPreLoad<? super T> onConnectPreLoad, final T table) {
+  public <T extends type.Table$> CacheConfig with(final OnConnectPreLoad<? super T> onConnectPreLoad, final T table) {
     final data.Table t = (data.Table)table;
     onConnectPreLoads.add(onConnectPreLoad);
     t.setCacheSelectEntity(true);
@@ -126,7 +128,7 @@ public class CacheConfig {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends type.Table$>CacheConfig with(final OnConnectPreLoad<? super T> onConnectPreLoad, final boolean cacheSelectEntity, final T table) {
+  public <T extends type.Table$> CacheConfig with(final OnConnectPreLoad<? super T> onConnectPreLoad, final boolean cacheSelectEntity, final T table) {
     final data.Table t = (data.Table)table;
     onConnectPreLoads.add(onConnectPreLoad);
     t.setCacheSelectEntity(cacheSelectEntity);

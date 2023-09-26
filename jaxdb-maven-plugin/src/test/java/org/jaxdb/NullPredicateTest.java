@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class NullPredicateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends NullPredicateTest {
   }
@@ -52,41 +52,41 @@ public abstract class NullPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testPrimaryIs(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        IS.NULL(c.customerNumber),
-        SELECT(IS.NULL(c.customerNumber)).
-        FROM(c).
-        WHERE(IS.NULL(c.customerNumber)).
-        LIMIT(1)).
-      FROM(c).
-      WHERE(IS.NULL(c.customerNumber))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          IS.NULL(c.customerNumber),
+          SELECT(IS.NULL(c.customerNumber))
+            .FROM(c)
+            .WHERE(IS.NULL(c.customerNumber))
+            .LIMIT(1))
+          .FROM(c)
+          .WHERE(IS.NULL(c.customerNumber))
+          .execute(transaction)
+    ) {
       assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testPrimaryIsNot(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        IS.NOT.NULL(c.customerNumber),
-        SELECT(IS.NOT.NULL(c.customerNumber)).
-        FROM(c).
-        WHERE(IS.NOT.NULL(c.customerNumber)).
-        LIMIT(1)).
-      FROM(c).
-      WHERE(IS.NOT.NULL(c.customerNumber))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          IS.NOT.NULL(c.customerNumber),
+          SELECT(IS.NOT.NULL(c.customerNumber))
+            .FROM(c)
+            .WHERE(IS.NOT.NULL(c.customerNumber))
+            .LIMIT(1))
+          .FROM(c)
+          .WHERE(IS.NOT.NULL(c.customerNumber))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 122; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -98,21 +98,21 @@ public abstract class NullPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testNotPrimaryIs(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        IS.NULL(c.locality),
-        SELECT(IS.NULL(c.locality)).
-        FROM(c).
-        WHERE(IS.NULL(c.locality)).
-        LIMIT(1)).
-      FROM(c).
-      WHERE(IS.NULL(c.locality))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          IS.NULL(c.locality),
+          SELECT(IS.NULL(c.locality))
+            .FROM(c)
+            .WHERE(IS.NULL(c.locality))
+            .LIMIT(1))
+          .FROM(c)
+          .WHERE(IS.NULL(c.locality))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 71; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -124,21 +124,21 @@ public abstract class NullPredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = true)
   public void testNotPrimaryIsNot(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Customer c = classicmodels.Customer$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(
-        IS.NOT.NULL(c.locality),
-        SELECT(IS.NOT.NULL(c.locality)).
-        FROM(c).
-        WHERE(IS.NOT.NULL(c.locality)).
-        LIMIT(1)).
-      FROM(c).
-      WHERE(IS.NOT.NULL(c.locality))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<data.BOOLEAN> rows =
+        SELECT(
+          IS.NOT.NULL(c.locality),
+          SELECT(IS.NOT.NULL(c.locality))
+            .FROM(c)
+            .WHERE(IS.NOT.NULL(c.locality))
+            .LIMIT(1))
+          .FROM(c)
+          .WHERE(IS.NOT.NULL(c.locality))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 51; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());

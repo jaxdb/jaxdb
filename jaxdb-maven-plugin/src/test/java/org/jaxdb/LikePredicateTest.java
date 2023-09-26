@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class LikePredicateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends LikePredicateTest {
   }
@@ -51,15 +51,16 @@ public abstract class LikePredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testLikeSimple(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<Classicmodels.Product> rows =
+    try (
+      final RowIterator<Classicmodels.Product> rows =
 
-      SELECT(p).
-      FROM(p).
-      WHERE(LIKE(p.name, "%"))
-        .execute(transaction)) {
+        SELECT(p).FROM(p)
+          .WHERE(LIKE(p.name, "%"))
+          .execute(transaction)
+    ) {
 
       for (int i = 0; i < 110; ++i) // [N]
         assertTrue(rows.nextRow());
@@ -69,16 +70,16 @@ public abstract class LikePredicateTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testLikePrimary(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<Classicmodels.Product> rows =
-
-      SELECT(p).
-      FROM(p).
-      WHERE(LIKE(p.code, "S10%"))
-        .execute(transaction)) {
-
+    try (
+      final RowIterator<Classicmodels.Product> rows =
+        SELECT(p)
+          .FROM(p)
+          .WHERE(LIKE(p.code, "S10%"))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 6; ++i) // [N]
         assertTrue(rows.nextRow());
 
@@ -89,40 +90,30 @@ public abstract class LikePredicateTest {
   private static final String $Ford$ = "%Ford%";
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testLikeComplex(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final Classicmodels.Product p = classicmodels.Product$;
-    try (final RowIterator<data.BOOLEAN> rows =
-
-      SELECT(OR(
-        LIKE(p.name, $Ford$),
-        LIKE(
-          SELECT(p.name).
-          FROM(p).
-          LIMIT(1), $Ford$)),
+    try (
+      final RowIterator<data.BOOLEAN> rows =
         SELECT(OR(
           LIKE(p.name, $Ford$),
           LIKE(
-            SELECT(p.name).
-            FROM(p).
-            LIMIT(1), $Ford$))).
-        FROM(p).
-        WHERE(OR(
-          LIKE(p.name, $Ford$),
-          LIKE(
-            SELECT(p.name).
-            FROM(p).
-            LIMIT(1), $Ford$))).
-        LIMIT(1)).
-      FROM(p).
-      WHERE(OR(
-        LIKE(p.name, $Ford$),
-        LIKE(
-          SELECT(p.name).
-          FROM(p).
-          LIMIT(1), $Ford$)))
-            .execute(transaction)) {
-
+            SELECT(p.name).FROM(p).LIMIT(1), $Ford$)),
+          SELECT(OR(
+            LIKE(p.name, $Ford$),
+            LIKE(
+              SELECT(p.name).FROM(p).LIMIT(1), $Ford$))).FROM(p)
+            .WHERE(OR(
+              LIKE(p.name, $Ford$),
+              LIKE(
+                SELECT(p.name).FROM(p).LIMIT(1), $Ford$)))
+            .LIMIT(1)).FROM(p)
+          .WHERE(OR(
+            LIKE(p.name, $Ford$),
+            LIKE(
+              SELECT(p.name).FROM(p).LIMIT(1), $Ford$)))
+          .execute(transaction)
+    ) {
       for (int i = 0; i < 15; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());

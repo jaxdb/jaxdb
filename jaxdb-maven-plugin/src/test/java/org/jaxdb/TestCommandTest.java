@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class TestCommandTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(value = Derby.class, parallel = 2)
   @DB(SQLite.class)
   public static class IntegrationTest extends TestCommandTest {
   }
@@ -52,17 +52,18 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testFailEntityOnlySelectTrue(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
       final Classicmodels.Product p = classicmodels.Product$;
-      try (final RowIterator<?> rows =
-
-        SELECT(p.code).
-        FROM(p)
-          .execute(transaction, queryConfig)) {
+      try (
+        final RowIterator<?> rows =
+          SELECT(p.code)
+            .FROM(p)
+            .execute(transaction, queryConfig)
+      ) {
       }
 
       fail("Expected IllegalStateException");
@@ -72,17 +73,18 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=false, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = false, rowIteratorFullConsume = false)
   public void testFailEntityOnlySelectFalse(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
       final Classicmodels.Product p = classicmodels.Product$;
-      try (final RowIterator<?> rows =
-
-        SELECT(p).
-        FROM(p)
-          .execute(transaction, queryConfig)) {
+      try (
+        final RowIterator<?> rows =
+          SELECT(p)
+            .FROM(p)
+            .execute(transaction, queryConfig)
+      ) {
       }
 
       fail("Expected AssertionError");
@@ -94,18 +96,18 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=true)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
   public void testRowIteratorFullConsumeRequiredTrue(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
       final Classicmodels.Product p = classicmodels.Product$;
-      try (final RowIterator<?> rows =
-
-        SELECT(p).
-        FROM(p)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(p)
+            .FROM(p)
+            .execute(transaction, queryConfig)
+      ) {
         rows.nextRow();
       }
 
@@ -116,18 +118,18 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(cacheSelectEntity=true, rowIteratorFullConsume=false)
+  @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = false)
   public void testRowIteratorFullConsumeRequiredFalse(final Classicmodels classicmodels, final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
       final Classicmodels.Product p = classicmodels.Product$;
-      try (final RowIterator<?> rows =
-
-        SELECT(p).
-        FROM(p)
-          .execute(transaction, queryConfig)) {
-
+      try (
+        final RowIterator<?> rows =
+          SELECT(p)
+            .FROM(p)
+            .execute(transaction, queryConfig)
+      ) {
         while (rows.nextRow());
       }
 

@@ -138,7 +138,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       if (!isClosed.get())
         return false;
 
-      if (logger.isDebugEnabled()) logger.debug(table.getName() + " is closed");
+      if (logger.isDebugEnabled()) { logger.debug(table.getName() + " is closed"); }
       return true;
     }
 
@@ -207,7 +207,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     private T toRow(final T table, final Map<String,Object> json, final String oldNew) {
       final T row = (T)table.clone();
       final String[] notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get(oldNew), data.Column.SetBy.SYSTEM);
-      if (notFound != null && logger.isErrorEnabled()) logger.error("Not found columns in \"" + table.getName() + "\": [\"" + ArrayUtil.toString(notFound, "\", \"") + "\"] of " + JSON.toString(json));
+      if (notFound != null && logger.isErrorEnabled())
+        logger.error("Not found columns in \"" + table.getName() + "\": [\"" + ArrayUtil.toString(notFound, "\", \"") + "\"] of " + JSON.toString(json));
+
       return row;
     }
 
@@ -243,7 +245,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
             }
           }
           catch (final Exception e) {
-            if (logger.isErrorEnabled()) logger.error("Unable to parse columns in \"" + table.getName() + "\": " + JSON.toString(json), e);
+            if (logger.isErrorEnabled()) { logger.error("Unable to parse columns in \"" + table.getName() + "\": " + JSON.toString(json), e); }
             continue;
           }
 
@@ -293,7 +295,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
     this.thread = new Thread("JAXDB-Notify") {
       private void flushQueues() {
-        if (logger.isTraceEnabled()) logger.trace("JAXDB-Notify Thread.flushQueues()");
+        if (logger.isTraceEnabled()) { logger.trace("JAXDB-Notify Thread.flushQueues()"); }
 
         final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
         if (tableNotifiers.size() > 0) {
@@ -304,14 +306,14 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
                 notification.invoke();
           }
           catch (final Exception e) {
-            if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.flushQueues(): " + notification, e);
+            if (logger.isErrorEnabled()) { logger.error("Uncaught exception in Notifier.flushQueues(): " + notification, e); }
           }
         }
       }
 
       @Override
       public void run() {
-        if (logger.isTraceEnabled()) logger.trace("JAXDB-Notify Thread.run()");
+        if (logger.isTraceEnabled()) { logger.trace("JAXDB-Notify Thread.run()"); }
 
         while (true) {
           while (state.get() != Notifier.State.STARTED) {
@@ -321,7 +323,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
                   state.wait();
               }
               catch (final InterruptedException e) {
-                if (logger.isErrorEnabled()) logger.error("JAXDB-Notify state wait interrupted, continuing", e);
+                if (logger.isErrorEnabled()) { logger.error("JAXDB-Notify state wait interrupted, continuing", e); }
               }
             }
           }
@@ -334,7 +336,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
             }
           }
           catch (final Throwable t) {
-            if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.run()", t);
+            if (logger.isErrorEnabled()) { logger.error("Uncaught exception in Notifier.run()", t); }
 
             setState(Notifier.State.FAILED);
             if (!(t instanceof Exception))
@@ -358,7 +360,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     connection = connectionFactory.getConnection(isolation);
     connection.setAutoCommit(true);
 
-    if (logger.isDebugEnabled()) logger.debug("getConnection(): New connection: " + ObjectUtil.simpleIdentityString(connection));
+    if (logger.isDebugEnabled()) { logger.debug("getConnection(): New connection: " + ObjectUtil.simpleIdentityString(connection)); }
     return connection;
   }
 
@@ -382,7 +384,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       tableNotifier.notify(sessionId, timestamp, json);
     }
     catch (final Exception e) {
-      if (logger.isErrorEnabled()) logger.error("Uncaught exception in Notifier.notify()", e);
+      if (logger.isErrorEnabled()) { logger.error("Uncaught exception in Notifier.notify()", e); }
       setState(Notifier.State.FAILED);
       tableNotifier.onFailure(sessionId, timestamp, e);
     }
@@ -413,7 +415,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   };
 
   private void recreateTrigger(final Connection connection, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
-    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
+    if (logger.isTraceEnabled()) { logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets)); }
 
     try (final Statement statement = connection.createStatement()) {
       checkCreateTriggers(statement, tables, actionSets);
@@ -431,7 +433,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
     final State state = this.state.get();
     if (state != Notifier.State.CREATED && state != Notifier.State.STARTED) {
-      if (logger.isWarnEnabled()) logger.warn("Trying to reconnect when Notifier.state == " + state);
+      if (logger.isWarnEnabled()) { logger.warn("Trying to reconnect when Notifier.state == " + state); }
       return;
     }
 
@@ -523,7 +525,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private <T extends data.Table>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T[] tables) throws SQLException {
+  private <T extends data.Table> void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T[] tables) throws SQLException {
     final int len = tables.length;
     final Action[][] actionSets = new Action[len][];
     for (int i = 0; i < len; ++i) { // [A]
@@ -548,16 +550,16 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @SuppressWarnings("unchecked")
-  final <T extends data.Table>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T ... tables) throws IOException, SQLException {
+  final <T extends data.Table> boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T ... tables) throws IOException, SQLException {
     assertNotNull(notificationListener);
     assertNotEmpty(tables);
     if (insert == null && up == null && delete == null)
       return false;
 
-    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
+    if (logger.isTraceEnabled()) { logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new)); }
 
     if (state.get() == Notifier.State.FAILED) {
-      if (logger.isWarnEnabled()) logger.warn("Trying to addNotificationListener(...) when Notifier.state == " + state);
+      if (logger.isWarnEnabled()) { logger.warn("Trying to addNotificationListener(...) when Notifier.state == " + state); }
       return false;
     }
 
@@ -707,7 +709,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       connection.close();
     }
     catch (final SQLException e) {
-      if (logger.isWarnEnabled()) logger.warn(e.getMessage(), e);
+      if (logger.isWarnEnabled()) { logger.warn(e.getMessage(), e); }
     }
   }
 }
