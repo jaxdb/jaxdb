@@ -25,7 +25,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.vendor.DbVendor;
@@ -114,8 +113,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  List<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
-    final List<CreateStatement> statements = new ArrayList<>();
+  ArrayList<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+    final ArrayList<CreateStatement> statements = new ArrayList<>();
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
       for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
@@ -158,8 +157,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  List<CreateStatement> triggers(final $Table table) {
-    final List<CreateStatement> statements = new ArrayList<>();
+  ArrayList<CreateStatement> triggers(final $Table table) {
+    final ArrayList<CreateStatement> statements = new ArrayList<>();
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
       for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]

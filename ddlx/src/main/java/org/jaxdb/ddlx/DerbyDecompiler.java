@@ -256,7 +256,7 @@ final class DerbyDecompiler extends Decompiler {
   // final Map<String,List<$Column>> nameToColumn = new HashMap<String,List<$Column>>();
   // final PreparedStatement statement = connection.prepareStatement(tablesSql);
   // final ResultSet rows = statement.executeQuery();
-  // final List<AbstractMap.SimpleEntry<Integer,$Column>> columns = new ArrayList<AbstractMap.SimpleEntry<Integer,$Column>>();
+  // final ArrayList<AbstractMap.SimpleEntry<Integer,$Column>> columns = new ArrayList<AbstractMap.SimpleEntry<Integer,$Column>>();
   // while (rows.next()) {
   // final String schemaName = rows.getString(1).toLowerCase();
   // final String tableName = rows.getString(2).toLowerCase();

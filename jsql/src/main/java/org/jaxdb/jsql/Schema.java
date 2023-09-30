@@ -27,6 +27,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -42,14 +43,15 @@ import org.slf4j.LoggerFactory;
 public abstract class Schema {
   private static final Logger logger = LoggerFactory.getLogger(Schema.class);
 
-  private static ConnectionFactory toConnectionFactory(final DataSource dataSource) {
+  private static ConnectionFactory toConnectionFactory(final DataSource dataSource, final Function<Connection,Connection> connectionWrapper) {
     assertNotNull(dataSource, "dataSource is null");
+    assertNotNull(connectionWrapper, "connectionWrapper is null");
     return (final Transaction.Isolation isolation) -> {
       final Connection connection = dataSource.getConnection();
       if (isolation != null)
         connection.setTransactionIsolation(isolation.getLevel());
 
-      return AuditConnection.wrapIfDebugEnabled(connection);
+      return connectionWrapper.apply(connection);
     };
   }
 
@@ -62,7 +64,11 @@ public abstract class Schema {
   }
 
   public Connector connect(final DataSource dataSource, final boolean isPrepared) {
-    return connect(toConnectionFactory(dataSource), isPrepared);
+    return connect(toConnectionFactory(dataSource, AuditConnection::wrapIfDebugEnabled), isPrepared);
+  }
+
+  public Connector connect(final DataSource dataSource, final Function<Connection,Connection> connectionWrapper, final boolean isPrepared) {
+    return connect(toConnectionFactory(dataSource, connectionWrapper != null ? connectionWrapper : AuditConnection::wrapIfDebugEnabled), isPrepared);
   }
 
   protected Schema() {

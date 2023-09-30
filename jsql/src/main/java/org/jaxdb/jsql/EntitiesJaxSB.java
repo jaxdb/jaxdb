@@ -22,7 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.jaxdb.sqlx.SQL;
 import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Binary;
@@ -88,7 +87,7 @@ final class EntitiesJaxSB {
       final Constructor<?> constructor = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toClassCase(database.id())).getDeclaredConstructor();
       constructor.setAccessible(true);
       final Schema schema = (Schema)constructor.newInstance();
-      final List<data.Table> entities = new ArrayList<>();
+      final ArrayList<data.Table> entities = new ArrayList<>();
       while (iterator.hasNext())
         entities.add(toEntity(schema, iterator.next()));
 

@@ -658,12 +658,12 @@ abstract class Compiler extends DbVendorCompiler {
    * @param table The {@link $Table} for which to produce {@code TRIGGER} clauses.
    * @return A list of {@link CreateStatement} objects of {@code TRIGGER} clauses for the specified {@link $Table table}.
    */
-  List<CreateStatement> triggers(final $Table table) {
+  ArrayList<CreateStatement> triggers(final $Table table) {
     return new ArrayList<>();
   }
 
-  List<CreateStatement> indexes(final $Table table, final Map<String,ColumnRef> columnNameToColumn) {
-    final List<CreateStatement> statements = new ArrayList<>();
+  ArrayList<CreateStatement> indexes(final $Table table, final Map<String,ColumnRef> columnNameToColumn) {
+    final ArrayList<CreateStatement> statements = new ArrayList<>();
     final $Indexes tableIndexes = table.getIndexes();
     if (tableIndexes != null) {
       final List<Index> indexes = tableIndexes.getIndex();
@@ -703,7 +703,7 @@ abstract class Compiler extends DbVendorCompiler {
    * @param table The {@link $Table}.
    * @return A list of {@link CreateStatement} objects for the creation of types for the specified {@link $Table}.
    */
-  List<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  ArrayList<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     return new ArrayList<>();
   }
 

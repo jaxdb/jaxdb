@@ -47,13 +47,13 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  List<CreateStatement> triggers(final $Table table) {
+  ArrayList<CreateStatement> triggers(final $Table table) {
     if (table.getTriggers() == null)
       return super.triggers(table);
 
     final String tableName = table.getName$().text();
     final BindingList<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
-    final List<CreateStatement> statements = new ArrayList<>();
+    final ArrayList<CreateStatement> statements = new ArrayList<>();
     final StringBuilder b = new StringBuilder();
     for (int i = 0, i$ = triggers.size(); i < i$; ++i) { // [RA]
       final $Table.Triggers.Trigger trigger = triggers.get(i);

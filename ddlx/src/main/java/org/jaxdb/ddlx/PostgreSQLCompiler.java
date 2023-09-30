@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.vendor.DbVendor;
@@ -76,8 +75,8 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  List<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
-    final List<CreateStatement> statements = new ArrayList<>();
+  ArrayList<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+    final ArrayList<CreateStatement> statements = new ArrayList<>();
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
       StringBuilder sql = null;
