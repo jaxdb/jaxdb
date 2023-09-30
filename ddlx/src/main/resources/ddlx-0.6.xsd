@@ -24,99 +24,137 @@
 
   <xs:include schemaLocation="ddlx-common-0.6.xsd"/>
 
+  <xs:group name="columnIndex">
+    <xs:sequence>
+      <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
   <xs:complexType name="tinyint">
     <xs:complexContent>
-      <xs:extension base="ddlx:tinyintAbstract"/>
+      <xs:extension base="ddlx:tinyintAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="smallint">
     <xs:complexContent>
-      <xs:extension base="ddlx:smallintAbstract"/>
+      <xs:extension base="ddlx:smallintAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="int">
     <xs:complexContent>
-      <xs:extension base="ddlx:intAbstract"/>
+      <xs:extension base="ddlx:intAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="bigint">
     <xs:complexContent>
-      <xs:extension base="ddlx:bigintAbstract"/>
+      <xs:extension base="ddlx:bigintAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="float">
     <xs:complexContent>
-      <xs:extension base="ddlx:floatAbstract"/>
+      <xs:extension base="ddlx:floatAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="double">
     <xs:complexContent>
-      <xs:extension base="ddlx:doubleAbstract"/>
+      <xs:extension base="ddlx:doubleAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="decimal">
     <xs:complexContent>
-      <xs:extension base="ddlx:decimalAbstract"/>
+      <xs:extension base="ddlx:decimalAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="binary">
     <xs:complexContent>
-      <xs:extension base="ddlx:binaryAbstract"/>
+      <xs:extension base="ddlx:binaryAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="blob">
     <xs:complexContent>
-      <xs:extension base="ddlx:blobAbstract"/>
+      <xs:extension base="ddlx:blobAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="char">
     <xs:complexContent>
-      <xs:extension base="ddlx:charAbstract"/>
+      <xs:extension base="ddlx:charAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="clob">
     <xs:complexContent>
-      <xs:extension base="ddlx:clobAbstract"/>
+      <xs:extension base="ddlx:clobAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="enum">
     <xs:complexContent>
-      <xs:extension base="ddlx:enumAbstract"/>
+      <xs:extension base="ddlx:enumAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="date">
     <xs:complexContent>
-      <xs:extension base="ddlx:dateAbstract"/>
+      <xs:extension base="ddlx:dateAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="time">
     <xs:complexContent>
-      <xs:extension base="ddlx:timeAbstract"/>
+      <xs:extension base="ddlx:timeAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="datetime">
     <xs:complexContent>
-      <xs:extension base="ddlx:datetimeAbstract"/>
+      <xs:extension base="ddlx:datetimeAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="boolean">
     <xs:complexContent>
-      <xs:extension base="ddlx:booleanAbstract"/>
+      <xs:extension base="ddlx:booleanAbstract">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

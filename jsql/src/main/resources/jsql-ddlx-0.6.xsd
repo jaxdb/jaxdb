@@ -26,100 +26,146 @@
 
   <xs:import namespace="http://www.jaxdb.org/jsql-0.6.xsd" schemaLocation="jsql-0.6.xsd"/>
   <xs:include schemaLocation="http://www.jaxdb.org/ddlx-common-0.6.xsd"/>
-
+  
+  <xs:group name="columnIndex">
+    <xs:sequence>
+      <xs:element name="index" minOccurs="0">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:columnIndex">
+              <xs:attribute ref="jsql:cache"/>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  
   <xs:complexType name="tinyint">
     <xs:complexContent>
-      <xs:extension base="jsql:tinyint"/>
+      <xs:extension base="jsql:tinyint">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="smallint">
     <xs:complexContent>
-      <xs:extension base="jsql:smallint"/>
+      <xs:extension base="jsql:smallint">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="int">
     <xs:complexContent>
-      <xs:extension base="jsql:int"/>
+      <xs:extension base="jsql:int">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="bigint">
     <xs:complexContent>
-      <xs:extension base="jsql:bigint"/>
+      <xs:extension base="jsql:bigint">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="float">
     <xs:complexContent>
-      <xs:extension base="jsql:float"/>
+      <xs:extension base="jsql:float">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="double">
     <xs:complexContent>
-      <xs:extension base="jsql:double"/>
+      <xs:extension base="jsql:double">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="decimal">
     <xs:complexContent>
-      <xs:extension base="jsql:decimal"/>
+      <xs:extension base="jsql:decimal">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="binary">
     <xs:complexContent>
-      <xs:extension base="jsql:binary"/>
+      <xs:extension base="jsql:binary">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="blob">
     <xs:complexContent>
-      <xs:extension base="jsql:blob"/>
+      <xs:extension base="jsql:blob">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="char">
     <xs:complexContent>
-      <xs:extension base="jsql:char"/>
+      <xs:extension base="jsql:char">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="clob">
     <xs:complexContent>
-      <xs:extension base="jsql:clob"/>
+      <xs:extension base="jsql:clob">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="enum">
     <xs:complexContent>
-      <xs:extension base="jsql:enum"/>
+      <xs:extension base="jsql:enum">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="date">
     <xs:complexContent>
-      <xs:extension base="jsql:date"/>
+      <xs:extension base="jsql:date">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="time">
     <xs:complexContent>
-      <xs:extension base="jsql:time"/>
+      <xs:extension base="jsql:time">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="datetime">
     <xs:complexContent>
-      <xs:extension base="jsql:datetime"/>
+      <xs:extension base="jsql:datetime">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="boolean">
     <xs:complexContent>
-      <xs:extension base="jsql:boolean"/>
+      <xs:extension base="jsql:boolean">
+        <xs:group ref="ddlx:columnIndex"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

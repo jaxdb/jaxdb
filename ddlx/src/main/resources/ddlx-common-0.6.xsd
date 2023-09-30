@@ -1047,22 +1047,21 @@
   </xs:complexType>
 
   <!-- End: BOOLEAN -->
+  
+  <xs:complexType name="columnIndex">
+    <xs:complexContent>
+      <xs:extension base="ddlx:documented">
+        <xs:attributeGroup ref="ddlx:index"/>
+        <xs:assert test="not('index cannot be specified on template') or ../name()!='template'"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:complexType name="column" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:named">
         <xs:sequence minOccurs="0">
           <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
-          <xs:element name="index" minOccurs="0">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="ddlx:documented">
-                  <xs:attributeGroup ref="ddlx:index"/>
-                  <xs:assert test="not('index cannot be specified on template') or ../name()!='template'"/>
-                </xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
         </xs:sequence>
         <xs:attribute name="template" type="ddlx:name"/>
         <xs:attribute name="null" type="xs:boolean">
