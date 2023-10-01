@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
 public class Generator {
   private static final Logger logger = LoggerFactory.getLogger(Generator.class);
   private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
-  static final Comparator<TableModel> tableModelComparator = (o1, o2) -> o1.table.getName$().text().compareTo(o2.table.getName$().text());
+  static final Comparator<TableModel> tableModelComparator = (final TableModel o1, final TableModel o2) -> o1.table.getName$().text().compareTo(o2.table.getName$().text());
   static final Comparator<$Named> namedComparator = (o1, o2) -> o1.getName$().text().compareTo(o2.getName$().text());
 
   static String enumStringToEnum(final String value) {

@@ -34,7 +34,6 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.libj.io.Readers;
 import org.slf4j.Logger;
@@ -136,12 +135,12 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,String> enumTemplateToValues, final Map<String,ColumnRef> columnNameToColumn, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final Map<String,String> enumTemplateToValues, final Map<String,ColumnRef> columnNameToColumn, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     return new CreateStatement("CALL CREATE_TABLE_IF_NOT_EXISTS('" + table.getName$().text() + "', '" + super.createTableIfNotExists(alterStatements, table, enumTemplateToValues, columnNameToColumn, tableNameToEnumToOwner).getSql().replace("'", "''") + "')");
   }
 
   @Override
-  DropStatement dropTableIfExists(final $Table table) {
+  DropStatement dropTableIfExists(final Schema.Table table) {
     return new DropStatement("CALL DROP_TABLE_IF_EXISTS('" + table.getName$().text() + "')");
   }
 
@@ -156,7 +155,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+  StringBuilder $null(final StringBuilder b, final Schema.Table table, final $Column column) {
     if (column.getNull$() != null && !column.getNull$().text())
       b.append(" NOT NULL");
 
@@ -164,7 +163,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final $Integer column) {
     if (!Generator.isAuto(column))
       return null;
 
@@ -184,12 +183,12 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder primaryKey(final StringBuilder b, final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final PrimaryKey.Using$ using) {
     return super.primaryKey(b, table, columns, null);
   }
 
   @Override
-  StringBuilder dropIndexOnClause(final $Table table) {
+  StringBuilder dropIndexOnClause(final Schema.Table table) {
     return q(new StringBuilder(" ON "), table.getName$().text());
   }
 

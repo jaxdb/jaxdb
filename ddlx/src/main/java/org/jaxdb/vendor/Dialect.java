@@ -27,8 +27,7 @@ import java.time.temporal.ChronoField;
 import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Schema;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Binding;
 import org.libj.lang.Hexadecimal;
 import org.libj.lang.Strings;
@@ -64,10 +63,10 @@ public abstract class Dialect extends DbVendorCompiler {
       return b.append("ty_").append(column.getTemplate$().text());
 
     final yAA.$AnyType<?> owner = BindingProxy.owner(column);
-    if (owner instanceof $Schema)
+    if (owner instanceof Schema)
       return b.append("ty_").append(column.getName$().text());
 
-    String tableName = (($Table)owner).getName$().text();
+    String tableName = ((Schema.Table)owner).getName$().text();
     if (tableNameToEnumToOwner != null)
       tableName = tableNameToEnumToOwner.get(tableName).get(column.getName$().text());
 

@@ -27,13 +27,11 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Columns;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyComposite;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Indexes;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Indexes.Index;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexesIndex;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table.Extends$;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$TableCommon;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$TableCommon.Extends$;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.jaxsb.runtime.Bindings;
@@ -46,7 +44,7 @@ import org.xml.sax.SAXException;
 
 public class DDLx {
   private static final Logger logger = LoggerFactory.getLogger(DDLx.class);
-  private static final Comparator<$Table> tableNameComparator = (o1, o2) -> o1 == null ? o2 == null ? 0 : 1 : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
+  private static final Comparator<$TableCommon> tableNameComparator = (o1, o2) -> o1 == null ? o2 == null ? 0 : 1 : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
   private static final URL normalizeXsl;
   private static final URL mergeXsl;
 
@@ -64,12 +62,12 @@ public class DDLx {
   }
 
   private static Schema topologicalSort(final Schema schema) {
-    final ArrayList<$Table> tables = new ArrayList<>(schema.getTable());
+    final ArrayList<$TableCommon> tables = new ArrayList<>(schema.getTable());
     schema.getTable().clear();
     tables.sort(tableNameComparator);
-    final RefDigraph<$Table,String> digraph = new RefDigraph<>(table -> table.getName$().text());
+    final RefDigraph<Schema.Table,String> digraph = new RefDigraph<>(table -> table.getName$().text());
     for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
+      final Schema.Table table = (Schema.Table)tables.get(i);
       digraph.add(table);
       final Extends$ extends$ = table.getExtends$();
       if (extends$ != null)
@@ -84,7 +82,7 @@ public class DDLx {
         }
       }
 
-      final $Constraints constraints = table.getConstraints();
+      final Schema.Table.Constraints constraints = table.getConstraints();
       if (constraints != null) {
         final BindingList<$ForeignKeyComposite> foreignKeys = constraints.getForeignKey();
         if (foreignKeys != null) {
@@ -97,7 +95,7 @@ public class DDLx {
     if (digraph.hasCycle())
       throw new IllegalStateException("Cycle exists in relational model: " + CollectionUtil.toString(digraph.getCycle(), " -> "));
 
-    final ArrayList<$Table> topologicalOrder = digraph.getTopologicalOrder();
+    final ArrayList<Schema.Table> topologicalOrder = digraph.getTopologicalOrder();
     for (int i = topologicalOrder.size() - 1; i >= 0; --i) // [RA]
       schema.getTable().add(topologicalOrder.get(i));
 
@@ -120,15 +118,17 @@ public class DDLx {
 
     this.mergedXml = Transformer.transform(mergeXsl, normalizeddXml, null);
     this.mergedSchema = topologicalSort((Schema)Bindings.parse(mergedXml));
-    final BindingList<$Table> tables = mergedSchema.getTable();
-    for (int i = 0, i$ = tables.size(); i < i$; ++i) // [RA]
-      if (tables.get(i).getExtends$() != null)
+    final BindingList<Schema.Table> tables = mergedSchema.getTable();
+    for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
+      final $TableCommon table = tables.get(i);
+      if (table.getExtends$() != null)
         throw new IllegalStateException("Input schema is not merged");
+    }
   }
 
   // FIXME: Remove this.
-  public boolean isUnique(final $Table table, final $Named column) {
-    final $Constraints constraints = table.getConstraints();
+  public boolean isUnique(final Schema.Table table, final $Named column) {
+    final Schema.Table.Constraints constraints = table.getConstraints();
     if (constraints != null) {
       final BindingList<$Columns> uniques = constraints.getUnique();
       if (uniques != null) {
@@ -140,12 +140,12 @@ public class DDLx {
       }
     }
 
-    final $Indexes tableIndexes = table.getIndexes();
+    final Schema.Table.Indexes tableIndexes = table.getIndexes();
     if (tableIndexes != null) {
-      final BindingList<Index> indexes = tableIndexes.getIndex();
+      final BindingList<$IndexesIndex> indexes = tableIndexes.getIndex();
       if (indexes != null) {
         for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
-          final $Indexes.Index index = indexes.get(i);
+          final $IndexesIndex index = indexes.get(i);
           if (index.getUnique$() != null && index.getUnique$().text() && index.getColumn().size() == 1 && column.getName$().text().equals(index.getColumn(0).getName$().text()))
             return true;
         }

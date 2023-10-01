@@ -26,7 +26,8 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Triggers;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,16 +48,16 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  ArrayList<CreateStatement> triggers(final $Table table) {
+  ArrayList<CreateStatement> triggers(final Schema.Table table) {
     if (table.getTriggers() == null)
       return super.triggers(table);
 
     final String tableName = table.getName$().text();
-    final BindingList<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
+    final BindingList<$Triggers.Trigger> triggers = table.getTriggers().getTrigger();
     final ArrayList<CreateStatement> statements = new ArrayList<>();
     final StringBuilder b = new StringBuilder();
     for (int i = 0, i$ = triggers.size(); i < i$; ++i) { // [RA]
-      final $Table.Triggers.Trigger trigger = triggers.get(i);
+      final $Triggers.Trigger trigger = triggers.get(i);
       final List<String> actions = trigger.getActions$().text();
       for (int j = 0, j$ = actions.size(); j < j$; ++j) { // [RA]
         final String action = actions.get(j);
@@ -95,7 +96,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+  StringBuilder $null(final StringBuilder b, final Schema.Table table, final $Column column) {
     if (column.getNull$() != null)
       b.append(column.getNull$().text() ? " NULL" : " NOT NULL");
 
@@ -103,7 +104,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final $Integer column) {
     if (!Generator.isAuto(column))
       return null;
 
@@ -124,7 +125,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder dropIndexOnClause(final $Table table) {
+  StringBuilder dropIndexOnClause(final Schema.Table table) {
     return q(new StringBuilder(" ON "), table.getName$().text());
   }
 

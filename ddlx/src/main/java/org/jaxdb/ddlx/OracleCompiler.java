@@ -34,7 +34,7 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Resources;
 import org.libj.math.FastMath;
@@ -73,7 +73,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  LinkedHashSet<DropStatement> dropTypes(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  LinkedHashSet<DropStatement> dropTypes(final Schema.Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final LinkedHashSet<DropStatement> statements = super.dropTypes(table, tableNameToEnumToOwner);
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
@@ -93,7 +93,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+  StringBuilder $null(final StringBuilder b, final Schema.Table table, final $Column column) {
     if (column.getNull$() != null)
       b.append(column.getNull$().text() ? " NULL" : " NOT NULL");
 
@@ -101,19 +101,19 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final $Integer column) {
     // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements,
     // and nothing is needed in the CREATE TABLE statement
     return null;
   }
 
   @Override
-  StringBuilder primaryKey(final StringBuilder b, final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final PrimaryKey.Using$ using) {
     return super.primaryKey(b, table, columns, null);
   }
 
   @Override
-  ArrayList<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  ArrayList<CreateStatement> types(final Schema.Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final ArrayList<CreateStatement> statements = new ArrayList<>();
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
@@ -157,7 +157,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  ArrayList<CreateStatement> triggers(final $Table table) {
+  ArrayList<CreateStatement> triggers(final Schema.Table table) {
     final ArrayList<CreateStatement> statements = new ArrayList<>();
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
@@ -184,12 +184,12 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  DropStatement dropTableIfExists(final $Table table) {
+  DropStatement dropTableIfExists(final Schema.Table table) {
     return new DropStatement(q(new StringBuilder("BEGIN EXECUTE IMMEDIATE 'DROP TABLE "), table.getName$().text()).append("'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;").toString());
   }
 
   @Override
-  StringBuilder dropIndexOnClause(final $Table table) {
+  StringBuilder dropIndexOnClause(final Schema.Table table) {
     return new StringBuilder(0);
   }
 

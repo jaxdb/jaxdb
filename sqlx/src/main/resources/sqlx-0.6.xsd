@@ -37,9 +37,7 @@
 
   <xs:complexType name="tinyint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:tinyintCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:tinyintCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -53,9 +51,7 @@
   
   <xs:complexType name="smallint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:smallintCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:smallintCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -101,9 +97,7 @@
   
   <xs:complexType name="int" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:bigintCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:intCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -153,9 +147,7 @@
   
   <xs:complexType name="bigint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:bigintCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:bigintCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -167,9 +159,7 @@
   
   <xs:complexType name="float" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:floatCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:floatCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -181,9 +171,7 @@
   
   <xs:complexType name="double" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:doubleCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:doubleCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -195,9 +183,7 @@
   
   <xs:complexType name="decimal" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:decimalCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:decimalCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -209,9 +195,7 @@
   
   <xs:complexType name="binary" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:binaryCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:binaryCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -223,9 +207,7 @@
   
   <xs:complexType name="blob" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:blobCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:blobCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -251,9 +233,7 @@
   
   <xs:complexType name="char" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:charCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:charCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -265,9 +245,7 @@
 
   <xs:complexType name="clob" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:clobCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:clobCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -279,9 +257,7 @@
   
   <xs:complexType name="enum" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:enumCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:enumCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -295,9 +271,7 @@
   
   <xs:complexType name="date" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:dateCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:dateCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -311,9 +285,7 @@
   
   <xs:complexType name="time" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:timeCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:timeCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -327,9 +299,7 @@
   
   <xs:complexType name="datetime" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:datetimeCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:datetimeCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -341,9 +311,7 @@
   
   <xs:complexType name="boolean" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:booleanCommon">
-        <xs:group ref="ddlx:columnIndex"/>
-      </xs:extension>
+      <xs:extension base="sqlx:booleanCommon"/>
     </xs:complexContent>
   </xs:complexType>
 

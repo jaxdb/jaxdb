@@ -22,7 +22,8 @@ import java.util.zip.CRC32;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Triggers;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 
 public abstract class DbVendorCompiler {
   protected static String hash(final String str) {
@@ -32,7 +33,7 @@ public abstract class DbVendorCompiler {
     return Long.toString(crc.getValue(), 16);
   }
 
-  protected static final StringBuilder getConstraintName(final $Table table, final int columnIndex) {
+  protected static final StringBuilder getConstraintName(final Schema.Table table, final int columnIndex) {
     return new StringBuilder(table.getName$().text()).append('_').append(columnIndex);
   }
 
@@ -65,7 +66,7 @@ public abstract class DbVendorCompiler {
     return constraintName;
   }
 
-  protected final StringBuilder getConstraintName(final String prefix, final $Table table, final xLygluGCXAA.$Name references, final int[] columnIndexes) {
+  protected final StringBuilder getConstraintName(final String prefix, final Schema.Table table, final xLygluGCXAA.$Name references, final int[] columnIndexes) {
     final StringBuilder builder = new StringBuilder(table.getName$().text());
     if (references != null)
       builder.append('_').append(references.text());
@@ -76,7 +77,7 @@ public abstract class DbVendorCompiler {
     return getConstraintName(prefix, builder);
   }
 
-  protected final String getSequenceName(final $Table table, final $Integer column) {
+  protected final String getSequenceName(final Schema.Table table, final $Integer column) {
     return getSequenceName(table.getName$().text(), column.getName$().text());
   }
 
@@ -84,15 +85,15 @@ public abstract class DbVendorCompiler {
     return getConstraintName("sq", new StringBuilder(tableName).append('_').append(columnName)).toString();
   }
 
-  protected final StringBuilder getTriggerName(final $Table table, final $Integer column) {
+  protected final StringBuilder getTriggerName(final Schema.Table table, final $Integer column) {
     return getConstraintName("tr", new StringBuilder(table.getName$().text()).append('_').append(column.getName$().text()));
   }
 
-  protected final StringBuilder getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
+  protected final StringBuilder getTriggerName(final String tableName, final $Triggers.Trigger trigger, final String action) {
     return getConstraintName("tr", new StringBuilder(tableName).append('_').append(trigger.getTime$().text().toLowerCase()).append('_').append(action.toLowerCase()));
   }
 
-  protected final String getIndexName(final $Table table, final $IndexType indexType, final int ... columnIndexes) {
+  protected final String getIndexName(final Schema.Table table, final $IndexType indexType, final int ... columnIndexes) {
     if (columnIndexes.length == 0)
       return null;
 

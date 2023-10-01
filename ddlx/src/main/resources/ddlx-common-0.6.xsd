@@ -505,9 +505,6 @@
   <xs:complexType name="tinyintCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check" type="ddlx:tinyintCheck"/>
-        </xs:sequence>
         <xs:attributeGroup ref="ddlx:tinyint"/>
       </xs:extension>
     </xs:complexContent>
@@ -546,9 +543,6 @@
   <xs:complexType name="smallintCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check" type="ddlx:smallintCheck"/>
-        </xs:sequence>
         <xs:attributeGroup ref="ddlx:smallint"/>
       </xs:extension>
     </xs:complexContent>
@@ -587,9 +581,6 @@
   <xs:complexType name="intCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check" type="ddlx:intCheck"/>
-        </xs:sequence>
         <xs:attributeGroup ref="ddlx:int"/>
       </xs:extension>
     </xs:complexContent>
@@ -628,9 +619,6 @@
   <xs:complexType name="bigintCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check" type="ddlx:bigintCheck"/>
-        </xs:sequence>
         <xs:attributeGroup ref="ddlx:bigint"/>
       </xs:extension>
     </xs:complexContent>
@@ -658,16 +646,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:group name="float">
-    <xs:sequence>
-      <xs:element name="check" type="ddlx:floatCheck"/>
-    </xs:sequence>
-  </xs:group>
-
   <xs:complexType name="floatCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:group ref="ddlx:float" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:float"/>
       </xs:extension>
     </xs:complexContent>
@@ -695,16 +676,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:group name="double">
-    <xs:sequence>
-      <xs:element name="check" type="ddlx:doubleCheck"/>
-    </xs:sequence>
-  </xs:group>
-
   <xs:complexType name="doubleCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:group ref="ddlx:double" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:double"/>
       </xs:extension>
     </xs:complexContent>
@@ -758,16 +732,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:group name="decimal">
-    <xs:sequence>
-      <xs:element name="check" type="ddlx:decimalCheck"/>
-    </xs:sequence>
-  </xs:group>
-
   <xs:complexType name="decimalCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:group ref="ddlx:decimal" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:decimal"/>
       </xs:extension>
     </xs:complexContent>
@@ -860,16 +827,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:group name="char">
-    <xs:sequence>
-      <xs:element name="check" type="ddlx:charCheck"/>
-    </xs:sequence>
-  </xs:group>
-
   <xs:complexType name="charCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:group ref="ddlx:char" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:char"/>
       </xs:extension>
     </xs:complexContent>
@@ -902,16 +862,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:group name="clob">
-    <xs:sequence>
-      <xs:element name="check" type="ddlx:clobCheck"/>
-    </xs:sequence>
-  </xs:group>
-
   <xs:complexType name="clobCommon" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:group ref="ddlx:clob" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:clob"/>
       </xs:extension>
     </xs:complexContent>
@@ -1346,7 +1299,6 @@
               <xs:field xpath="@value|@reference|@null"/>
             </xs:key>
           </xs:element>
-          <xs:element name="triggers" type="ddlx:triggers" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="abstract" type="xs:boolean" default="false"/>
         <xs:attribute name="extends" type="ddlx:name"/>
@@ -1357,69 +1309,6 @@
         <xs:assert test="not('[t2] table must extend abstract table') or
           not(@extends) or
           (some $extends in @extends satisfies exists(root()/ddlx:table[@name=$extends and @abstract=true()]))"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  
-  <xs:complexType name="table">
-    <xs:complexContent>
-      <xs:extension base="ddlx:tableCommon">
-        <xs:sequence>
-          <xs:element name="constraints" minOccurs="0">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="ddlx:constraints">
-                  <xs:sequence>
-                    <xs:element name="foreignKey" type="ddlx:foreignKeyComposite" minOccurs="0" maxOccurs="unbounded">
-                      <xs:unique name="ddlx_foreignKey_column_name_must_be_unique">
-                        <xs:selector xpath="ddlx:column"/>
-                        <xs:field xpath="@name"/>
-                      </xs:unique>
-                      <xs:unique name="ddlx_foreignKey_reference_name_must_be_unique">
-                        <xs:selector xpath="ddlx:column"/>
-                        <xs:field xpath="@references"/>
-                      </xs:unique>
-                    </xs:element>
-                    <xs:element name="unique" type="ddlx:columns" minOccurs="0" maxOccurs="unbounded">
-                      <xs:unique name="ddlx_unique_column_name_must_be_unique">
-                        <xs:selector xpath="ddlx:column"/>
-                        <xs:field xpath="@name"/>
-                      </xs:unique>
-                    </xs:element>
-                    <xs:element name="check" minOccurs="0" maxOccurs="unbounded" type="ddlx:checkReference"/>
-                  </xs:sequence>
-                </xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-            <xs:unique name="ddlx_cannot_specify_both_value_and_null_on_check_constraint">
-              <xs:selector xpath=".//ddlx:check|.//and|.//or"/>
-              <xs:field xpath="@value|@null"/>
-            </xs:unique>
-            <xs:unique name="ddlx_cannot_specify_both_value_and_reference_on_check_constraint">
-              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
-              <xs:field xpath="@value|@reference"/>
-            </xs:unique>
-            <xs:unique name="ddlx_cannot_specify_both_reference_and_null_on_check_constraint">
-              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
-              <xs:field xpath="@reference|@null"/>
-            </xs:unique>
-            <xs:key name="ddlx_must_specify_either_value_or_reference_or_null_on_check_constraint">
-              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
-              <xs:field xpath="@value|@reference|@null"/>
-            </xs:key>
-          </xs:element>
-          <xs:element name="indexes" minOccurs="0">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="ddlx:indexes">
-                  <xs:sequence maxOccurs="unbounded">
-                    <xs:element name="index" type="ddlx:indexesIndex"/>
-                  </xs:sequence>
-                </xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

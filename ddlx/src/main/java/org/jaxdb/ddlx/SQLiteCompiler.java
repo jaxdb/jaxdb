@@ -29,7 +29,7 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+  StringBuilder $null(final StringBuilder b, final Schema.Table table, final $Column column) {
     if (column.getNull$() != null && !column.getNull$().text())
       b.append(" NOT NULL");
 
@@ -54,7 +54,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final $Integer column) {
     if (!Generator.isAuto(column))
       return null;
 
@@ -95,7 +95,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder primaryKey(final StringBuilder b, final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final PrimaryKey.Using$ using) {
     return super.primaryKey(b, table, columns, null);
   }
 
@@ -112,7 +112,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder blockPrimaryKey(final StringBuilder b, final $Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
+  StringBuilder blockPrimaryKey(final StringBuilder b, final Schema.Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final PrimaryKey primaryKey = constraints.getPrimaryKey();
     if (primaryKey != null && primaryKey.getColumn().size() == 1) {
       final ColumnRef ref = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
@@ -124,7 +124,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder dropIndexOnClause(final $Table table) {
+  StringBuilder dropIndexOnClause(final Schema.Table table) {
     return q(new StringBuilder(" ON "), table.getName$().text());
   }
 

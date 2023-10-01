@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -28,7 +27,7 @@ import java.util.LinkedHashSet;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.vendor.DbVendor;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$TableCommon;
 import org.libj.util.ArrayUtil;
 import org.xml.sax.SAXException;
 
@@ -210,17 +209,26 @@ public final class Schemas {
     return counts;
   }
 
-  public static int[] truncate(final Connection connection, final $Table ... tables) throws SQLException {
-    return truncate(connection, Arrays.asList(tables));
+  public static int[] truncate(final Connection connection, final $TableCommon ... tables) throws SQLException {
+    if (tables.length == 0)
+      return ArrayUtil.EMPTY_ARRAY_INT;
+
+    final Compiler compiler = Compiler.getCompiler(DbVendor.valueOf(connection.getMetaData()));
+    try (final java.sql.Statement statement = connection.createStatement()) {
+      for (final $TableCommon table : tables) // [A]
+        statement.addBatch(compiler.truncate(table.getName$().text()).toString());
+
+      return statement.executeBatch();
+    }
   }
 
-  public static int[] truncate(final Connection connection, final Collection<? extends $Table> tables) throws SQLException {
+  public static int[] truncate(final Connection connection, final Collection<? extends $TableCommon> tables) throws SQLException {
     if (tables.size() == 0)
       return ArrayUtil.EMPTY_ARRAY_INT;
 
     final Compiler compiler = Compiler.getCompiler(DbVendor.valueOf(connection.getMetaData()));
     try (final java.sql.Statement statement = connection.createStatement()) {
-      for (final $Table table : tables) // [C]
+      for (final $TableCommon table : tables) // [C]
         statement.addBatch(compiler.truncate(table.getName$().text()).toString());
 
       return statement.executeBatch();

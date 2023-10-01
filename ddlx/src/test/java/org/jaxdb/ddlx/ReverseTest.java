@@ -32,7 +32,6 @@ import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.vendor.DbVendor;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Binding;
 import org.jaxsb.runtime.BindingList;
@@ -106,9 +105,9 @@ public abstract class ReverseTest extends DDLxTest {
   private static final Comparator<Binding> hashCodeComparator = Comparator.comparingLong(Binding::hashCode);
 
   private static void sort(final Schema schema) {
-    final BindingList<$Table> tables = schema.getTable();
+    final BindingList<Schema.Table> tables = schema.getTable();
     for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
+      final Schema.Table table = tables.get(i);
       if (table.getIndexes() != null && table.getIndexes().getIndex() != null && table.getIndexes().getIndex().size() > 0)
         table.getIndexes().getIndex().sort(hashCodeComparator);
 
@@ -124,7 +123,7 @@ public abstract class ReverseTest extends DDLxTest {
     // if (logger.isInfoEnabled()) { logger.info(expected); }
     Schema actual = Decompiler.createDDL(connection);
     // FIXME: Need to restrict which database/schema/tablespace we're looking at.
-    final Iterator<$Table> iterator = actual.getTable().iterator();
+    final Iterator<Schema.Table> iterator = actual.getTable().iterator();
     while (iterator.hasNext())
       if (!iterator.next().getName$().text().startsWith("t_"))
         iterator.remove();

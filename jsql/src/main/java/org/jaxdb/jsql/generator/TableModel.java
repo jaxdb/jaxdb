@@ -47,8 +47,7 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Boolean;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Char;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Columns;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ColumnIndex;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Date;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Datetime;
@@ -59,15 +58,13 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyComposite;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyComposite.Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyUnary;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Indexes;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Indexes.Index;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Schema.Table;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Tinyint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema.Table;
 import org.jaxdb.www.jsql_0_6.xLygluGCXAA.KeyForUpdate;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Identifiers;
@@ -150,7 +147,7 @@ class TableModel {
     this.className = schemaModel.schemaClassName + "." + classSimpleName;
     this.singletonInstanceName = classSimpleName + "$";
 
-    final $Constraints constraints = table.getConstraints();
+    final Table.Constraints constraints = table.getConstraints();
     final PrimaryKey primaryKey;
     if (constraints != null && (primaryKey = constraints.getPrimaryKey()) != null) {
       primaryKeyIndexType = IndexType.of(primaryKey.getUsing$(), IndexType.BTREE_UNIQUE);
@@ -185,7 +182,7 @@ class TableModel {
       columnNameToColumnModel.put(column.name, column);
 
     if (constraints != null) {
-      final BindingList<$Columns> uniqueColumns = constraints.getUnique();
+      final BindingList<Table.Constraints.Unique> uniqueColumns = constraints.getUnique();
       if (uniqueColumns != null) {
         for (int i = 0, i$ = uniqueColumns.size(); i < i$; ++i) { // [RA]
           final BindingList<? extends $Named> columns = uniqueColumns.get(i).getColumn();
@@ -199,7 +196,7 @@ class TableModel {
         }
       }
 
-      final BindingList<$ForeignKeyComposite> foreignKeyComposites = constraints.getForeignKey();
+      final BindingList<Table.Constraints.ForeignKey> foreignKeyComposites = constraints.getForeignKey();
       if (foreignKeyComposites != null) {
         for (int i = 0, i$ = foreignKeyComposites.size(); i < i$; ++i) { // [RA]
           final $ForeignKeyComposite foreignKeyComposite = foreignKeyComposites.get(i);
@@ -237,12 +234,12 @@ class TableModel {
     }
 
     // FIXME: Should <index> be CACHED?
-    final $Indexes indexes = table.getIndexes();
+    final Table.Indexes indexes = table.getIndexes();
     if (indexes != null) {
-      final BindingList<Index> indexColumns = indexes.getIndex();
+      final BindingList<Table.Indexes.Index> indexColumns = indexes.getIndex();
       if (indexColumns != null) {
         for (int i = 0, i$ = indexColumns.size(); i < i$; ++i) { // [RA]
-          final $Indexes.Index indexColumn = indexColumns.get(i);
+          final Table.Indexes.Index indexColumn = indexColumns.get(i);
           final BindingList<? extends $Named> columns = indexColumn.getColumn();
           final int noColumns = columns.size();
           final ColumnModels indexColumnModels = new ColumnModels(this, 1);
@@ -259,9 +256,61 @@ class TableModel {
     }
   }
 
+  private static $ColumnIndex getIndex(final $Column column) {
+    if (column instanceof $Tinyint)
+      return (($Tinyint)column).getIndex();
+
+    if (column instanceof $Smallint)
+      return (($Smallint)column).getIndex();
+
+    if (column instanceof $Int)
+      return (($Int)column).getIndex();
+
+    if (column instanceof $Bigint)
+      return (($Bigint)column).getIndex();
+
+    if (column instanceof $Float)
+      return (($Float)column).getIndex();
+
+    if (column instanceof $Double)
+      return (($Double)column).getIndex();
+
+    if (column instanceof $Decimal)
+      return (($Decimal)column).getIndex();
+
+    if (column instanceof $Binary)
+      return (($Binary)column).getIndex();
+
+    if (column instanceof $Blob)
+      return (($Blob)column).getIndex();
+
+    if (column instanceof $Char)
+      return (($Char)column).getIndex();
+
+    if (column instanceof $Clob)
+      return (($Clob)column).getIndex();
+
+    if (column instanceof $Enum)
+      return (($Enum)column).getIndex();
+
+    if (column instanceof $Date)
+      return (($Date)column).getIndex();
+
+    if (column instanceof $Time)
+      return (($Time)column).getIndex();
+
+    if (column instanceof $Datetime)
+      return (($Datetime)column).getIndex();
+
+    if (column instanceof $Boolean)
+      return (($Boolean)column).getIndex();
+
+    throw new RuntimeException("Unknown column type: " + column.getClass().getName());
+  }
+
   void init() throws GeneratorExecutionException {
     for (final ColumnModel column : columns) { // [A]
-      final $Column.Index index = column.column.getIndex();
+      final $ColumnIndex index = getIndex(column.column);
       if (index != null) {
         final ColumnModels indexColumnModels = new ColumnModels(column.tableModel, column);
         this.indexes.add(indexColumnModels);

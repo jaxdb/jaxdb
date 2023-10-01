@@ -27,7 +27,6 @@ import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Decimal;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.libj.net.MemoryURLStreamHandler;
@@ -48,9 +47,9 @@ public abstract class DDLxTest {
     final Schema schema = ddlx.getNormalizedSchema();
     if (!unaltered) {
       final Dialect dialect = DbVendor.valueOf(connection.getMetaData()).getDialect();
-      final BindingList<$Table> tables = schema.getTable();
+      final BindingList<Schema.Table> tables = schema.getTable();
       for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
-        final $Table table = tables.get(i);
+        final Schema.Table table = tables.get(i);
         final BindingList<$Column> columns = table.getColumn();
         if (columns != null) {
           for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]

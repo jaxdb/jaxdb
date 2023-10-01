@@ -50,8 +50,8 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$RangeOperator;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.libj.lang.Strings;
 
 final class DerbyDecompiler extends Decompiler {
@@ -288,13 +288,13 @@ final class DerbyDecompiler extends Decompiler {
 
   @Override
   @SuppressWarnings({"null", "unchecked"})
-  <L extends List<$Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(final Connection connection) throws SQLException {
+  <L extends List<Schema.Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(constraintsSql);
     final ResultSet rows = statement.executeQuery();
     final Map<String,L> tableNameToUniques = new HashMap<>();
     String lastTable = null;
-    ArrayList<$Table.Constraints.Unique> uniques = null;
+    ArrayList<Schema.Table.Constraints.Unique> uniques = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       if (!tableName.equals(lastTable)) {
@@ -308,12 +308,12 @@ final class DerbyDecompiler extends Decompiler {
       final int open = descriptor.lastIndexOf('(', close - 1);
       final String[] colRefs = Strings.split(descriptor.substring(open + 1, close), ',');
 
-      final $Table.Constraints.Unique unique = new $Table.Constraints.Unique();
+      final Schema.Table.Constraints.Unique unique = new Schema.Table.Constraints.Unique();
       uniques.add(unique);
       for (int i = 0, i$ = colRefs.length; i < i$; ++i) { // [A]
         colRefs[i] = columns.get(Integer.valueOf(colRefs[i].trim()) - 1);
-        final $Table.Constraints.Unique.Column column = new $Table.Constraints.Unique.Column();
-        column.setName$(new $Table.Constraints.Unique.Column.Name$(colRefs[i].toLowerCase()));
+        final Schema.Table.Constraints.Unique.Column column = new Schema.Table.Constraints.Unique.Column();
+        column.setName$(new Schema.Table.Constraints.Unique.Column.Name$(colRefs[i].toLowerCase()));
         unique.addColumn(column);
       }
     }
@@ -322,7 +322,7 @@ final class DerbyDecompiler extends Decompiler {
   }
 
   private static $CheckReference makeCheck(final String andOr, final String columnName, final String operator, final String value) {
-    final $CheckReference check = andOr == null ? new $Table.Constraints.Check() : "AND".equals(andOr) ? new $Table.Constraints.Check.And() : new $Table.Constraints.Check.Or();
+    final $CheckReference check = andOr == null ? new Schema.Table.Constraints.Check() : "AND".equals(andOr) ? new Schema.Table.Constraints.Check.And() : new Schema.Table.Constraints.Check.Or();
     check.setColumn$(new $Check.Column$(columnName));
     final $RangeOperator.Enum operatorEnum;
     if ("!=".equals(operator))
@@ -355,9 +355,9 @@ final class DerbyDecompiler extends Decompiler {
       if (previousCheck == null)
         check = previousCheck = nextCheck;
       else {
-        if (nextCheck instanceof $Table.Constraints.Check.And)
+        if (nextCheck instanceof Schema.Table.Constraints.Check.And)
           previousCheck.setAnd(nextCheck);
-        else if (nextCheck instanceof $Table.Constraints.Check.Or)
+        else if (nextCheck instanceof Schema.Table.Constraints.Check.Or)
           previousCheck.setOr(nextCheck);
         else
           throw new UnsupportedOperationException("Unsupported check type: " + nextCheck.getClass().getName());
@@ -418,19 +418,19 @@ final class DerbyDecompiler extends Decompiler {
 
   @Override
   @SuppressWarnings("null")
-  Map<String,$Table.Indexes> getIndexes(final Connection connection) throws SQLException {
+  Map<String,Schema.Table.Indexes> getIndexes(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(indexSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,$Table.Indexes> tableNameToIndexes = new HashMap<>();
+    final Map<String,Schema.Table.Indexes> tableNameToIndexes = new HashMap<>();
     String lastTable = null;
-    $Table.Indexes indexes = null;
+    Schema.Table.Indexes indexes = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       final List<String> columnNames = tableNameToColumns.get(tableName);
       if (!tableName.equals(lastTable)) {
         lastTable = tableName;
-        tableNameToIndexes.put(tableName, indexes = new $Table.Indexes());
+        tableNameToIndexes.put(tableName, indexes = new Schema.Table.Indexes());
       }
 
       final String descriptor = rows.getString(3);
@@ -438,19 +438,19 @@ final class DerbyDecompiler extends Decompiler {
       final boolean unique = descriptor.startsWith("UNIQUE");
       final $IndexType.Enum type = descriptor.startsWith("HASH") ? $IndexType.HASH : $IndexType.BTREE;
 
-      final $Table.Indexes.Index index = new $Table.Indexes.Index();
+      final Schema.Table.Indexes.Index index = new Schema.Table.Indexes.Index();
       indexes.addIndex(index);
       if (!$IndexType.BTREE.equals(type))
-        index.setType$(new $Table.Indexes.Index.Type$(type));
+        index.setType$(new Schema.Table.Indexes.Index.Type$(type));
 
       if (unique)
-        index.setUnique$(new $Table.Indexes.Index.Unique$(unique));
+        index.setUnique$(new Schema.Table.Indexes.Index.Unique$(unique));
 
       final String[] columnNumbers = Strings.split(descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')), ',');
       for (final String columnNumber : columnNumbers) { // [A]
         final String columnName = columnNames.get(Integer.valueOf(columnNumber.trim()) - 1);
-        final $Table.Indexes.Index.Column column = new $Table.Indexes.Index.Column();
-        column.setName$(new $Table.Indexes.Index.Column.Name$(columnName.toLowerCase()));
+        final Schema.Table.Indexes.Index.Column column = new Schema.Table.Indexes.Index.Column();
+        column.setName$(new Schema.Table.Indexes.Index.Column.Name$(columnName.toLowerCase()));
         index.addColumn(column);
       }
     }

@@ -23,9 +23,9 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Tinyint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 
 class SQLiteDecompiler extends Decompiler {
   @Override
@@ -227,7 +227,7 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  <L extends List<$Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(final Connection connection) {
+  <L extends List<Schema.Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 
@@ -237,7 +237,7 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  Map<String,$Table.Indexes> getIndexes(final Connection connection) {
+  Map<String,Schema.Table.Indexes> getIndexes(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 }

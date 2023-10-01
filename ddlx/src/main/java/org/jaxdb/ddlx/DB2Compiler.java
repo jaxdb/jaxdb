@@ -27,7 +27,7 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  DropStatement dropTableIfExists(final $Table table) {
+  DropStatement dropTableIfExists(final Schema.Table table) {
     return new DropStatement(q(new StringBuilder("CALL db2perf_quiet_drop('TABLE "), table.getName$().text()).append("')").toString());
   }
 
@@ -67,12 +67,12 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  StringBuilder dropIndexOnClause(final $Table table) {
+  StringBuilder dropIndexOnClause(final Schema.Table table) {
     return new StringBuilder(0);
   }
 
   @Override
-  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+  StringBuilder $null(final StringBuilder b, final Schema.Table table, final $Column column) {
     if (column.getNull$() != null && !column.getNull$().text())
       b.append(" NOT NULL");
 
@@ -80,7 +80,7 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final $Integer column) {
     if (!Generator.isAuto(column))
       return null;
 

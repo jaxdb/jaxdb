@@ -55,7 +55,6 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IntCheck;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$SmallintCheck;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$TinyintCheck;
@@ -88,8 +87,8 @@ abstract class Decompiler {
     try (final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"})) {
       final Schema schema = new Schema();
       final Map<String,BindingList<$CheckReference>> tableNameToChecks = decompiler.getCheckConstraints(connection);
-      final Map<String,BindingList<$Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
-      final Map<String,$Table.Indexes> tableNameToIndexes = decompiler.getIndexes(connection);
+      final Map<String,BindingList<Schema.Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
+      final Map<String,Schema.Table.Indexes> tableNameToIndexes = decompiler.getIndexes(connection);
       final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = decompiler.getForeignKeys(connection);
       final Map<String,$Column> columnNameToColumn = new HashMap<>();
       final Map<Integer,$Column> columnNumberToColumn = new TreeMap<>();
@@ -98,7 +97,7 @@ abstract class Decompiler {
       final Map<String,Boolean> indexNameToUnique = new HashMap<>();
       while (tableRows.next()) {
         final String tableName = tableRows.getString(3);
-        final $Table table = new Schema.Table();
+        final Schema.Table table = new Schema.Table();
         table.setName$(new $Named.Name$(tableName.toLowerCase()));
         schema.addTable(table);
 
@@ -123,21 +122,21 @@ abstract class Decompiler {
             while (primaryKeyRows.next()) {
               final String columnName = primaryKeyRows.getString("COLUMN_NAME").toLowerCase();
               if (table.getConstraints() == null)
-                table.setConstraints(new $Table.Constraints());
+                table.setConstraints(new Schema.Table.Constraints());
 
               if (table.getConstraints().getPrimaryKey() == null)
-                table.getConstraints().setPrimaryKey(new $Table.Constraints.PrimaryKey());
+                table.getConstraints().setPrimaryKey(new Schema.Table.Constraints.PrimaryKey());
 
-              final $Table.Constraints.PrimaryKey.Column column = new $Table.Constraints.PrimaryKey.Column();
-              column.setName$(new $Table.Constraints.PrimaryKey.Column.Name$(columnName));
+              final Schema.Table.Constraints.PrimaryKey.Column column = new Schema.Table.Constraints.PrimaryKey.Column();
+              column.setName$(new Schema.Table.Constraints.PrimaryKey.Column.Name$(columnName));
               table.getConstraints().getPrimaryKey().addColumn(column);
             }
           }
 
-          final BindingList<$Table.Constraints.Unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
+          final BindingList<Schema.Table.Constraints.Unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
           if (uniques != null && uniques.size() > 0) {
             if (table.getConstraints() == null)
-              table.setConstraints(new $Table.Constraints());
+              table.setConstraints(new Schema.Table.Constraints());
 
             for (int i = 0, i$ = uniques.size(); i < i$; ++i) // [RA]
               table.getConstraints().addUnique(uniques.get(i));
@@ -173,7 +172,7 @@ abstract class Decompiler {
             }
           }
 
-          final $Table.Indexes indexes = tableNameToIndexes == null ? null : tableNameToIndexes.get(tableName);
+          final Schema.Table.Indexes indexes = tableNameToIndexes == null ? null : tableNameToIndexes.get(tableName);
           if (indexes != null)
             table.setIndexes(indexes);
 
@@ -250,8 +249,8 @@ abstract class Decompiler {
   abstract DbVendor getVendor();
   abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
   abstract <L extends List<$CheckReference> & RandomAccess> Map<String,L> getCheckConstraints(Connection connection) throws SQLException;
-  abstract <L extends List<$Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(Connection connection) throws SQLException;
-  abstract Map<String,$Table.Indexes> getIndexes(Connection connection) throws SQLException;
+  abstract <L extends List<Schema.Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(Connection connection) throws SQLException;
+  abstract Map<String,Schema.Table.Indexes> getIndexes(Connection connection) throws SQLException;
 
   private static $ChangeRule.Enum toBinding(final short rule) {
     if (rule == 1)

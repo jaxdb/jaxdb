@@ -43,15 +43,6 @@
     <column name="created_on" xsi:type="datetime" template="created_on"/>
     <column name="modified_on" xsi:type="datetime" template="modified_on"/>
 
-    <triggers>
-      <trigger time="BEFORE" actions="INSERT">
-        SELECT(1)
-      </trigger>
-      <trigger time="AFTER" actions="INSERT">
-        SELECT(2)
-      </trigger>
-    </triggers>
-
     <indexes>
       <index>
         <column name="created_on"/>
@@ -64,7 +55,16 @@
         <column name="modified_on"/>
       </index>
     </indexes>
-
+    
+    <triggers>
+      <trigger time="BEFORE" actions="INSERT">
+        SELECT(1)
+      </trigger>
+      <trigger time="AFTER" actions="INSERT">
+        SELECT(2)
+      </trigger>
+    </triggers>
+    
     <jsql:keyForUpdate>
       <jsql:column name="version"/>
     </jsql:keyForUpdate>
@@ -99,18 +99,18 @@
       <check column="population" operator="gt" value="10"/>
     </constraints>
 
-    <triggers>
-      <trigger time="BEFORE" actions="INSERT">
-        SELECT(5)
-      </trigger>
-    </triggers>
-
     <indexes>
       <index>
         <column name="code2"/>
       </index>
     </indexes>
-
+    
+    <triggers>
+      <trigger time="BEFORE" actions="INSERT">
+        SELECT(5)
+      </trigger>
+    </triggers>
+    
   </table>
 
   <table name="city" extends="timestamp">
@@ -135,15 +135,6 @@
       <check column="population" operator="lt" value="10000000000"/>
     </constraints>
 
-    <triggers>
-      <trigger time="BEFORE" actions="INSERT">
-        SELECT(3)
-      </trigger>
-      <trigger time="AFTER" actions="INSERT">
-        SELECT(4)
-      </trigger>
-    </triggers>
-
     <indexes>
       <index>
         <column name="country_code"/>
@@ -152,6 +143,15 @@
         <column name="district"/>
       </index>
     </indexes>
+    
+    <triggers>
+      <trigger time="BEFORE" actions="INSERT">
+        SELECT(3)
+      </trigger>
+      <trigger time="AFTER" actions="INSERT">
+        SELECT(4)
+      </trigger>
+    </triggers>
 
   </table>
 

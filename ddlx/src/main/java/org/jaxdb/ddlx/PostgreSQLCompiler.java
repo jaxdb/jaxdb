@@ -30,7 +30,7 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,12 +47,12 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder primaryKey(final StringBuilder b, final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final PrimaryKey.Using$ using) {
     return super.primaryKey(b, table, columns, null);
   }
 
   @Override
-  LinkedHashSet<DropStatement> dropTypes(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  LinkedHashSet<DropStatement> dropTypes(final Schema.Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final LinkedHashSet<DropStatement> statements = super.dropTypes(table, tableNameToEnumToOwner);
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
@@ -75,7 +75,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  ArrayList<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  ArrayList<CreateStatement> types(final Schema.Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final ArrayList<CreateStatement> statements = new ArrayList<>();
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
@@ -130,7 +130,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+  StringBuilder $null(final StringBuilder b, final Schema.Table table, final $Column column) {
     if (column.getNull$() != null)
       b.append(column.getNull$().text() ? " NULL" : " NOT NULL");
 
@@ -138,12 +138,12 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final $Integer column) {
     return Generator.isAuto(column) ? "DEFAULT nextval('" + getSequenceName(table, column) + "')" : null; // FIXME: StringBuilder
   }
 
   @Override
-  StringBuilder dropIndexOnClause(final $Table table) {
+  StringBuilder dropIndexOnClause(final Schema.Table table) {
     return new StringBuilder(0);
   }
 

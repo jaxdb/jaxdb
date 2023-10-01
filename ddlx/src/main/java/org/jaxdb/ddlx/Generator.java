@@ -33,9 +33,8 @@ import javax.xml.transform.TransformerException;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$EnumAbstract;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$EnumCommon;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.PackageLoader;
@@ -130,9 +129,9 @@ public final class Generator {
 
   private ArrayList<String> getErrors() {
     final ArrayList<String> errors = new ArrayList<>();
-    final List<$Table> tables = ddlx.getMergedSchema().getTable();
+    final List<Schema.Table> tables = ddlx.getMergedSchema().getTable();
     for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
+      final Schema.Table table = tables.get(i);
       if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
         errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
       }
@@ -149,7 +148,7 @@ public final class Generator {
     return errors;
   }
 
-  private final Map<String,Integer> columnCount = new HashMap<>();
+  private final HashMap<String,Integer> columnCount = new HashMap<>();
 
   public Map<String,Integer> getColumnCount() {
     return columnCount;
@@ -165,7 +164,7 @@ public final class Generator {
     }
   }
 
-  private static void registerColumns(final $Table table, final Set<String> tableNames, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
+  private static void registerColumns(final Schema.Table table, final Set<String> tableNames, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final String tableName = table.getName$().text();
     final ArrayList<String> violations = new ArrayList<>();
     String nameViolation = checkNameViolation(tableName);
@@ -197,9 +196,9 @@ public final class Generator {
       violations.forEach(logger::warn);
   }
 
-  private LinkedHashSet<CreateStatement> parseTable(final DbVendor vendor, final $Table table, final Set<String> tableNames, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
+  private LinkedHashSet<CreateStatement> parseTable(final DbVendor vendor, final Schema.Table table, final Set<String> tableNames, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
-    final Map<String,ColumnRef> columnNameToColumn = new HashMap<>();
+    final HashMap<String,ColumnRef> columnNameToColumn = new HashMap<>();
     registerColumns(table, tableNames, columnNameToColumn);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
@@ -219,17 +218,17 @@ public final class Generator {
   }
 
   public LinkedHashSet<Statement> parse(final DbVendor vendor) throws GeneratorExecutionException {
-    final Map<String,LinkedHashSet<DropStatement>> dropTableStatements = new HashMap<>();
-    final Map<String,LinkedHashSet<DropStatement>> dropTypeStatements = new HashMap<>();
-    final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<>();
+    final HashMap<String,LinkedHashSet<DropStatement>> dropTableStatements = new HashMap<>();
+    final HashMap<String,LinkedHashSet<DropStatement>> dropTypeStatements = new HashMap<>();
+    final HashMap<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<>();
 
     final Schema normalized = ddlx.getNormalizedSchema();
 
     // The following code resolves a problem with ENUM types. The DDLx is generated from merged schema, whereby the original owner
     // of the ENUM type is lost. The jSQL, however, is generated from the normalized schema, where the owner of the ENUM type is
     // present. The `tableNameToEnumToOwner` variable is a map for each table linking each table's ENUMs to their original owners.
-    final Map<String,$Table> tableNameToTable = new HashMap<>();
-    final Map<String,Map<String,String>> tableNameToEnumToOwner = new HashMap<String,Map<String,String>>() {
+    final HashMap<String,Schema.Table> tableNameToTable = new HashMap<>();
+    final HashMap<String,Map<String,String>> tableNameToEnumToOwner = new HashMap<String,Map<String,String>>() {
       @Override
       public Map<String,String> get(final Object key) {
         final String tableName = (String)key;
@@ -241,15 +240,15 @@ public final class Generator {
       }
     };
 
-    List<$Table> tables = normalized.getTable();
+    List<Schema.Table> tables = normalized.getTable();
     int i$ = tables.size();
     for (int i = 0; i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
+      final Schema.Table table = tables.get(i);
       tableNameToTable.put(table.getName$().text(), table);
     }
 
     for (int i = 0; i < i$; ++i) { // [RA]
-      $Table table = tables.get(i);
+      Schema.Table table = tables.get(i);
       if (table.getAbstract$().text())
         continue;
 
@@ -274,7 +273,7 @@ public final class Generator {
     tables = merged.getTable();
     i$ = tables.size();
     for (int i = 0; i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
+      final Schema.Table table = tables.get(i);
       if (table.getSkip$().text()) {
         skipTables.add(table.getName$().text());
       }
@@ -287,7 +286,7 @@ public final class Generator {
     final HashMap<String,String> enumTemplateToValues = registerEnums(normalized);
     final Set<String> tableNames = new HashSet<>();
     for (int i = 0; i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
+      final Schema.Table table = tables.get(i);
       if (!table.getAbstract$().text())
         createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames, enumTemplateToValues, tableNameToEnumToOwner));
     }
@@ -297,23 +296,23 @@ public final class Generator {
     if (createSchema != null)
       statements.add(createSchema);
 
-    final ListIterator<$Table> listIterator = tables.listIterator(tables.size());
+    final ListIterator<Schema.Table> listIterator = tables.listIterator(tables.size());
     while (listIterator.hasPrevious()) {
-      final $Table table = listIterator.previous();
+      final Schema.Table table = listIterator.previous();
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(dropTableStatements.get(tableName));
     }
 
     for (int i = 0; i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
+      final Schema.Table table = tables.get(i);
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(dropTypeStatements.get(tableName));
     }
 
     for (int i = 0; i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
+      final Schema.Table table = tables.get(i);
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(createTableStatements.get(tableName));
@@ -331,7 +330,7 @@ public final class Generator {
         if (!(template instanceof $Enum))
           throw new IllegalStateException("Input schema is not normalized");
 
-        final $EnumAbstract.Values$ values = (($Enum)template).getValues$();
+        final $EnumCommon.Values$ values = (($Enum)template).getValues$();
         if (values != null)
           enumToValues.put(template.getName$().text(), values.text());
       }

@@ -30,6 +30,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jaxdb.ddlx.DDLx;
+import org.jaxdb.ddlx.Generator;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.vendor.DbVendor;
 import org.xml.sax.SAXException;
@@ -52,7 +53,7 @@ public class DDLxMojo extends SqlMojo<DDLxProduce,DDLx> {
   @Override
   void makeSql(final Reserve<? extends DDLx> reserve, final DbVendor dbVendor, final File sqlFile) throws GeneratorExecutionException, IOException {
     getLog().info("Writing DDL to file: " + sqlFile);
-    org.jaxdb.ddlx.Generator.createDDL(reserve.obj, dbVendor).writeOutput(sqlFile);
+    Generator.createDDL(reserve.obj, dbVendor).writeOutput(sqlFile);
   }
 
   @Override
