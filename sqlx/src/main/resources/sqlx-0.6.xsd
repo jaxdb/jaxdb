@@ -27,9 +27,9 @@
   <xs:import namespace="http://www.jaxdb.org/ddlx-0.6.xsd" schemaLocation="sqlx-ddlx-0.6.xsd"/>
   <xs:include schemaLocation="sqlx-common-0.6.xsd"/>
 
-  <xs:complexType name="tinyintAbstract" abstract="true">
+  <xs:complexType name="tinyintCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:tinyintAbstract">
+      <xs:extension base="ddlx:tinyintCommon">
         <xs:attributeGroup ref="sqlx:tinyint"/>
       </xs:extension>
     </xs:complexContent>
@@ -37,15 +37,15 @@
 
   <xs:complexType name="tinyint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:tinyintAbstract">
+      <xs:extension base="sqlx:tinyintCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="smallintAbstract" abstract="true">
+  <xs:complexType name="smallintCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:smallintAbstract">
+      <xs:extension base="ddlx:smallintCommon">
         <xs:attributeGroup ref="sqlx:smallint"/>
       </xs:extension>
     </xs:complexContent>
@@ -53,15 +53,15 @@
   
   <xs:complexType name="smallint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:smallintAbstract">
+      <xs:extension base="sqlx:smallintCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="intAbstract" abstract="true">
+  <xs:complexType name="intCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:intAbstract">
+      <xs:extension base="ddlx:intCommon">
         <xs:attributeGroup ref="sqlx:int"/>
         <xs:assert test="not('[1][sqlx] @precision must satisfy @generateOnInsert') or
           not(@precision) or
@@ -101,15 +101,15 @@
   
   <xs:complexType name="int" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:bigintAbstract">
+      <xs:extension base="ddlx:bigintCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="bigintAbstract" abstract="true">
+  <xs:complexType name="bigintCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:bigintAbstract">
+      <xs:extension base="ddlx:bigintCommon">
         <xs:attributeGroup ref="sqlx:bigint"/>
         <xs:assert test="not('[5][sqlx] @precision must satisfy @generateOnInsert') or
           not(@precision) or
@@ -153,85 +153,85 @@
   
   <xs:complexType name="bigint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:bigintAbstract">
+      <xs:extension base="ddlx:bigintCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="floatAbstract" abstract="true">
+  <xs:complexType name="floatCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:floatAbstract"/>
+      <xs:extension base="ddlx:floatCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="float" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:floatAbstract">
+      <xs:extension base="sqlx:floatCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="doubleAbstract" abstract="true">
+  <xs:complexType name="doubleCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:doubleAbstract"/>
+      <xs:extension base="ddlx:doubleCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="double" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:doubleAbstract">
+      <xs:extension base="sqlx:doubleCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="decimalAbstract" abstract="true">
+  <xs:complexType name="decimalCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:decimalAbstract"/>
+      <xs:extension base="ddlx:decimalCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="decimal" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:decimalAbstract">
+      <xs:extension base="sqlx:decimalCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="binaryAbstract" abstract="true">
+  <xs:complexType name="binaryCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:binaryAbstract"/>
+      <xs:extension base="ddlx:binaryCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="binary" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:binaryAbstract">
+      <xs:extension base="sqlx:binaryCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="blobAbstract" abstract="true">
+  <xs:complexType name="blobCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:blobAbstract"/>
+      <xs:extension base="ddlx:blobCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="blob" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:blobAbstract">
+      <xs:extension base="sqlx:blobCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="charAbstract" abstract="true">
+  <xs:complexType name="charCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:charAbstract">
+      <xs:extension base="ddlx:charCommon">
         <xs:attributeGroup ref="sqlx:char"/>
         <xs:assert test="not('[9][sqlx] @length must satisfy @generateOnInsert') or
           not(@length) or
@@ -251,43 +251,43 @@
   
   <xs:complexType name="char" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:charAbstract">
+      <xs:extension base="sqlx:charCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="clobAbstract" abstract="true">
+  <xs:complexType name="clobCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:clobAbstract"/>
+      <xs:extension base="ddlx:clobCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="clob" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:clobAbstract">
+      <xs:extension base="sqlx:clobCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="enumAbstract" abstract="true">
+  <xs:complexType name="enumCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:enumAbstract"/>
+      <xs:extension base="ddlx:enumCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="enum" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:enumAbstract">
+      <xs:extension base="sqlx:enumCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="dateAbstract" abstract="true">
+  <xs:complexType name="dateCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:dateAbstract">
+      <xs:extension base="ddlx:dateCommon">
         <xs:attributeGroup ref="sqlx:date"/>
       </xs:extension>
     </xs:complexContent>
@@ -295,15 +295,15 @@
   
   <xs:complexType name="date" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:dateAbstract">
+      <xs:extension base="sqlx:dateCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="timeAbstract" abstract="true">
+  <xs:complexType name="timeCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:timeAbstract">
+      <xs:extension base="ddlx:timeCommon">
         <xs:attributeGroup ref="sqlx:time"/>
       </xs:extension>
     </xs:complexContent>
@@ -311,15 +311,15 @@
   
   <xs:complexType name="time" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:timeAbstract">
+      <xs:extension base="sqlx:timeCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="datetimeAbstract" abstract="true">
+  <xs:complexType name="datetimeCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:datetimeAbstract">
+      <xs:extension base="ddlx:datetimeCommon">
         <xs:attributeGroup ref="sqlx:datetime"/>
       </xs:extension>
     </xs:complexContent>
@@ -327,29 +327,23 @@
   
   <xs:complexType name="datetime" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:datetimeAbstract">
+      <xs:extension base="sqlx:datetimeCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="booleanAbstract" abstract="true">
+  <xs:complexType name="booleanCommon" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:booleanAbstract"/>
+      <xs:extension base="ddlx:booleanCommon"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="boolean" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:booleanAbstract">
+      <xs:extension base="sqlx:booleanCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  
-  <xs:complexType name="table">
-    <xs:complexContent>
-      <xs:extension base="ddlx:table"/>
     </xs:complexContent>
   </xs:complexType>
 

@@ -32,7 +32,7 @@
 
   <xs:complexType name="tinyint">
     <xs:complexContent>
-      <xs:extension base="ddlx:tinyintAbstract">
+      <xs:extension base="ddlx:tinyintCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -40,7 +40,7 @@
 
   <xs:complexType name="smallint">
     <xs:complexContent>
-      <xs:extension base="ddlx:smallintAbstract">
+      <xs:extension base="ddlx:smallintCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -48,7 +48,7 @@
 
   <xs:complexType name="int">
     <xs:complexContent>
-      <xs:extension base="ddlx:intAbstract">
+      <xs:extension base="ddlx:intCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -56,7 +56,7 @@
 
   <xs:complexType name="bigint">
     <xs:complexContent>
-      <xs:extension base="ddlx:bigintAbstract">
+      <xs:extension base="ddlx:bigintCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -64,7 +64,7 @@
 
   <xs:complexType name="float">
     <xs:complexContent>
-      <xs:extension base="ddlx:floatAbstract">
+      <xs:extension base="ddlx:floatCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -72,7 +72,7 @@
 
   <xs:complexType name="double">
     <xs:complexContent>
-      <xs:extension base="ddlx:doubleAbstract">
+      <xs:extension base="ddlx:doubleCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -80,7 +80,7 @@
 
   <xs:complexType name="decimal">
     <xs:complexContent>
-      <xs:extension base="ddlx:decimalAbstract">
+      <xs:extension base="ddlx:decimalCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -88,7 +88,7 @@
 
   <xs:complexType name="binary">
     <xs:complexContent>
-      <xs:extension base="ddlx:binaryAbstract">
+      <xs:extension base="ddlx:binaryCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -96,7 +96,7 @@
 
   <xs:complexType name="blob">
     <xs:complexContent>
-      <xs:extension base="ddlx:blobAbstract">
+      <xs:extension base="ddlx:blobCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -104,7 +104,7 @@
 
   <xs:complexType name="char">
     <xs:complexContent>
-      <xs:extension base="ddlx:charAbstract">
+      <xs:extension base="ddlx:charCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -112,7 +112,7 @@
 
   <xs:complexType name="clob">
     <xs:complexContent>
-      <xs:extension base="ddlx:clobAbstract">
+      <xs:extension base="ddlx:clobCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -120,7 +120,7 @@
 
   <xs:complexType name="enum">
     <xs:complexContent>
-      <xs:extension base="ddlx:enumAbstract">
+      <xs:extension base="ddlx:enumCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -128,7 +128,7 @@
 
   <xs:complexType name="date">
     <xs:complexContent>
-      <xs:extension base="ddlx:dateAbstract">
+      <xs:extension base="ddlx:dateCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -136,7 +136,7 @@
 
   <xs:complexType name="time">
     <xs:complexContent>
-      <xs:extension base="ddlx:timeAbstract">
+      <xs:extension base="ddlx:timeCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -144,7 +144,7 @@
 
   <xs:complexType name="datetime">
     <xs:complexContent>
-      <xs:extension base="ddlx:datetimeAbstract">
+      <xs:extension base="ddlx:datetimeCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -152,7 +152,7 @@
 
   <xs:complexType name="boolean">
     <xs:complexContent>
-      <xs:extension base="ddlx:booleanAbstract">
+      <xs:extension base="ddlx:booleanCommon">
         <xs:group ref="ddlx:columnIndex"/>
       </xs:extension>
     </xs:complexContent>
@@ -173,7 +173,6 @@
               <xs:selector xpath="ddlx:column"/>
               <xs:field xpath="@name"/>
             </xs:key>
-
             <xs:keyref name="check_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
               <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
               <xs:field xpath="@column"/>

@@ -143,12 +143,11 @@
               <xs:selector xpath="ddlx:column"/>
               <xs:field xpath="@name"/>
             </xs:key>
-
-            <xs:keyref name="check_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+            <xs:keyref name="sqlx_check_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
               <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
               <xs:field xpath="@column"/>
             </xs:keyref>
-            <xs:keyref name="check_reference_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+            <xs:keyref name="sqlx_check_reference_must_match_name_of_column_element" refer="ddlx:keyColumnName">
               <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
               <xs:field xpath="@reference"/>
             </xs:keyref>
