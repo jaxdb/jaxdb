@@ -127,7 +127,7 @@ class Relation {
     }
     else {
       for (final ColumnModel column : columns) // [S]
-        keyClauseColumnAssignment.append(tableModel.singletonInstanceName).append("._column$[").append(column.index).append("], ");
+        keyClauseColumnAssignment.append(tableModel.singletonInstanceName).append("._column$[").append(column.position).append("], ");
 
       keyClauseColumnAssignment.setLength(keyClauseColumnAssignment.length() - 2);
       keyClauseColumnAssignments.add(cacheIndexFieldName + " = new " + data.Column.class.getCanonicalName() + "<?>[] {" + keyClauseColumnAssignment + "}");

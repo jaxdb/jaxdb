@@ -43,8 +43,6 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ColumnIndex;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Columns;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Date;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Datetime;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Decimal;
@@ -58,15 +56,17 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexesIndex;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema.Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema.Table.Constraints.PrimaryKey;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Numbers;
 import org.openjax.xml.datatype.HexBinary;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
-import org.w3.www._2001.XMLSchema.yAA.$AnyType;
 import org.w3.www._2001.XMLSchema.yAA.$String;
 
 abstract class Compiler extends DbVendorCompiler {
@@ -110,7 +110,7 @@ abstract class Compiler extends DbVendorCompiler {
     return null;
   }
 
-  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final Map<String,String> enumTemplateToValues, final Map<String,ColumnRef> columnNameToColumn, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final Table table, final Map<String,String> enumTemplateToValues, final Map<String,ColumnRef> columnNameToColumn, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     final StringBuilder b = new StringBuilder();
     final String tableName = table.getName$().text();
     b.append("CREATE TABLE ");
@@ -126,7 +126,7 @@ abstract class Compiler extends DbVendorCompiler {
     return new CreateStatement(b.toString());
   }
 
-  private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final Map<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final Table table, final Map<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final StringBuilder builder = new StringBuilder();
     final BindingList<$Column> columns = table.getColumn();
     $Column column = null;
@@ -146,7 +146,7 @@ abstract class Compiler extends DbVendorCompiler {
     return builder.toString();
   }
 
-  private CreateStatement createColumn(final LinkedHashSet<CreateStatement> alterStatements, final Schema.Table table, final $Column column, final Map<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  private CreateStatement createColumn(final LinkedHashSet<CreateStatement> alterStatements, final Table table, final $Column column, final Map<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final StringBuilder b = new StringBuilder();
     q(b, column.getName$().text()).append(' ');
     // FIXME: Passing null to compile*() methods will throw a NPE
@@ -299,10 +299,10 @@ abstract class Compiler extends DbVendorCompiler {
     }
   }
 
-  private CreateStatement createConstraints(final Map<String,ColumnRef> columnNameToColumn, final Schema.Table table) throws GeneratorExecutionException {
+  private CreateStatement createConstraints(final Map<String,ColumnRef> columnNameToColumn, final Table table) throws GeneratorExecutionException {
     final StringBuilder constraintsBuilder = new StringBuilder();
     if (table.getConstraints() != null) {
-      final Schema.Table.Constraints constraints = table.getConstraints();
+      final Table.Constraints constraints = table.getConstraints();
 
       // UNIQUE constraint
       final List<$Columns> uniques = constraints.getUnique();
@@ -350,7 +350,7 @@ abstract class Compiler extends DbVendorCompiler {
       }
 
       // PRIMARY KEY constraint
-      blockPrimaryKey(constraintsBuilder, table, constraints, columnNameToColumn);
+      blockPrimaryKey(constraintsBuilder, table, DDLx.getPrimaryKey(constraints), columnNameToColumn);
 
       // FOREIGN KEY constraints
       final List<$ForeignKeyComposite> foreignKeyComposites = constraints.getForeignKey();
@@ -387,7 +387,7 @@ abstract class Compiler extends DbVendorCompiler {
       final List<$Column> columns = table.getColumn();
       for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
         final $Column column = columns.get(c);
-        final $ForeignKeyUnary foreignKey = column.getForeignKey();
+        final $ForeignKeyUnary foreignKey = DDLx.getForeignKey(column);
         if (foreignKey != null) {
           constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKey.getReferences$(), c)).append(" (");
           q(constraintsBuilder, column.getName$().text());
@@ -547,13 +547,13 @@ abstract class Compiler extends DbVendorCompiler {
     return constraintsBuilder.length() == 0 ? null : new CreateStatement(constraintsBuilder.toString());
   }
 
-  StringBuilder blockPrimaryKey(final StringBuilder b, final Schema.Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
-    if (constraints.getPrimaryKey() == null)
+  StringBuilder blockPrimaryKey(final StringBuilder b, final Table table, final $PrimaryKey primaryKey, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
+    if (primaryKey == null)
       return b;
 
     final StringBuilder key = new StringBuilder();
-    final List<? extends $Named> columns = constraints.getPrimaryKey().getColumn();
-    final PrimaryKey.Using$ using = constraints.getPrimaryKey().getUsing$();
+    final List<? extends $Named> columns = primaryKey.getColumn();
+    final PrimaryKey.Using$ using = primaryKey.getUsing$();
     final int[] columnIndexes = new int[columns.size()];
     for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
       final $Named primaryColumn = columns.get(i);
@@ -577,26 +577,27 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   /**
-   * Returns the "FOREIGN KEY" keyword for the specified {@link $Table}.
+   * Returns the "FOREIGN KEY" keyword for the specified {@link Table}.
    *
-   * @param table The {@link $Table}.
+   * @param table The {@link Table}.
    * @param references The optional "references" qualifier.
    * @param columns The indexes of the columns comprising the "FOREIGN KEY".
-   * @return The "FOREIGN KEY" keyword for the specified {@link $Table}.
+   * @return The "FOREIGN KEY" keyword for the specified {@link Table}.
    */
-  StringBuilder foreignKey(final Schema.Table table, final xLygluGCXAA.$Name references, final int ... columns) {
+  StringBuilder foreignKey(final Table table, final xLygluGCXAA.$Name references, final int ... columns) {
     return q(new StringBuilder("CONSTRAINT "), getConstraintName("fk", table, references, columns)).append(" FOREIGN KEY");
   }
 
   /**
-   * Returns the "PRIMARY KEY" keyword for the specified {@link $Table}.
+   * Appends the "PRIMARY KEY" keyword for the specified {@link Table} to the provided {@link StringBuilder}.
    *
-   * @param table The {@link $Table}.
+   * @param b The {@link StringBuilder}.
+   * @param table The {@link Table}.
    * @param columns The indexes of the columns comprising the "PRIMARY KEY".
    * @param using The index type.
-   * @return The "PRIMARY KEY" keyword for the specified {@link $Table}.
+   * @return The "PRIMARY KEY" keyword for the specified {@link Table}.
    */
-  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final PrimaryKey.Using$ using) {
+  StringBuilder primaryKey(final StringBuilder b, final Table table, final int[] columns, final PrimaryKey.Using$ using) {
     b.append("CONSTRAINT ");
     q(b, getConstraintName("pk", table, null, columns)).append(" PRIMARY KEY");
     if (using != null)
@@ -606,17 +607,18 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   /**
-   * Returns the "CHECK" keyword for the specified {@link $Table}.
+   * Appends the "CHECK" keyword for the specified {@link Table} to the provided {@link StringBuilder}.
    *
-   * @param table The {@link $Table}.
+   * @param b The {@link StringBuilder}.
+   * @param table The {@link Table}.
    * @param column The index of the column on which the "CHECK" is to be declared.
    * @param operator1 The first {@link Operator} of the constraint.
    * @param arg1 The first argument of the constraint.
    * @param operator2 The second {@link Operator} of the constraint.
    * @param arg2 The second argument of the constraint.
-   * @return The "CHECK" keyword for the specified {@link $Table}.
+   * @return The "CHECK" keyword for the specified {@link Table}.
    */
-  StringBuilder check(final StringBuilder b, final Schema.Table table, final int column, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
+  StringBuilder check(final StringBuilder b, final Table table, final int column, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
     final StringBuilder builder = getConstraintName(table, column);
     builder.append('_').append(operator1.desc).append('_').append(arg1);
     if (operator2 != null)
@@ -653,18 +655,18 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   /**
-   * Delegate method to produce {@link CreateStatement} objects of {@code TRIGGER} clauses for the specified {@link $Table table}.
+   * Delegate method to produce {@link CreateStatement} objects of {@code TRIGGER} clauses for the specified {@link Table table}.
    *
-   * @param table The {@link $Table} for which to produce {@code TRIGGER} clauses.
-   * @return A list of {@link CreateStatement} objects of {@code TRIGGER} clauses for the specified {@link $Table table}.
+   * @param table The {@link Table} for which to produce {@code TRIGGER} clauses.
+   * @return A list of {@link CreateStatement} objects of {@code TRIGGER} clauses for the specified {@link Table table}.
    */
-  ArrayList<CreateStatement> triggers(final Schema.Table table) {
+  ArrayList<CreateStatement> triggers(final Table table) {
     return new ArrayList<>();
   }
 
-  ArrayList<CreateStatement> indexes(final Schema.Table table, final Map<String,ColumnRef> columnNameToColumn) {
+  ArrayList<CreateStatement> indexes(final Table table, final Map<String,ColumnRef> columnNameToColumn) {
     final ArrayList<CreateStatement> statements = new ArrayList<>();
-    final Schema.Table.Indexes tableIndexes = table.getIndexes();
+    final Table.Indexes tableIndexes = table.getIndexes();
     if (tableIndexes != null) {
       final List<$IndexesIndex> indexes = tableIndexes.getIndex();
       for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
@@ -686,7 +688,7 @@ abstract class Compiler extends DbVendorCompiler {
       final List<$Column> columns = table.getColumn();
       for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
         final $Column column = columns.get(c);
-        final $ColumnIndex index = getIndex(column);
+        final $ColumnIndex index = DDLx.getIndex(column);
         if (index != null) {
           final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index.getType$(), c), index.getType$(), table.getName$().text(), column);
           if (createIndex != null)
@@ -698,34 +700,23 @@ abstract class Compiler extends DbVendorCompiler {
     return statements;
   }
 
-  private static $ColumnIndex getIndex(final $Column column) {
-    final Iterator<$AnyType<?>> columnElements = column.elementIterator();
-    while (columnElements.hasNext()) {
-      final $AnyType<?> columnElement = columnElements.next();
-      if ("index".equals(columnElement.name().getLocalPart()))
-        return ($ColumnIndex)columnElement;
-    }
-
-    return null;
-  }
-
   /**
-   * Returns a list of {@link CreateStatement} objects for the creation of types for the specified {@link $Table}.
+   * Returns a list of {@link CreateStatement} objects for the creation of types for the specified {@link Table}.
    *
-   * @param table The {@link $Table}.
-   * @return A list of {@link CreateStatement} objects for the creation of types for the specified {@link $Table}.
+   * @param table The {@link Table}.
+   * @return A list of {@link CreateStatement} objects for the creation of types for the specified {@link Table}.
    */
-  ArrayList<CreateStatement> types(final Schema.Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  ArrayList<CreateStatement> types(final Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     return new ArrayList<>();
   }
 
-  abstract StringBuilder dropIndexOnClause(Schema.Table table);
+  abstract StringBuilder dropIndexOnClause(Table table);
 
-  final LinkedHashSet<DropStatement> dropTable(final Schema.Table table) {
+  final LinkedHashSet<DropStatement> dropTable(final Table table) {
     final LinkedHashSet<DropStatement> statements = new LinkedHashSet<>();
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
     // if (table.getIndexes() != null)
-    // for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex()) // [L]
+    // for (final Table.getIndexes.getIndex index : table.getIndexes(0).getIndex()) // [L]
     // statements.add(dropIndexIfExists(getIndexName(table, index, ???) + dropIndexOnClause(table)));
 
     // if (table.getColumn() != null)
@@ -735,7 +726,7 @@ abstract class Compiler extends DbVendorCompiler {
 
     // FIXME: Explicitly dropping triggers on tables that may not exist will throw errors!
     // if (table.getTriggers() != null)
-    // for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger()) // [L]
+    // for (final Table.Triggers.Trigger trigger : table.getTriggers().getTrigger()) // [L]
     // for (final String action : trigger.getActions$().text()) // [L]
     // statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(getTriggerName(table.getName$().text(), trigger, action)) + " ON "
     // + q(table.getName$().text())));
@@ -748,16 +739,16 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   /**
-   * Returns a list of {@link DropStatement} objects for the dropping of types for the specified {@link $Table}.
+   * Returns a list of {@link DropStatement} objects for the dropping of types for the specified {@link Table}.
    *
-   * @param table The {@link $Table}.
-   * @return A list of {@link DropStatement} objects for the dropping of types for the specified {@link $Table}.
+   * @param table The {@link Table}.
+   * @return A list of {@link DropStatement} objects for the dropping of types for the specified {@link Table}.
    */
-  LinkedHashSet<DropStatement> dropTypes(final Schema.Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  LinkedHashSet<DropStatement> dropTypes(final Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     return new LinkedHashSet<>();
   }
 
-  DropStatement dropTableIfExists(final Schema.Table table) {
+  DropStatement dropTableIfExists(final Table table) {
     return new DropStatement(q(new StringBuilder("DROP TABLE IF EXISTS "), table.getName$().text()).toString());
   }
 
@@ -950,8 +941,8 @@ abstract class Compiler extends DbVendorCompiler {
     return q(new StringBuilder("DELETE FROM "), tableName);
   }
 
-  abstract StringBuilder $null(StringBuilder b, Schema.Table table, $Column column);
-  abstract String $autoIncrement(LinkedHashSet<CreateStatement> alterStatements, Schema.Table table, $Integer column);
+  abstract StringBuilder $null(StringBuilder b, Table table, $Column column);
+  abstract String $autoIncrement(LinkedHashSet<CreateStatement> alterStatements, Table table, $Integer column);
 
   StringBuilder compileBinary(final StringBuilder b, final String value) {
     return b.append("X'").append(value).append('\'');

@@ -117,7 +117,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     return prepared.get();
   }
 
-  private static final Comparator<FrameworkMethod> orderComparator = (o1, o2) -> {
+  private static final Comparator<FrameworkMethod> orderComparator = (final FrameworkMethod o1, final FrameworkMethod o2) -> {
     final TestSpec a1 = o1.getAnnotation(TestSpec.class);
     if (a1 == null)
       return -1;

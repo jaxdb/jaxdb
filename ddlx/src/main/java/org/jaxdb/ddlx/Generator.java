@@ -36,6 +36,7 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$EnumCommon;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema.Table.Constraints;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
@@ -74,13 +75,16 @@ public final class Generator {
     URL schemaUrl = null;
     String sqlFileName = null;
     for (int i = 0, i$ = args.length; i < i$; ++i) { // [A]
-      if ("-v".equals(args[i]))
+      if ("-v".equals(args[i])) {
         vendor = DbVendor.valueOf(args[++i]);
-      else if ("-d".equals(args[i]))
+      }
+      else if ("-d".equals(args[i])) {
         destDir = new File(args[++i]).getAbsoluteFile();
+      }
       else {
         final File schemaFile = new File(args[i]);
-        sqlFileName = schemaFile.getName().substring(0, schemaFile.getName().lastIndexOf('.') + 1) + "sql";
+        final String name = schemaFile.getName();
+        sqlFileName = name.substring(0, name.lastIndexOf('.') + 1) + "sql";
         schemaUrl = schemaFile.getAbsoluteFile().toURI().toURL();
       }
     }
@@ -132,7 +136,8 @@ public final class Generator {
     final List<Schema.Table> tables = ddlx.getMergedSchema().getTable();
     for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
       final Schema.Table table = tables.get(i);
-      if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
+      final Constraints constraints = table.getConstraints();
+      if (constraints == null || DDLx.getPrimaryKey(constraints) == null) {
         errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
       }
       // else {

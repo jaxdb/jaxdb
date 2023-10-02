@@ -23,13 +23,13 @@ import java.util.Map;
 import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema.Table.Constraints.PrimaryKey;
 import org.jaxsb.runtime.BindingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ final class SQLiteCompiler extends Compiler {
     if (!Generator.isAuto(column))
       return null;
 
-    final PrimaryKey primaryKey;
+    final $PrimaryKey primaryKey;
     if (table.getConstraints() == null || (primaryKey = table.getConstraints().getPrimaryKey()) == null) {
       if (logger.isWarnEnabled()) { logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec."); }
       return null;
@@ -112,15 +112,14 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder blockPrimaryKey(final StringBuilder b, final Schema.Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
-    final PrimaryKey primaryKey = constraints.getPrimaryKey();
+  StringBuilder blockPrimaryKey(final StringBuilder b, final Schema.Table table, final $PrimaryKey primaryKey, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     if (primaryKey != null && primaryKey.getColumn().size() == 1) {
       final ColumnRef ref = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
       if (Generator.isAuto(ref.column))
         return null;
     }
 
-    return super.blockPrimaryKey(b, table, constraints, columnNameToColumn);
+    return super.blockPrimaryKey(b, table, primaryKey, columnNameToColumn);
   }
 
   @Override

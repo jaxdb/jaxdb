@@ -33,7 +33,7 @@
   <table name="name" abstract="true">
     <column name="name" xsi:type="char" varying="true" length="52" null="false"/>
     <column name="version" xsi:type="int" template="version"/>
-    
+
     <constraints>
       <check column="name" operator="ne" value=""/>
     </constraints>
@@ -55,7 +55,7 @@
         <column name="modified_on"/>
       </index>
     </indexes>
-    
+
     <triggers>
       <trigger time="BEFORE" actions="INSERT">
         SELECT(1)
@@ -64,7 +64,7 @@
         SELECT(2)
       </trigger>
     </triggers>
-    
+
     <jsql:keyForUpdate>
       <jsql:column name="version"/>
     </jsql:keyForUpdate>
@@ -104,13 +104,13 @@
         <column name="code2"/>
       </index>
     </indexes>
-    
+
     <triggers>
       <trigger time="BEFORE" actions="INSERT">
         SELECT(5)
       </trigger>
     </triggers>
-    
+
   </table>
 
   <table name="city" extends="timestamp">
@@ -143,7 +143,7 @@
         <column name="district"/>
       </index>
     </indexes>
-    
+
     <triggers>
       <trigger time="BEFORE" actions="INSERT">
         SELECT(3)

@@ -30,10 +30,10 @@ import java.util.Map;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Resources;
@@ -108,7 +108,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final PrimaryKey.Using$ using) {
+  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final $PrimaryKey.Using$ using) {
     return super.primaryKey(b, table, columns, null);
   }
 

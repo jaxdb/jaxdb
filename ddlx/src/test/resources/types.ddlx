@@ -92,7 +92,7 @@
   </table>
 
   <table name="type" extends="abstractType"/>
-    
+
   <table name="backup" extends="abstractType">
     <documentation>Backup of the Type table</documentation>
   </table>

@@ -2,9 +2,8 @@ package org.jaxdb.ddlx;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.RandomAccess;
 
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Bigint;
@@ -227,12 +226,12 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  <L extends List<Schema.Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(final Connection connection) {
+  Map<String,ArrayList<Schema.Table.Constraints.Unique>> getUniqueConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  <L extends List<$CheckReference> & RandomAccess> Map<String,L> getCheckConstraints(final Connection connection) {
+  Map<String,ArrayList<$CheckReference>> getCheckConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 

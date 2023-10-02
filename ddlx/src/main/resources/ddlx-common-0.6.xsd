@@ -324,78 +324,68 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="constraints">
-    <xs:sequence>
-      <xs:element name="primaryKey" minOccurs="0">
+  <xs:complexType name="primaryKey">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="column">
         <xs:complexType>
-          <xs:sequence maxOccurs="unbounded">
-            <xs:element name="column">
-              <xs:complexType>
-                <xs:complexContent>
-                  <xs:extension base="ddlx:named">
-                    <xs:assert test="not('[pk0] column must belong to existing table, and must be NOT NULL') or (
-                      (some $name in @name satisfies (../../../ddlx:column[@name=$name] and (some $column in ../../../ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))))) or
-                      (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))))))
-                    )"/>
-                    <xs:assert test="not('[pk1] primaryKey is specified in parent table') or
-                      not(../../../@extends) or (some $extends in ../../../@extends satisfies not(root()/ddlx:table[@name=$extends]/ddlx:constraints/ddlx:primaryKey) and (
-                        not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/ddlx:constraints/ddlx:primaryKey) and (
-                          not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/ddlx:constraints/ddlx:primaryKey) and (
-                            not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/ddlx:constraints/ddlx:primaryKey) and (
-                              not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/ddlx:constraints/ddlx:primaryKey) and (
-                                not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/ddlx:constraints/ddlx:primaryKey) and (
-                                  not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/ddlx:constraints/ddlx:primaryKey) and (
-                                    not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/ddlx:constraints/ddlx:primaryKey) and (
-                                      not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/ddlx:constraints/ddlx:primaryKey))
-                                    ))
-                                  ))
+          <xs:complexContent>
+            <xs:extension base="ddlx:named">
+              <xs:assert test="not('[pk0] column must belong to existing table, and must be NOT NULL') or (
+                (some $name in @name satisfies (../../../ddlx:column[@name=$name] and (some $column in ../../../ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false))))))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))))))
+              )"/>
+              <xs:assert test="not('[pk1] primaryKey is specified in parent table') or
+                not(../../../@extends) or (some $extends in ../../../@extends satisfies not(root()/ddlx:table[@name=$extends]/ddlx:constraints/ddlx:primaryKey) and (
+                  not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/ddlx:constraints/ddlx:primaryKey) and (
+                    not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/ddlx:constraints/ddlx:primaryKey) and (
+                      not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/ddlx:constraints/ddlx:primaryKey) and (
+                        not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/ddlx:constraints/ddlx:primaryKey) and (
+                          not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/ddlx:constraints/ddlx:primaryKey) and (
+                            not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/ddlx:constraints/ddlx:primaryKey) and (
+                              not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/ddlx:constraints/ddlx:primaryKey) and (
+                                not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/ddlx:constraints/ddlx:primaryKey))
+                              ))
+                            ))
+                          ))
+                        ))
+                      ))
+                    ))
+                  ))
+                ))"/>
+              <xs:assert test="not('[kfu2] Column name exists in keyForUpdate') or (some $name in @name satisfies
+                not(../../../*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                  not(../../../@extends) or (some $extends in ../../../@extends satisfies not(root()/ddlx:table[@name=$extends]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                    not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                      not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                        not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                          not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                            not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                              not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                  not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]))
                                 ))
                               ))
                             ))
                           ))
                         ))
-                      ))"/>
-                    <xs:assert test="not('[kfu2] Column name exists in keyForUpdate') or (some $name in @name satisfies
-                      not(../../../*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                        not(../../../@extends) or (some $extends in ../../../@extends satisfies not(root()/ddlx:table[@name=$extends]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                          not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                            not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                              not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                                not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                                  not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                                    not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                                      not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
-                                        not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]))
-                                      ))
-                                    ))
-                                  ))
-                                ))
-                              ))
-                            ))
-                          ))
-                        ))
-                      ))"/>
-                  </xs:extension>
-                </xs:complexContent>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-          <xs:attribute name="using" type="ddlx:indexType"/>
+                      ))
+                    ))
+                  ))
+                ))"/>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
-        <xs:unique name="primaryKey_column_name_must_be_unique">
-          <xs:selector xpath="ddlx:column"/>
-          <xs:field xpath="@name"/>
-        </xs:unique>
       </xs:element>
     </xs:sequence>
+    <xs:attribute name="using" type="ddlx:indexType"/>
   </xs:complexType>
 
   <xs:complexType name="triggers">
@@ -427,7 +417,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="indexesIndex">
     <xs:complexContent>
       <xs:extension base="ddlx:columns">
@@ -976,7 +966,7 @@
   </xs:complexType>
 
   <!-- End: BOOLEAN -->
-  
+
   <xs:complexType name="columnIndex">
     <xs:complexContent>
       <xs:extension base="ddlx:documented">
@@ -989,9 +979,6 @@
   <xs:complexType name="column" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:named">
-        <xs:sequence minOccurs="0">
-          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
-        </xs:sequence>
         <xs:attribute name="template" type="ddlx:name"/>
         <xs:attribute name="null" type="xs:boolean">
           <xs:annotation>
@@ -1303,7 +1290,7 @@
         <xs:attribute name="abstract" type="xs:boolean" default="false"/>
         <xs:attribute name="extends" type="ddlx:name"/>
         <xs:attribute name="skip" type="xs:boolean" default="false"/>
-        
+
         <xs:assert test="not('[t1] name of table must not equal name of template enum') or
           not(some $name in @name satisfies exists(root()/ddlx:template[@name=$name and local-name-from-QName(@xsi:type)='enum']))"/>
         <xs:assert test="not('[t2] table must extend abstract table') or

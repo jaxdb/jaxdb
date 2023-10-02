@@ -54,6 +54,7 @@ import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Time;
 import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Tinyint;
 import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Row;
+import org.jaxsb.compiler.lang.NamespaceURI;
 import org.jaxsb.compiler.processor.GeneratorContext;
 import org.jaxsb.compiler.processor.reference.SchemaReference;
 import org.jaxsb.generator.Generator;
@@ -64,6 +65,19 @@ import org.libj.util.FlatIterableIterator;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class SqlJaxSBLoader extends SqlLoader {
+  private static final HashSet<NamespaceURI> ignoreNamespaceURIs = new HashSet<>();
+
+  static {
+    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/ddlx-0.3.xsd"));
+    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/sqlx-0.3.xsd"));
+    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/ddlx-0.4.xsd"));
+    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/sqlx-0.4.xsd"));
+    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/ddlx-0.5.xsd"));
+    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/sqlx-0.5.xsd"));
+    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/ddlx-0.6.xsd"));
+    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/sqlx-0.6.xsd"));
+  }
+
   static class RowIterator extends FlatIterableIterator<$Database,$Row> {
     RowIterator(final $Database database) {
       super(database);
@@ -89,7 +103,7 @@ final class SqlJaxSBLoader extends SqlLoader {
     for (final URL xsd : xsds) // [A]
       schemas.add(new SchemaReference(xsd, false));
 
-    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, ignoreNamespaceURIs), schemas, null, false);
   }
 
   static void xsd2jaxsb(final File destDir, final Collection<URL> xsds) throws IOException {
@@ -101,7 +115,7 @@ final class SqlJaxSBLoader extends SqlLoader {
     for (final URL xsd : xsds) // [A]
       schemas.add(new SchemaReference(xsd, false));
 
-    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, ignoreNamespaceURIs), schemas, null, false);
   }
 
   static void sqlx2sql(final DbVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {

@@ -28,6 +28,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:tinyintCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:tinyintCheck" minOccurs="0"/>
         </xs:sequence>
@@ -39,6 +40,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:smallintCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:smallintCheck" minOccurs="0"/>
         </xs:sequence>
@@ -50,6 +52,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:intCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:intCheck" minOccurs="0"/>
         </xs:sequence>
@@ -61,6 +64,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:bigintCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:bigintCheck" minOccurs="0"/>
         </xs:sequence>
@@ -72,6 +76,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:floatCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:floatCheck" minOccurs="0"/>
         </xs:sequence>
@@ -83,6 +88,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:doubleCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:doubleCheck" minOccurs="0"/>
         </xs:sequence>
@@ -94,6 +100,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:decimalCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:decimalCheck" minOccurs="0"/>
         </xs:sequence>
@@ -105,6 +112,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:binaryCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
@@ -115,6 +123,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:blobCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
@@ -125,6 +134,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:charCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:charCheck" minOccurs="0"/>
         </xs:sequence>
@@ -136,6 +146,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:clobCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
           <xs:element name="check" type="ddlx:clobCheck" minOccurs="0"/>
         </xs:sequence>
@@ -147,6 +158,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:enumCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
@@ -157,6 +169,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:dateCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
@@ -167,6 +180,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:timeCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
@@ -177,6 +191,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:datetimeCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
@@ -187,6 +202,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:booleanCommon">
         <xs:sequence>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
           <xs:element name="index" type="ddlx:columnIndex" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
@@ -211,29 +227,31 @@
                     <xs:sequence>
                       <xs:element name="constraints" minOccurs="0">
                         <xs:complexType>
-                          <xs:complexContent>
-                            <xs:extension base="ddlx:constraints">
-                              <xs:sequence>
-                                <xs:element name="foreignKey" type="ddlx:foreignKeyComposite" minOccurs="0" maxOccurs="unbounded">
-                                  <xs:unique name="foreignKey_column_name_must_be_unique">
-                                    <xs:selector xpath="ddlx:column"/>
-                                    <xs:field xpath="@name"/>
-                                  </xs:unique>
-                                  <xs:unique name="foreignKey_reference_name_must_be_unique">
-                                    <xs:selector xpath="ddlx:column"/>
-                                    <xs:field xpath="@references"/>
-                                  </xs:unique>
-                                </xs:element>
-                                <xs:element name="unique" type="ddlx:columns" minOccurs="0" maxOccurs="unbounded">
-                                  <xs:unique name="unique_column_name_must_be_unique">
-                                    <xs:selector xpath="ddlx:column"/>
-                                    <xs:field xpath="@name"/>
-                                  </xs:unique>
-                                </xs:element>
-                                <xs:element name="check" minOccurs="0" maxOccurs="unbounded" type="ddlx:checkReference"/>
-                              </xs:sequence>
-                            </xs:extension>
-                          </xs:complexContent>
+                          <xs:sequence>
+                            <xs:element name="primaryKey" type="ddlx:primaryKey" minOccurs="0">
+                              <xs:unique name="primaryKey_column_name_must_be_unique">
+                                <xs:selector xpath="ddlx:column"/>
+                                <xs:field xpath="@name"/>
+                              </xs:unique>
+                            </xs:element>
+                            <xs:element name="foreignKey" type="ddlx:foreignKeyComposite" minOccurs="0" maxOccurs="unbounded">
+                              <xs:unique name="foreignKey_column_name_must_be_unique">
+                                <xs:selector xpath="ddlx:column"/>
+                                <xs:field xpath="@name"/>
+                              </xs:unique>
+                              <xs:unique name="foreignKey_reference_name_must_be_unique">
+                                <xs:selector xpath="ddlx:column"/>
+                                <xs:field xpath="@references"/>
+                              </xs:unique>
+                            </xs:element>
+                            <xs:element name="unique" type="ddlx:columns" minOccurs="0" maxOccurs="unbounded">
+                              <xs:unique name="unique_column_name_must_be_unique">
+                                <xs:selector xpath="ddlx:column"/>
+                                <xs:field xpath="@name"/>
+                              </xs:unique>
+                            </xs:element>
+                            <xs:element name="check" minOccurs="0" maxOccurs="unbounded" type="ddlx:checkReference"/>
+                          </xs:sequence>
                         </xs:complexType>
                         <xs:unique name="cannot_specify_both_value_and_null_on_check_constraint">
                           <xs:selector xpath=".//ddlx:check|.//and|.//or"/>

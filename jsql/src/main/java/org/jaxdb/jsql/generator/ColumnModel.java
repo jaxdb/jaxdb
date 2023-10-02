@@ -20,16 +20,203 @@ import static org.jaxdb.jsql.generator.GeneratorUtil.*;
 
 import java.util.Arrays;
 
+import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.data;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Binary;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Blob;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Boolean;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Char;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ColumnIndex;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Date;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Datetime;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Float;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyUnary;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Tinyint;
+import org.jaxdb.www.jsql_0_6.xLygluGCXAA.Cache$;
 import org.libj.lang.Classes;
 import org.libj.lang.Identifiers;
 
 final class ColumnModel {
+  private static Cache$ getIndexCache(final $Column column) {
+    if (column instanceof $Tinyint) {
+      final $Tinyint.Index index = (($Tinyint)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Smallint) {
+      final $Smallint.Index index = (($Smallint)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Int) {
+      final $Int.Index index = (($Int)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Bigint) {
+      final $Bigint.Index index = (($Bigint)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Float) {
+      final $Float.Index index = (($Float)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Double) {
+      final $Double.Index index = (($Double)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Decimal) {
+      final $Decimal.Index index = (($Decimal)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Binary) {
+      final $Binary.Index index = (($Binary)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Blob) {
+      final $Blob.Index index = (($Blob)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Char) {
+      final $Char.Index index = (($Char)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Clob) {
+      final $Clob.Index index = (($Clob)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Enum) {
+      final $Enum.Index index = (($Enum)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Date) {
+      final $Date.Index index = (($Date)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Time) {
+      final $Time.Index index = (($Time)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Datetime) {
+      final $Datetime.Index index = (($Datetime)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    if (column instanceof $Boolean) {
+      final $Boolean.Index index = (($Boolean)column).getIndex();
+      return index == null ? null : index.getJsqlCache$();
+    }
+
+    throw new RuntimeException("Unknown column type: " + column.getClass().getName());
+  }
+
+  private static Cache$ getForeignKeyCache(final $Column column) {
+    if (column instanceof $Tinyint) {
+      final $Tinyint.ForeignKey foreignKey = (($Tinyint)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Smallint) {
+      final $Smallint.ForeignKey foreignKey = (($Smallint)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Int) {
+      final $Int.ForeignKey foreignKey = (($Int)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Bigint) {
+      final $Bigint.ForeignKey foreignKey = (($Bigint)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Float) {
+      final $Float.ForeignKey foreignKey = (($Float)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Double) {
+      final $Double.ForeignKey foreignKey = (($Double)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Decimal) {
+      final $Decimal.ForeignKey foreignKey = (($Decimal)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Binary) {
+      final $Binary.ForeignKey foreignKey = (($Binary)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Blob) {
+      final $Blob.ForeignKey foreignKey = (($Blob)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Char) {
+      final $Char.ForeignKey foreignKey = (($Char)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Clob) {
+      final $Clob.ForeignKey foreignKey = (($Clob)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Enum) {
+      final $Enum.ForeignKey foreignKey = (($Enum)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Date) {
+      final $Date.ForeignKey foreignKey = (($Date)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Time) {
+      final $Time.ForeignKey foreignKey = (($Time)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Datetime) {
+      final $Datetime.ForeignKey foreignKey = (($Datetime)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    if (column instanceof $Boolean) {
+      final $Boolean.ForeignKey foreignKey = (($Boolean)column).getForeignKey();
+      return foreignKey == null ? null : foreignKey.getJsqlCache$();
+    }
+
+    throw new RuntimeException("Unknown column type: " + column.getClass().getName());
+  }
+
   final TableModel tableModel;
-  final int index;
+  final int position;
   final $Column column;
   final String name;
   final boolean isPrimary;
@@ -45,10 +232,15 @@ final class ColumnModel {
   final String instanceCase;
   final String camelCase;
 
+  final boolean cacheIndex;
+  final $ColumnIndex index;
+  final boolean cacheForeignKey;
+  final $ForeignKeyUnary foreignKey;
+
   @SuppressWarnings("rawtypes")
-  ColumnModel(final TableModel tableModel, final int index, final $Column column, final boolean isPrimary, final boolean isKeyForUpdate, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
+  ColumnModel(final TableModel tableModel, final int position, final $Column column, final boolean isPrimary, final boolean isKeyForUpdate, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
     this.tableModel = tableModel;
-    this.index = index;
+    this.position = position;
     this.column = column;
     this.isPrimary = isPrimary;
     this.isKeyForUpdate = isKeyForUpdate;
@@ -62,6 +254,14 @@ final class ColumnModel {
     this.customParams = params;
     this.instanceCase = Identifiers.toInstanceCase(name);
     this.camelCase = Identifiers.toCamelCase(name, '_');
+
+    this.index = DDLx.getIndex(column);
+    final Cache$ indexCache = getIndexCache(column);
+    this.cacheIndex = indexCache == null || indexCache.text();
+
+    this.foreignKey = DDLx.getForeignKey(column);
+    final Cache$ foreignKeyCache = getForeignKeyCache(column);
+    this.cacheForeignKey = foreignKeyCache == null || foreignKeyCache.text();
   }
 
   String getEqualsClause() {

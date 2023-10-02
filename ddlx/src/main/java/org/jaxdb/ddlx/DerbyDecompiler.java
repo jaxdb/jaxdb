@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.RandomAccess;
 
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Bigint;
@@ -287,19 +286,19 @@ final class DerbyDecompiler extends Decompiler {
       "ORDER BY s.schemaname, t.tablename";
 
   @Override
-  @SuppressWarnings({"null", "unchecked"})
-  <L extends List<Schema.Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(final Connection connection) throws SQLException {
+  @SuppressWarnings("null")
+  Map<String,ArrayList<Schema.Table.Constraints.Unique>> getUniqueConstraints(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(constraintsSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,L> tableNameToUniques = new HashMap<>();
+    final HashMap<String,ArrayList<Schema.Table.Constraints.Unique>> tableNameToUniques = new HashMap<>();
     String lastTable = null;
     ArrayList<Schema.Table.Constraints.Unique> uniques = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       if (!tableName.equals(lastTable)) {
         lastTable = tableName;
-        tableNameToUniques.put(tableName, (L)(uniques = new ArrayList<>()));
+        tableNameToUniques.put(tableName, uniques = new ArrayList<>());
       }
 
       final List<String> columns = tableNameToColumns.get(tableName);
@@ -382,12 +381,12 @@ final class DerbyDecompiler extends Decompiler {
 
   @Override
   @SuppressWarnings("null")
-  Map<String,List<$CheckReference>> getCheckConstraints(final Connection connection) throws SQLException {
+  Map<String,ArrayList<$CheckReference>> getCheckConstraints(final Connection connection) throws SQLException {
     final PreparedStatement statement = connection.prepareStatement(checkSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,List<$CheckReference>> tableNameToChecks = new HashMap<>();
+    final HashMap<String,ArrayList<$CheckReference>> tableNameToChecks = new HashMap<>();
     String lastTable = null;
-    List<$CheckReference> checks = null;
+    ArrayList<$CheckReference> checks = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       if (!tableName.equals(lastTable)) {
@@ -481,7 +480,7 @@ final class DerbyDecompiler extends Decompiler {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(foreignKeySql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = new HashMap<>();
+    final HashMap<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = new HashMap<>();
     String lastTable = null;
     Map<String,$ForeignKeyUnary> columnNameToForeignKey = null;
     while (rows.next()) {
@@ -496,19 +495,24 @@ final class DerbyDecompiler extends Decompiler {
       final String primaryDescriptor = rows.getString(7);
       final String primaryColumn = tableNameToColumns.get(primaryTable).get(Integer.valueOf(primaryDescriptor.substring(primaryDescriptor.lastIndexOf('(') + 1, primaryDescriptor.lastIndexOf(')'))) - 1);
 
-      final $ForeignKeyUnary foreignKey = new $Column.ForeignKey();
-      foreignKey.setReferences$(new $Column.ForeignKey.References$(primaryTable.toLowerCase()));
+      final $ForeignKeyUnary foreignKey = new $ForeignKeyUnary() {
+        @Override
+        protected $ForeignKeyUnary inherits() {
+          return null;
+        }
+      };
+      foreignKey.setReferences$(new $ForeignKeyUnary.References$(primaryTable.toLowerCase()));
       foreignKey.setColumn$(new Column$(primaryColumn.toLowerCase()));
 
       final String deleteRule = rows.getString(4);
       final $ChangeRule.Enum onDelete = deleteRule == null ? null : "S".equals(deleteRule) ? $ChangeRule.RESTRICT : "C".equals(deleteRule) ? $ChangeRule.CASCADE : "U".equals(deleteRule) ? $ChangeRule.SET_20NULL : null;
       if (onDelete != null)
-        foreignKey.setOnDelete$(new $Column.ForeignKey.OnDelete$(onDelete));
+        foreignKey.setOnDelete$(new $ForeignKeyUnary.OnDelete$(onDelete));
 
       final String updateRule = rows.getString(5);
       final $ChangeRule.Enum onUpdate = updateRule == null ? null : "S".equals(updateRule) ? $ChangeRule.RESTRICT : null;
       if (onUpdate != null)
-        foreignKey.setOnUpdate$(new $Column.ForeignKey.OnUpdate$(onUpdate));
+        foreignKey.setOnUpdate$(new $ForeignKeyUnary.OnUpdate$(onUpdate));
 
       final String foreignDescriptor = rows.getString(3);
       final String foreignColumn = columnNames.get(Integer.valueOf(foreignDescriptor.substring(foreignDescriptor.lastIndexOf('(') + 1, foreignDescriptor.lastIndexOf(')'))) - 1);

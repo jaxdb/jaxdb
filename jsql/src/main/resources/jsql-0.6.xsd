@@ -32,55 +32,55 @@
 
   <xs:complexType name="tinyint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:tinyintCommon"/>      
+      <xs:extension base="sqlx:tinyintCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="smallint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:smallintCommon"/>      
+      <xs:extension base="sqlx:smallintCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="int" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:intCommon"/>      
+      <xs:extension base="sqlx:intCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="bigint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:bigintCommon"/>      
+      <xs:extension base="sqlx:bigintCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="float" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:floatCommon"/>      
+      <xs:extension base="sqlx:floatCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="double" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:doubleCommon"/>      
+      <xs:extension base="sqlx:doubleCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="decimal" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:decimalCommon"/>      
+      <xs:extension base="sqlx:decimalCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="binary" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:binaryCommon"/>      
+      <xs:extension base="sqlx:binaryCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="blob" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:blobCommon"/>      
+      <xs:extension base="sqlx:blobCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -92,13 +92,13 @@
 
   <xs:complexType name="clob" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:clobCommon"/>      
+      <xs:extension base="sqlx:clobCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="enum" abstract="true">
     <xs:complexContent>
-      <xs:extension base="sqlx:enumCommon"/>      
+      <xs:extension base="sqlx:enumCommon"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -125,7 +125,7 @@
       <xs:extension base="sqlx:booleanCommon"/>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:element name="keyForUpdate">
     <xs:complexType>
       <xs:sequence minOccurs="1" maxOccurs="unbounded">

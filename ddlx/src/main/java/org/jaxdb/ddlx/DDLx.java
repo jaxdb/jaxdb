@@ -22,17 +22,40 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import javax.xml.transform.TransformerException;
 
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Binary;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Blob;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Boolean;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Char;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ColumnIndex;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Columns;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Date;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Datetime;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Double;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyComposite;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyUnary;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexesIndex;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexesIndex.Unique$;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$PrimaryKey;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$TableCommon;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$TableCommon.Extends$;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema.Table;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema.Table.Constraints;
 import org.jaxsb.runtime.BindingList;
 import org.jaxsb.runtime.Bindings;
 import org.libj.util.CollectionUtil;
@@ -40,11 +63,12 @@ import org.libj.util.RefDigraph;
 import org.openjax.xml.transform.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3.www._2001.XMLSchema.yAA.$AnyType;
 import org.xml.sax.SAXException;
 
 public class DDLx {
   private static final Logger logger = LoggerFactory.getLogger(DDLx.class);
-  private static final Comparator<$TableCommon> tableNameComparator = (o1, o2) -> o1 == null ? o2 == null ? 0 : 1 : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
+  private static final Comparator<$Named> tableNameComparator = (final $Named o1, final $Named o2) -> o1 == null ? o2 == null ? 0 : 1 : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
   private static final URL normalizeXsl;
   private static final URL mergeXsl;
 
@@ -61,13 +85,125 @@ public class DDLx {
     return url;
   }
 
+  /*static $ForeignKeyUnary newForeignKey(final $Column column) {
+    if (column instanceof $Tinyint)
+      return new $Tinyint.ForeignKey();
+
+    if (column instanceof $Smallint)
+      return new $Smallint.ForeignKey();
+
+    if (column instanceof $Int)
+      return new $Int.ForeignKey();
+
+    if (column instanceof $Bigint)
+      return new $Bigint.ForeignKey();
+
+    if (column instanceof $Float)
+      return new $Float.ForeignKey();
+
+    if (column instanceof $Double)
+      return new $Double.ForeignKey();
+
+    if (column instanceof $Decimal)
+      return new $Decimal.ForeignKey();
+
+    if (column instanceof $Binary)
+      return new $Binary.ForeignKey();
+
+    if (column instanceof $Blob)
+      return new $Blob.ForeignKey();
+
+    if (column instanceof $Char)
+      return new $Char.ForeignKey();
+
+    if (column instanceof $Clob)
+      return new $Clob.ForeignKey();
+
+    if (column instanceof $Enum)
+      return new $Enum.ForeignKey();
+
+    if (column instanceof $Date)
+      return new $Date.ForeignKey();
+
+    if (column instanceof $Time)
+      return new $Time.ForeignKey();
+
+    if (column instanceof $Datetime)
+      return new $Datetime.ForeignKey();
+
+    if (column instanceof $Boolean)
+      return new $Boolean.ForeignKey();
+
+    throw new RuntimeException("Unknown column type: " + column.getClass().getName());
+  }*/
+
+  static void setForeignKey(final $Column column, final $ForeignKeyUnary foreignKey) {
+    if (column instanceof $Tinyint)
+      (($Tinyint)column).setForeignKey(foreignKey);
+    else if (column instanceof $Smallint)
+      (($Smallint)column).setForeignKey(foreignKey);
+    if (column instanceof $Int)
+      (($Int)column).setForeignKey(foreignKey);
+    else if (column instanceof $Bigint)
+      (($Bigint)column).setForeignKey(foreignKey);
+    else if (column instanceof $Float)
+      (($Float)column).setForeignKey(foreignKey);
+    else if (column instanceof $Double)
+      (($Double)column).setForeignKey(foreignKey);
+    else if (column instanceof $Decimal)
+      (($Decimal)column).setForeignKey(foreignKey);
+    else if (column instanceof $Binary)
+      (($Binary)column).setForeignKey(foreignKey);
+    else if (column instanceof $Blob)
+      (($Blob)column).setForeignKey(foreignKey);
+    else if (column instanceof $Char)
+      (($Char)column).setForeignKey(foreignKey);
+    else if (column instanceof $Clob)
+      (($Clob)column).setForeignKey(foreignKey);
+    else if (column instanceof $Enum)
+      (($Enum)column).setForeignKey(foreignKey);
+    else if (column instanceof $Date)
+      (($Date)column).setForeignKey(foreignKey);
+    else if (column instanceof $Time)
+      (($Time)column).setForeignKey(foreignKey);
+    else if (column instanceof $Datetime)
+      (($Datetime)column).setForeignKey(foreignKey);
+    else if (column instanceof $Boolean)
+      (($Boolean)column).setForeignKey(foreignKey);
+    else
+      throw new RuntimeException("Unknown column type: " + column.getClass().getName());
+  }
+
+  private static $AnyType<?> getChildElement(final $AnyType<String> element, final String localName) {
+    final Iterator<$AnyType<?>> childElements = element.elementIterator();
+    while (childElements.hasNext()) {
+      final $AnyType<?> childElement = childElements.next();
+      if (localName.equals(childElement.name().getLocalPart()))
+        return childElement;
+    }
+
+    return null;
+  }
+
+  public static $PrimaryKey getPrimaryKey(final Constraints column) {
+    return ($PrimaryKey)getChildElement(column, "primaryKey");
+  }
+
+  public static $ForeignKeyUnary getForeignKey(final $Column column) {
+    return ($ForeignKeyUnary)getChildElement(column, "foreignKey");
+  }
+
+  public static $ColumnIndex getIndex(final $Column column) {
+    return ($ColumnIndex)getChildElement(column, "index");
+  }
+
   private static Schema topologicalSort(final Schema schema) {
-    final ArrayList<$TableCommon> tables = new ArrayList<>(schema.getTable());
+    final ArrayList<Table> tables = new ArrayList<>(schema.getTable());
     schema.getTable().clear();
     tables.sort(tableNameComparator);
-    final RefDigraph<Schema.Table,String> digraph = new RefDigraph<>(table -> table.getName$().text());
+    final RefDigraph<Table,String> digraph = new RefDigraph<>((final Table table) -> table.getName$().text());
     for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
-      final Schema.Table table = (Schema.Table)tables.get(i);
+      final Table table = tables.get(i);
       digraph.add(table);
       final Extends$ extends$ = table.getExtends$();
       if (extends$ != null)
@@ -76,13 +212,13 @@ public class DDLx {
       final BindingList<$Column> columns = table.getColumn();
       if (columns != null) {
         for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
-          final $Column column = columns.get(j);
-          if (column.getForeignKey() != null)
-            digraph.add(table, column.getForeignKey().getReferences$().text());
+          final $ForeignKeyUnary foreignKey = getForeignKey(columns.get(j));
+          if (foreignKey != null)
+            digraph.add(table, foreignKey.getReferences$().text());
         }
       }
 
-      final Schema.Table.Constraints constraints = table.getConstraints();
+      final Table.Constraints constraints = table.getConstraints();
       if (constraints != null) {
         final BindingList<$ForeignKeyComposite> foreignKeys = constraints.getForeignKey();
         if (foreignKeys != null) {
@@ -95,7 +231,7 @@ public class DDLx {
     if (digraph.hasCycle())
       throw new IllegalStateException("Cycle exists in relational model: " + CollectionUtil.toString(digraph.getCycle(), " -> "));
 
-    final ArrayList<Schema.Table> topologicalOrder = digraph.getTopologicalOrder();
+    final ArrayList<Table> topologicalOrder = digraph.getTopologicalOrder();
     for (int i = topologicalOrder.size() - 1; i >= 0; --i) // [RA]
       schema.getTable().add(topologicalOrder.get(i));
 
@@ -118,7 +254,7 @@ public class DDLx {
 
     this.mergedXml = Transformer.transform(mergeXsl, normalizeddXml, null);
     this.mergedSchema = topologicalSort((Schema)Bindings.parse(mergedXml));
-    final BindingList<Schema.Table> tables = mergedSchema.getTable();
+    final BindingList<Table> tables = mergedSchema.getTable();
     for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
       final $TableCommon table = tables.get(i);
       if (table.getExtends$() != null)
@@ -127,8 +263,8 @@ public class DDLx {
   }
 
   // FIXME: Remove this.
-  public boolean isUnique(final Schema.Table table, final $Named column) {
-    final Schema.Table.Constraints constraints = table.getConstraints();
+  public boolean isUnique(final Table table, final $Named column) {
+    final Table.Constraints constraints = table.getConstraints();
     if (constraints != null) {
       final BindingList<$Columns> uniques = constraints.getUnique();
       if (uniques != null) {
@@ -140,13 +276,14 @@ public class DDLx {
       }
     }
 
-    final Schema.Table.Indexes tableIndexes = table.getIndexes();
+    final Table.Indexes tableIndexes = table.getIndexes();
     if (tableIndexes != null) {
       final BindingList<$IndexesIndex> indexes = tableIndexes.getIndex();
       if (indexes != null) {
         for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
           final $IndexesIndex index = indexes.get(i);
-          if (index.getUnique$() != null && index.getUnique$().text() && index.getColumn().size() == 1 && column.getName$().text().equals(index.getColumn(0).getName$().text()))
+          final Unique$ unique$ = index.getUnique$();
+          if (unique$ != null && unique$.text() && index.getColumn().size() == 1 && column.getName$().text().equals(index.getColumn(0).getName$().text()))
             return true;
         }
       }

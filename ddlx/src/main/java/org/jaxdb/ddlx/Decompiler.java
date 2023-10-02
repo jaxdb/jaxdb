@@ -20,10 +20,9 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.RandomAccess;
 import java.util.TreeMap;
 
 import org.jaxdb.vendor.DbVendor;
@@ -59,7 +58,6 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$TinyintCheck;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
-import org.jaxsb.runtime.BindingList;
 
 abstract class Decompiler {
   private static final Decompiler[] decompilers = {
@@ -86,15 +84,15 @@ abstract class Decompiler {
     final DatabaseMetaData metaData = connection.getMetaData();
     try (final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"})) {
       final Schema schema = new Schema();
-      final Map<String,BindingList<$CheckReference>> tableNameToChecks = decompiler.getCheckConstraints(connection);
-      final Map<String,BindingList<Schema.Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
+      final Map<String,ArrayList<$CheckReference>> tableNameToChecks = decompiler.getCheckConstraints(connection);
+      final Map<String,ArrayList<Schema.Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
       final Map<String,Schema.Table.Indexes> tableNameToIndexes = decompiler.getIndexes(connection);
       final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = decompiler.getForeignKeys(connection);
-      final Map<String,$Column> columnNameToColumn = new HashMap<>();
-      final Map<Integer,$Column> columnNumberToColumn = new TreeMap<>();
-      final Map<String,TreeMap<Short,String>> indexNameToIndex = new HashMap<>();
-      final Map<String,String> indexNameToType = new HashMap<>();
-      final Map<String,Boolean> indexNameToUnique = new HashMap<>();
+      final HashMap<String,$Column> columnNameToColumn = new HashMap<>();
+      final TreeMap<Integer,$Column> columnNumberToColumn = new TreeMap<>();
+      final HashMap<String,TreeMap<Short,String>> indexNameToIndex = new HashMap<>();
+      final HashMap<String,String> indexNameToType = new HashMap<>();
+      final HashMap<String,Boolean> indexNameToUnique = new HashMap<>();
       while (tableRows.next()) {
         final String tableName = tableRows.getString(3);
         final Schema.Table table = new Schema.Table();
@@ -133,7 +131,7 @@ abstract class Decompiler {
             }
           }
 
-          final BindingList<Schema.Table.Constraints.Unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
+          final ArrayList<Schema.Table.Constraints.Unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
           if (uniques != null && uniques.size() > 0) {
             if (table.getConstraints() == null)
               table.setConstraints(new Schema.Table.Constraints());
@@ -176,7 +174,7 @@ abstract class Decompiler {
           if (indexes != null)
             table.setIndexes(indexes);
 
-          final BindingList<$CheckReference> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
+          final ArrayList<$CheckReference> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
           if (checks != null) {
             for (int i = 0, i$ = checks.size(); i < i$; ++i) { // [RA]
               final $CheckReference check = checks.get(i);
@@ -187,7 +185,7 @@ abstract class Decompiler {
           final Map<String,$ForeignKeyUnary> foreignKeys = tableNameToForeignKeys == null ? null : tableNameToForeignKeys.get(tableName);
           if (foreignKeys != null)
             for (final Map.Entry<String,$ForeignKeyUnary> entry : foreignKeys.entrySet()) // [S]
-              columnNameToColumn.get(entry.getKey().toLowerCase()).setForeignKey(entry.getValue());
+              DDLx.setForeignKey(columnNameToColumn.get(entry.getKey().toLowerCase()), entry.getValue());
         }
 
         columnNameToColumn.clear();
@@ -248,8 +246,8 @@ abstract class Decompiler {
 
   abstract DbVendor getVendor();
   abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
-  abstract <L extends List<$CheckReference> & RandomAccess> Map<String,L> getCheckConstraints(Connection connection) throws SQLException;
-  abstract <L extends List<Schema.Table.Constraints.Unique> & RandomAccess> Map<String,L> getUniqueConstraints(Connection connection) throws SQLException;
+  abstract Map<String,ArrayList<$CheckReference>> getCheckConstraints(Connection connection) throws SQLException;
+  abstract Map<String,ArrayList<Schema.Table.Constraints.Unique>> getUniqueConstraints(Connection connection) throws SQLException;
   abstract Map<String,Schema.Table.Indexes> getIndexes(Connection connection) throws SQLException;
 
   private static $ChangeRule.Enum toBinding(final short rule) {
@@ -276,7 +274,7 @@ abstract class Decompiler {
   Map<String,Map<String,$ForeignKeyUnary>> getForeignKeys(final Connection connection) throws SQLException {
     final DatabaseMetaData metaData = connection.getMetaData();
     try (final ResultSet foreignKeyRows = metaData.getImportedKeys(null, null, null)) {
-      final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = new HashMap<>();
+      final HashMap<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = new HashMap<>();
       String lastTable = null;
       Map<String,$ForeignKeyUnary> columnNameToForeignKey = null;
       while (foreignKeyRows.next()) {
@@ -291,17 +289,22 @@ abstract class Decompiler {
         final String columnName = foreignKeyRows.getString("FKCOLUMN_NAME").toLowerCase();
         final short updateRule = foreignKeyRows.getShort("UPDATE_RULE");
         final short deleteRule = foreignKeyRows.getShort("DELETE_RULE");
-        final $ForeignKeyUnary foreignKey = new $Column.ForeignKey();
-        foreignKey.setReferences$(new $Column.ForeignKey.References$(primaryTable));
+        final $ForeignKeyUnary foreignKey = new $ForeignKeyUnary() {
+          @Override
+          protected $ForeignKeyUnary inherits() {
+            return null;
+          }
+        };
+        foreignKey.setReferences$(new $ForeignKeyUnary.References$(primaryTable));
         foreignKey.setColumn$(new Column$(primaryColumn));
 
         final $ChangeRule.Enum onUpdate = toBinding(updateRule);
         if (onUpdate != null)
-          foreignKey.setOnUpdate$(new $Column.ForeignKey.OnUpdate$(onUpdate));
+          foreignKey.setOnUpdate$(new $ForeignKeyUnary.OnUpdate$(onUpdate));
 
         final $ChangeRule.Enum onDelete = toBinding(deleteRule);
         if (onDelete != null)
-          foreignKey.setOnDelete$(new $Column.ForeignKey.OnDelete$(onDelete));
+          foreignKey.setOnDelete$(new $ForeignKeyUnary.OnDelete$(onDelete));
 
         columnNameToForeignKey.put(columnName, foreignKey);
       }
