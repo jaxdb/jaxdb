@@ -52,6 +52,7 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyUnary.Column$;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IntCheck;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$PrimaryKey;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$SmallintCheck;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Time;
@@ -122,12 +123,13 @@ abstract class Decompiler {
               if (table.getConstraints() == null)
                 table.setConstraints(new Schema.Table.Constraints());
 
-              if (table.getConstraints().getPrimaryKey() == null)
-                table.getConstraints().setPrimaryKey(new Schema.Table.Constraints.PrimaryKey());
+              $PrimaryKey primaryKey = DDLx.getPrimaryKey(table.getConstraints());
+              if (primaryKey == null)
+                table.getConstraints().setPrimaryKey(primaryKey = new Schema.Table.Constraints.PrimaryKey());
 
               final Schema.Table.Constraints.PrimaryKey.Column column = new Schema.Table.Constraints.PrimaryKey.Column();
               column.setName$(new Schema.Table.Constraints.PrimaryKey.Column.Name$(columnName));
-              table.getConstraints().getPrimaryKey().addColumn(column);
+              primaryKey.addColumn(column);
             }
           }
 

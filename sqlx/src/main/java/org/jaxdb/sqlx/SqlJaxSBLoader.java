@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,10 +33,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
+import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA;
 import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Bigint;
 import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Binary;
 import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Blob;
@@ -52,9 +55,9 @@ import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Int;
 import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Smallint;
 import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Time;
 import org.jaxdb.www.datatypes_0_6.xL3gluGCXAA.$Tinyint;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA;
 import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_6.xLygluGCXAA.$Row;
-import org.jaxsb.compiler.lang.NamespaceURI;
 import org.jaxsb.compiler.processor.GeneratorContext;
 import org.jaxsb.compiler.processor.reference.SchemaReference;
 import org.jaxsb.generator.Generator;
@@ -65,17 +68,19 @@ import org.libj.util.FlatIterableIterator;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class SqlJaxSBLoader extends SqlLoader {
-  private static final HashSet<NamespaceURI> ignoreNamespaceURIs = new HashSet<>();
+  private static final HashSet<Pattern> ignoreNamespaceURIs = new HashSet<>(2);
+  private static final HashSet<File> classPath = new HashSet<>(2);
 
   static {
-    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/ddlx-0.3.xsd"));
-    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/sqlx-0.3.xsd"));
-    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/ddlx-0.4.xsd"));
-    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/sqlx-0.4.xsd"));
-    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/ddlx-0.5.xsd"));
-    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/sqlx-0.5.xsd"));
-    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/ddlx-0.6.xsd"));
-    ignoreNamespaceURIs.add(NamespaceURI.getInstance("http://www.jaxdb.org/sqlx-0.6.xsd"));
+    ignoreNamespaceURIs.add(Pattern.compile("http://www\\.openjax\\.org/xml/datatypes-\\d+\\.\\d+\\.xsd"));
+    ignoreNamespaceURIs.add(Pattern.compile("http://www\\.jaxdb\\.org/(ddlx|sqlx|jsql|datatypes)-\\d+\\.\\d+\\.xsd"));
+    try {
+      classPath.add(new File(xL3gluGCXAA.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
+      classPath.add(new File(xLygluGCXAA.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
+    }
+    catch (final URISyntaxException e) {
+      throw new ExceptionInInitializerError(e);
+    }
   }
 
   static class RowIterator extends FlatIterableIterator<$Database,$Row> {
@@ -103,7 +108,7 @@ final class SqlJaxSBLoader extends SqlLoader {
     for (final URL xsd : xsds) // [A]
       schemas.add(new SchemaReference(xsd, false));
 
-    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, ignoreNamespaceURIs), schemas, null, false);
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, ignoreNamespaceURIs), schemas, classPath, false);
   }
 
   static void xsd2jaxsb(final File destDir, final Collection<URL> xsds) throws IOException {
@@ -115,7 +120,7 @@ final class SqlJaxSBLoader extends SqlLoader {
     for (final URL xsd : xsds) // [A]
       schemas.add(new SchemaReference(xsd, false));
 
-    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, ignoreNamespaceURIs), schemas, null, false);
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, ignoreNamespaceURIs), schemas, classPath, false);
   }
 
   static void sqlx2sql(final DbVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {

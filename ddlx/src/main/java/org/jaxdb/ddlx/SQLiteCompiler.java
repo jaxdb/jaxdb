@@ -59,7 +59,7 @@ final class SQLiteCompiler extends Compiler {
       return null;
 
     final $PrimaryKey primaryKey;
-    if (table.getConstraints() == null || (primaryKey = table.getConstraints().getPrimaryKey()) == null) {
+    if (table.getConstraints() == null || (primaryKey = DDLx.getPrimaryKey(table.getConstraints())) == null) {
       if (logger.isWarnEnabled()) { logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec."); }
       return null;
     }
