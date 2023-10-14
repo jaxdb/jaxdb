@@ -134,7 +134,7 @@ public class Transaction implements AutoCloseable {
 
   public NotifiableBatchResult commit() throws SQLException {
     if (connection == null)
-      throw new SQLRecoverableException("Closed Connection");
+      throw new SQLRecoverableException("Connection closed");
 
     try {
       connection.commit();
@@ -154,7 +154,7 @@ public class Transaction implements AutoCloseable {
 
   public void rollback() throws SQLException {
     if (connection == null)
-      throw new SQLRecoverableException("Closed Connection");
+      throw new SQLRecoverableException("Connection closed");
 
     try {
       connection.rollback();
@@ -166,9 +166,21 @@ public class Transaction implements AutoCloseable {
     }
   }
 
+  /**
+   * Undoes all changes made in the current transaction and releases any database locks currently held by this {@link Transaction}'s
+   * {@link Connection}, and returns the {@code boolean} value representing the success of the rollback. If a {@link SQLException} is
+   * encountered during the rollback operation, the thrown exception is added as a {@link Throwable#addSuppressed(Throwable)
+   * suppressed exception} to the provided {@link Throwable}.
+   *
+   * @implNote This method should be used only when auto-commit mode has been disabled.
+   * @param t The {@link Throwable} to which any thrown exceptions should be added as {@link Throwable#addSuppressed(Throwable)
+   *          suppressed exceptions}.
+   * @return The {@code boolean} value representing the success of the rollback.
+   * @throws NullPointerException If {@code t} is null.
+   */
   public boolean rollback(final Throwable t) {
     if (connection == null) {
-      assertNotNull(t).addSuppressed(new SQLRecoverableException("Closed Connection"));
+      assertNotNull(t).addSuppressed(new SQLRecoverableException("Connection closed"));
       return false;
     }
 
