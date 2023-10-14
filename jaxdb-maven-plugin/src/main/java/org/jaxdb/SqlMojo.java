@@ -50,7 +50,7 @@ abstract class SqlMojo<P extends Produce<?,?,?>,T> extends JaxDbMojo<P> {
     Reserve<T> reserve = schemaToReserve().get(schema);
     if (reserve == null) {
       final Thread thread = Thread.currentThread();
-      thread.setContextClassLoader(new URLClassLoader(new URL[] {new URL("file", "", project.getBuild().getOutputDirectory() + "/")}, thread.getContextClassLoader()));
+      thread.setContextClassLoader(new URLClassLoader(new URL[] {new URL("file", "", getProject().getBuild().getOutputDirectory() + "/")}, thread.getContextClassLoader()));
       schemaToReserve().put(schema, reserve = newReserve(schema));
     }
 
@@ -59,7 +59,7 @@ abstract class SqlMojo<P extends Produce<?,?,?>,T> extends JaxDbMojo<P> {
 
   final void executeStaged(final JaxDbMojo<?>.Configuration configuration) throws Exception {
     if (vendor == null || vendor.length() == 0)
-      throw new MojoExecutionException("The parameter 'vendor' is required for goal " + execution.getGoal() + "@" + execution.getExecutionId());
+      throw new MojoExecutionException("The parameter 'vendor' is required for goal " + getExecution().getGoal() + "@" + getExecution().getExecutionId());
 
     final DbVendor dbVendor = DbVendor.valueOf(vendor);
     if (dbVendor == null)
