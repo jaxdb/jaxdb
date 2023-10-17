@@ -152,6 +152,7 @@ public final class Callbacks implements Closeable {
           if (count == -1) {
             try {
               this.count.wait();
+              count = this.count.get();
             }
             catch (final InterruptedException ie) {
               throw new IllegalStateException(ie);
