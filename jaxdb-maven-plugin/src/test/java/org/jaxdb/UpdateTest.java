@@ -173,7 +173,8 @@ public abstract class UpdateTest {
       assertFalse(rows.nextRow());
 
       assertTrue(0 <
-          UPDATE(t).SET(t.enumType, EnumType.FOUR)
+          UPDATE(t)
+            .SET(t.enumType, EnumType.FOUR)
             .WHERE(EQ(t.enumType, EnumType.ONE))
             .execute(transaction)
             .getCount());
@@ -198,7 +199,8 @@ public abstract class UpdateTest {
       assertFalse(rows.nextRow());
 
       assertTrue(300 <
-          UPDATE(t).SET(t.datetimeType, LocalDateTime.now())
+          UPDATE(t)
+            .SET(t.datetimeType, LocalDateTime.now())
             .execute(transaction)
             .getCount());
     }
