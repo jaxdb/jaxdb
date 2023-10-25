@@ -421,8 +421,21 @@ public final class statement {
         super(count);
       }
 
-      abstract String[] getSessionId();
+      /**
+       * Await for the expected {@code NOTIFY} callback (or callbacks) that are asynchronously published by the DB in lieu of all
+       * {@code INSERT}, {@code UPDATE} or {@code DELETE} statements made by this {@link NotifiableResult}'s originator jSQL
+       * {@code execute(...)} method.
+       *
+       * @param timeout The maximum time to wait (in milliseconds) until this method should abort waiting for the NOTIFY callback and
+       *          return {@code false}.
+       * @return {@code true} if no {@code NOTIFY} callbacks are expected, or if all expected {@code NOTIFY} callbacks are received;
+       *         otherwise {@code false} if not all {@code NOTIFY} callbacks are received before the expiration of the provided
+       *         {@code timeout}.
+       * @throws InterruptedException If any thread interrupted the current thread before or while the current thread was waiting for a
+       *           notification. The interrupted status of the current thread is cleared when this exception is thrown.
+       */
       public abstract boolean awaitNotify(long timeout) throws InterruptedException;
+      abstract String[] getSessionId();
     }
 
     public static class NotifiableBatchResult extends NotifiableResult {
