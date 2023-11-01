@@ -35,11 +35,17 @@ public class RevertCommitTest {
   private static final String OLD = "old";
   private static final String UPD = "upd";
 
+  static void assertCued(final boolean expected, final String name, final data.Column<?> c) {
+    assertEquals(name, expected, c.cued());
+    assertEquals(name, expected, c.cuedByUser());
+    assertFalse(name, c.cuedBySystem());
+  }
+
   public <V> void test(final data.Column<V> c, final V v1, final V v2, final V v3) {
     final String name = c.getClass().getSimpleName();
     assertTrue(name, c.isNull());
     assertNull(name, c.get());
-    assertFalse(name, c.cued());
+    assertCued(false, name, c);
 
     assertTrue(name, c.set(v1));
     assertEquals(CUR, callback.toString());
@@ -50,7 +56,7 @@ public class RevertCommitTest {
     assertFalse(name, c.set(v1));
     assertEquals(null, callback.toString());
     assertFalse(name, c.isNull());
-    assertTrue(name, c.cued());
+    assertCued(true, name, c);
     assertEquals(name, v1, c.get());
 
     c.revert();
@@ -58,7 +64,7 @@ public class RevertCommitTest {
     assertFalse(name, c.changed);
     assertTrue(name, c.isNull());
     assertNull(name, c.get());
-    assertFalse(name, c.cued());
+    assertCued(false, name, c);
 
     assertTrue(name, c.set(v1));
     assertEquals(CUR, callback.toString());
@@ -66,8 +72,7 @@ public class RevertCommitTest {
     assertFalse(name, c.set(v1));
     assertEquals(null, callback.toString());
     assertFalse(name, c.isNull());
-    assertTrue(name, c.cued());
-    assertTrue(name, c.cued());
+    assertCued(true, name, c);
     assertEquals(name, v1, c.get());
 
     c._commitEntity$();
@@ -77,7 +82,7 @@ public class RevertCommitTest {
     assertEquals(CUR, callback.toString());
     assertFalse(name, c.changed);
     assertFalse(name, c.isNull());
-    assertTrue(name, c.cued());
+    assertCued(true, name, c);
     assertEquals(name, v1, c.get());
 
     assertTrue(name, c.set(v2));
@@ -93,13 +98,13 @@ public class RevertCommitTest {
     assertFalse(name, c.set(v2));
     assertEquals(null, callback.toString());
     assertFalse(name, c.isNull());
-    assertTrue(name, c.cued());
+    assertCued(true, name, c);
     assertEquals(name, v2, c.get());
 
     c.revert();
     assertFalse(name, c.changed);
     assertFalse(name, c.isNull());
-    assertTrue(name, c.cued());
+    assertCued(true, name, c);
     assertEquals(name, v1, c.get());
   }
 

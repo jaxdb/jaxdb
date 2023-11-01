@@ -2059,12 +2059,34 @@ public final class data {
     }
 
     /**
-     * Returns {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE},
-     * and {@code DELETE} statements, otherwise {@code false}.
+     * Returns {@code true} if this {@link Column}'s value was cued (by {@link SetBy#USER user}) to be considered in {@code SELECT},
+     * {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
      *
-     * @return {@code true} if this {@link Column}'s value was cued to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE},
-     *         and {@code DELETE} statements., otherwise {@code false}.
-     * @implNote A {@link Column}'s value may be cued by either the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system}.
+     * @return {@code true} if this {@link Column}'s value was cued (by {@link SetBy#USER user}) to be considered in {@code SELECT},
+     *         {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     */
+    public final boolean cuedByUser() {
+      return setByCur == SetBy.USER;
+    }
+
+    /**
+     * Returns {@code true} if this {@link Column}'s value was cued (by {@link SetBy#SYSTEM system}) to be considered in {@code SELECT},
+     * {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     *
+     * @return {@code true} if this {@link Column}'s value was cued (by {@link SetBy#SYSTEM system}) to be considered in {@code SELECT},
+     *         {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     */
+    public final boolean cuedBySystem() {
+      return setByCur == SetBy.SYSTEM;
+    }
+
+    /**
+     * Returns {@code true} if this {@link Column}'s value was cued (by the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system})
+     * to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     *
+     * @return {@code true} if this {@link Column}'s value was cued (by the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system})
+     *         to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise
+     *         {@code false}.
      */
     public final boolean cued() {
       return setByCur != null;
@@ -5649,25 +5671,52 @@ public final class data {
     protected final String toString(final boolean wasCuedOnly) {
       final StringBuilder s = new StringBuilder();
       toString(wasCuedOnly, s);
-
       if (s.length() > 0)
         s.setCharAt(0, '{');
       else
         s.append('{');
 
-      s.append('}');
-
-      return s.toString();
+      return s.append('}').toString();
     }
 
     /**
-     * Returns {@code true} if any {@link Column} in this {@link Table} was cued to be considered in {@code SELECT}, {@code INSERT},
-     * {@code UPDATE}, and {@code DELETE} statements, otherwise {@code false}.
+     * Returns {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#USER user}) to be
+     * considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
      *
-     * @return {@code true} if any {@link Column} in this {@link Table} was cued to be considered in {@code SELECT}, {@code INSERT},
-     *         {@code UPDATE}, and {@code DELETE} statements., otherwise {@code false}.
-     * @implNote A {@link Column}'s value may be cued by either the {@link Column.SetBy#USER user} or the {@link Column.SetBy#SYSTEM
-     *           system}.
+     * @return {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#USER user}) to be
+     *         considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     */
+    public final boolean cuedByUser() {
+      for (final Column<?> column : _column$) // [A]
+        if (column.cuedByUser())
+          return true;
+
+      return false;
+    }
+
+    /**
+     * Returns {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#SYSTEM system}) to be
+     * considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     *
+     * @return {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#SYSTEM system}) to be
+     *         considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     */
+    public final boolean cuedBySystem() {
+      for (final Column<?> column : _column$) // [A]
+        if (column.cuedBySystem())
+          return true;
+
+      return false;
+    }
+
+    /**
+     * Returns {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#USER user} or the
+     * {@link Column.SetBy#SYSTEM system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE}
+     * statements; otherwise {@code false}.
+     *
+     * @return {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#USER user} or the
+     *         {@link Column.SetBy#SYSTEM system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and
+     *         {@code DELETE} statements; otherwise {@code false}.
      */
     public final boolean cued() {
       for (final Column<?> column : _column$) // [A]

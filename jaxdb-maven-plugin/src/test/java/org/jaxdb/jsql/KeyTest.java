@@ -16,6 +16,7 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.RevertCommitTest.*;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
@@ -117,28 +118,28 @@ public class KeyTest {
 
     assertTrue(c.isNull());
     assertTrue(c.isNullOld());
-    assertFalse(c.cued());
+    assertCued(false, null, c);
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
 
     assertFalse(c.setIfNotNull(null));
     assertTrue(c.isNull());
     assertTrue(c.isNullOld());
-    assertFalse(c.cued());
+    assertCued(false, null, c);
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
 
     assertFalse(c.setIfNotEqual(null));
     assertTrue(c.isNull());
     assertTrue(c.isNullOld());
-    assertFalse(c.cued());
+    assertCued(false, null, c);
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
 
     assertFalse(c.setIfNotNullOrEqual(null));
     assertTrue(c.isNull());
     assertTrue(c.isNullOld());
-    assertFalse(c.cued());
+    assertCued(false, null, c);
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
 
@@ -146,7 +147,7 @@ public class KeyTest {
     assertFalse(c.changed);
     assertTrue(c.isNull());
     assertTrue(c.isNullOld());
-    assertTrue(c.cued());
+    assertCued(true, null, c);
     assertEquals(data.Column.SetBy.USER, c.setByCur);
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
@@ -155,7 +156,7 @@ public class KeyTest {
     assertFalse(c.changed);
     assertTrue(c.isNull());
     assertTrue(c.isNullOld());
-    assertTrue(c.cued());
+    assertCued(true, null, c);
     assertEquals(data.Column.SetBy.USER, c.setByCur);
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
@@ -164,7 +165,7 @@ public class KeyTest {
     assertFalse(c.changed);
     assertTrue(c.isNull());
     assertTrue(c.isNullOld());
-    assertTrue(c.cued());
+    assertCued(true, null, c);
     assertEquals(data.Column.SetBy.USER, c.setByCur);
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
@@ -211,7 +212,7 @@ public class KeyTest {
     else
       assertTrue(ObjectUtil.equals(v, c.getOld()));
 
-    assertFalse(c.cued());
+    assertCued(false, null, c);
     assertNull(c.setByCur);
     assertNotNull(t._primaryKeyImmutable$);
     assertNotNull(t._primaryKeyOldImmutable$);
@@ -225,7 +226,7 @@ public class KeyTest {
       else
         assertTrue(ObjectUtil.equals(v, c.getOld()));
 
-      assertTrue(c.cued());
+      assertCued(true, null, c);
       assertEquals(data.Column.SetBy.USER, c.setByCur);
       assertEquals(i == 0, t._primaryKeyImmutable$ == null);
       assertEquals(i == 0 && isFirst, t._primaryKeyOldImmutable$ == null); // Because SetByOld is null
@@ -241,14 +242,14 @@ public class KeyTest {
       assertTrue(ObjectUtil.equals(v, c.get()));
 
       assertNull(c.setByCur);
-      assertFalse(c.cued());
+      assertCued(false, null, c);
       assertNotNull(t._primaryKeyImmutable$);
       assertNotNull(t._primaryKeyOldImmutable$);
 
       assertFalse(c.setIfNotNullOrEqual(v));
       assertTrue(ObjectUtil.equals(v, c.get()));
       assertNull(c.setByCur);
-      assertFalse(c.cued());
+      assertCued(false, null, c);
       assertNotNull(t._primaryKeyImmutable$);
       assertNotNull(t._primaryKeyOldImmutable$);
       c.setByCur = data.Column.SetBy.USER;
