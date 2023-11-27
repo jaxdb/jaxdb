@@ -58,7 +58,6 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyComposite;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyComposite.Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyUnary;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
@@ -210,7 +209,7 @@ class TableModel {
           final TableModel referenceTable = schemaModel.tableNameToTableModel.get(foreignKeyComposite.getReferences$().text());
           final ColumnModels columns = new ColumnModels(this, 2);
           final ColumnModels referenceColumns = new ColumnModels(this, 2);
-          final BindingList<Column> foreignKeyColumns = foreignKeyComposite.getColumn();
+          final BindingList<$ForeignKeyComposite.Column> foreignKeyColumns = foreignKeyComposite.getColumn();
           final int j$ = foreignKeyColumns.size();
           for (int j = 0; j < j$; ++j) { // [RA]
             final $ForeignKeyComposite.Column foreignKeyColumn = foreignKeyColumns.get(j);

@@ -22,7 +22,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.jaxdb.jsql.data.Table;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.util.DiscreteTopology;
 
@@ -184,7 +183,7 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
   }
 
-  Condition(final data.Table owner, final boolean mutable, final OnModify<? extends Table> onModify) {
+  Condition(final data.Table owner, final boolean mutable, final OnModify<? extends data.Table> onModify) {
     super(owner, mutable, onModify);
   }
 

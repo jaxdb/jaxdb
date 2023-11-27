@@ -40,17 +40,17 @@ final class ExpressionImpl {
 
     @Override
     LocalTime evaluate(final LocalTime a) {
-      return this.b.toTimeInterval().addTo(a);
+      return b.toTimeInterval().addTo(a);
     }
 
     @Override
     LocalDate evaluate(final LocalDate a) {
-      return this.b.toDateInterval().addTo(a);
+      return b.toDateInterval().addTo(a);
     }
 
     @Override
     LocalDateTime evaluate(final LocalDateTime a) {
-      return this.b.addTo(a);
+      return b.addTo(a);
     }
   }
 
@@ -70,17 +70,17 @@ final class ExpressionImpl {
 
     @Override
     LocalTime evaluate(final LocalTime a) {
-      return this.b.toTimeInterval().subtractFrom(a);
+      return b.toTimeInterval().subtractFrom(a);
     }
 
     @Override
     LocalDate evaluate(final LocalDate a) {
-      return this.b.toDateInterval().subtractFrom(a);
+      return b.toDateInterval().subtractFrom(a);
     }
 
     @Override
     LocalDateTime evaluate(final LocalDateTime a) {
-      return this.b.subtractFrom(a);
+      return b.subtractFrom(a);
     }
   }
 

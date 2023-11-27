@@ -24,7 +24,7 @@ abstract class Statement {
   }
 
   String getSql() {
-    return this.sql;
+    return sql;
   }
 
   @Override

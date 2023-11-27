@@ -34,7 +34,6 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Char;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ColumnIndex;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Columns;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Date;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Datetime;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Decimal;
@@ -43,8 +42,6 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyComposite;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$ForeignKeyUnary;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexesIndex;
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexesIndex.Unique$;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$PrimaryKey;
@@ -260,36 +257,6 @@ public class DDLx {
       if (table.getExtends$() != null)
         throw new IllegalStateException("Input schema is not merged");
     }
-  }
-
-  // FIXME: Remove this.
-  public boolean isUnique(final Table table, final $Named column) {
-    final Table.Constraints constraints = table.getConstraints();
-    if (constraints != null) {
-      final BindingList<$Columns> uniques = constraints.getUnique();
-      if (uniques != null) {
-        for (int i = 0, i$ = uniques.size(); i < i$; ++i) { // [RA]
-          final $Columns unique = uniques.get(i);
-          if (unique.getColumn().size() == 1 && column.getName$().text().equals(unique.getColumn(0).getName$().text()))
-            return true;
-        }
-      }
-    }
-
-    final Table.Indexes tableIndexes = table.getIndexes();
-    if (tableIndexes != null) {
-      final BindingList<$IndexesIndex> indexes = tableIndexes.getIndex();
-      if (indexes != null) {
-        for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
-          final $IndexesIndex index = indexes.get(i);
-          final Unique$ unique$ = index.getUnique$();
-          if (unique$ != null && unique$.text() && index.getColumn().size() == 1 && column.getName$().text().equals(index.getColumn(0).getName$().text()))
-            return true;
-        }
-      }
-    }
-
-    return false;
   }
 
   public void recreate(final Connection connection) throws GeneratorExecutionException, SQLException {

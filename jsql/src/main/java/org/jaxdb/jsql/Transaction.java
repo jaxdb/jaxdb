@@ -43,7 +43,7 @@ public class Transaction implements AutoCloseable {
     }
 
     public int getLevel() {
-      return this.level;
+      return level;
     }
   }
 
@@ -132,9 +132,20 @@ public class Transaction implements AutoCloseable {
     }
   }
 
+  /**
+   * Commits all changes made since the previous commit/rollback, releases any database locks currently held by this
+   * {@link Transaction}'s {@link Connection}, and returns a {@link NotifiableBatchResult}.
+   *
+   * @return The {@link NotifiableBatchResult} of the commit.
+   * @throws SQLException If a database access error occurs, this method is called while participating in a distributed transaction,
+   *           or this method is called on a closed connection.
+   */
   public NotifiableBatchResult commit() throws SQLException {
-    if (connection == null)
+    if (closed)
       throw new SQLRecoverableException("Connection closed");
+
+    if (connection == null)
+      return NotifiableBatchResult.EMPTY;
 
     try {
       connection.commit();
@@ -152,9 +163,19 @@ public class Transaction implements AutoCloseable {
     }
   }
 
+  /**
+   * Undoes all changes made in the current transaction and releases any database locks currently held by this {@link Transaction}'s
+   * {@link Connection}.
+   *
+   * @throws SQLException If a database access error occurs, this method is called while participating in a distributed transaction,
+   *           or this method is called on a closed connection.
+   */
   public void rollback() throws SQLException {
-    if (connection == null)
+    if (closed)
       throw new SQLRecoverableException("Connection closed");
+
+    if (connection == null)
+      return;
 
     try {
       connection.rollback();
@@ -172,17 +193,19 @@ public class Transaction implements AutoCloseable {
    * encountered during the rollback operation, the thrown exception is added as a {@link Throwable#addSuppressed(Throwable)
    * suppressed exception} to the provided {@link Throwable}.
    *
-   * @implNote This method should be used only when auto-commit mode has been disabled.
    * @param t The {@link Throwable} to which any thrown exceptions should be added as {@link Throwable#addSuppressed(Throwable)
    *          suppressed exceptions}.
    * @return The {@code boolean} value representing the success of the rollback.
    * @throws NullPointerException If {@code t} is null.
    */
   public boolean rollback(final Throwable t) {
-    if (connection == null) {
+    if (closed) {
       assertNotNull(t).addSuppressed(new SQLRecoverableException("Connection closed"));
       return false;
     }
+
+    if (connection == null)
+      return false;
 
     try {
       connection.rollback();

@@ -30,14 +30,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.function.Supplier;
 
-import org.jaxdb.jsql.data.Column;
 import org.junit.Test;
 import org.libj.lang.ObjectUtil;
 
 public class KeyTest {
   private static class MockTable extends data.Table {
     MockTable() {
-      super(true, false, new Column[1], new Column[1], new Column[0], new Column[0]);
+      super(true, false, new data.Column[1], new data.Column[1], new data.Column[0], new data.Column[0]);
     }
 
     @Override

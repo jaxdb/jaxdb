@@ -60,7 +60,7 @@ public abstract class Schema {
 
   public Connector connect(final ConnectionFactory connectionFactory, final boolean isPrepared) {
     this.isPrepared = isPrepared;
-    return this.connector = new Connector(this, connectionFactory, isPrepared);
+    return connector = new Connector(this, connectionFactory, isPrepared);
   }
 
   public Connector connect(final DataSource dataSource, final boolean isPrepared) {

@@ -19,9 +19,9 @@ package org.jaxdb.vendor;
 import java.util.function.Supplier;
 import java.util.zip.CRC32;
 
-import org.jaxdb.www.ddlx_0_6.xLygluGCXAA;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Name;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Triggers;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 
@@ -66,7 +66,7 @@ public abstract class DbVendorCompiler {
     return constraintName;
   }
 
-  protected final StringBuilder getConstraintName(final String prefix, final Schema.Table table, final xLygluGCXAA.$Name references, final int[] columnIndexes) {
+  protected final StringBuilder getConstraintName(final String prefix, final Schema.Table table, final $Name references, final int[] columnIndexes) {
     final StringBuilder builder = new StringBuilder(table.getName$().text());
     if (references != null)
       builder.append('_').append(references.text());

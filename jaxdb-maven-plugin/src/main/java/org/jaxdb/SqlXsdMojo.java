@@ -44,7 +44,7 @@ public class SqlXsdMojo extends JaxDbMojo<SqlXsdProduce> {
     }
 
     LinkedHashSet<URL> getXsds() {
-      return this.xsds;
+      return xsds;
     }
   }
 

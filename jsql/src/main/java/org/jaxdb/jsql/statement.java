@@ -439,6 +439,8 @@ public final class statement {
     }
 
     public static class NotifiableBatchResult extends NotifiableResult {
+      static final NotifiableBatchResult EMPTY = new NotifiableBatchResult(0, null);
+
       private final ArrayList<OnNotifyCallbackList> onNotifyCallbackLists;
       private String[] sessionIds;
 

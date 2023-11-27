@@ -52,6 +52,6 @@ public class StatementBatch {
   }
 
   public LinkedHashSet<Statement> getStatements() {
-    return this.statements;
+    return statements;
   }
 }

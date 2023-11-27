@@ -55,7 +55,7 @@ public class dt {
     }
 
     public T get() {
-      return this.value;
+      return value;
     }
 
     @Override
