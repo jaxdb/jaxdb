@@ -18,7 +18,7 @@
 
 ### Prerequisites
 
-* [Java 9][jdk9-download] - The minimum required JDK version. Java 9 is required due to framework triggering issue [JEP 215: Tiered Attribution for javac][jep215] in Java 8.
+* [Java][jdk-download] - The minimum required JDK version is Java 9, due to framework triggering issue [JEP 215: Tiered Attribution for javac][jep215] in Java 8.
 * [Maven][maven] - The dependency management system.
 
 ### Example
@@ -86,10 +86,12 @@
    public static example.Account findAccount(String email) throws SQLException {
      example.Account a = new example.Account();
      try (RowIterator<example.Account> rows =
+
        SELECT(a).
        FROM(a).
        WHERE(EQ(a.email, email))
          .execute()) {
+
        return rows.nextRow() ? rows.nextEntity() : null;
      }
    }
@@ -98,41 +100,43 @@
 1. To run the code, you must now connect <ins>jSQL</ins> to your database. <ins>jSQL</ins> relies on the [`dbcp`][dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
 
    ```xml
-   <dbcp name="example"
-     xmlns="http://www.openjax.org/dbcp-1.1.xsd"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.openjax.org/dbcp-1.1.xsd http://www.openjax.org/dbcp.xsd">
-     <jdbc>
-       <url>jdbc:postgresql://localhost/example?user=example&amp;password=example</url>
-       <driverClassName>org.postgresql.Driver</driverClassName>
-     </jdbc>
-     <default>
-       <autoCommit>true</autoCommit>
-       <readOnly>false</readOnly>
-       <transactionIsolation>READ_UNCOMMITTED</transactionIsolation>
-       <queryTimeout>1000</queryTimeout>
-     </default>
-     <size>
-       <initialSize>0</initialSize>
-       <maxTotal>16</maxTotal>
-       <maxIdle>16</maxIdle>
-       <minIdle>0</minIdle>
-       <maxOpenPreparedStatements>10</maxOpenPreparedStatements>
-     </size>
-     <pool>
-       <eviction>
-         <timeBetweenRuns>30</timeBetweenRuns>
-         <numTestsPerRun>3</numTestsPerRun>
-         <minIdleTime>1800000</minIdleTime>
-       </eviction>
-       <removeAbandoned on="borrow" timeout="300"/>
-     </pool>
-     <logging>
-       <level>TRACE</level>
-       <logExpiredConnections>true</logExpiredConnections>
-       <logAbandoned>true</logAbandoned>
-     </logging>
-   </dbcp>
+   <dbcp id="example"
+    xmlns="http://www.openjax.org/dbcp-1.2.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openjax.org/dbcp-1.2.xsd http://www.openjax.org/dbcp.xsd">
+    <jdbc>
+      <url>jdbc:postgresql://localhost/example?user=example&amp;password=example</url>
+      <driverClassName>org.postgresql.Driver</driverClassName>
+    </jdbc>
+    <default>
+      <autoCommit>true</autoCommit>
+      <readOnly>false</readOnly>
+      <transactionIsolation>READ_UNCOMMITTED</transactionIsolation>
+      <queryTimeout>1000</queryTimeout>
+    </default>
+    <size>
+      <initialSize>0</initialSize>
+      <maxTotal>16</maxTotal>
+      <maxIdle>16</maxIdle>
+      <minIdle>0</minIdle>
+      <poolPreparedStatements>
+        <maxOpen>10</maxOpen>
+      </poolPreparedStatements>
+    </size>
+    <pool>
+      <eviction>
+        <timeBetweenRuns>30</timeBetweenRuns>
+        <numTestsPerRun>3</numTestsPerRun>
+        <minIdleTime>1800000</minIdleTime>
+      </eviction>
+      <removeAbandoned on="borrow" timeout="300"/>
+    </pool>
+    <logging>
+      <level>TRACE</level>
+      <logExpiredConnections>true</logExpiredConnections>
+      <logAbandoned>true</logAbandoned>
+    </logging>
+  </dbcp>
    ```
 
 1. Add [`org.openjax:dbcp`][dbcp] dependency to the POM.
@@ -148,7 +152,7 @@
 1. In the beginning of the `main()` method in `App.java`, initialize the <ins>jSQL</ins> `Registry`.
 
    ```java
-   Dbcp dbcp = JaxbUtil.parse(Dbcp.class, ClassLoader.getSystemClassLoader().getResource("dbcp.xml").openStream()));
+   Dbcp dbcp = JaxbUtil.parse(Dbcp.class, ClassLoader.getSystemClassLoader().getResource("dbcp.xml").openStream());
    DataSource dataSource = DataSources.createDataSource(dbcp);
    Registry.registerPreparedBatching(example.class, new Connector() {
      @Override
@@ -162,7 +166,7 @@
 
 ## Known Issues
 
-* To model the strong-typed relation amongst the `Column`s, the <ins>jSQL</ins> framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
+* To model the strong-typed relation amongst the `Column`s, the <ins>jSQL</ins> framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of `javac` that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
 
 ## Releases (Supported Vendors)
 
@@ -559,10 +563,10 @@ Please make sure to update tests as appropriate.
 
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[dbcp.xsd]: /../../../../openjax/dbcp/src/main/resources/dbcp.xsd
+[dbcp.xsd]: http://www.openjax.org/dbcp.xsd
 [dbcp]: /../../../../openjax/dbcp
 [ddlx-example]: /ddlx#example
-[jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
+[jdk-download]: https://www.oracle.com/java/technologies/downloads/
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
 [maven]: https://maven.apache.org/
 [jaxdb-maven-plugin]: /jaxdb-maven-plugin
