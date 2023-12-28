@@ -61,8 +61,8 @@ public final class Generator {
     System.err.println("Usage: Generator <-d DEST_DIR> <-v VENDOR> <SCHEMA.ddlx>");
     System.err.println();
     System.err.println("Mandatory arguments:");
-    System.err.println("  -v <VENDOR>        One of: <" + ArrayUtil.toString(DbVendor.values(), "|") + ">");
-    System.err.println("  -d <DEST_DIR>      Specify the destination directory.");
+    System.err.println("  -v <VENDOR>    One of: <" + ArrayUtil.toString(DbVendor.values(), "|") + ">");
+    System.err.println("  -d <DEST_DIR>  Specify the destination directory.");
     System.exit(1);
   }
 
@@ -218,7 +218,7 @@ public final class Generator {
     statements.addAll(createStatements);
 
     statements.addAll(compiler.triggers(table));
-    statements.addAll(compiler.indexes(table, columnNameToColumn));
+    statements.addAll(compiler.indexes(table));
     return statements;
   }
 

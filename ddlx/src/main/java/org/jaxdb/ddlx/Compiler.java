@@ -349,18 +349,18 @@ abstract class Compiler extends DbVendorCompiler {
         for (int i = 0; i < i$; ++i) { // [RA]
           final $Columns unique = uniques.get(i);
           final List<? extends $Named> columns = unique.getColumn();
-          final int[] columnIndexes = new int[columns.size()];
+          final String[] columnNames = new String[columns.size()];
           for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
             if (j > 0)
               uniqueBuilder.append(", ");
 
             final String columnName = columns.get(j).getName$().text();
             q(uniqueBuilder, columnName);
-            columnIndexes[j] = columnNameToColumn.get(columnName).index;
+            columnNames[j] = columnName;
           }
 
           uniqueString.append(",\n  CONSTRAINT ");
-          q(uniqueString, getConstraintName("uq", table, null, columnIndexes)).append(" UNIQUE (").append(uniqueBuilder).append(')');
+          q(uniqueString, getConstraintName("uq", table, null, columnNames)).append(" UNIQUE (").append(uniqueBuilder).append(')');
           uniqueBuilder.setLength(0);
         }
 
@@ -394,7 +394,7 @@ abstract class Compiler extends DbVendorCompiler {
         for (int k = 0, k$ = foreignKeyComposites.size(); k < k$; ++k) { // [RA]
           final $ForeignKeyComposite foreignKeyComposite = foreignKeyComposites.get(k);
           final List<$ForeignKeyComposite.Column> columns = foreignKeyComposite.getColumn();
-          final int[] columnIndexes = new int[columns.size()];
+          final String[] columnNames = new String[columns.size()];
           final StringBuilder foreignKeyColumns = new StringBuilder();
           final StringBuilder foreignKeyReferences = new StringBuilder();
           for (int l = 0, l$ = columns.size(); l < l$; ++l) { // [RA]
@@ -407,10 +407,10 @@ abstract class Compiler extends DbVendorCompiler {
             final String columnName = column.getName$().text();
             q(foreignKeyColumns, columnName);
             q(foreignKeyReferences, column.getReferences$().text());
-            columnIndexes[l] = columnNameToColumn.get(columnName).index;
+            columnNames[l] = columnName;
           }
 
-          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columnIndexes)).append(" (").append(foreignKeyColumns);
+          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columnNames)).append(" (").append(foreignKeyColumns);
           constraintsBuilder.append(") REFERENCES ");
           q(constraintsBuilder, foreignKeyComposite.getReferences$().text());
           constraintsBuilder.append(" (").append(foreignKeyReferences).append(')');
@@ -426,8 +426,9 @@ abstract class Compiler extends DbVendorCompiler {
         final $ForeignKeyUnary foreignKey = DDLx.getForeignKey(column);
         if (foreignKey != null) {
           final References$ references$ = foreignKey.getReferences$();
-          constraintsBuilder.append(",\n  ").append(foreignKey(table, references$, c)).append(" (");
-          q(constraintsBuilder, column.getName$().text());
+          final String columnName = column.getName$().text();
+          constraintsBuilder.append(",\n  ").append(foreignKey(table, references$, columnName)).append(" (");
+          q(constraintsBuilder, columnName);
           constraintsBuilder.append(") REFERENCES ");
           q(constraintsBuilder, references$.text());
           constraintsBuilder.append(" (");
@@ -497,24 +498,24 @@ abstract class Compiler extends DbVendorCompiler {
           maxCheck = max$ != null ? String.valueOf(max$.text()) : null;
         }
 
-        final $Named.Name$ name$ = column.getName$();
+        final String columnName = column.getName$().text();
         if (minCheck != null) {
           if (maxCheck != null) {
             constraintsBuilder.append(",\n  ");
-            check(constraintsBuilder, table, c, Operator.GTE, minCheck, Operator.LTE, maxCheck).append(" (");
-            q(constraintsBuilder, name$.text()).append(" >= ").append(minCheck).append(" AND ");
-            q(constraintsBuilder, name$.text()).append(" <= ").append(maxCheck).append(')');
+            check(constraintsBuilder, table, columnName, Operator.GTE, minCheck, Operator.LTE, maxCheck).append(" (");
+            q(constraintsBuilder, columnName).append(" >= ").append(minCheck).append(" AND ");
+            q(constraintsBuilder, columnName).append(" <= ").append(maxCheck).append(')');
           }
           else {
             constraintsBuilder.append(",\n  ");
-            check(constraintsBuilder, table, c, Operator.GTE, minCheck, null, null).append(" (");
-            q(constraintsBuilder, name$.text()).append(" >= ").append(minCheck).append(')');
+            check(constraintsBuilder, table, columnName, Operator.GTE, minCheck, null, null).append(" (");
+            q(constraintsBuilder, columnName).append(" >= ").append(minCheck).append(')');
           }
         }
         else if (maxCheck != null) {
           constraintsBuilder.append(",\n  ");
-          check(constraintsBuilder, table, c, Operator.LTE, maxCheck, null, null).append(" (");
-          q(constraintsBuilder, name$.text()).append(" <= ").append(maxCheck).append(')');
+          check(constraintsBuilder, table, columnName, Operator.LTE, maxCheck, null, null).append(" (");
+          q(constraintsBuilder, columnName).append(" <= ").append(maxCheck).append(')');
         }
       }
 
@@ -588,18 +589,19 @@ abstract class Compiler extends DbVendorCompiler {
           }
         }
 
+        final String columnName = column.getName$().text();
         if (operator != null) {
           if (condition != null) {
             constraintsBuilder.append(",\n  ");
-            check(constraintsBuilder, table, c, operator, condition, null, null).append(" (");
-            q(constraintsBuilder, column.getName$().text()).append(' ').append(operator.symbol).append(' ').append(condition).append(')');
+            check(constraintsBuilder, table, columnName, operator, condition, null, null).append(" (");
+            q(constraintsBuilder, columnName).append(' ').append(operator.symbol).append(' ').append(condition).append(')');
           }
           else {
-            throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
+            throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + columnName);
           }
         }
         else if (condition != null) {
-          throw new UnsupportedOperationException("Unsupported 'null' operator encountered on column '" + column.getName$().text());
+          throw new UnsupportedOperationException("Unsupported 'null' operator encountered on column '" + columnName);
         }
       }
     }
@@ -614,7 +616,7 @@ abstract class Compiler extends DbVendorCompiler {
     final StringBuilder key = new StringBuilder();
     final List<? extends $Named> columns = primaryKey.getColumn();
     final PrimaryKey.Using$ using = primaryKey.getUsing$();
-    final int[] columnIndexes = new int[columns.size()];
+    final String[] columnNames = new String[columns.size()];
     for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
       final $Named primaryColumn = columns.get(i);
       final String primaryKeyColumn = primaryColumn.getName$().text();
@@ -622,18 +624,19 @@ abstract class Compiler extends DbVendorCompiler {
       if (ref == null)
         throw new GeneratorExecutionException("PRIMARY KEY column " + table.getName$().text() + "." + primaryKeyColumn + " is not defined");
 
+      final String columnName = ref.column.getName$().text();
       if (ref.column.getNull$() == null || ref.column.getNull$().text())
-        throw new GeneratorExecutionException("Column " + ref.column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
+        throw new GeneratorExecutionException("Column " + columnName + " must be NOT NULL to be a PRIMARY KEY");
 
       if (i > 0)
         key.append(", ");
 
       q(key, primaryKeyColumn);
-      columnIndexes[i] = ref.index;
+      columnNames[i] = columnName;
     }
 
     b.append(",\n  ");
-    return primaryKey(b, table, columnIndexes, using).append(" (").append(key).append(')');
+    return primaryKey(b, table, columnNames, using).append(" (").append(key).append(')');
   }
 
   /**
@@ -641,11 +644,11 @@ abstract class Compiler extends DbVendorCompiler {
    *
    * @param table The {@link Table}.
    * @param references The optional "references" qualifier.
-   * @param columns The indexes of the columns comprising the "FOREIGN KEY".
+   * @param columnNames The names of the columns comprising the "FOREIGN KEY".
    * @return The "FOREIGN KEY" keyword for the specified {@link Table}.
    */
-  StringBuilder foreignKey(final Table table, final xLygluGCXAA.$Name references, final int ... columns) {
-    return q(new StringBuilder("CONSTRAINT "), getConstraintName("fk", table, references, columns)).append(" FOREIGN KEY");
+  StringBuilder foreignKey(final Table table, final xLygluGCXAA.$Name references, final String ... columnNames) {
+    return q(new StringBuilder("CONSTRAINT "), getConstraintName("fk", table, references, columnNames)).append(" FOREIGN KEY");
   }
 
   /**
@@ -653,13 +656,13 @@ abstract class Compiler extends DbVendorCompiler {
    *
    * @param b The {@link StringBuilder}.
    * @param table The {@link Table}.
-   * @param columns The indexes of the columns comprising the "PRIMARY KEY".
+   * @param columnNames The names of the columns comprising the "PRIMARY KEY".
    * @param using The index type.
    * @return The "PRIMARY KEY" keyword for the specified {@link Table}.
    */
-  StringBuilder primaryKey(final StringBuilder b, final Table table, final int[] columns, final PrimaryKey.Using$ using) {
+  StringBuilder primaryKey(final StringBuilder b, final Table table, final String[] columnNames, final PrimaryKey.Using$ using) {
     b.append("CONSTRAINT ");
-    q(b, getConstraintName("pk", table, null, columns)).append(" PRIMARY KEY");
+    q(b, getConstraintName("pk", table, null, columnNames)).append(" PRIMARY KEY");
     if (using != null)
       b.append(" USING ").append(using.text().toUpperCase());
 
@@ -671,15 +674,15 @@ abstract class Compiler extends DbVendorCompiler {
    *
    * @param b The {@link StringBuilder}.
    * @param table The {@link Table}.
-   * @param column The index of the column on which the "CHECK" is to be declared.
+   * @param columnName The name of the column on which the "CHECK" is to be declared.
    * @param operator1 The first {@link Operator} of the constraint.
    * @param arg1 The first argument of the constraint.
    * @param operator2 The second {@link Operator} of the constraint.
    * @param arg2 The second argument of the constraint.
    * @return The "CHECK" keyword for the specified {@link Table}.
    */
-  StringBuilder check(final StringBuilder b, final Table table, final int column, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
-    final StringBuilder builder = getConstraintName(table, column);
+  StringBuilder check(final StringBuilder b, final Table table, final String columnName, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
+    final StringBuilder builder = getConstraintName(table, columnName);
     builder.append('_').append(operator1.desc).append('_').append(arg1);
     if (operator2 != null)
       builder.append('_').append(operator2.desc).append('_').append(arg2);
@@ -729,7 +732,7 @@ abstract class Compiler extends DbVendorCompiler {
     return new ArrayList<>();
   }
 
-  ArrayList<CreateStatement> indexes(final Table table, final Map<String,ColumnRef> columnNameToColumn) {
+  ArrayList<CreateStatement> indexes(final Table table) {
     final ArrayList<CreateStatement> statements = new ArrayList<>();
     final Table.Indexes tableIndexes = table.getIndexes();
     if (tableIndexes != null) {
@@ -737,13 +740,11 @@ abstract class Compiler extends DbVendorCompiler {
       for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
         final $IndexesIndex index = indexes.get(i);
         final List<? extends $Named> columns = index.getColumn();
-        final int[] columnIndexes = new int[columns.size()];
-        for (int c = 0, c$ = columns.size(); c < c$; ++c) { // [RA]
-          final $Named column = columns.get(c);
-          columnIndexes[c] = columnNameToColumn.get(column.getName$().text()).index;
-        }
+        final String[] columnNames = new String[columns.size()];
+        for (int c = 0, c$ = columns.size(); c < c$; ++c) // [RA]
+          columnNames[c] = columns.get(c).getName$().text();
 
-        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index.getType$(), columnIndexes), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
+        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index.getType$(), columnNames), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
         if (createIndex != null)
           statements.add(createIndex);
       }
@@ -755,7 +756,7 @@ abstract class Compiler extends DbVendorCompiler {
         final $Column column = columns.get(c);
         final $ColumnIndex index = DDLx.getIndex(column);
         if (index != null) {
-          final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index.getType$(), c), index.getType$(), table.getName$().text(), column);
+          final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index.getType$(), column.getName$().text()), index.getType$(), table.getName$().text(), column);
           if (createIndex != null)
             statements.add(createIndex);
         }

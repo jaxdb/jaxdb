@@ -28,6 +28,7 @@ import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$PrimaryKey;
+import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.$PrimaryKey.Column;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema;
 import org.jaxdb.www.ddlx_0_6.xLygluGCXAA.Schema.Table.Constraints.PrimaryKey;
 import org.jaxsb.runtime.BindingList;
@@ -95,8 +96,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final PrimaryKey.Using$ using) {
-    return super.primaryKey(b, table, columns, null);
+  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final String[] columnNames, final PrimaryKey.Using$ using) {
+    return super.primaryKey(b, table, columnNames, null);
   }
 
   @Override
@@ -113,8 +114,9 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   StringBuilder blockPrimaryKey(final StringBuilder b, final Schema.Table table, final $PrimaryKey primaryKey, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
-    if (primaryKey != null && primaryKey.getColumn().size() == 1) {
-      final ColumnRef ref = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
+    final BindingList<Column> columns;
+    if (primaryKey != null && (columns = primaryKey.getColumn()).size() == 1) {
+      final ColumnRef ref = columnNameToColumn.get(columns.get(0).getName$().text());
       if (Generator.isAuto(ref.column))
         return null;
     }

@@ -108,8 +108,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final int[] columns, final $PrimaryKey.Using$ using) {
-    return super.primaryKey(b, table, columns, null);
+  StringBuilder primaryKey(final StringBuilder b, final Schema.Table table, final String[] columnNames, final $PrimaryKey.Using$ using) {
+    return super.primaryKey(b, table, columnNames, null);
   }
 
   @Override

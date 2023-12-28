@@ -33,8 +33,8 @@ public abstract class DbVendorCompiler {
     return Long.toString(crc.getValue(), 16);
   }
 
-  protected static final StringBuilder getConstraintName(final Schema.Table table, final int columnIndex) {
-    return new StringBuilder(table.getName$().text()).append('_').append(columnIndex);
+  protected static final StringBuilder getConstraintName(final Schema.Table table, final String columnName) {
+    return new StringBuilder(table.getName$().text()).append('_').append(columnName);
   }
 
   private final DbVendor vendor;
@@ -66,13 +66,13 @@ public abstract class DbVendorCompiler {
     return constraintName;
   }
 
-  protected final StringBuilder getConstraintName(final String prefix, final Schema.Table table, final $Name references, final int[] columnIndexes) {
+  protected final StringBuilder getConstraintName(final String prefix, final Schema.Table table, final $Name references, final String[] columnNames) {
     final StringBuilder builder = new StringBuilder(table.getName$().text());
     if (references != null)
       builder.append('_').append(references.text());
 
-    for (int i = 0, i$ = columnIndexes.length; i < i$; ++i) // [A]
-      builder.append('_').append(columnIndexes[i]);
+    for (int i = 0, i$ = columnNames.length; i < i$; ++i) // [A]
+      builder.append('_').append(columnNames[i]);
 
     return getConstraintName(prefix, builder);
   }
@@ -93,14 +93,14 @@ public abstract class DbVendorCompiler {
     return getConstraintName("tr", new StringBuilder(tableName).append('_').append(trigger.getTime$().text().toLowerCase()).append('_').append(action.toLowerCase()));
   }
 
-  protected final String getIndexName(final Schema.Table table, final $IndexType indexType, final int ... columnIndexes) {
-    if (columnIndexes.length == 0)
+  protected final String getIndexName(final Schema.Table table, final $IndexType indexType, final String ... columnNames) {
+    if (columnNames.length == 0)
       return null;
 
     final StringBuilder builder = new StringBuilder(indexType.text().substring(0, 2).toLowerCase());
     builder.append('_').append(table.getName$().text());
-    for (int i = 0, i$ = columnIndexes.length; i < i$; ++i) // [A]
-      builder.append('_').append(columnIndexes[i]);
+    for (int i = 0, i$ = columnNames.length; i < i$; ++i) // [A]
+      builder.append('_').append(columnNames[i]);
 
     return getConstraintName("id", builder).toString();
   }
