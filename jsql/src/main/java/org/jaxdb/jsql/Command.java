@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
 
 import org.jaxdb.jsql.Callbacks.OnCommit;
@@ -446,7 +447,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -1091,7 +1092,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -1261,7 +1262,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -1431,7 +1432,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -1601,7 +1602,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -1771,7 +1772,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -1941,7 +1942,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -2111,7 +2112,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -2281,7 +2282,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -2451,7 +2452,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -2621,7 +2622,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -2791,7 +2792,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -2961,7 +2962,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -3135,7 +3136,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -3305,7 +3306,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -3475,7 +3476,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -3645,7 +3646,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -3815,7 +3816,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -3985,7 +3986,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -4155,7 +4156,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -4325,7 +4326,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -4495,7 +4496,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -4665,7 +4666,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -4835,7 +4836,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         public D AS(final D as) {
-          ((data.Entity)as).wrap(new As<D>(this, as, true));
+          ((data.Entity)as).wrap(new As<>(this, as, true));
           return as;
         }
 
@@ -5126,6 +5127,11 @@ abstract class Command<E> extends Keyword implements Closeable {
       @Override
       final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
         root.compile(compilation, isExpression);
+      }
+
+      @Override
+      Object evaluate(final Set<Evaluable> visited) {
+        return this.value.get();
       }
     }
 
