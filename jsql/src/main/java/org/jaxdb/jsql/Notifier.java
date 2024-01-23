@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -294,16 +294,21 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     connection.setAutoCommit(true);
 
     this.thread = new Thread("JAXDB-Notify") {
+      @SuppressWarnings("resource")
       private void flushQueues() {
         if (logger.isTraceEnabled()) { logger.trace("JAXDB-Notify Thread.flushQueues()"); }
 
-        final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
-        if (tableNotifiers.size() > 0) {
+        final ArrayList<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
+        final int size = tableNotifiers.size();
+        if (size > 0) {
           Notification<?> notification = null;
           try {
-            for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
-              while ((notification = tableNotifier.queue.poll()) != null)
+            int i = 0;
+            do { // [RA]
+              while ((notification = tableNotifiers.get(i).queue.poll()) != null)
                 notification.invoke();
+            }
+            while (++i < size);
           }
           catch (final Exception e) {
             if (logger.isErrorEnabled()) { logger.error("Uncaught exception in Notifier.flushQueues(): " + notification, e); }
@@ -402,17 +407,45 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   }
 
-  private final HashMap<String,TableNotifier<?>> tableNameToNotifier = new HashMap<String,TableNotifier<?>>() {
+  private class TableNameToNotifier extends HashMap<String,TableNotifier<?>> {
+    private final ArrayList<TableNotifier<?>> values;
+
+    TableNameToNotifier(final int initialCapacity) {
+      super(initialCapacity);
+      this.values = new ArrayList<>(initialCapacity);
+    }
+
+    @Override
+    public TableNotifier<?> put(final String key, final TableNotifier<?> value) {
+      values.add(value);
+      return super.put(key, value);
+    }
+
+    @Override
+    public TableNotifier<?> remove(final Object key) {
+      final TableNotifier<?> value = super.remove(key);
+      if (value != null)
+        values.remove(value);
+
+      return value;
+    }
+
+    @Override
+    public ArrayList<TableNotifier<?>> values() {
+      return values;
+    }
+
     @Override
     public void clear() {
-      final Collection<TableNotifier<?>> values = values();
-      if (values.size() > 0)
-        for (final TableNotifier<?> notifier : values) // [C]
-          notifier.close();
+      for (int i = 0, i$ = values.size(); i < i$; ++i) // [RA]
+        values.get(i).close();
 
+      values.clear();
       super.clear();
     }
-  };
+  }
+
+  private final TableNameToNotifier tableNameToNotifier = new TableNameToNotifier(16);
 
   private void recreateTrigger(final Connection connection, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
     if (logger.isTraceEnabled()) { logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets)); }
@@ -440,10 +473,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     try {
       tryReconnect(connection, listener);
 
-      final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
-      if (tableNotifiers.size() > 0)
-        for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
-          tableNotifier.onConnect(connection);
+      final ArrayList<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
+      for (int i = 0, i$ = tableNotifiers.size(); i < i$; ++i) // [RA]
+        tableNotifiers.get(i).onConnect(connection);
 
       listenTriggers(connection);
     }
@@ -455,16 +487,18 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   protected abstract void stop() throws SQLException;
 
+  @SuppressWarnings("resource")
   boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
-    final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
+    final ArrayList<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
     final int size = tableNotifiers.size();
     if (size == 0)
       return false;
 
     final data.Table[] tables = new data.Table[size];
-    final Iterator<TableNotifier<?>> iterator = tableNotifiers.iterator();
-    for (int i = 0; i < size; ++i) // [I]
-      tables[i] = iterator.next().table;
+    int i = 0;
+    do // [RA]
+      tables[i] = tableNotifiers.get(i).table;
+    while (++i < size);
 
     return removeNotificationListeners(insert, up, delete, tables);
   }
