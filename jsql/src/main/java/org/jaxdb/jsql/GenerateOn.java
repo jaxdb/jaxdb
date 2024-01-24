@@ -102,7 +102,7 @@ public interface GenerateOn<T> extends Serializable {
       if (numberType instanceof data.INT)
         ((data.INT)numberType).setValue(ts);
       else if (numberType instanceof data.BIGINT)
-        ((data.BIGINT)numberType).setValue(ts);
+        ((data.BIGINT)numberType).setValue(ts, null);
       else
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }
@@ -117,7 +117,7 @@ public interface GenerateOn<T> extends Serializable {
       if (numberType instanceof data.INT)
         ((data.INT)numberType).setValue(ts);
       else if (numberType instanceof data.BIGINT)
-        ((data.BIGINT)numberType).setValue(ts);
+        ((data.BIGINT)numberType).setValue(ts, null);
       else
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }

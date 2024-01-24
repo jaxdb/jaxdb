@@ -316,6 +316,8 @@ public final class data {
     private boolean isNullCur = true;
     private long valueOld;
     private long valueCur;
+    private Long valueObjOld;
+    private Long valueObjCur;
 
     public BIGINT() {
       this(true);
@@ -367,13 +369,16 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
+
+      this.valueObjOld = copy.valueObjOld;
+      this.valueObjCur = copy.valueObjCur;
     }
 
     BIGINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final Integer precision, final Long min, final Long max) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.valueOld = this.valueCur = _default;
+        this.valueOld = this.valueCur = this.valueObjOld = this.valueObjCur = _default;
         this.isNullOld = this.isNullCur = false;
       }
 
@@ -385,6 +390,7 @@ public final class data {
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
+      valueObjOld = valueObjCur;
       setByOld = setByCur;
       changed = false;
       onChange(OLD);
@@ -450,6 +456,7 @@ public final class data {
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
+      this.valueObjCur = copy.valueObjCur;
       this.setByCur = copy.setByCur;
 
       if (changed)
@@ -463,12 +470,12 @@ public final class data {
 
     @Override
     public final Long get() {
-      return isNullCur ? null : valueCur;
+      return isNullCur ? null : valueObjCur;
     }
 
     @Override
     public final Long get(final Long defaultValue) {
-      return isNullCur ? defaultValue : valueCur;
+      return isNullCur ? defaultValue : valueObjCur;
     }
 
     public final long getAsLong() {
@@ -489,7 +496,7 @@ public final class data {
 
     @Override
     final Long getOld() {
-      return setByOld == null ? get() : isNullOld ? null : valueOld;
+      return setByOld == null ? get() : isNullOld ? null : valueObjOld;
     }
 
     @Override
@@ -542,7 +549,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       final long value = resultSet.getLong(columnIndex);
-      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
+      this.valueObjOld = this.valueObjCur = this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
       onChange(CUR_OLD);
     }
@@ -551,6 +558,7 @@ public final class data {
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
+      valueObjCur = valueObjOld;
       setByCur = setByOld;
       changed = false;
       onChange(CUR);
@@ -583,8 +591,8 @@ public final class data {
       return set(value, SetBy.USER);
     }
 
-    final boolean set(final long value, final SetBy setBy) {
-      final boolean changed = setValue(value);
+    final boolean set(final long value, final Long valueObj, final SetBy setBy) {
+      final boolean changed = setValue(value, valueObj);
       setByCur = setBy;
       return changed;
     }
@@ -596,7 +604,7 @@ public final class data {
 
     @Override
     final boolean set(final Long value, final SetBy setBy) {
-      return value == null ? setNull() : set((long)value, setBy);
+      return value == null ? setNull() : set(value, value, setBy);
     }
 
     @SuppressWarnings("unused")
@@ -611,14 +619,14 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final long value) {
-      if (!setValue(value))
+      if (!setValue(value, null))
         return false;
 
       this.setByCur = SetBy.USER;
       return true;
     }
 
-    final boolean setValue(final long value) {
+    final boolean setValue(final long value, final Long valueObj) {
       assertMutable();
       checkValue(value);
       final boolean changed = isNullCur || valueCur != value;
@@ -628,6 +636,7 @@ public final class data {
       this.changed = isNullOld || valueOld != value;
 
       this.valueCur = value;
+      this.valueObjCur = valueObj != null ? valueObj : Long.valueOf(value);
       this.isNullCur = false;
 
       onChange(CUR);
@@ -636,7 +645,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Long value) {
-      return value == null ? setValueNull() : setValue((long)value);
+      return value == null ? setValueNull() : setValue(value, value);
     }
 
     @Override
@@ -1093,6 +1102,8 @@ public final class data {
     private boolean isNullCur = true;
     private boolean valueOld;
     private boolean valueCur;
+    private Boolean valueObjOld;
+    private Boolean valueObjCur;
 
     public BOOLEAN() {
       super(null, true, (OnModify<?>)null);
@@ -1130,12 +1141,15 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
+
+      this.valueObjOld = copy.valueObjOld;
+      this.valueObjCur = copy.valueObjCur;
     }
 
     BOOLEAN(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
-        this.valueOld = this.valueCur = _default;
+        this.valueOld = this.valueCur = this.valueObjOld = this.valueObjCur = _default;
         this.isNullOld = this.isNullCur = false;
       }
     }
@@ -1144,6 +1158,7 @@ public final class data {
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
+      valueObjOld = valueObjCur;
       setByOld = setByCur;
       changed = false;
       onChange(OLD);
@@ -1188,6 +1203,7 @@ public final class data {
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
+      this.valueObjCur = copy.valueObjCur;
       this.setByCur = copy.setByCur;
 
       if (changed)
@@ -1206,12 +1222,12 @@ public final class data {
 
     @Override
     public final Boolean get() {
-      return isNullCur ? null : valueCur;
+      return isNullCur ? null : valueObjCur;
     }
 
     @Override
     public final Boolean get(final Boolean defaultValue) {
-      return isNullCur ? defaultValue : valueCur;
+      return isNullCur ? defaultValue : valueObjCur;
     }
 
     public final boolean getAsBoolean() {
@@ -1232,7 +1248,7 @@ public final class data {
 
     @Override
     final Boolean getOld() {
-      return setByOld == null ? get() : isNullOld ? null : valueOld;
+      return setByOld == null ? get() : isNullOld ? null : valueObjOld;
     }
 
     @Override
@@ -1260,7 +1276,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
-      this.valueOld = this.valueCur = !(this.isNullOld = this.isNullCur = resultSet.wasNull()) && value;
+      this.valueObjOld = this.valueObjCur = this.valueOld = this.valueCur = !(this.isNullOld = this.isNullCur = resultSet.wasNull()) && value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
       onChange(CUR_OLD);
     }
@@ -1269,6 +1285,7 @@ public final class data {
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
+      valueObjCur = valueObjOld;
       setByCur = setByOld;
       changed = false;
       onChange(CUR);
@@ -1286,8 +1303,8 @@ public final class data {
       return set(value, SetBy.USER);
     }
 
-    final boolean set(final boolean value, final SetBy setBy) {
-      final boolean changed = setValue(value);
+    final boolean set(final boolean value, final Boolean valueObj, final SetBy setBy) {
+      final boolean changed = setValue(value, valueObj);
       setByCur = setBy;
       return changed;
     }
@@ -1299,7 +1316,7 @@ public final class data {
 
     @Override
     final boolean set(final Boolean value, final SetBy setBy) {
-      return value == null ? setNull() : set((boolean)value, setBy);
+      return value == null ? setNull() : set(value, value, setBy);
     }
 
     @SuppressWarnings("unused")
@@ -1314,7 +1331,7 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final boolean value) {
-      if (!setValue(value))
+      if (!setValue(value, null))
         return false;
 
       this.setByCur = SetBy.USER;
@@ -1340,7 +1357,7 @@ public final class data {
       return value != null && setIfNotEqual(value);
     }
 
-    final boolean setValue(final boolean value) {
+    final boolean setValue(final boolean value, final Boolean valueObj) {
       assertMutable();
       final boolean changed = isNullCur || valueCur != value;
       if (!changed)
@@ -1348,6 +1365,7 @@ public final class data {
 
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
+      this.valueObjCur = valueObj != null ? valueObj : Boolean.valueOf(value);
       this.isNullCur = false;
 
       onChange(CUR);
@@ -1356,7 +1374,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Boolean value) {
-      return value == null ? setValueNull() : setValue((boolean)value);
+      return value == null ? setValueNull() : setValue(value, value);
     }
 
     @Override
@@ -2832,6 +2850,8 @@ public final class data {
     private boolean isNullCur = true;
     private double valueOld;
     private double valueCur;
+    private Double valueObjOld;
+    private Double valueObjCur;
 
     public DOUBLE() {
       this(true);
@@ -2871,13 +2891,16 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
+
+      this.valueObjOld = copy.valueObjOld;
+      this.valueObjCur = copy.valueObjCur;
     }
 
     DOUBLE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
-        this.valueOld = this.valueCur = _default;
+        this.valueOld = this.valueCur = this.valueObjOld = this.valueObjCur = _default;
         this.isNullOld = this.isNullCur = false;
       }
 
@@ -2889,6 +2912,7 @@ public final class data {
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
+      valueObjOld = valueObjCur;
       setByOld = setByCur;
       changed = false;
       onChange(OLD);
@@ -2954,6 +2978,7 @@ public final class data {
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
+      this.valueObjCur = copy.valueObjCur;
       this.setByCur = copy.setByCur;
 
       if (changed)
@@ -2967,12 +2992,12 @@ public final class data {
 
     @Override
     public final Double get() {
-      return isNullCur ? null : valueCur;
+      return isNullCur ? null : valueObjCur;
     }
 
     @Override
     public final Double get(final Double defaultValue) {
-      return isNullCur ? defaultValue : valueCur;
+      return isNullCur ? defaultValue : valueObjCur;
     }
 
     public final double getAsDouble() {
@@ -2993,7 +3018,7 @@ public final class data {
 
     @Override
     final Double getOld() {
-      return setByOld == null ? get() : isNullOld ? null : valueOld;
+      return setByOld == null ? get() : isNullOld ? null : valueObjOld;
     }
 
     @Override
@@ -3031,7 +3056,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
-      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Double.NaN : value;
+      this.valueObjOld = this.valueObjCur = this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Double.NaN : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
       onChange(CUR_OLD);
     }
@@ -3040,6 +3065,7 @@ public final class data {
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
+      valueObjCur = valueObjOld;
       setByCur = setByOld;
       changed = false;
       onChange(CUR);
@@ -3062,8 +3088,8 @@ public final class data {
       return set(value, SetBy.USER);
     }
 
-    final boolean set(final double value, final SetBy setBy) {
-      final boolean changed = setValue(value);
+    final boolean set(final double value, final Double valueObj, final SetBy setBy) {
+      final boolean changed = setValue(value, valueObj);
       setByCur = setBy;
       return changed;
     }
@@ -3075,7 +3101,7 @@ public final class data {
 
     @Override
     final boolean set(final Double value, final SetBy setBy) {
-      return value == null ? setNull() : set((double)value, setBy);
+      return value == null ? setNull() : set(value, value, setBy);
     }
 
     @SuppressWarnings("unused")
@@ -3090,14 +3116,14 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final double value) {
-      if (!setValue(value))
+      if (!setValue(value, null))
         return false;
 
       this.setByCur = SetBy.USER;
       return true;
     }
 
-    final boolean setValue(final double value) {
+    final boolean setValue(final double value, final Double valueObj) {
       assertMutable();
       checkValue(value);
       final boolean changed = isNullCur || valueCur != value;
@@ -3106,6 +3132,7 @@ public final class data {
 
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
+      this.valueObjCur = valueObj != null ? valueObj : Double.valueOf(value);
       this.isNullCur = false;
 
       onChange(CUR);
@@ -3114,7 +3141,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Double value) {
-      return value == null ? setValueNull() : setValue((double)value);
+      return value == null ? setValueNull() : setValue(value, value);
     }
 
     @Override
@@ -3616,6 +3643,8 @@ public final class data {
     private boolean isNullCur = true;
     private float valueOld;
     private float valueCur;
+    private Float valueObjOld;
+    private Float valueObjCur;
 
     public FLOAT() {
       this(true);
@@ -3655,13 +3684,16 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
+
+      this.valueObjOld = copy.valueObjOld;
+      this.valueObjCur = copy.valueObjCur;
     }
 
     FLOAT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
-        this.valueOld = this.valueCur = _default;
+        this.valueOld = this.valueCur = this.valueObjOld = this.valueObjCur = _default;
         this.isNullOld = this.isNullCur = false;
       }
 
@@ -3673,6 +3705,7 @@ public final class data {
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
+      valueObjOld = valueObjCur;
       setByOld = setByCur;
       changed = false;
       onChange(OLD);
@@ -3738,6 +3771,7 @@ public final class data {
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
+      this.valueObjCur = copy.valueObjCur;
       this.setByCur = copy.setByCur;
 
       if (changed)
@@ -3751,12 +3785,12 @@ public final class data {
 
     @Override
     public final Float get() {
-      return isNullCur ? null : valueCur;
+      return isNullCur ? null : valueObjCur;
     }
 
     @Override
     public final Float get(final Float defaultValue) {
-      return isNullCur ? defaultValue : valueCur;
+      return isNullCur ? defaultValue : valueObjCur;
     }
 
     public final float getAsFloat() {
@@ -3777,7 +3811,7 @@ public final class data {
 
     @Override
     final Float getOld() {
-      return setByOld == null ? get() : isNullOld ? null : valueOld;
+      return setByOld == null ? get() : isNullOld ? null : valueObjOld;
     }
 
     @Override
@@ -3815,7 +3849,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
-      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Float.NaN : value;
+      this.valueObjOld = this.valueObjCur = this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Float.NaN : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
       onChange(CUR_OLD);
     }
@@ -3824,6 +3858,7 @@ public final class data {
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
+      valueObjCur = valueObjOld;
       setByCur = setByOld;
       changed = false;
       onChange(CUR);
@@ -3884,7 +3919,7 @@ public final class data {
       return true;
     }
 
-    final boolean setValue(final float value) {
+    final boolean setValue(final float value, final Float valueObj) {
       assertMutable();
       checkValue(value);
       final boolean changed = isNullCur || valueCur != value;
@@ -3893,6 +3928,7 @@ public final class data {
 
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
+      this.valueObjCur = valueObj != null ? valueObj : Float.valueOf(value);
       this.isNullCur = false;
 
       onChange(CUR);
@@ -3901,7 +3937,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Float value) {
-      return value == null ? setValueNull() : setValue((float)value);
+      return value == null ? setValueNull() : setValue(value, value);
     }
 
     @Override
@@ -3974,6 +4010,8 @@ public final class data {
     private boolean isNullCur = true;
     private int valueOld;
     private int valueCur;
+    private Integer valueObjOld;
+    private Integer valueObjCur;
 
     public INT() {
       this(true);
@@ -4021,6 +4059,9 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
+
+      this.valueObjOld = copy.valueObjOld;
+      this.valueObjCur = copy.valueObjCur;
     }
 
     private INT(final Table owner, final boolean mutable, final Short precision) {
@@ -4033,7 +4074,7 @@ public final class data {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.valueOld = this.valueCur = _default;
+        this.valueOld = this.valueCur = this.valueObjOld = this.valueObjCur = _default;
         this.isNullOld = this.isNullCur = false;
       }
 
@@ -4045,6 +4086,7 @@ public final class data {
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
+      valueObjOld = valueObjCur;
       setByOld = setByCur;
       changed = false;
       onChange(OLD);
@@ -4110,6 +4152,7 @@ public final class data {
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
+      this.valueObjCur = copy.valueObjCur;
       this.setByCur = copy.setByCur;
 
       if (changed)
@@ -4123,12 +4166,12 @@ public final class data {
 
     @Override
     public final Integer get() {
-      return isNullCur ? null : valueCur;
+      return isNullCur ? null : valueObjCur;
     }
 
     @Override
     public final Integer get(final Integer defaultValue) {
-      return isNullCur ? defaultValue : valueCur;
+      return isNullCur ? defaultValue : valueObjCur;
     }
 
     public final int getAsInt() {
@@ -4149,7 +4192,7 @@ public final class data {
 
     @Override
     final Integer getOld() {
-      return setByOld == null ? get() : isNullOld ? null : valueOld;
+      return setByOld == null ? get() : isNullOld ? null : valueObjOld;
     }
 
     @Override
@@ -4202,7 +4245,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
-      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
+      this.valueObjOld = this.valueObjCur = this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
       onChange(CUR_OLD);
     }
@@ -4211,6 +4254,7 @@ public final class data {
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
+      valueObjCur = valueObjOld;
       setByCur = setByOld;
       changed = false;
       onChange(CUR);
@@ -4244,8 +4288,8 @@ public final class data {
       return set(value, SetBy.USER);
     }
 
-    final boolean set(final int value, final SetBy setBy) {
-      final boolean changed = setValue(value);
+    final boolean set(final int value, final Integer valueObj, final SetBy setBy) {
+      final boolean changed = setValue(value, valueObj);
       setByCur = setBy;
       return changed;
     }
@@ -4257,7 +4301,7 @@ public final class data {
 
     @Override
     final boolean set(final Integer value, final SetBy setBy) {
-      return value == null ? setNull() : set((int)value, setBy);
+      return value == null ? setNull() : set(value, value, setBy);
     }
 
     @SuppressWarnings("unused")
@@ -4272,14 +4316,14 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final int value) {
-      if (!setValue(value))
+      if (!setValue(value, null))
         return false;
 
       this.setByCur = SetBy.USER;
       return true;
     }
 
-    final boolean setValue(final int value) {
+    final boolean setValue(final int value, final Integer valueObj) {
       assertMutable();
       checkValue(value);
       final boolean changed = isNullCur || valueCur != value;
@@ -4288,6 +4332,7 @@ public final class data {
 
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
+      this.valueObjCur = valueObj != null ? valueObj : Integer.valueOf(value);
       this.isNullCur = false;
 
       onChange(CUR);
@@ -4296,7 +4341,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Integer value) {
-      return value == null ? setValueNull() : setValue((int)value);
+      return value == null ? setValueNull() : setValue(value, value);
     }
 
     @Override
@@ -5022,6 +5067,8 @@ public final class data {
     private boolean isNullCur = true;
     private short valueOld;
     private short valueCur;
+    private Short valueObjOld;
+    private Short valueObjCur;
 
     public SMALLINT() {
       this(true);
@@ -5073,13 +5120,16 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
+
+      this.valueObjOld = copy.valueObjOld;
+      this.valueObjCur = copy.valueObjCur;
     }
 
     SMALLINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final Integer precision, final Short min, final Short max) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.valueOld = this.valueCur = _default;
+        this.valueOld = this.valueCur = this.valueObjOld = this.valueObjCur = _default;
         this.isNullOld = this.isNullCur = false;
       }
 
@@ -5091,6 +5141,7 @@ public final class data {
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
+      valueObjOld = valueObjCur;
       setByOld = setByCur;
       changed = false;
       onChange(OLD);
@@ -5156,6 +5207,7 @@ public final class data {
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
+      this.valueObjCur = copy.valueObjCur;
       this.setByCur = copy.setByCur;
 
       if (changed)
@@ -5169,12 +5221,12 @@ public final class data {
 
     @Override
     public final Short get() {
-      return isNullCur ? null : valueCur;
+      return isNullCur ? null : valueObjCur;
     }
 
     @Override
     public final Short get(final Short defaultValue) {
-      return isNullCur ? defaultValue : valueCur;
+      return isNullCur ? defaultValue : valueObjCur;
     }
 
     public final short getAsShort() {
@@ -5195,7 +5247,7 @@ public final class data {
 
     @Override
     final Short getOld() {
-      return setByOld == null ? get() : isNullOld ? null : valueOld;
+      return setByOld == null ? get() : isNullOld ? null : valueObjOld;
     }
 
     @Override
@@ -5248,7 +5300,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
-      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
+      this.valueObjOld = this.valueObjCur = this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
       onChange(CUR_OLD);
     }
@@ -5257,6 +5309,7 @@ public final class data {
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
+      valueObjCur = valueObjOld;
       setByCur = setByOld;
       changed = false;
       onChange(CUR);
@@ -5299,8 +5352,8 @@ public final class data {
       return set(value, SetBy.USER);
     }
 
-    final boolean set(final short value, final SetBy setBy) {
-      final boolean changed = setValue(value);
+    final boolean set(final short value, final Short valueObj, final SetBy setBy) {
+      final boolean changed = setValue(value, valueObj);
       setByCur = setBy;
       return changed;
     }
@@ -5312,7 +5365,7 @@ public final class data {
 
     @Override
     final boolean set(final Short value, final SetBy setBy) {
-      return value == null ? setNull() : set((short)value, setBy);
+      return value == null ? setNull() : set(value, value, setBy);
     }
 
     public final SMALLINT set(final type.SMALLINT value) {
@@ -5321,14 +5374,14 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final short value) {
-      if (!setValue(value))
+      if (!setValue(value, null))
         return false;
 
       this.setByCur = SetBy.USER;
       return true;
     }
 
-    final boolean setValue(final short value) {
+    final boolean setValue(final short value, final Short valueObj) {
       assertMutable();
       checkValue(value);
       final boolean changed = isNullCur || valueCur != value;
@@ -5337,6 +5390,7 @@ public final class data {
 
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
+      this.valueObjCur = valueObj != null ? valueObj : Short.valueOf(value);
       this.isNullCur = false;
 
       onChange(CUR);
@@ -5345,7 +5399,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Short value) {
-      return value == null ? setValueNull() : setValue((short)value);
+      return value == null ? setValueNull() : setValue(value, value);
     }
 
     @Override
@@ -5994,6 +6048,8 @@ public final class data {
     private boolean isNullCur = true;
     private byte valueOld;
     private byte valueCur;
+    private Byte valueObjOld;
+    private Byte valueObjCur;
 
     public TINYINT() {
       this(true);
@@ -6038,7 +6094,7 @@ public final class data {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.valueOld = this.valueCur = _default;
+        this.valueOld = this.valueCur = this.valueObjOld = this.valueObjCur = _default;
         this.isNullOld = this.isNullCur = false;
       }
 
@@ -6057,12 +6113,16 @@ public final class data {
 
       this.valueOld = copy.valueOld;
       this.valueCur = copy.valueCur;
+
+      this.valueObjOld = copy.valueObjOld;
+      this.valueObjCur = copy.valueObjCur;
     }
 
     @Override
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
+      valueObjOld = valueObjCur;
       setByOld = setByCur;
       changed = false;
       onChange(OLD);
@@ -6128,6 +6188,7 @@ public final class data {
 
       this.isNullCur = isNullCur;
       this.valueCur = valueCur;
+      this.valueObjCur = copy.valueObjCur;
       this.setByCur = copy.setByCur;
 
       if (changed)
@@ -6141,12 +6202,12 @@ public final class data {
 
     @Override
     public final Byte get() {
-      return isNullCur ? null : valueCur;
+      return isNullCur ? null : valueObjCur;
     }
 
     @Override
     public final Byte get(final Byte defaultValue) {
-      return isNullCur ? defaultValue : valueCur;
+      return isNullCur ? defaultValue : valueObjCur;
     }
 
     public final byte getAsByte() {
@@ -6167,7 +6228,7 @@ public final class data {
 
     @Override
     final Byte getOld() {
-      return setByOld == null ? get() : isNullOld ? null : valueOld;
+      return setByOld == null ? get() : isNullOld ? null : valueObjOld;
     }
 
     @Override
@@ -6220,7 +6281,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
-      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
+      this.valueObjOld = this.valueObjCur = this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
       this.setByOld = this.setByCur = SetBy.SYSTEM;
       onChange(CUR_OLD);
     }
@@ -6229,6 +6290,7 @@ public final class data {
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
+      valueObjCur = valueObjOld;
       setByCur = setByOld;
       changed = false;
       onChange(CUR);
@@ -6271,8 +6333,8 @@ public final class data {
       return set(value, SetBy.USER);
     }
 
-    final boolean set(final byte value, final SetBy setBy) {
-      final boolean changed = setValue(value);
+    final boolean set(final byte value, final Byte valueObj, final SetBy setBy) {
+      final boolean changed = setValue(value, valueObj);
       setByCur = setBy;
       return changed;
     }
@@ -6284,7 +6346,7 @@ public final class data {
 
     @Override
     final boolean set(final Byte value, final SetBy setBy) {
-      return value == null ? setNull() : set((byte)value, setBy);
+      return value == null ? setNull() : set(value, value, setBy);
     }
 
     @SuppressWarnings("unused")
@@ -6299,14 +6361,14 @@ public final class data {
     }
 
     public final boolean setIfNotEqual(final byte value) {
-      if (!setValue(value))
+      if (!setValue(value, null))
         return false;
 
       this.setByCur = SetBy.USER;
       return true;
     }
 
-    final boolean setValue(final byte value) {
+    final boolean setValue(final byte value, final Byte valueObj) {
       assertMutable();
       checkValue(value);
       final boolean changed = isNullCur || valueCur != value;
@@ -6315,6 +6377,7 @@ public final class data {
 
       this.changed = isNullOld || valueOld != value;
       this.valueCur = value;
+      this.valueObjCur = valueObj != null ? valueObj : Byte.valueOf(value);
       this.isNullCur = false;
 
       onChange(CUR);
@@ -6323,7 +6386,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Byte value) {
-      return value == null ? setValueNull() : setValue((byte)value);
+      return value == null ? setValueNull() : setValue(value, value);
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Year;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 import org.jaxdb.jsql.Types.$AbstractType.EnumType;
 import org.junit.Test;
@@ -41,25 +42,33 @@ public class RevertCommitTest {
     assertFalse(name, c.cuedBySystem());
   }
 
-  public <V> void test(final data.Column<V> c, final V v1, final V v2, final V v3) {
+  public <V,C extends data.Column<V>> void test(final C c, final V v1, final V v2, final V v3, final Predicate<C> p) {
     final String name = c.getClass().getSimpleName();
     assertTrue(name, c.isNull());
     assertNull(name, c.get());
     assertCued(false, name, c);
 
     assertTrue(name, c.set(v1));
+    if (p != null)
+      p.test(c);
     assertEquals(CUR, callback.toString());
     assertFalse(name, c.set(v1));
+    if (p != null)
+      p.test(c);
     assertEquals(null, callback.toString());
 
     assertTrue(name, c.changed);
     assertFalse(name, c.set(v1));
+    if (p != null)
+      p.test(c);
     assertEquals(null, callback.toString());
     assertFalse(name, c.isNull());
     assertCued(true, name, c);
     assertEquals(name, v1, c.get());
 
     c.revert();
+    if (p != null)
+      p.test(c);
     assertEquals(CUR, callback.toString());
     assertFalse(name, c.changed);
     assertTrue(name, c.isNull());
@@ -67,18 +76,26 @@ public class RevertCommitTest {
     assertCued(false, name, c);
 
     assertTrue(name, c.set(v1));
+    if (p != null)
+      p.test(c);
     assertEquals(CUR, callback.toString());
     assertTrue(name, c.changed);
     assertFalse(name, c.set(v1));
+    if (p != null)
+      p.test(c);
     assertEquals(null, callback.toString());
     assertFalse(name, c.isNull());
     assertCued(true, name, c);
     assertEquals(name, v1, c.get());
 
     c._commitEntity$();
+    if (p != null)
+      p.test(c);
     assertEquals(OLD, callback.toString());
 
     c.revert();
+    if (p != null)
+      p.test(c);
     assertEquals(CUR, callback.toString());
     assertFalse(name, c.changed);
     assertFalse(name, c.isNull());
@@ -86,22 +103,32 @@ public class RevertCommitTest {
     assertEquals(name, v1, c.get());
 
     assertTrue(name, c.set(v2));
+    if (p != null)
+      p.test(c);
     assertEquals(CUR, callback.toString());
     assertFalse(name, c.set(v2));
+    if (p != null)
+      p.test(c);
     assertEquals(null, callback.toString());
     if (v3 != null) { // BLOB and CLOB are not supported
       assertFalse(name, c.set(v3));
+      if (p != null)
+        p.test(c);
       assertEquals(null, callback.toString());
     }
 
     assertTrue(name, c.changed);
     assertFalse(name, c.set(v2));
+    if (p != null)
+      p.test(c);
     assertEquals(null, callback.toString());
     assertFalse(name, c.isNull());
     assertCued(true, name, c);
     assertEquals(name, v2, c.get());
 
     c.revert();
+    if (p != null)
+      p.test(c);
     assertFalse(name, c.changed);
     assertFalse(name, c.isNull());
     assertCued(true, name, c);
@@ -134,21 +161,21 @@ public class RevertCommitTest {
 
   @Test
   public void testRevertCommit() {
-    test(new data.BIGINT(onModify), 1L, 2L, new Long(2));
-    test(new data.BINARY(2, onModify), new byte[] {1, 2}, new byte[] {3, 4}, new byte[] {3, 4});
-    test(new data.BLOB(onModify), new ByteArrayInputStream(new byte[] {1, 2}), new ByteArrayInputStream(new byte[] {3, 4}), null);
-    test(new data.BOOLEAN(onModify), false, true, new Boolean(true));
-    test(new data.CHAR(onModify), "one", "two", new String("two"));
-    test(new data.CLOB(onModify), new UnsynchronizedStringReader("one"), new UnsynchronizedStringReader("two"), null);
-    test(new data.DATE(onModify), LocalDate.MIN, LocalDate.MAX, LocalDate.of(Year.MAX_VALUE, 12, 31));
-    test(new data.DATETIME(onModify), LocalDateTime.MIN, LocalDateTime.MAX, LocalDateTime.of(LocalDate.MAX, LocalTime.MAX));
-    test(new data.DECIMAL(onModify), BigDecimal.ZERO, BigDecimal.ONE, new BigDecimal("1.0"));
-    test(new data.DOUBLE(onModify), 0d, 1d, new Double(1));
-    test(new data.ENUM<>(EnumType.class, onModify), EnumType.ZERO, EnumType.ONE, EnumType.ONE);
-    test(new data.FLOAT(onModify), 0f, 1f, new Float(1));
-    test(new data.INT(onModify), 0, 1, new Integer(1));
-    test(new data.SMALLINT(onModify), (short)0, (short)1, new Short((short)1));
-    test(new data.TIME(onModify), LocalTime.MIN, LocalTime.of(12, 0), LocalTime.of(12, 0));
-    test(new data.TINYINT(onModify), (byte)0, (byte)1, new Byte((byte)1));
+    test(new data.BIGINT(onModify), 1L, 2L, new Long(2), (final data.BIGINT d) -> d.isNull() ? d.get() == null : d.get() == d.getAsLong());
+    test(new data.BINARY(2, onModify), new byte[] {1, 2}, new byte[] {3, 4}, new byte[] {3, 4}, null);
+    test(new data.BLOB(onModify), new ByteArrayInputStream(new byte[] {1, 2}), new ByteArrayInputStream(new byte[] {3, 4}), null, null);
+    test(new data.BOOLEAN(onModify), false, true, new Boolean(true), (final data.BOOLEAN d) -> d.isNull() ? d.get() == null : d.get() == d.getAsBoolean());
+    test(new data.CHAR(onModify), "one", "two", new String("two"), null);
+    test(new data.CLOB(onModify), new UnsynchronizedStringReader("one"), new UnsynchronizedStringReader("two"), null, null);
+    test(new data.DATE(onModify), LocalDate.MIN, LocalDate.MAX, LocalDate.of(Year.MAX_VALUE, 12, 31), null);
+    test(new data.DATETIME(onModify), LocalDateTime.MIN, LocalDateTime.MAX, LocalDateTime.of(LocalDate.MAX, LocalTime.MAX), null);
+    test(new data.DECIMAL(onModify), BigDecimal.ZERO, BigDecimal.ONE, new BigDecimal("1.0"), null);
+    test(new data.DOUBLE(onModify), 0d, 1d, new Double(1), (final data.DOUBLE d) -> d.isNull() ? d.get() == null : d.get() == d.getAsDouble());
+    test(new data.ENUM<>(EnumType.class, onModify), EnumType.ZERO, EnumType.ONE, EnumType.ONE, null);
+    test(new data.FLOAT(onModify), 0f, 1f, new Float(1), (final data.FLOAT d) -> d.isNull() ? d.get() == null : d.get() == d.getAsFloat());
+    test(new data.INT(onModify), 0, 1, new Integer(1), (final data.INT d) -> d.isNull() ? d.get() == null : d.get() == d.getAsInt());
+    test(new data.SMALLINT(onModify), (short)0, (short)1, new Short((short)1), (final data.SMALLINT d) -> d.isNull() ? d.get() == null : d.get() == d.getAsShort());
+    test(new data.TIME(onModify), LocalTime.MIN, LocalTime.of(12, 0), LocalTime.of(12, 0), null);
+    test(new data.TINYINT(onModify), (byte)0, (byte)1, new Byte((byte)1), (final data.TINYINT d) -> d.isNull() ? d.get() == null : d.get() == d.getAsByte());
   }
 }
