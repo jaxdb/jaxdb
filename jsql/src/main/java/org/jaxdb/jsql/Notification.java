@@ -146,25 +146,83 @@ public final class Notification<T extends data.Table> {
     }
   }
 
+  /**
+   * A cache notification {@link Listener} for {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements.
+   *
+   * @param <T> The {@link data.Table} type parameter to which this {@link Listener} applies.
+   */
   public interface DefaultListener<T extends data.Table> extends SelectListener<T>, InsertListener<T>, UpdateListener<T>, DeleteListener<T> {
   }
 
+  /**
+   * A cache notification {@link Listener} for {@code SELECT} statements.
+   *
+   * @param <T> The {@link data.Table} type parameter to which this {@link Listener} applies.
+   */
+  @FunctionalInterface
   public interface SelectListener<T extends data.Table> extends Listener<T> {
+    /**
+     * Called when a {@code SELECT} is performed by the caching system to initialize or refresh the cache.
+     *
+     * @param row The {@link data.Table} which the {@code SELECT} concerns.
+     */
     void onSelect(T row);
   }
 
+  /**
+   * A cache notification {@link Listener} for {@code INSERT} statements.
+   *
+   * @param <T> The {@link data.Table} type parameter to which this {@link Listener} applies.
+   */
   @FunctionalInterface
   public interface InsertListener<T extends data.Table> extends Listener<T> {
+    /**
+     * Called when an {@code INSERT} notification is received from the DB for the provided {@link data.Table row}.
+     *
+     * @param sessionId The id of the SQL session in which the {@code INSERT} was executed.
+     * @param timestamp The millisecond timestamp when the DB invoked the notification.
+     * @param row The {@link data.Table row} which the {@code INSERT} concerns.
+     * @return The {@link data.Table} representing the cached entity of the provided {@link data.Table row}.
+     */
     T onInsert(String sessionId, long timestamp, T row);
   }
 
+  /**
+   * A cache notification {@link Listener} for {@code UPDATE} statements.
+   *
+   * @param <T> The {@link data.Table} type parameter to which this {@link Listener} applies.
+   */
   @FunctionalInterface
   public interface UpdateListener<T extends data.Table> extends Listener<T> {
+    /**
+     * Called when an {@code UPDATE} notification is received from the DB for the provided {@link data.Table row}.
+     *
+     * @param sessionId The id of the SQL session in which the {@code UPDATE} was executed.
+     * @param timestamp The millisecond timestamp when the DB invoked the notification.
+     * @param row The {@link data.Table row} which the {@code UPDATE} concerns.
+     * @param keyForUpdate A map of column names specified in the {@code <jsql:keyForUpdate>} spec of the DDLx schema for the table of
+     *          the provided {@link data.Table row} specifying values that must match for the {@code UPDATE} to be applied to the cache
+     *          (optimistic locking).
+     * @return The {@link data.Table} representing the cached entity of the provided {@link data.Table row}.
+     */
     T onUpdate(String sessionId, long timestamp, T row, Map<String,String> keyForUpdate);
   }
 
+  /**
+   * A cache notification {@link Listener} for {@code DELETE} statements.
+   *
+   * @param <T> The {@link data.Table} type parameter to which this {@link Listener} applies.
+   */
   @FunctionalInterface
   public interface DeleteListener<T extends data.Table> extends Listener<T> {
+    /**
+     * Called when an {@code DELETE} notification is received from the DB for the provided {@link data.Table row}.
+     *
+     * @param sessionId The id of the SQL session in which the {@code DELETE} was executed.
+     * @param timestamp The millisecond timestamp when the DB invoked the notification.
+     * @param row The {@link data.Table row} which the {@code DELETE} concerns.
+     * @return The {@link data.Table} representing the cached entity of the provided {@link data.Table row}.
+     */
     T onDelete(String sessionId, long timestamp, T row);
   }
 
