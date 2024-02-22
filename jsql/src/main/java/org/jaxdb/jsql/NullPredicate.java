@@ -41,6 +41,6 @@ final class NullPredicate extends Predicate {
 
   @Override
   void collectColumns(final ArrayList<data.Column<?>> list) {
-    list.add(((Subject)column).getColumn());
+    collectColumn(list, (Subject)column);
   }
 }

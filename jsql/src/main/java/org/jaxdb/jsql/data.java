@@ -1096,6 +1096,10 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
+
+    public static final BOOLEAN TRUE = new BOOLEAN(true, Boolean.TRUE);
+    public static final BOOLEAN FALSE = new BOOLEAN(false, Boolean.FALSE);
+
     private static final Class<Boolean> type = Boolean.class;
 
     private boolean isNullOld = true;
@@ -1118,6 +1122,18 @@ public final class data {
       super(null, true, (OnModify<?>)null);
       if (value != null)
         set(value);
+    }
+
+    private BOOLEAN(final boolean value, final Boolean valueObj) {
+      super(null, false, (OnModify<?>)null);
+      this.isNullCur = false;
+      this.isNullOld = false;
+      this.valueCur = value;
+      this.valueOld = value;
+      this.valueObjCur = valueObj;
+      this.valueObjOld = valueObj;
+      this.setByCur = SetBy.SYSTEM;
+      this.setByOld = SetBy.SYSTEM;
     }
 
     @SuppressWarnings("unused")

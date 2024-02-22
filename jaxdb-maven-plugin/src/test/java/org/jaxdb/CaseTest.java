@@ -510,10 +510,10 @@ public abstract class CaseTest {
       final RowIterator<data.BOOLEAN> rows =
         SELECT(
           CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new data.BOOLEAN()),
-          CASE.WHEN(EQ(t.booleanType, true)).THEN(true).ELSE(t.booleanType).END().AS(new data.BOOLEAN()),
-          CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(true).END().AS(new data.BOOLEAN()),
+          CASE.WHEN(NE(t.booleanType, false)).THEN(data.BOOLEAN.TRUE).ELSE(data.BOOLEAN.FALSE).END().AS(new data.BOOLEAN()),
+          CASE.WHEN(EQ(t.booleanType, data.BOOLEAN.TRUE)).THEN(t.booleanType).ELSE(true).END().AS(new data.BOOLEAN()),
           SELECT(
-            CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new data.BOOLEAN()))
+            CASE.WHEN(NE(t.booleanType, false)).THEN(data.BOOLEAN.TRUE).ELSE(t.booleanType).END().AS(new data.BOOLEAN()))
             .FROM(t)
             .LIMIT(1))
           .FROM(t)
@@ -804,9 +804,9 @@ public abstract class CaseTest {
     try (
       final RowIterator<data.BINARY> rows =
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new data.BINARY(255)),
+          CASE.WHEN(NOT(IS.NULL(t.binaryType))).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new data.BINARY(255)),
           CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(new byte[] {0x00, 0x01}).ELSE(t.binaryType).END().AS(new data.BINARY(255)),
-          CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(new byte[] {0x00, 0x01}).END().AS(new data.BINARY(255)),
+          CASE.WHEN(NOT(IS.NULL(t.binaryType))).THEN(t.binaryType).ELSE(new byte[] {0x00, 0x01}).END().AS(new data.BINARY(255)),
           SELECT(
             CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new data.BINARY(255)))
             .FROM(t)
@@ -825,9 +825,9 @@ public abstract class CaseTest {
     try (
       final RowIterator<data.DATE> rows =
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(t.dateType).END().AS(new data.DATE()),
+          CASE.WHEN(NOT(IS.NULL(t.dateType))).THEN(t.dateType).ELSE(t.dateType).END().AS(new data.DATE()),
           CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(LocalDate.now()).ELSE(t.dateType).END().AS(new data.DATE()),
-          CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(LocalDate.now()).END().AS(new data.DATE()),
+          CASE.WHEN(NOT(IS.NULL(t.dateType))).THEN(t.dateType).ELSE(LocalDate.now()).END().AS(new data.DATE()),
           SELECT(
             CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(t.dateType).END().AS(new data.DATE()))
             .FROM(t)
@@ -846,9 +846,9 @@ public abstract class CaseTest {
     try (
       final RowIterator<data.TIME> rows =
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(t.timeType).ELSE(t.timeType).END().AS(new data.TIME()),
+          CASE.WHEN(NOT(IS.NULL(t.timeType))).THEN(t.timeType).ELSE(t.timeType).END().AS(new data.TIME()),
           CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(LocalTime.now()).ELSE(t.timeType).END().AS(new data.TIME()),
-          CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(t.timeType).ELSE(LocalTime.now()).END().AS(new data.TIME()))
+          CASE.WHEN(NOT(IS.NULL(t.timeType))).THEN(t.timeType).ELSE(LocalTime.now()).END().AS(new data.TIME()))
           .FROM(t)
           .execute(transaction)
     ) {
@@ -864,10 +864,10 @@ public abstract class CaseTest {
       final RowIterator<data.DATETIME> rows =
         SELECT(
           CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new data.DATETIME()),
-          CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(LocalDateTime.now()).ELSE(t.datetimeType).END().AS(new data.DATETIME()),
+          CASE.WHEN(NOT(IS.NULL(t.datetimeType))).THEN(LocalDateTime.now()).ELSE(t.datetimeType).END().AS(new data.DATETIME()),
           CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(LocalDateTime.now()).END().AS(new data.DATETIME()),
           SELECT(
-            CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new data.DATETIME()))
+            CASE.WHEN(NOT(IS.NULL(t.datetimeType))).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new data.DATETIME()))
             .FROM(t)
             .LIMIT(1))
           .FROM(t)
@@ -884,14 +884,14 @@ public abstract class CaseTest {
     try (
       final RowIterator<data.CHAR> rows =
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+          CASE.WHEN(NOT(IS.NULL(t.charType))).THEN(t.charType).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
           CASE.WHEN(IS.NOT.NULL(t.charType)).THEN("char").ELSE(t.charType).END().AS(new data.CHAR(255, false)),
-          CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE("char").END().AS(new data.CHAR(255, false)),
+          CASE.WHEN(NOT(IS.NULL(t.charType))).THEN(t.charType).ELSE("char").END().AS(new data.CHAR(255, false)),
           CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.enumType).END().AS(new data.CHAR(255, false)),
-          CASE.WHEN(IS.NOT.NULL(t.charType)).THEN("char").ELSE(t.enumType).END().AS(new data.CHAR(255, false)),
+          CASE.WHEN(NOT(IS.NULL(t.charType))).THEN("char").ELSE(t.enumType).END().AS(new data.CHAR(255, false)),
           CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.enumType).ELSE("char").END().AS(new data.CHAR(255, false)),
           SELECT(
-            CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.charType).END().AS(new data.CHAR(255, false)))
+            CASE.WHEN(NOT(IS.NULL(t.charType))).THEN(t.charType).ELSE(t.charType).END().AS(new data.CHAR(255, false)))
             .FROM(t)
             .LIMIT(1))
           .FROM(t)
@@ -908,14 +908,14 @@ public abstract class CaseTest {
     try (
       final RowIterator<? extends data.Textual<?>> rows =
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+          CASE.WHEN(NOT(IS.NULL(t.enumType))).THEN(t.enumType).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
           CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(EnumType.EIGHT).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
-          CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(EnumType.EIGHT).END().AS(new data.ENUM<>(EnumType.class)),
+          CASE.WHEN(NOT(IS.NULL(t.enumType))).THEN(t.enumType).ELSE(EnumType.EIGHT).END().AS(new data.ENUM<>(EnumType.class)),
           CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.enumType).END().AS(new data.ENUM<>(EnumType.class)),
-          CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(EnumType.EIGHT).ELSE(t.enumType).END().AS(new data.ENUM<>(EnumType.class)),
+          CASE.WHEN(NOT(IS.NULL(t.enumType))).THEN(EnumType.EIGHT).ELSE(t.enumType).END().AS(new data.ENUM<>(EnumType.class)),
           CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(EnumType.EIGHT).END().AS(new data.ENUM<>(EnumType.class)),
           SELECT(
-            CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.charType).END().AS(new data.CHAR(255, false)))
+            CASE.WHEN(NOT(IS.NULL(t.enumType))).THEN(t.enumType).ELSE(t.charType).END().AS(new data.CHAR(255, false)))
             .FROM(t)
             .LIMIT(1))
           .FROM(t)

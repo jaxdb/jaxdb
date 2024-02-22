@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.Classicmodels;
-import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
@@ -84,13 +83,13 @@ public abstract class InPredicateTest {
     try (
       final RowIterator<data.BOOLEAN> rows =
         SELECT(
-          NOT.IN(p.productLine, "Ships", "Planes", "Trains"),
-          SELECT(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
+          NOT(IN(p.productLine, "Ships", "Planes", "Trains")),
+          SELECT(NOT(IN(p.productLine, "Ships", "Planes", "Trains")))
             .FROM(p)
-            .WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
+            .WHERE(NOT(IN(p.productLine, "Ships", "Planes", "Trains")))
             .LIMIT(1))
           .FROM(p)
-          .WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
+          .WHERE(NOT(IN(p.productLine, "Ships", "Planes", "Trains")))
           .execute(transaction)
     ) {
       for (int i = 0; i < 86; ++i) { // [N]
@@ -132,13 +131,13 @@ public abstract class InPredicateTest {
     try (
       final RowIterator<data.BOOLEAN> rows =
         SELECT(
-          NOT.IN(p.code, SELECT(p.productLine).FROM(p)),
-          SELECT(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
+          NOT(IN(p.code, SELECT(p.productLine).FROM(p))),
+          SELECT(NOT(IN(p.code, SELECT(p.productLine).FROM(p))))
             .FROM(p)
-            .WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
+            .WHERE(NOT(IN(p.code, SELECT(p.productLine).FROM(p))))
             .LIMIT(1))
           .FROM(p)
-          .WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
+          .WHERE(NOT(IN(p.code, SELECT(p.productLine).FROM(p))))
           .execute(transaction)
     ) {
       for (int i = 0; i < 110; ++i) { // [N]

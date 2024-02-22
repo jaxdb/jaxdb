@@ -41,6 +41,13 @@ public final class DML {
 
   /* END Ordering Specification */
 
+  /* START NOT Specification */
+
+  public static Predicate NOT(final type.Column<?> column) { return new NotPredicate(column); }
+  public static Predicate NOT(final Select.untyped.SELECT<?> subQuery) { return new NotPredicate(subQuery); }
+
+  /* END NOT Specification */
+
   /* START Cast */
 
   public static Cast.BIGINT CAST(final type.BIGINT a) { return new Cast.BIGINT(a); }
@@ -475,11 +482,11 @@ public final class DML {
   public static <V>ANY<V> ANY(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new ANY<>(subQuery); }
   public static <V>SOME<V> SOME(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new SOME<>(subQuery); }
 
-  public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery, true); }
-  public static <V>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, true, b); }
-  public static <V>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, true, b); }
-  @SafeVarargs public static <V>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, true, b); }
-  public static Predicate LIKE(final type.CHAR a, final CharSequence b) { return new LikePredicate(a, true, b); }
+  public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery); }
+  public static <V>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, b); }
+  public static <V>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, b); }
+  @SafeVarargs public static <V>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, b); }
+  public static Predicate LIKE(final type.CHAR a, final CharSequence b) { return new LikePredicate(a, b); }
 
   public static exp.TINYINT ADD(final type.TINYINT a, final type.TINYINT b) { return new OperationImpl.Operation2.TINYINT(function.NumericOperator2.ADD, a, b); }
   public static exp.SMALLINT ADD(final type.TINYINT a, final type.SMALLINT b) { return new OperationImpl.Operation2.SMALLINT(function.NumericOperator2.ADD, a, b); }
@@ -2520,86 +2527,86 @@ public final class DML {
   public static exp.DOUBLE ROUND(final double a, final float b) { return new OperationImpl.Operation2.DOUBLE(function.Function2.ROUND, a, b); }
   public static exp.DOUBLE ROUND(final double a, final double b) { return new OperationImpl.Operation2.DOUBLE(function.Function2.ROUND, a, b); }
 
-  public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final type.Numeric<?> l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final type.Numeric<?> l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final Number l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final Number l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final Number v, final type.Numeric<?> l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final Number v, final type.Numeric<?> l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final Number v, final Number l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, true); }
+  public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final type.Numeric<?> l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final type.Numeric<?> l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final Number l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final Number l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final Number v, final type.Numeric<?> l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final Number v, final type.Numeric<?> l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final Number v, final Number l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r); }
 
-  public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final type.Textual<?> l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final type.Textual<?> l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final CharSequence l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final CharSequence l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final CharSequence v, final type.Textual<?> l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final CharSequence v, final type.Textual<?> l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final CharSequence v, final CharSequence l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, true); }
+  public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final type.Textual<?> l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final type.Textual<?> l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final CharSequence l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final CharSequence l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final CharSequence v, final type.Textual<?> l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final CharSequence v, final type.Textual<?> l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final CharSequence v, final CharSequence l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r); }
 
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, true); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r); }
 
-  public static data.BOOLEAN BETWEEN(final type.TIME v, final type.TIME l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.TIME v, final type.TIME l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.TIME v, final LocalTime l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final type.TIME v, final LocalTime l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalTime v, final type.TIME l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalTime v, final type.TIME l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, true); }
-  public static data.BOOLEAN BETWEEN(final LocalTime v, final LocalTime l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, true); }
+  public static data.BOOLEAN BETWEEN(final type.TIME v, final type.TIME l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.TIME v, final type.TIME l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.TIME v, final LocalTime l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final type.TIME v, final LocalTime l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalTime v, final type.TIME l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalTime v, final type.TIME l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r); }
+  public static data.BOOLEAN BETWEEN(final LocalTime v, final LocalTime l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r); }
 
   public static final class IS {
     private IS() {}
@@ -2609,97 +2616,6 @@ public final class DML {
       private NOT() {}
       public static Predicate NULL(final type.Column<?> column) { return new NullPredicate(column, false); }
     }
-  }
-
-  public static final class NOT {
-    private NOT() { super(); }
-
-    public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery, false); }
-    public static <V>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, false, b); }
-    public static <V>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, false, b); }
-    @SafeVarargs public static <V>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, false, b); }
-    public static Predicate LIKE(final type.CHAR a, final String b) { return new LikePredicate(a, false, b); }
-
-    public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final type.Numeric<?> l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final type.Numeric<?> l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final Number l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.Numeric<?> v, final Number l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final Number v, final type.Numeric<?> l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final Number v, final type.Numeric<?> l, final Number r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final Number v, final Number l, final type.Numeric<?> r) { return new BetweenPredicates.NumericBetweenPredicate<>(v, l, r, false); }
-
-    public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final type.Textual<?> l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final type.Textual<?> l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final CharSequence l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.Textual<?> v, final CharSequence l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final CharSequence v, final type.Textual<?> l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final CharSequence v, final type.Textual<?> l, final CharSequence r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final CharSequence v, final CharSequence l, final type.Textual<?> r) { return new BetweenPredicates.TextualBetweenPredicate<>(v, l, r, false); }
-
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDate l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATE v, final LocalDateTime l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDate l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.DATETIME v, final LocalDateTime l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDate v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATE l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final LocalDate r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final type.DATETIME l, final LocalDateTime r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDate l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDate l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDateTime l, final type.DATE r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalDateTime v, final LocalDateTime l, final type.DATETIME r) { return new BetweenPredicates.TemporalBetweenPredicate<>(v, l, r, false); }
-
-    public static data.BOOLEAN BETWEEN(final type.TIME v, final type.TIME l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.TIME v, final type.TIME l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.TIME v, final LocalTime l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final type.TIME v, final LocalTime l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalTime v, final type.TIME l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalTime v, final type.TIME l, final LocalTime r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, false); }
-    public static data.BOOLEAN BETWEEN(final LocalTime v, final LocalTime l, final type.TIME r) { return new BetweenPredicates.TimeBetweenPredicate<>(v, l, r, false); }
   }
 
   private DML() {

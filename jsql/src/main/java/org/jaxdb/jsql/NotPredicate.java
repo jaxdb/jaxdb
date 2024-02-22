@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2024 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,43 +19,31 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.jaxdb.jsql.keyword.Select;
 
-final class InPredicate extends Predicate {
-  final Subject[] values;
+final class NotPredicate extends Predicate {
+  final Select.untyped.SELECT<?> query;
 
-  @SafeVarargs
-  InPredicate(final type.Column<?> column, final Object ... values) {
-    this(column, Arrays.asList(values));
+  NotPredicate(final type.Column<?> column) {
+    super(column);
+    this.query = null;
   }
 
-  InPredicate(final type.Column<?> column, final Collection<?> values) {
-    super(column);
-    final int len = values.size();
-    this.values = new data.Column<?>[len];
-    final Iterator<?> iterator = values.iterator();
-    for (int i = 0; i < len; ++i) // [A]
-      this.values[i] = org.jaxdb.jsql.data.wrap(iterator.next());
-  }
-
-  InPredicate(final type.Column<?> column, final Select.untyped.SELECT<? extends data.Column<?>> query) {
-    super(column);
-    this.values = new Subject[] {(Subject)query};
+  NotPredicate(final Select.untyped.SELECT<?> query) {
+    super(null);
+    this.query = query;
   }
 
   @Override
   Object evaluate(final Set<Evaluable> visited) {
-    throw new UnsupportedOperationException("IN cannot be evaluated outside the DB");
+    throw new UnsupportedOperationException("NOT cannot be evaluated outside the DB");
   }
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compileInPredicate(this, compilation);
+    compilation.compiler.compileNotPredicate(this, compilation);
   }
 
   @Override

@@ -195,6 +195,14 @@ public abstract class Condition<V> extends data.Primitive<V> {
     super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
   }
 
+  static final void collectColumn(final ArrayList<data.Column<?>> list, final Subject column) {
+    final data.Column<?> col = column.getColumn();
+    if (col instanceof Condition)
+      ((Condition<?>)col).collectColumns(list);
+    else
+      list.add(col);
+  }
+
   abstract void collectColumns(ArrayList<data.Column<?>> list);
   // abstract void andIntervalSet(IntervalSet<data.Key> intervalSet);
   // abstract void orIntervalSet(IntervalSet<data.Key> intervalSet);

@@ -118,9 +118,9 @@ abstract class BooleanTerm extends data.BOOLEAN {
 
   @Override
   void collectColumns(final ArrayList<data.Column<?>> list) {
-    a.collectColumns(list);
-    b.collectColumns(list);
+    collectColumn(list, a);
+    collectColumn(list, b);
     for (int i = 0, i$ = conditions.length; i < i$; ++i) // [A]
-      conditions[i].collectColumns(list);
+      collectColumn(list, conditions[i]);
   }
 }

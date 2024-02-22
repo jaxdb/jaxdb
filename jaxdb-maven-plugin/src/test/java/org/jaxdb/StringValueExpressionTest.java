@@ -176,7 +176,7 @@ public abstract class StringValueExpressionTest {
         .FROM(t)
         .WHERE(AND(
           IS.NOT.NULL(t.charType),
-          IS.NOT.NULL(t.enumType)))
+          NOT(IS.NULL(t.enumType))))
         .execute(transaction));
 
     final Types.Type clone = t.clone();
@@ -240,7 +240,7 @@ public abstract class StringValueExpressionTest {
     t = getNthRow(0,
       SELECT(t)
         .FROM(t)
-        .WHERE(IS.NOT.NULL(t.charType))
+        .WHERE(NOT(IS.NULL(t.charType)))
         .execute(transaction));
 
     final Types.Type clone = t.clone();

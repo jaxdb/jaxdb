@@ -25,12 +25,10 @@ import org.jaxdb.jsql.keyword.Select;
 
 final class ExistsPredicate extends Predicate {
   final Subject subQuery;
-  final boolean isPositive;
 
-  ExistsPredicate(final Select.untyped.SELECT<?> query, final boolean isPositive) {
+  ExistsPredicate(final Select.untyped.SELECT<?> query) {
     super();
     this.subQuery = (Subject)query;
-    this.isPositive = isPositive;
   }
 
   @Override
@@ -40,11 +38,11 @@ final class ExistsPredicate extends Predicate {
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compileExistsPredicate(this, isPositive, compilation);
+    compilation.compiler.compileExistsPredicate(this, compilation);
   }
 
   @Override
   void collectColumns(final ArrayList<data.Column<?>> list) {
-    list.add(subQuery.getColumn());
+    collectColumn(list, subQuery);
   }
 }

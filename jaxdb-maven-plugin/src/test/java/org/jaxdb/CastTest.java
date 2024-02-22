@@ -22,7 +22,6 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
@@ -1093,14 +1092,14 @@ public abstract class CastTest {
             SELECT(t.charType).FROM(t)
               .WHERE(AND(
                 LIKE(t.charType, "%1%"),
-                NOT.LIKE(t.charType, "%-%"),
-                NOT.LIKE(t.charType, "%:%")))
+                NOT(LIKE(t.charType, "%-%")),
+                NOT(LIKE(t.charType, "%:%"))))
               .LIMIT(1)).AS.DECIMAL(transaction.getVendor().getDialect().decimalMaxPrecision(), 10))
           .FROM(t)
           .WHERE(AND(
             LIKE(t.charType, "%1%"),
-            NOT.LIKE(t.charType, "%-%"),
-            NOT.LIKE(t.charType, "%:%")))
+            NOT(LIKE(t.charType, "%-%")),
+            NOT(LIKE(t.charType, "%:%"))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
@@ -1118,16 +1117,16 @@ public abstract class CastTest {
           CAST(SELECT(t.charType).FROM(t)
             .WHERE(AND(
               LIKE(t.charType, "%1%"),
-              NOT.LIKE(t.charType, "%.%"),
-              NOT.LIKE(t.charType, "%-%"),
-              NOT.LIKE(t.charType, "%:%")))
+              NOT(LIKE(t.charType, "%.%")),
+              NOT(LIKE(t.charType, "%-%")),
+              NOT(LIKE(t.charType, "%:%"))))
             .LIMIT(1)).AS.TINYINT(3))
           .FROM(t)
           .WHERE(AND(
             LIKE(t.charType, "%1%"),
-            NOT.LIKE(t.charType, "%.%"),
-            NOT.LIKE(t.charType, "%-%"),
-            NOT.LIKE(t.charType, "%:%")))
+            NOT(LIKE(t.charType, "%.%")),
+            NOT(LIKE(t.charType, "%-%")),
+            NOT(LIKE(t.charType, "%:%"))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
@@ -1145,16 +1144,16 @@ public abstract class CastTest {
           CAST(SELECT(t.charType).FROM(t)
             .WHERE(AND(
               LIKE(t.charType, "%1%"),
-              NOT.LIKE(t.charType, "%.%"),
-              NOT.LIKE(t.charType, "%-%"),
-              NOT.LIKE(t.charType, "%:%")))
+              NOT(LIKE(t.charType, "%.%")),
+              NOT(LIKE(t.charType, "%-%")),
+              NOT(LIKE(t.charType, "%:%"))))
             .LIMIT(1)).AS.SMALLINT(5))
           .FROM(t)
           .WHERE(AND(
             LIKE(t.charType, "%1%"),
-            NOT.LIKE(t.charType, "%.%"),
-            NOT.LIKE(t.charType, "%-%"),
-            NOT.LIKE(t.charType, "%:%")))
+            NOT(LIKE(t.charType, "%.%")),
+            NOT(LIKE(t.charType, "%-%")),
+            NOT(LIKE(t.charType, "%:%"))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
@@ -1172,16 +1171,16 @@ public abstract class CastTest {
           CAST(SELECT(t.charType).FROM(t)
             .WHERE(AND(
               LIKE(t.charType, "%1%"),
-              NOT.LIKE(t.charType, "%.%"),
-              NOT.LIKE(t.charType, "%-%"),
-              NOT.LIKE(t.charType, "%:%")))
+              NOT(LIKE(t.charType, "%.%")),
+              NOT(LIKE(t.charType, "%-%")),
+              NOT(LIKE(t.charType, "%:%"))))
             .LIMIT(1)).AS.INT(10))
           .FROM(t)
           .WHERE(AND(
             LIKE(t.charType, "%1%"),
-            NOT.LIKE(t.charType, "%.%"),
-            NOT.LIKE(t.charType, "%-%"),
-            NOT.LIKE(t.charType, "%:%")))
+            NOT(LIKE(t.charType, "%.%")),
+            NOT(LIKE(t.charType, "%-%")),
+            NOT(LIKE(t.charType, "%:%"))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
@@ -1199,16 +1198,16 @@ public abstract class CastTest {
           CAST(SELECT(t.charType).FROM(t)
             .WHERE(AND(
               LIKE(t.charType, "%1%"),
-              NOT.LIKE(t.charType, "%.%"),
-              NOT.LIKE(t.charType, "%-%"),
-              NOT.LIKE(t.charType, "%:%")))
+              NOT(LIKE(t.charType, "%.%")),
+              NOT(LIKE(t.charType, "%-%")),
+              NOT(LIKE(t.charType, "%:%"))))
             .LIMIT(1)).AS.BIGINT(19))
           .FROM(t)
           .WHERE(AND(
             LIKE(t.charType, "%1%"),
-            NOT.LIKE(t.charType, "%.%"),
-            NOT.LIKE(t.charType, "%-%"),
-            NOT.LIKE(t.charType, "%:%")))
+            NOT(LIKE(t.charType, "%.%")),
+            NOT(LIKE(t.charType, "%-%")),
+            NOT(LIKE(t.charType, "%:%"))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
@@ -1244,12 +1243,12 @@ public abstract class CastTest {
           CAST(SELECT(t.charType).FROM(t)
             .WHERE(AND(
               LIKE(t.charType, "%-%-%"),
-              NOT.LIKE(t.charType, "%-%-% %")))
+              NOT(LIKE(t.charType, "%-%-% %"))))
             .LIMIT(1)).AS.DATE())
           .FROM(t)
           .WHERE(AND(
             LIKE(t.charType, "%-%-%"),
-            NOT.LIKE(t.charType, "%-%-% %")))
+            NOT(LIKE(t.charType, "%-%-% %"))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
@@ -1267,12 +1266,12 @@ public abstract class CastTest {
           CAST(SELECT(t.charType).FROM(t)
             .WHERE(AND(
               LIKE(t.charType, "%:%:%"),
-              NOT.LIKE(t.charType, "% %:%:%")))
+              NOT(LIKE(t.charType, "% %:%:%"))))
             .LIMIT(1)).AS.TIME())
           .FROM(t)
           .WHERE(AND(
             LIKE(t.charType, "%:%:%"),
-            NOT.LIKE(t.charType, "% %:%:%")))
+            NOT(LIKE(t.charType, "% %:%:%"))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());

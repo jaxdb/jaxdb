@@ -218,7 +218,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
 
   @Override
   final void collectColumns(final ArrayList<data.Column<?>> list) {
-    list.add(a.getColumn());
-    list.add(b.getColumn());
+    collectColumn(list, a);
+    collectColumn(list, b);
   }
 }

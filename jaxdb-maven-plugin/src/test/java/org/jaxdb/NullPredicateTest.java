@@ -78,10 +78,10 @@ public abstract class NullPredicateTest {
     try (
       final RowIterator<data.BOOLEAN> rows =
         SELECT(
-          IS.NOT.NULL(c.customerNumber),
+          NOT(IS.NULL(c.customerNumber)),
           SELECT(IS.NOT.NULL(c.customerNumber))
             .FROM(c)
-            .WHERE(IS.NOT.NULL(c.customerNumber))
+            .WHERE(NOT(IS.NULL(c.customerNumber)))
             .LIMIT(1))
           .FROM(c)
           .WHERE(IS.NOT.NULL(c.customerNumber))
@@ -131,12 +131,12 @@ public abstract class NullPredicateTest {
       final RowIterator<data.BOOLEAN> rows =
         SELECT(
           IS.NOT.NULL(c.locality),
-          SELECT(IS.NOT.NULL(c.locality))
+          SELECT(NOT(IS.NULL(c.locality)))
             .FROM(c)
             .WHERE(IS.NOT.NULL(c.locality))
             .LIMIT(1))
           .FROM(c)
-          .WHERE(IS.NOT.NULL(c.locality))
+          .WHERE(NOT(IS.NULL(c.locality)))
           .execute(transaction)
     ) {
       for (int i = 0; i < 51; ++i) { // [N]

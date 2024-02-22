@@ -108,11 +108,13 @@ public abstract class ReverseTest extends DDLxTest {
     final BindingList<Schema.Table> tables = schema.getTable();
     for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
       final Schema.Table table = tables.get(i);
-      if (table.getIndexes() != null && table.getIndexes().getIndex() != null && table.getIndexes().getIndex().size() > 0)
-        table.getIndexes().getIndex().sort(hashCodeComparator);
+      final Schema.Table.Indexes indexes = table.getIndexes();
+      if (indexes != null && indexes.getIndex() != null && indexes.getIndex().size() > 0)
+        indexes.getIndex().sort(hashCodeComparator);
 
-      if (table.getConstraints() != null && table.getConstraints().getUnique() != null && table.getConstraints().getUnique().size() > 0)
-        table.getConstraints().getUnique().sort(hashCodeComparator);
+      final Schema.Table.Constraints constraints = table.getConstraints();
+      if (constraints != null && constraints.getUnique() != null && constraints.getUnique().size() > 0)
+        constraints.getUnique().sort(hashCodeComparator);
     }
   }
 

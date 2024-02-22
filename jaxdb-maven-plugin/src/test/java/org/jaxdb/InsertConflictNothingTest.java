@@ -138,7 +138,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
             IS.NOT.NULL(t.id),
             OR(
               IS.NULL(t.charType),
-              IS.NOT.NULL(t.charType)))))
+              NOT(IS.NULL(t.charType))))))
         .ON_CONFLICT()
         .DO_NOTHING()
         .execute(transaction)
@@ -148,7 +148,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
       INSERT(b).VALUES(
         SELECT(t).FROM(t)
           .WHERE(AND(
-            IS.NOT.NULL(t.id),
+            NOT(IS.NULL(t.id)),
             OR(
               IS.NULL(t.charType),
               IS.NOT.NULL(t.charType)))))
@@ -173,7 +173,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
       INSERT(b).VALUES(
         SELECT(t)
           .FROM(t)
-          .WHERE(IS.NOT.NULL(t.id)))
+          .WHERE(NOT(IS.NULL(t.id))))
         .ON_CONFLICT()
         .DO_NOTHING()
         .execute(transaction)
@@ -183,7 +183,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
       INSERT(b).VALUES(
         SELECT(t)
           .FROM(t)
-          .WHERE(IS.NOT.NULL(t.id)))
+          .WHERE(NOT(IS.NULL(t.id))))
         .ON_CONFLICT()
         .DO_NOTHING()
         .execute(transaction)

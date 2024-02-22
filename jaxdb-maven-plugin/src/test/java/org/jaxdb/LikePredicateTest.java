@@ -56,12 +56,10 @@ public abstract class LikePredicateTest {
     final Classicmodels.Product p = classicmodels.Product$;
     try (
       final RowIterator<Classicmodels.Product> rows =
-
         SELECT(p).FROM(p)
           .WHERE(LIKE(p.name, "%"))
           .execute(transaction)
     ) {
-
       for (int i = 0; i < 110; ++i) // [N]
         assertTrue(rows.nextRow());
 

@@ -189,7 +189,7 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
       INSERT(b).VALUES(
         SELECT(t)
           .FROM(t)
-          .WHERE(IS.NOT.NULL(t.id))
+          .WHERE(NOT(IS.NULL(t.id)))
           .LIMIT(10))
         .execute(transaction)
         .getCount());

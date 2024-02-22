@@ -41,6 +41,13 @@ import org.libj.util.ArrayUtil;
 
   /* END Ordering Specification */
 
+  /* START NOT Specification */
+
+  public static Predicate NOT(final type.Column<?> column) { return new NotPredicate(column); }
+  public static Predicate NOT(final Select.untyped.SELECT<?> subQuery) { return new NotPredicate(subQuery); }
+
+  /* END NOT Specification */
+
   /* START Cast */
 
   public static Cast.BIGINT CAST(final type.BIGINT a) { return new Cast.BIGINT(a); }
@@ -475,11 +482,11 @@ import org.libj.util.ArrayUtil;
   public static <V>ANY<V> ANY(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new ANY<>(subQuery); }
   public static <V>SOME<V> SOME(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new SOME<>(subQuery); }
 
-  public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery, true); }
-  public static <V>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, true, b); }
-  public static <V>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, true, b); }
-  @SafeVarargs public static <V>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, true, b); }
-  public static Predicate LIKE(final type.CHAR a, final CharSequence b) { return new LikePredicate(a, true, b); }
+  public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery); }
+  public static <V>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, b); }
+  public static <V>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, b); }
+  @SafeVarargs public static <V>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, b); }
+  public static Predicate LIKE(final type.CHAR a, final CharSequence b) { return new LikePredicate(a, b); }
 
   /**** DMLx ****/
 
@@ -491,18 +498,6 @@ import org.libj.util.ArrayUtil;
       private NOT() {}
       public static Predicate NULL(final type.Column<?> column) { return new NullPredicate(column, false); }
     }
-  }
-
-  public static final class NOT {
-    private NOT() { super(); }
-
-    public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery, false); }
-    public static <V>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, false, b); }
-    public static <V>Predicate IN(final type.Column<V> a, final Select.untyped.SELECT<? extends data.Column<V>> b) { return new InPredicate(a, false, b); }
-    @SafeVarargs public static <V>Predicate IN(final type.Column<V> a, final V ... b) { return new InPredicate(a, false, b); }
-    public static Predicate LIKE(final type.CHAR a, final String b) { return new LikePredicate(a, false, b); }
-
-    /** DMLx.NOT **/
   }
 
   private DMLx() {

@@ -155,7 +155,7 @@ abstract class Compiler extends DbVendorCompiler {
   abstract void onRegister(Connection connection) throws SQLException;
   abstract void onConnect(Connection connection) throws SQLException;
 
-  static <T extends type.Entity> Subject toSubject(final T entity) {
+  static <T> Subject toSubject(final T entity) {
     return (Subject)entity;
   }
 
@@ -841,14 +841,17 @@ abstract class Compiler extends DbVendorCompiler {
     }
   }
 
+  void compileNotPredicate(final NotPredicate predicate, final Compilation compilation) throws IOException, SQLException {
+    final StringBuilder sql = compilation.sql;
+    sql.append("NOT (");
+    toSubject(predicate.query != null ? predicate.query : predicate.column).compile(compilation, true);
+    sql.append(")");
+  }
+
   void compileInPredicate(final InPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     toSubject(predicate.column).compile(compilation, true);
     final StringBuilder sql = compilation.sql;
-    sql.append(' ');
-    if (!predicate.positive)
-      sql.append("NOT ");
-
-    sql.append("IN (");
+    sql.append(" IN (");
     final Subject[] values = predicate.values;
     for (int i = 0, i$ = values.length; i < i$; ++i) { // [A]
       if (i > 0)
@@ -860,11 +863,8 @@ abstract class Compiler extends DbVendorCompiler {
     sql.append(')');
   }
 
-  void compileExistsPredicate(final ExistsPredicate predicate, final boolean isPositive, final Compilation compilation) throws IOException, SQLException {
+  void compileExistsPredicate(final ExistsPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
-    if (!isPositive)
-      sql.append("NOT ");
-
     sql.append("EXISTS (");
     predicate.subQuery.compile(compilation, true);
     sql.append(')');
@@ -874,12 +874,7 @@ abstract class Compiler extends DbVendorCompiler {
     final StringBuilder sql = compilation.sql;
     sql.append('(');
     toSubject(predicate.column).compile(compilation, true);
-    sql.append(") ");
-
-    if (!predicate.positive)
-      sql.append("NOT ");
-
-    sql.append("LIKE '").append(predicate.pattern).append('\'');
+    sql.append(") LIKE '").append(predicate.pattern).append('\'');
   }
 
   void compileQuantifiedComparisonPredicate(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
@@ -894,11 +889,7 @@ abstract class Compiler extends DbVendorCompiler {
     sql.append('(');
     final type.Column<?> column = predicate.column;
     toSubject(column).compile(compilation, true);
-    sql.append(')');
-    if (!predicate.positive)
-      sql.append(" NOT");
-
-    sql.append(" BETWEEN ");
+    sql.append(") BETWEEN ");
 
     final Subject a = predicate.a();
     a.compile(compilation, true);

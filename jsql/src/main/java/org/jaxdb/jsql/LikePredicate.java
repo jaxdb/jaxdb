@@ -22,12 +22,10 @@ import java.util.ArrayList;
 import java.util.Set;
 
 final class LikePredicate extends Predicate {
-  final boolean positive;
   final CharSequence pattern;
 
-  LikePredicate(final type.Textual<?> column, final boolean positive, final CharSequence pattern) {
+  LikePredicate(final type.Textual<?> column, final CharSequence pattern) {
     super(column);
-    this.positive = positive;
     this.pattern = pattern;
   }
 
@@ -41,7 +39,7 @@ final class LikePredicate extends Predicate {
       return null;
 
     final String value = a.get().toString();
-    return value.matches(pattern.toString().replace("%", ".*")) == positive ? value : null;
+    return value.matches(pattern.toString().replace("%", ".*")) ? value : null;
   }
 
   @Override
@@ -51,6 +49,6 @@ final class LikePredicate extends Predicate {
 
   @Override
   void collectColumns(final ArrayList<data.Column<?>> list) {
-    list.add(((Subject)column).getColumn());
+    collectColumn(list, (Subject)column);
   }
 }

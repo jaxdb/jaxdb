@@ -59,7 +59,7 @@ public abstract class HavingClauseTest {
       final RowIterator<data.BIGINT> rows =
         SELECT(COUNT(p))
           .FROM(p)
-          .HAVING(IS.NOT.NULL(p.code))
+          .HAVING(NOT(IS.NULL(p.code)))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
@@ -77,7 +77,7 @@ public abstract class HavingClauseTest {
           .FROM(p)
           .HAVING(OR(
             IS.NOT.NULL(p.msrp),
-            IS.NOT.NULL(p.code)))
+            NOT(IS.NULL(p.code))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());

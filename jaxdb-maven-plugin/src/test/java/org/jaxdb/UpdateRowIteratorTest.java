@@ -256,7 +256,7 @@ public abstract class UpdateRowIteratorTest {
       final RowIterator<?> rows =
         SELECT(t.booleanType, t.id)
           .FROM(t)
-          .WHERE(IS.NOT.NULL(t.booleanType))
+          .WHERE(NOT(IS.NULL(t.booleanType)))
           .execute(transaction, queryConfig)
     ) {
       while (rows.nextRow())

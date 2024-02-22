@@ -178,7 +178,7 @@ public abstract class NumericFunctionStaticTest {
           t.doubleType.AS(a),
           SIGN(t.doubleType).AS(b))
           .FROM(t)
-          .WHERE(IS.NOT.NULL(t.doubleType))
+          .WHERE(NOT(IS.NULL(t.doubleType)))
           .LIMIT(1)
           .execute(transaction)
     ) {
@@ -227,7 +227,7 @@ public abstract class NumericFunctionStaticTest {
           t.doubleType.AS(a),
           CEIL(t.doubleType).AS(b))
           .FROM(t)
-          .WHERE(IS.NOT.NULL(t.doubleType))
+          .WHERE(NOT(IS.NULL(t.doubleType)))
           .LIMIT(1)
           .execute(transaction)
     ) {
@@ -513,7 +513,7 @@ public abstract class NumericFunctionStaticTest {
           t.intType.AS(a),
           MOD(t.intType, -3).AS(b))
           .FROM(t)
-          .WHERE(IS.NOT.NULL(t.intType))
+          .WHERE(NOT(IS.NULL(t.intType)))
           .LIMIT(1)
           .execute(transaction)
     ) {
@@ -566,7 +566,7 @@ public abstract class NumericFunctionStaticTest {
           MOD(t.doubleType, 1.2).AS(b))
           .FROM(t)
           .WHERE(AND(
-            IS.NOT.NULL(t.doubleType),
+            NOT(IS.NULL(t.doubleType)),
             LT(ABS(t.doubleType), 100)))
           .LIMIT(1)
           .execute(transaction)
@@ -624,7 +624,7 @@ public abstract class NumericFunctionStaticTest {
           MOD(t.doubleType, t.floatType).AS(c))
           .FROM(t)
           .WHERE(AND(
-            IS.NOT.NULL(t.doubleType),
+            NOT(IS.NULL(t.doubleType)),
             GT(ABS(t.floatType), 10),
             LT(ABS(t.floatType), 100),
             GT(ABS(t.doubleType), 10),
@@ -713,7 +713,7 @@ public abstract class NumericFunctionStaticTest {
           POW(3, MUL(t.doubleType, -1)).AS(b))
           .FROM(t)
           .WHERE(AND(
-            IS.NOT.NULL(t.doubleType),
+            NOT(IS.NULL(t.doubleType)),
             LT(ABS(t.doubleType), 100)))
           .LIMIT(1)
           .execute(transaction)

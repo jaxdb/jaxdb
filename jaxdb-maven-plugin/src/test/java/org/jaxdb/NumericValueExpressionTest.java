@@ -191,7 +191,7 @@ public abstract class NumericValueExpressionTest {
           GTE(t.smallintType, -100), LTE(t.smallintType, 100),
           GTE(t.intType, -1000), LTE(t.intType, 1000),
           GTE(t.bigintType, -10000), LTE(t.bigintType, 10000),
-          IS.NOT.NULL(t.floatType),
+          NOT(IS.NULL(t.floatType)),
           IS.NOT.NULL(t.doubleType),
           GTE(t.decimalType, -100000), LTE(t.decimalType, 100000)))
         .execute(transaction));

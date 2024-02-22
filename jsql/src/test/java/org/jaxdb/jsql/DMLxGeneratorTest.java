@@ -206,19 +206,19 @@ public class DMLxGeneratorTest {
     return compose2("  public static %s " + function + "(" + params + ") { return new " + getCanonicalCompositeName(OperationImpl.Operation2.class, false) + ".%s(" + getCanonicalCompositeName(operatorClass, false) + "." + function + ", " + args + "); }", returning, types, catalogs);
   }
 
-  private static StringBuilder between(final StringBuilder builder, final int spaces, final boolean positive) {
+  private static StringBuilder between(final StringBuilder builder, final int spaces) {
     builder.append('\n');
     final Class<?>[] numericTypes = {type.Numeric.class, Number.class};
-    between(builder, spaces, BetweenPredicates.NumericBetweenPredicate.class, positive, numericTypes).append('\n');
+    between(builder, spaces, BetweenPredicates.NumericBetweenPredicate.class, numericTypes).append('\n');
 
     final Class<?>[] textualTypes = {type.Textual.class, CharSequence.class};
-    between(builder, spaces, BetweenPredicates.TextualBetweenPredicate.class, positive, textualTypes).append('\n');
+    between(builder, spaces, BetweenPredicates.TextualBetweenPredicate.class, textualTypes).append('\n');
 
     final Class<?>[] temporalTypes = {type.DATE.class, type.DATETIME.class, LocalDate.class, LocalDateTime.class};
-    between(builder, spaces, BetweenPredicates.TemporalBetweenPredicate.class, positive, temporalTypes).append('\n');
+    between(builder, spaces, BetweenPredicates.TemporalBetweenPredicate.class, temporalTypes).append('\n');
 
     final Class<?>[] timeTypes = {type.TIME.class, LocalTime.class};
-    between(builder, spaces, BetweenPredicates.TimeBetweenPredicate.class, positive, timeTypes);
+    between(builder, spaces, BetweenPredicates.TimeBetweenPredicate.class, timeTypes);
 
     return builder;
   }
@@ -233,7 +233,7 @@ public class DMLxGeneratorTest {
     return generic;
   }
 
-  private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final boolean positive, final Class<?>[] types) {
+  private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final Class<?>[] types) {
     final Class<?>[] parameters = new Class[2];
     for (final Class<?> type : types) { // [A]
       final boolean isTypeClass = type.getDeclaringClass() == type.class;
@@ -257,7 +257,7 @@ public class DMLxGeneratorTest {
           for (int k = 1, k$ = stringArgs.length; k < k$; ++k) // [A]
             generic = toStringArg(stringArgs, parameters[k - 1], k, generic);
 
-          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(data.BOOLEAN.class, false) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, false) + "<>(v, l, r, " + positive + "); }", stringArgs)).append('\n');
+          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(data.BOOLEAN.class, false) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, false) + "<>(v, l, r); }", stringArgs)).append('\n');
         }
       }
     }
@@ -305,10 +305,7 @@ public class DMLxGeneratorTest {
     dml.append(compose2("ROUND", function2, "a", "b", Returning.BOTH_APPROX, allNumericTypes, numericCatalogs)).append('\n');
 
     // -- between --
-    between(dml, 2, true).append('\n');
-
-    final StringBuilder not = new StringBuilder();
-    between(not, 4, false);
+    between(dml, 2).append('\n');
 
     final File dmlJavaFile = new File("src/test/java", DMLx.class.getName().replace('.', '/') + ".java");
     final String source = new String(Files.readAllBytes(dmlJavaFile.toPath()))
@@ -316,8 +313,7 @@ public class DMLxGeneratorTest {
       .replace("]**/", "")
       .replace("/*** public ***/ final class DMLx {", "public final class DML {")
       .replace("private DMLx() {", "private DML() {")
-      .replace("/**** DMLx ****/", dml.toString().trim())
-      .replace("/** DMLx.NOT **/", not.toString().trim());
+      .replace("/**** DMLx ****/", dml.toString().trim());
 
     assertMatch(source, DML.class, true);
     assertMatch(source.replace(" DML", " TestDML").replace("new Command.", "new TestCommand."), TestDML.class, false);

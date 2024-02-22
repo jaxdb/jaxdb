@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.Classicmodels;
-import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
@@ -98,9 +97,9 @@ public abstract class BetweenPredicateTest {
     try (
       final RowIterator<data.BOOLEAN> rows =
         SELECT(
-          SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
+          SELECT(NOT(BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
             .FROM(p)
-            .WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
+            .WHERE(NOT(BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
@@ -114,9 +113,9 @@ public abstract class BetweenPredicateTest {
     final Classicmodels.Purchase p = classicmodels.Purchase$;
     try (
       final RowIterator<data.BOOLEAN> rows =
-        SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
+        SELECT(NOT(BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
           .FROM(p)
-          .WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
+          .WHERE(NOT(BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
           .execute(transaction)
     ) {
       assertTrue(rows.nextRow());
