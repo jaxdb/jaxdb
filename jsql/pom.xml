@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.6.0</version>
   </parent>
   <artifactId>jsql</artifactId>
   <name>JAX-DB jSQL</name>
@@ -124,17 +124,17 @@
     <dependency>
       <groupId>org.libj</groupId>
       <artifactId>sql</artifactId>
-      <version>0.4.9-SNAPSHOT</version>
+      <version>0.4.9</version>
     </dependency>
     <dependency>
       <groupId>org.openjax</groupId>
       <artifactId>json</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.openjax</groupId>
       <artifactId>binarytree</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <version>1.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
