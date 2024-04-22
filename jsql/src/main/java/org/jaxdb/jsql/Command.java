@@ -958,13 +958,19 @@ abstract class Command<E> extends Keyword implements Closeable {
           if (tableCalled)
             return table;
 
-          tableCalled = true;
           // FIXME: Note that this returns the 1st table only! Is this what we want?!
-          if (entities[0] instanceof Select.untyped.SELECT)
-            return table = ((Select.untyped.SELECT<?>)entities[0]).getTable();
+          if (entities[0] instanceof Select.untyped.SELECT) {
+            table = ((Select.untyped.SELECT<?>)entities[0]).getTable();
+            tableCalled = true;
+            return table;
+          }
 
           final data.Table[] from = from();
-          return from != null ? table = from[0] : null;
+          if (from != null)
+            table = from[0];
+
+          tableCalled = true;
+          return table;
         }
 
         @Override
@@ -982,12 +988,12 @@ abstract class Command<E> extends Keyword implements Closeable {
           if (fromCalled)
             return from;
 
-          fromCalled = true;
           from = getTables(entities, entities.length, 0, 0);
           if ((isObjectQuery = where == null) || from == null)
             for (final type.Entity entity : entities) // [A]
               isObjectQuery &= entity instanceof data.Table;
 
+          fromCalled = true;
           return from;
         }
 
@@ -1009,7 +1015,6 @@ abstract class Command<E> extends Keyword implements Closeable {
           if (whereCalled)
             return where;
 
-          whereCalled = true;
           if (isObjectQuery) {
             final Condition<?>[] conditions = createObjectQueryConditions(entities, entities.length, 0, 0);
             if (conditions != null)
@@ -1017,6 +1022,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
 
           isConditionalSelect = where != null;
+          whereCalled = true;
           return where;
         }
 
