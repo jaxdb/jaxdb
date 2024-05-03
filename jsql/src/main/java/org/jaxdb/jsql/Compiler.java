@@ -811,6 +811,9 @@ abstract class Compiler extends DbVendorCompiler {
         unwrapAlias(predicate.a).compile(compilation, true);
         sql.append(')');
       }
+      else if (predicate.a == null) {
+        throw new IllegalArgumentException("lhs is NULL");
+      }
       else {
         unwrapAlias(predicate.a).compile(compilation, true);
       }
@@ -834,6 +837,9 @@ abstract class Compiler extends DbVendorCompiler {
         sql.append('(');
         unwrapAlias(predicate.b).compile(compilation, true);
         sql.append(')');
+      }
+      else if (predicate.b == null) {
+        compilation.sql.append("NULL");
       }
       else {
         unwrapAlias(predicate.b).compile(compilation, true);

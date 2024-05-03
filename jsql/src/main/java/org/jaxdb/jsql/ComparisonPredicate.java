@@ -62,7 +62,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
 
     @Override
     final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
-      return b.append('=');
+      return b.append(this.b == null ? "IS" : "=");
     }
   }
 
@@ -85,7 +85,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
 
     @Override
     final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
-      return b.append("!=");
+      return b.append(this.b == null ? "IS NOT" : "!=");
     }
   }
 
@@ -108,6 +108,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
 
     @Override
     final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      super.compile(compiler, b, isForUpdateWhere);
       return b.append('>');
     }
   }
@@ -131,6 +132,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
 
     @Override
     final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      super.compile(compiler, b, isForUpdateWhere);
       return b.append('<');
     }
   }
@@ -154,6 +156,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
 
     @Override
     final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      super.compile(compiler, b, isForUpdateWhere);
       return b.append(">=");
     }
   }
@@ -177,6 +180,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
 
     @Override
     final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+      super.compile(compiler, b, isForUpdateWhere);
       return b.append("<=");
     }
   }
@@ -184,7 +188,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
   private ComparisonPredicate(final type.Column<?> a, final V b) {
     super(((Subject)a).getTable());
     this.a = (Subject)a;
-    this.b = org.jaxdb.jsql.data.wrap(b);
+    this.b = b == null ? null : org.jaxdb.jsql.data.wrap(b);
   }
 
   private ComparisonPredicate(final type.Column<?> a, final QuantifiedComparisonPredicate<?> b) {
@@ -195,7 +199,7 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
 
   private ComparisonPredicate(final V a, final type.Column<?> b) {
     super(((Subject)b).getTable());
-    this.a = org.jaxdb.jsql.data.wrap(a);
+    this.a = a == null ? null : org.jaxdb.jsql.data.wrap(a);
     this.b = (Subject)b;
   }
 
@@ -220,5 +224,13 @@ abstract class ComparisonPredicate<V> extends data.BOOLEAN {
   final void collectColumns(final ArrayList<data.Column<?>> list) {
     collectColumn(list, a);
     collectColumn(list, b);
+  }
+
+  @Override
+  StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
+    if (b == null)
+      throw new IllegalArgumentException("NULL is not allowed for " + this.getClass().getSimpleName());
+
+    return null;
   }
 }

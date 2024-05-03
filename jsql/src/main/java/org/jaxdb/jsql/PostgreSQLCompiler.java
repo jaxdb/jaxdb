@@ -270,12 +270,14 @@ final class PostgreSQLCompiler extends Compiler {
   final void compilePredicate(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
     final Subject a = predicate.a;
     final Subject b = predicate.b;
-    if (a.getClass() == b.getClass() || (!(a instanceof data.ENUM) && !(b instanceof data.ENUM))) {
+    if (!(a instanceof data.ENUM) && !(b instanceof data.ENUM) || (a != null && b != null && a.getClass() == b.getClass())) {
       super.compilePredicate(predicate, compilation);
     }
     else {
       if (a instanceof data.ENUM)
         toChar((data.ENUM<?>)a, compilation);
+      else if (a == null)
+        compilation.sql.append("NULL");
       else
         a.compile(compilation, true);
 
@@ -285,6 +287,8 @@ final class PostgreSQLCompiler extends Compiler {
       sql.append(' ');
       if (b instanceof data.ENUM)
         toChar((data.ENUM<?>)b, compilation);
+      else if (b == null)
+        compilation.sql.append("NULL");
       else
         b.compile(compilation, true);
     }
