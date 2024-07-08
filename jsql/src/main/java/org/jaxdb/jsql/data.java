@@ -6601,10 +6601,7 @@ public final class data {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static <V,C extends Column<V>> C wrap(final V value) {
-    if (EntityEnum.class.isAssignableFrom(value.getClass()))
-      return (C)new ENUM((EntityEnum)value);
-
-    return (C)newInstance(lookupColumnConstructor(value.getClass()), value);
+    return (C)(EntityEnum.class.isAssignableFrom(value.getClass()) ? new ENUM((EntityEnum)value) : newInstance(lookupColumnConstructor(value.getClass()), value));
   }
 
   private data() {

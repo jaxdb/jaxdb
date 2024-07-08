@@ -22,15 +22,16 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jaxdb.jsql.QueryConfig.Concurrency;
-import org.jaxdb.jsql.QueryConfig.Holdability;
-import org.jaxdb.jsql.QueryConfig.Type;
 import org.libj.sql.exception.SQLExceptions;
 
 public abstract class RowIterator<D extends type.Entity> implements AutoCloseable, Iterable<D> {
+  protected static <D extends type.Entity>void setRow(final RowIterator<D> rowIterator, final D[] row) {
+    rowIterator.setRow(row);
+  }
+
   final ResultSet resultSet;
-  private final Type type;
-  private final Concurrency concurrency;
+  private final QueryConfig.Type type;
+  private final QueryConfig.Concurrency concurrency;
 
   boolean endReached;
   SQLException suppressed;
@@ -59,16 +60,16 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
     entityIndex = -1;
   }
 
-  public Type getType() {
+  public QueryConfig.Type getType() {
     return type;
   }
 
-  public Concurrency getConcurrency() {
+  public QueryConfig.Concurrency getConcurrency() {
     return concurrency;
   }
 
-  public final Holdability getHoldability() throws SQLException {
-    return Holdability.fromInt(resultSet.getHoldability());
+  public final QueryConfig.Holdability getHoldability() throws SQLException {
+    return QueryConfig.Holdability.fromInt(resultSet.getHoldability());
   }
 
   /**
@@ -78,8 +79,8 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    * <p>
    * When a call to this method returns {@code false}, the cursor is positioned after the last row. Any invocation of a
    * {@link RowIterator}'s method which requires a current row will result in a {@link SQLException} to be thrown. If
-   * {@linkplain #getType() the result set type} is {@link Type#FORWARD_ONLY}, it is vendor specified whether their JDBC driver
-   * implementation will return {@code false} or throw an {@link SQLException} on a subsequent call to next.
+   * {@linkplain #getType() the result set type} is {@link QueryConfig.Type#FORWARD_ONLY}, it is vendor specified whether their JDBC
+   * driver implementation will return {@code false} or throw an {@link SQLException} on a subsequent call to next.
    *
    * @return {@code true} if the new current row is valid; {@code false} if there are no more rows.
    * @throws SQLException If a database access error occurs or this method is called on a closed result set.
@@ -99,7 +100,7 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    * @return {@code true} if the cursor is now positioned on a valid row; {@code false} if the cursor is positioned before the first
    *         row.
    * @throws SQLException If a database access error occurs; this method is called on a closed result set or {@linkplain #getType()
-   *           the result set type} is {@link Type#FORWARD_ONLY}.
+   *           the result set type} is {@link QueryConfig.Type#FORWARD_ONLY}.
    * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
   public boolean previousRow() throws SQLException, SQLFeatureNotSupportedException {
@@ -111,8 +112,8 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    * called when the cursor is on the insert row.
    *
    * @throws SQLException If a database access error occurs; the {@linkplain #getConcurrency() result set concurrency} is
-   *           {@link Concurrency#READ_ONLY}; this method is called on a closed result set or if this method is called when the cursor
-   *           is on the insert row.
+   *           {@link QueryConfig.Concurrency#READ_ONLY}; this method is called on a closed result set or if this method is called
+   *           when the cursor is on the insert row.
    * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
   public final void updateRow() throws SQLException, SQLFeatureNotSupportedException {

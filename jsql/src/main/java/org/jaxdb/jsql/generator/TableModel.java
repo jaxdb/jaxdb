@@ -1428,7 +1428,7 @@ class TableModel {
     if (!isUnique && isReferencesUnique)
       return new ManyToManyRelation(schemaModel.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
-    throw new UnsupportedOperationException("Is this even possible?");
+    throw new UnsupportedOperationException("Caching of many-to-many relations is not supported");
   }
 
   private static boolean isNull(final $Column column) {
