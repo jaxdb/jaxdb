@@ -707,7 +707,7 @@ abstract class Compiler extends DbVendorCompiler {
     final Operator operator = Operator.valueOf(check.getOperator$().text());
     final $Check.Value$ value$ = check.getValue$();
     final String text = value$.text();
-    final String condition = Numbers.isNumber(text) ? Numbers.stripTrailingZeros(text) : "'" + text + "'";
+    final String condition = Numbers.isNumberWithFraction(text) ? Numbers.stripTrailingZeros(text) : "'" + text + "'";
     final StringBuilder b = new StringBuilder();
     q(b, check.getColumn$().text()).append(' ').append(operator.symbol).append(' ').append(condition);
 
