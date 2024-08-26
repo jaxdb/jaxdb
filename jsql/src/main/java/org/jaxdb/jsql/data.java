@@ -1474,13 +1474,13 @@ public final class data {
     }
 
     public CHAR(final long length, final boolean varying) {
-      super(null, true, (short)length, null);
+      super(null, true, (int)length, null);
       this.varying = varying;
       checkLength(length);
     }
 
     public CHAR(final Long length, final boolean varying) {
-      super(null, true, Numbers.cast(length, Short.class), (OnModify<?>)null);
+      super(null, true, Numbers.cast(length, Integer.class), (OnModify<?>)null);
       this.varying = varying;
       checkLength(length);
     }
@@ -3316,19 +3316,19 @@ public final class data {
     }
 
     public static final NULL NULL = new NULL();
-    private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>(2);
+    private static final IdentityHashMap<Class<?>,Integer> typeToLength = new IdentityHashMap<>(2);
     private static volatile ConcurrentHashMap<Class<?>,Method> classToFromStringMethod;
 
-    private static short calcEnumLength(final EntityEnum[] constants) {
-      final Short cached = typeToLength.get(constants.getClass().getComponentType());
+    private static int calcEnumLength(final EntityEnum[] constants) {
+      final Integer cached = typeToLength.get(constants.getClass().getComponentType());
       if (cached != null)
         return cached;
 
-      short length = 0;
+      int length = 0;
       for (final EntityEnum constant : constants) { // [A]
         final int len = constant.toString().length();
         if (length < len)
-          length = (short)len;
+          length = len;
       }
 
       typeToLength.put(constants.getClass().getComponentType(), length);
@@ -5827,19 +5827,19 @@ public final class data {
   }
 
   public abstract static class Textual<V extends CharSequence & Comparable<?>> extends Objective<V> implements type.Textual<V>, Comparable<Textual<?>> {
-    private final Short length;
+    private final Integer length;
 
-    Textual(final Table owner, final boolean mutable, final Short length, final OnModify<? extends Table> onModify) {
+    Textual(final Table owner, final boolean mutable, final Integer length, final OnModify<? extends Table> onModify) {
       super(owner, mutable, onModify);
       this.length = length;
     }
 
     Textual(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final OnModify<? extends Table> onModify, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final long length) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, onModify, isNullable, _default, generateOnInsert, generateOnUpdate);
-      this.length = (short)length;
+      this.length = (int)length;
     }
 
-    Textual(final Table owner, final boolean mutable, final Textual<V> copy, final Short length) {
+    Textual(final Table owner, final boolean mutable, final Textual<V> copy, final Integer length) {
       super(owner, mutable, copy);
       this.length = length;
     }
@@ -5859,7 +5859,7 @@ public final class data {
       return (String)super.evaluate(visited);
     }
 
-    public final Short length() {
+    public final Integer length() {
       return length;
     }
 

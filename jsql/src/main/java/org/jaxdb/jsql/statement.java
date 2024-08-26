@@ -144,8 +144,14 @@ public final class statement {
             // FIXME: Why am I doing this a second time here in the catch block?
             if (parameters != null) {
               final int updateWhereIndex = compilation.getUpdateWhereIndex();
-              for (int p = 0, i$ = parameters.size(); p < i$;) // [RA]
-                parameters.get(p).write(compiler, preparedStatement, p >= updateWhereIndex, ++p);
+              for (int p = 0, i$ = parameters.size(); p < i$;) { // [RA]
+                try {
+                  parameters.get(p).write(compiler, preparedStatement, p >= updateWhereIndex, ++p);
+                }
+                catch (final IOException ie) {
+                  e.addSuppressed(ie);
+                }
+              }
             }
 
             if (e instanceof SQLException)
