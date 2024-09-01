@@ -5725,7 +5725,7 @@ public final class data {
      * @return A JSON string representation of <u>all</u> {@link Column}s in this {@link Table}.
      */
     @Override
-    public final String toString() {
+    public String toString() {
       return toString(false);
     }
 
