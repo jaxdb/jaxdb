@@ -397,6 +397,8 @@ final class OracleCompiler extends Compiler {
 
     if (doUpdate) {
       sql.append(" WHEN MATCHED THEN UPDATE SET ");
+      final int len = sql.length();
+
       modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
@@ -409,6 +411,9 @@ final class OracleCompiler extends Compiler {
           modified = true;
         }
       }
+
+      if (sql.length() == len)
+        throw new SQLException("No columns to update");
     }
 
     sql.append(" WHEN NOT MATCHED THEN INSERT (").append(insertNames).append(") VALUES (").append(insertValues).append(')');

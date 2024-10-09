@@ -23,6 +23,8 @@
 
   <table name="markable" abstract="true">
     <column name="mark" xsi:type="boolean"/>
+    <column name="create_time" xsi:type="bigint" precision="19" min="0" null="false" sqlx:generateOnInsert="EPOCH_MILLIS"/>
+    <column name="modify_time" xsi:type="bigint" precision="19" min="0" null="false" sqlx:generateOnInsert="EPOCH_MILLIS" sqlx:generateOnUpdate="EPOCH_MILLIS"/>
   </table>
 
   <table name="char_uuid" extends="markable">

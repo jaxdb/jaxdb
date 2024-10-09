@@ -80,13 +80,13 @@ public abstract class DeleteTest {
     final Batch batch = new Batch();
     batch.addStatement(
       DELETE(p1)
-        .onExecute(c -> assertTrue(isOracle || c != 0)));
+        .onExecute((final int c) -> assertTrue(isOracle || c != 0)));
     batch.addStatement(
       DELETE(pa)
-        .onExecute(c -> assertTrue(isOracle || c != 0)));
+        .onExecute((final int c) -> assertTrue(isOracle || c != 0)));
     batch.addStatement(
       DELETE(p2)
-        .onExecute(c -> assertTrue(isOracle || c != 0)));
+        .onExecute((final int c) -> assertTrue(isOracle || c != 0)));
 
     if (!isOracle)
       assertEquals(5, batch.execute(transaction).getCount());

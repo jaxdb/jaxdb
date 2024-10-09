@@ -130,7 +130,7 @@ public class Generator {
     out.append("\n\n").append(s).append("  public static ").append(String.class.getName()).append("[] strings() {");
     out.append('\n').append(s).append("    return strings;");
     out.append('\n').append(s).append("  }\n");
-    out.append("\n").append(s).append("  public static ").append(className).append("[] values() {");
+    out.append('\n').append(s).append("  public static ").append(className).append("[] values() {");
     out.append('\n').append(s).append("    return values;");
     out.append('\n').append(s).append("  }\n");
     out.append('\n').append(s).append("  public static ").append(className).append(" valueOf(final ").append(CharSequence.class.getName()).append(" string) {");

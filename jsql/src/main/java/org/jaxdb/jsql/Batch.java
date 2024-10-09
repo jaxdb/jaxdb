@@ -169,7 +169,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       if (transaction != null) {
         final Callbacks callbacks = transaction.getCallbacks();
         if (command.callbacks != null)
-          callbacks.addOnCommit(c -> command.callbacks.onCommit(c));
+          callbacks.addOnCommit((final int c) -> command.callbacks.onCommit(c));
       }
       else if (command.callbacks != null) {
         command.callbacks.onCommit(counts[i - start]);

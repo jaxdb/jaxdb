@@ -59,13 +59,27 @@ public abstract class AutoTest {
 
   @Test
   @AssertSelect(cacheSelectEntity = true, rowIteratorFullConsume = true)
-  public void testCharUuid(final Auto auto, final Transaction transaction) throws IOException, SQLException {
+  public void testCharUuid(final Auto auto, final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final Auto.CharUuid a = auto.new CharUuid();
 
     INSERT(a)
       .execute(transaction);
 
     assertFalse(a.primary.isNull());
+
+    final long createTime = a.createTime.getAsLong();
+    final long modifyTime0 = a.modifyTime.getAsLong();
+
+    Thread.sleep(10);
+    a.mark.set(true);
+
+    INSERT(a)
+      .ON_CONFLICT()
+      .DO_UPDATE()
+      .execute(transaction);
+
+    final long modifyTime1 = a.modifyTime.getAsLong();
+    assertTrue(modifyTime0 < modifyTime1);
 
     try (
       final RowIterator<Auto.CharUuid> rows =
@@ -77,6 +91,9 @@ public abstract class AutoTest {
       assertNotNull(rows.nextEntity().primary.get());
       assertFalse(rows.nextRow());
     }
+
+    assertEquals(createTime, a.createTime.getAsLong());
+    assertEquals(modifyTime1, a.modifyTime.getAsLong());
   }
 
   @Test

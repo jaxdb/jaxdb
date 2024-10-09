@@ -285,7 +285,7 @@ class TableModel {
     if (columnsToIndexType.size() > 0) {
       for (final Map.Entry<ColumnModels,IndexType> entry : columnsToIndexType.entrySet()) { // [S]
         if (entry.getValue() instanceof UNDEFINED) {
-          if (logger.isWarnEnabled()) { logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE."); }
+          if (logger.isWarnEnabled()) { logger.warn(tableName + " {" + entry.getKey().stream().map((final ColumnModel c) -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE."); }
           entry.setValue(entry.getValue().isUnique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
         }
       }
@@ -665,7 +665,7 @@ class TableModel {
       final TableModel ancestor = ancestors.get(i);
       final IndexType indexTypeForeign = foreignKey.referenceTable.columnsToIndexType.get(foreignKey.referenceColumns);
       if (indexTypeForeign == null)
-        throw new GeneratorExecutionException(tableName + ":{" + foreignKey.columns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} is referencing privateKey " + foreignKey.referenceTable.tableName + ":{" + foreignKey.referenceColumns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} which does not have an PRIMARY KEY, UNIQUE, or INDEX definition.");
+        throw new GeneratorExecutionException(tableName + ":{" + foreignKey.columns.stream().map((final ColumnModel c) -> c.name).collect(Collectors.joining(",")) + "} is referencing privateKey " + foreignKey.referenceTable.tableName + ":{" + foreignKey.referenceColumns.stream().map((final ColumnModel c) -> c.name).collect(Collectors.joining(",")) + "} which does not have an PRIMARY KEY, UNIQUE, or INDEX definition.");
 
       final IndexType indexType = columnsToIndexType.getOrDefault(foreignKey.columns, indexTypeForeign.getNonUnique());
       final ForeignRelation forward = makeForeignRelation(foreignKey.table, ancestor, foreignKey.columns, foreignKey.referenceTable, foreignKey.referenceColumns, indexType, indexTypeForeign);
@@ -1135,7 +1135,7 @@ class TableModel {
     }
 
     final StringBuilder init = new StringBuilder();
-    newColumnArray(init, noColumnsTotal, primaryKeyColumnNames.size() == 0 && keyForUpdateColumnNames.size() == 0 ? null : i -> {
+    newColumnArray(init, noColumnsTotal, primaryKeyColumnNames.size() == 0 && keyForUpdateColumnNames.size() == 0 ? null : (final int i) -> {
       if (primaryKeyColumnNames.contains(columns[i].name))
         return data.class.getCanonicalName() + (primaryKeyIndexType instanceof IndexType.HASH ? ".HASH" : ".BTREE");
 

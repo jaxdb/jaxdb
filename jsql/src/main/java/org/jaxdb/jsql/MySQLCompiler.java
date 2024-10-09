@@ -218,6 +218,7 @@ class MySQLCompiler extends Compiler {
     if (doUpdate) {
       final StringBuilder sql = compilation.sql;
       sql.append(" ON DUPLICATE KEY UPDATE ");
+      final int len = sql.length();
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
@@ -242,6 +243,9 @@ class MySQLCompiler extends Compiler {
           modified = true;
         }
       }
+
+      if (sql.length() == len)
+        throw new SQLException("No columns to update");
     }
   }
 }

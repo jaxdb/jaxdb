@@ -141,7 +141,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     Insert(final data.Table entity) {
       super(entity);
       this.columns = null;
-      this.autos = recurseColumns(entity._auto$, c -> c.setByCur != data.Column.SetBy.USER, entity._auto$.length, 0, 0);
+      this.autos = recurseColumns(entity._auto$, (final data.Column<?> c) -> c.setByCur != data.Column.SetBy.USER, entity._auto$.length, 0, 0);
     }
 
     Insert(final data.Column<?> column, final data.Column<?>[] columns) {
@@ -152,8 +152,8 @@ abstract class Command<E> extends Keyword implements Closeable {
         if (!this.columns[i].getTable().equals(table))
           throw new IllegalArgumentException("All columns must belong to the same Table");
 
-      this.primaries = recurseColumns(this.columns, c -> c.primaryIndexType != null, this.columns.length, 0, 0);
-      this.autos = recurseColumns(this.columns, c -> c.setByCur != data.Column.SetBy.USER && c.generateOnInsert == GenerateOn.AUTO_GENERATED, this.columns.length, 0, 0);
+      this.primaries = recurseColumns(this.columns, (final data.Column<?> c) -> c.primaryIndexType != null, this.columns.length, 0, 0);
+      this.autos = recurseColumns(this.columns, (final data.Column<?> c) -> c.setByCur != data.Column.SetBy.USER && c.generateOnInsert == GenerateOn.AUTO_GENERATED, this.columns.length, 0, 0);
     }
 
     @Override

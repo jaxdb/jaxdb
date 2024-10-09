@@ -228,15 +228,15 @@ public abstract class InsertTest {
     final Batch batch = new Batch();
     batch.addStatement(
       INSERT(t1)
-        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+        .onExecute((final int c) -> assertEquals(isOracle ? 0 : 1, c)));
 
     batch.addStatement(
       INSERT(t2)
-        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+        .onExecute((final int c) -> assertEquals(isOracle ? 0 : 1, c)));
 
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+        .onExecute((final int c) -> assertEquals(isOracle ? 0 : 1, c)));
 
     assertEquals(isOracle ? 0 : 3, batch.execute(transaction).getCount());
 

@@ -26,6 +26,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.jaxdb.vendor.DbVendor;
@@ -72,7 +73,7 @@ public class Derby extends Vendor {
       if (URLs.isJar(url)) {
         final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
         final String path = URLs.getJarPath(url);
-        ZipFiles.extract(jarFile, location.getParentFile(), f -> f.getName().startsWith(path));
+        ZipFiles.extract(jarFile, location.getParentFile(), (final ZipEntry f) -> f.getName().startsWith(path));
       }
       else {
         FileUtil.copyAll(new File(url.getPath()).toPath(), location.toPath(), StandardCopyOption.REPLACE_EXISTING);

@@ -52,7 +52,7 @@ public abstract class JSqlTest {
     Generator.generate(url, className, srcDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(srcDir.toPath())
-      .filter(p -> p.getFileName().toString().endsWith(".java"))
+      .filter((final Path p) -> p.getFileName().toString().endsWith(".java"))
       .forEach(rethrow((Path p) -> compiler.addSource(new String(Files.readAllBytes(p)))));
 
     compiler.compile(SQLxTest.testClassesDir, "-g");
@@ -71,7 +71,7 @@ public abstract class JSqlTest {
     for (final data.Table table : Entities.toEntities(database, className)) // [A]
       batch.addStatement(
         INSERT(table)
-          .onExecute(c -> assertEquals(expectedCount, c)));
+          .onExecute((final int c) -> assertEquals(expectedCount, c)));
 
     return batch.execute(connection, DBTestRunner.isPrepared());
   }

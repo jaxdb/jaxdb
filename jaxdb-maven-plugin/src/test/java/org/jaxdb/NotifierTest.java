@@ -199,7 +199,7 @@ public abstract class NotifierTest {
 
     for (int i = 0; i < 10; ++i) { // [N]
       final int value = r.nextInt();
-      pre.values().forEach(c -> ((Types.Type)c).intType.set(value));
+      pre.values().forEach((final data.Table table) -> ((Types.Type)table).intType.set(value));
 
       UPDATE(t).SET(t.intType, value)
         .execute(connector);

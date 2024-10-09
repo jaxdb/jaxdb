@@ -87,7 +87,7 @@ abstract class CachingTest {
 
     final CONFLICT_ACTION_NOTIFY statement =
       DML.INSERT(row)
-        .onNotify((e, idx, cnt) -> {
+        .onNotify((final Exception e, final int idx, final int cnt) -> {
           count.getAndAdd(cnt);
           async.accept(i);
           return true;
@@ -116,7 +116,7 @@ abstract class CachingTest {
 
     final UPDATE_NOTIFY statement =
       DML.UPDATE(row)
-        .onNotify((e, idx, cnt) -> {
+        .onNotify((final Exception e, final int idx, final int cnt) -> {
           count.getAndAdd(cnt);
           async.accept(i, false);
           return true;
@@ -157,7 +157,7 @@ abstract class CachingTest {
 
     final DELETE_NOTIFY statement =
       DML.DELETE(row)
-        .onNotify((e, idx, cnt) -> {
+        .onNotify((final Exception e, final int idx, final int cnt) -> {
           count.getAndAdd(cnt);
           async.accept(i, false);
           return true;
@@ -218,6 +218,6 @@ abstract class CachingTest {
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
-    }, new ConcurrentLinkedQueue<>(), c -> c.with(OnConnectPreLoad.ALL, caching.getTables()));
+    }, new ConcurrentLinkedQueue<>(), (final CacheConfig c) -> c.with(OnConnectPreLoad.ALL, caching.getTables()));
   }
 }

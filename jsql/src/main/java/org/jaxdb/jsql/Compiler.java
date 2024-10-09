@@ -558,7 +558,7 @@ abstract class Compiler extends DbVendorCompiler {
 
     if (column.ref != null) {
       shouldUpdate = true;
-      compilation.afterExecute(success -> {
+      compilation.afterExecute((final boolean success) -> {
         if (success) {
           // NOTE: Column.wasSet must be false, so that the Column.ref can continue to take effect.
           final Object evaluated = column.evaluate(new IdentityHashSet<>());
@@ -851,7 +851,7 @@ abstract class Compiler extends DbVendorCompiler {
     final StringBuilder sql = compilation.sql;
     sql.append("NOT (");
     toSubject(predicate.query != null ? predicate.query : predicate.column).compile(compilation, true);
-    sql.append(")");
+    sql.append(')');
   }
 
   void compileInPredicate(final InPredicate predicate, final Compilation compilation) throws IOException, SQLException {

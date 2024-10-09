@@ -57,12 +57,12 @@ public abstract class CachingPkTest extends CachingTest {
       o.idx1.set(i);
       o.idx2.set(i);
 
-      INSERT(transaction, o, i, j -> {}, j -> {});
+      INSERT(transaction, o, i, (final int j) -> {}, (final int j) -> {});
       assertEquals(i, afterSleep, o, caching.One$.id_TO_One_CACHED(i));
 
       final Caching.OneOneId oo = caching.new OneOneId();
       oo.oneId.set(i);
-      INSERT(transaction, oo, i, j -> {}, j -> {});
+      INSERT(transaction, oo, i, (final int j) -> {}, (final int j) -> {});
       assertEquals(i, afterSleep, oo, caching.OneOneId$.oneId_TO_OneOneId_CACHED(i));
 
       final Caching.One o1 = oo.oneId_TO_id_ON_One_CACHED();
@@ -75,7 +75,7 @@ public abstract class CachingPkTest extends CachingTest {
         final int oneManyId = i * iterations + j;
         final Caching.OneManyId om = caching.new OneManyId(oneManyId);
         om.oneId.set(i);
-        INSERT(transaction, om, i, k -> {}, k -> {});
+        INSERT(transaction, om, i, (final int k) -> {}, (final int k) -> {});
         assertEquals(i, afterSleep, om, caching.OneManyId$.id_TO_OneManyId_CACHED(oneManyId));
 
         final Map<data.Key,Caching.OneManyId> oms = caching.OneManyId$.oneId_TO_OneManyId_CACHED(i);
@@ -98,7 +98,7 @@ public abstract class CachingPkTest extends CachingTest {
         final Caching.ManyManyId mm = caching.new ManyManyId(manyManyId);
         mm.oneAId.set(a);
         mm.oneBId.set(b);
-        INSERT(transaction, mm, i, j -> {}, j -> {});
+        INSERT(transaction, mm, i, (final int j) -> {}, (final int j) -> {});
         assertEquals(i, afterSleep, mm, caching.ManyManyId$.id_TO_ManyManyId_CACHED(manyManyId));
         assertEquals(i, afterSleep, caching.One$.id_TO_One_CACHED(a), mm.oneAId_TO_id_ON_One_CACHED());
         assertEquals(i, afterSleep, caching.One$.id_TO_One_CACHED(b), mm.oneBId_TO_id_ON_One_CACHED());
@@ -143,11 +143,11 @@ public abstract class CachingPkTest extends CachingTest {
       assertEquals(i, afterSleep, 0, mm.auto.getAsInt());
 
       UPDATE(transaction, mm, i, false,
-        j -> {
+        (final int j) -> {
           assertNull(j, afterSleep, caching.ManyManyId$.id_TO_ManyManyId_CACHED(oldId));
           assertEquals(j, afterSleep, mm, caching.ManyManyId$.id_TO_ManyManyId_CACHED(newId));
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, oa, mm.oneAId_TO_id_ON_One_CACHED());
           assertEquals(j, as, ob, mm.oneBId_TO_id_ON_One_CACHED());
 
@@ -229,10 +229,10 @@ public abstract class CachingPkTest extends CachingTest {
       o.id.set(newId);
 
       UPDATE(transaction, o, i, true,
-        j -> {
+        (final int j) -> {
           checkSync(caching, j, o, newId, oldId, oo, oms, mmAs, mmBs);
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, as ? o.getKeyOld() : o.getKey(), caching.One$.id_TO_One_CACHED(newId).getKey());
           checkAsync(caching, j, as, o, newId, oldId, oo, oms, mmAs, mmBs);
         });
@@ -240,10 +240,10 @@ public abstract class CachingPkTest extends CachingTest {
       o.id.set(oldId);
 
       UPDATE(transaction, o, i, true,
-        j -> {
+        (final int j) -> {
           checkSync(caching, j, o, oldId, newId, oo, oms, mmAs, mmBs);
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, o, caching.One$.id_TO_One_CACHED(oldId));
           checkAsync(caching, j, as, o, oldId, newId, oo, oms, mmAs, mmBs);
         });
@@ -263,12 +263,12 @@ public abstract class CachingPkTest extends CachingTest {
       assertTrue(ob.id_TO_oneBId_ON_ManyManyId_CACHED().containsValue(mm));
 
       DELETE(transaction, mm, i, true,
-        j -> {
+        (final int j) -> {
           assertFalse(caching.ManyManyId$.id_TO_ManyManyId_CACHED().containsValue(mm));
           assertFalse(oa.id_TO_oneAId_ON_ManyManyId_CACHED().containsValue(mm));
           assertFalse(ob.id_TO_oneBId_ON_ManyManyId_CACHED().containsValue(mm));
         },
-        (j, as) -> {});
+        (final int j, final boolean as) -> {});
     }
   }
 }

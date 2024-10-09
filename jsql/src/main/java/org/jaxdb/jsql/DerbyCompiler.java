@@ -178,7 +178,7 @@ final class DerbyCompiler extends Compiler {
     else
       throw new UnsupportedOperationException("Unsupported temporal type: " + a.getClass().getName());
 
-    sql.append("_").append(o).append('(');
+    sql.append('_').append(o).append('(');
     toSubject(a).compile(compilation, true);
     sql.append(", ");
 
@@ -331,6 +331,8 @@ final class DerbyCompiler extends Compiler {
       }
 
       sql.append(" THEN UPDATE SET ");
+      final int len = sql.length();
+
       modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
@@ -348,6 +350,9 @@ final class DerbyCompiler extends Compiler {
           modified = true;
         }
       }
+
+      if (sql.length() == len)
+        throw new SQLException("No columns to update");
     }
 
     sql.append(" WHEN NOT MATCHED");

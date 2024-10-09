@@ -54,7 +54,7 @@ public abstract class NotificationTest {
 
   static final Logger logger = LoggerFactory.getLogger(NotificationTest.class);
 
-  public static boolean sql(final Exception e) {
+  public static boolean sql(final Exception e, final int attemptNo, final long delayMs) {
     // 1. Retry these exceptions by default, and log with level=DEBUG.
     // FIXME: Replace with SQL State codes...
     final String message = e.getMessage();
@@ -109,6 +109,6 @@ public abstract class NotificationTest {
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
-    }, new ConcurrentLinkedQueue<>(), b -> b.with(caching.getTables()));
+    }, new ConcurrentLinkedQueue<>(), (final CacheConfig c) -> c.with(caching.getTables()));
   }
 }

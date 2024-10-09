@@ -57,13 +57,13 @@ public abstract class CachingUqTest extends CachingTest {
       o.idx1.set(i);
       o.idx2.set(i);
 
-      INSERT(transaction, o, i, j -> {}, j -> {});
+      INSERT(transaction, o, i, (final int j) -> {}, (final int j) -> {});
       assertEquals(i, afterSleep, o, caching.One$.id_TO_One_CACHED(i));
 
       final Caching.OneOneIdu oo = caching.new OneOneIdu();
       oo.id.set(i + idOffset);
       oo.oneIdu.set(i);
-      INSERT(transaction, oo, i, j -> {}, j -> {});
+      INSERT(transaction, oo, i, (final int j) -> {}, (final int j) -> {});
       assertEquals(i, afterSleep, oo, caching.OneOneIdu$.oneIdu_TO_OneOneIdu_CACHED(i));
 
       final Caching.One o1 = oo.oneIdu_TO_idu_ON_One_CACHED();
@@ -76,7 +76,7 @@ public abstract class CachingUqTest extends CachingTest {
         final int oneManyIdu = i * iterations + j;
         final Caching.OneManyIdu om = caching.new OneManyIdu(oneManyIdu);
         om.oneIdu.set(i);
-        INSERT(transaction, om, i, k -> {}, k -> {});
+        INSERT(transaction, om, i, (final int k) -> {}, (final int k) -> {});
         assertEquals(i, afterSleep, om, caching.OneManyIdu$.id_TO_OneManyIdu_CACHED(oneManyIdu));
 
         final Map<data.Key,Caching.OneManyIdu> oms = caching.OneManyIdu$.oneIdu_TO_OneManyIdu_CACHED(i);
@@ -99,7 +99,7 @@ public abstract class CachingUqTest extends CachingTest {
         final Caching.ManyManyIdu mm = caching.new ManyManyIdu(manyManyIdu);
         mm.oneAIdu.set(a);
         mm.oneBIdu.set(b);
-        INSERT(transaction, mm, i, j -> {}, j -> {});
+        INSERT(transaction, mm, i, (final int j) -> {}, (final int j) -> {});
         assertEquals(i, afterSleep, mm, caching.ManyManyIdu$.id_TO_ManyManyIdu_CACHED(manyManyIdu));
         assertEquals(i, afterSleep, caching.One$.id_TO_One_CACHED(a), mm.oneAIdu_TO_idu_ON_One_CACHED());
         assertEquals(i, afterSleep, caching.One$.id_TO_One_CACHED(b), mm.oneBIdu_TO_idu_ON_One_CACHED());
@@ -145,11 +145,11 @@ public abstract class CachingUqTest extends CachingTest {
       assertEquals(i, afterSleep, 0, mm.auto.getAsInt());
 
       UPDATE(transaction, mm, i, false,
-        j -> {
+        (final int j) -> {
           assertNull(j, afterSleep, caching.ManyManyIdu$.id_TO_ManyManyIdu_CACHED(oldIdu));
           assertEquals(j, afterSleep, mm, caching.ManyManyIdu$.id_TO_ManyManyIdu_CACHED(newIdu));
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, oa, mm.oneAIdu_TO_idu_ON_One_CACHED());
           assertEquals(j, as, ob, mm.oneBIdu_TO_idu_ON_One_CACHED());
 
@@ -231,10 +231,10 @@ public abstract class CachingUqTest extends CachingTest {
       o.idu.set(newIdu);
 
       UPDATE(transaction, o, i, true,
-        j -> {
+        (final int j) -> {
           checkSync(caching, j, o, newIdu, oldIdu, oo, oms, mmAs, mmBs);
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, as ? null : o, caching.One$.idu_TO_One_CACHED(as ? oldIdu : newIdu));
           checkAsync(caching, j, as, o, newIdu, oldIdu, oo, oms, mmAs, mmBs);
         });
@@ -242,10 +242,10 @@ public abstract class CachingUqTest extends CachingTest {
       o.idu.set(oldIdu);
 
       UPDATE(transaction, o, i, true,
-        j -> {
+        (final int j) -> {
           checkSync(caching, j, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, o, caching.One$.idu_TO_One_CACHED(oldIdu));
           checkAsync(caching, j, as, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
         });
@@ -265,12 +265,12 @@ public abstract class CachingUqTest extends CachingTest {
       assertTrue(ob.idu_TO_oneBIdu_ON_ManyManyIdu_CACHED().containsValue(mm));
 
       DELETE(transaction, mm, i, true,
-        j -> {
+        (final int j) -> {
           assertFalse(caching.ManyManyIdu$.id_TO_ManyManyIdu_CACHED().containsValue(mm));
           assertFalse(oa.idu_TO_oneAIdu_ON_ManyManyIdu_CACHED().containsValue(mm));
           assertFalse(ob.idu_TO_oneBIdu_ON_ManyManyIdu_CACHED().containsValue(mm));
         },
-        (j, as) -> {});
+        (final int j, final boolean as) -> {});
     }
   }
 }

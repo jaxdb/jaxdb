@@ -87,7 +87,7 @@ public abstract class OnSelectTest {
       public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
-    }, new ConcurrentLinkedQueue<>(), c -> c
+    }, new ConcurrentLinkedQueue<>(), (final CacheConfig c) -> c
       .with(OnConnectPreLoad.ALL, classicmodels.Product$, classicmodels.Employee$)
       .with(classicmodels.Customer$, classicmodels.Office$, classicmodels.ProductLine$, classicmodels.Purchase$, classicmodels.PurchaseDetail$));
 

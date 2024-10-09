@@ -61,52 +61,52 @@ public abstract class BatchTest {
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 1)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 1)));
 
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-06")))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 1)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 1)));
 
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.purchaseDate, LocalDate.parse("2004-11-17")))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 2)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 2)));
 
     batch.addStatement(
       UPDATE(p).SET(p.status, Classicmodels.Purchase.Status.ON_HOLD)
         .WHERE(EQ(p.status, Classicmodels.Purchase.Status.DISPUTED))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 3)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 3)));
 
     batch.addStatement(
       UPDATE(p).SET(p.status, Classicmodels.Purchase.Status.ON_HOLD)
         .WHERE(EQ(p.status, Classicmodels.Purchase.Status.DISPUTED))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 0)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 0)));
 
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.customerNumber, 112))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 3)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 3)));
 
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.customerNumber, 114))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 5)));
 
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.status, Classicmodels.Purchase.Status.CANCELED))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 6)));
 
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.status, Classicmodels.Purchase.Status.RESOLVED))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 4)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 4)));
 
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.status, Classicmodels.Purchase.Status.IN_PROCESS))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 6)));
 
     final Classicmodels.Purchase p1 = classicmodels.new Purchase();
     p1.purchaseDate.set(LocalDate.now());
@@ -118,18 +118,18 @@ public abstract class BatchTest {
     for (int i = 0; i < 5; ++i) { // [N]
       batch.addStatement(
         INSERT(p1)
-          .onExecute(c -> assertTrue("" + c, isOracle || c == 1)));
+          .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 1)));
     }
 
     batch.addStatement(
       UPDATE(p).SET(p.status, Classicmodels.Purchase.Status.CANCELED)
         .WHERE(EQ(p.status, Classicmodels.Purchase.Status.IN_PROCESS))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 5)));
 
     batch.addStatement(
       DELETE(p)
         .WHERE(EQ(p.status, Classicmodels.Purchase.Status.CANCELED))
-        .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
+        .onExecute((final int c) -> assertTrue("" + c, isOracle || c == 5)));
 
     if (!isOracle)
       assertEquals(46, batch.execute(transaction).getCount());

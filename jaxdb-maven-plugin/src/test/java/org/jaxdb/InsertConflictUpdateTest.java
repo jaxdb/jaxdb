@@ -163,13 +163,13 @@ public abstract class InsertConflictUpdateTest extends InsertTest {
 
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-        .onExecute(c -> assertEquals(expectedCount, c)));
+        .onExecute((final int c) -> assertEquals(expectedCount, c)));
 
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .ON_CONFLICT()
         .DO_UPDATE()
-        .onExecute(c -> assertEquals(expectedCount, c)));
+        .onExecute((final int c) -> assertEquals(expectedCount, c)));
 
     assertEquals(2 * expectedCount, batch.execute(transaction).getCount());
   }

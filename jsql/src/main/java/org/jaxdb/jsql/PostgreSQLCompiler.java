@@ -440,6 +440,7 @@ final class PostgreSQLCompiler extends Compiler {
 
     if (doUpdate) {
       sql.append(" DO UPDATE SET ");
+      final int len = sql.length();
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
@@ -464,6 +465,9 @@ final class PostgreSQLCompiler extends Compiler {
           modified = true;
         }
       }
+
+      if (sql.length() == len)
+        throw new SQLException("No columns to update");
     }
     else {
       sql.append(" DO NOTHING");

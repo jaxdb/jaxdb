@@ -3254,64 +3254,9 @@ public final class data {
   }
 
   public static class ENUM<E extends EntityEnum> extends Textual<E> implements type.ENUM<E> {
-    public static final class NULL extends ENUM<NULL_ENUM> implements data.NULL {
+    public static final class NULL extends ENUM<EntityEnum> implements data.NULL {
       private NULL() {
         super(false);
-      }
-    }
-
-    // FIXME: ENUM.NULL
-    // @org.jaxdb.jsql.EntityEnum.Spec(table="relation", column="units")
-    private static final class NULL_ENUM implements EntityEnum {
-      public static final NULL_ENUM NULL;
-
-      private static byte index;
-
-      private static final NULL_ENUM[] values = {
-        NULL = new NULL_ENUM("NULL")
-      };
-
-      public static NULL_ENUM valueOf(final String string) {
-        if (string == null)
-          return null;
-
-        for (final NULL_ENUM value : values()) // [A]
-          if (string.equals(value.name))
-            return value;
-
-        return null;
-      }
-
-      public static NULL_ENUM[] values() {
-        return values;
-      }
-
-      private final byte ordinal;
-      private final String name;
-
-      private NULL_ENUM(final String name) {
-        this.ordinal = index++;
-        this.name = name;
-      }
-
-      @Override
-      public char charAt(final int index) {
-        return 0;
-      }
-
-      @Override
-      public int length() {
-        return 0;
-      }
-
-      @Override
-      public byte ordinal() {
-        return ordinal;
-      }
-
-      @Override
-      public CharSequence subSequence(final int start, final int end) {
-        return null;
       }
     }
 
@@ -3399,7 +3344,7 @@ public final class data {
       super(null, true, constants == null ? null : calcEnumLength(constants), onModify);
       this.enumType = enumType;
       this.constants = constants;
-      this.fromStringFunction = enumType == null ? null : s -> {
+      this.fromStringFunction = enumType == null ? null : (final String s) -> {
         Method method;
         if (classToFromStringMethod == null) {
           synchronized (enumType) {
@@ -4558,7 +4503,7 @@ public final class data {
     private final Object[] values;
     private final Column[] columns;
 
-    private static final Comparator<Key> comparator = (o1, o2) -> o1.compareTo(o2);
+    private static final Comparator<Key> comparator = (final Key o1, final Key o2) -> o1.compareTo(o2);
 
     private Key(final Column<?>[] columns, final Object ... values) {
       min = this;
@@ -5846,12 +5791,12 @@ public final class data {
 
     @Override
     public final int compareTo(final Textual<?> o) {
-      return o == null || o.isNull() ? isNull() ? 0 : 1 : isNull() ? -1 : valueCur.toString().compareTo(o.valueCur.toString()); // FIXME: Why toString()?
+      return o == null || o.isNull() ? isNull() ? 0 : 1 : isNull() ? -1 : valueCur.toString().compareTo(o.valueCur.toString());
     }
 
     @Override
     final boolean equals(final Column<V> obj) {
-      return valueCur.toString().equals(((Textual<?>)obj).valueCur.toString()); // FIXME: Why toString()?
+      return valueCur.toString().equals(((Textual<?>)obj).valueCur.toString());
     }
 
     @Override

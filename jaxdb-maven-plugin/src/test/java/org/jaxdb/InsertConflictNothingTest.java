@@ -109,13 +109,13 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .ON_CONFLICT()
         .DO_NOTHING()
-        .onExecute(c -> assertEquals(expectedCount, c)));
+        .onExecute((final int c) -> assertEquals(expectedCount, c)));
 
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .ON_CONFLICT()
         .DO_NOTHING()
-        .onExecute(c -> assertEquals(0, c)));
+        .onExecute((final int c) -> assertEquals(0, c)));
 
     assertEquals(expectedCount, batch.execute(transaction).getCount());
   }

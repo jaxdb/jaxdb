@@ -57,12 +57,12 @@ public abstract class CachingIdx1Test extends CachingTest {
       o.idx1.set(i);
       o.idx2.set(i);
 
-      INSERT(transaction, o, i, j -> {}, j -> {});
+      INSERT(transaction, o, i, (final int j) -> {}, (final int j) -> {});
       assertEquals(i, afterSleep, o, caching.One$.id_TO_One_CACHED(i));
 
       final Caching.OneOneIdx1 oo = caching.new OneOneIdx1();
       oo.oneIdx1.set(i);
-      INSERT(transaction, oo, i, j -> {}, j -> {});
+      INSERT(transaction, oo, i, (final int j) -> {}, (final int j) -> {});
       assertEquals(i, afterSleep, oo, caching.OneOneIdx1$.oneIdx1_TO_OneOneIdx1_CACHED(i));
 
       final Caching.One o1 = oo.oneIdx1_TO_idx1_ON_One_CACHED();
@@ -75,7 +75,7 @@ public abstract class CachingIdx1Test extends CachingTest {
         final int oneManyIdx1 = i * iterations + j;
         final Caching.OneManyIdx1 om = caching.new OneManyIdx1(oneManyIdx1);
         om.oneIdx1.set(i);
-        INSERT(transaction, om, i, k -> {}, k -> {});
+        INSERT(transaction, om, i, (final int k) -> {}, (final int k) -> {});
         assertEquals(i, afterSleep, om, caching.OneManyIdx1$.id_TO_OneManyIdx1_CACHED(oneManyIdx1));
 
         final Map<data.Key,Caching.OneManyIdx1> oms = caching.OneManyIdx1$.oneIdx1_TO_OneManyIdx1_CACHED(i);
@@ -98,7 +98,7 @@ public abstract class CachingIdx1Test extends CachingTest {
         final Caching.ManyManyIdx1 mm = caching.new ManyManyIdx1(manyManyIdx1);
         mm.oneAIdx1.set(a);
         mm.oneBIdx1.set(b);
-        INSERT(transaction, mm, i, j -> {}, j -> {});
+        INSERT(transaction, mm, i, (final int j) -> {}, (final int j) -> {});
         assertEquals(i, afterSleep, mm, caching.ManyManyIdx1$.id_TO_ManyManyIdx1_CACHED(manyManyIdx1));
         assertEquals(i, afterSleep, caching.One$.id_TO_One_CACHED(a), mm.oneAIdx1_TO_idx1_ON_One_CACHED());
         assertEquals(i, afterSleep, caching.One$.id_TO_One_CACHED(b), mm.oneBIdx1_TO_idx1_ON_One_CACHED());
@@ -144,11 +144,11 @@ public abstract class CachingIdx1Test extends CachingTest {
       assertEquals(i, afterSleep, 0, mm.auto.getAsInt());
 
       UPDATE(transaction, mm, i, false,
-        j -> {
+        (final int j) -> {
           assertNull(j, afterSleep, caching.ManyManyIdx1$.id_TO_ManyManyIdx1_CACHED(oldIdx1));
           assertEquals(j, afterSleep, mm, caching.ManyManyIdx1$.id_TO_ManyManyIdx1_CACHED(newIdx1));
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, oa, mm.oneAIdx1_TO_idx1_ON_One_CACHED());
           assertEquals(j, as, ob, mm.oneBIdx1_TO_idx1_ON_One_CACHED());
 
@@ -229,10 +229,10 @@ public abstract class CachingIdx1Test extends CachingTest {
       o.idx1.set(newIdx1);
 
       UPDATE(transaction, o, i, true,
-        j -> {
+        (final int j) -> {
           checkSync(caching, j, o, newIdx1, oldIdx1, oo, oms, mmAs, mmBs);
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, as ? null : o, caching.One$.idx1_TO_One_CACHED(as ? oldIdx1 : newIdx1));
           checkAsync(caching, j, as, o, newIdx1, oldIdx1, oo, oms, mmAs, mmBs);
         });
@@ -240,10 +240,10 @@ public abstract class CachingIdx1Test extends CachingTest {
       o.idx1.set(oldIdx1);
 
       UPDATE(transaction, o, i, true,
-        j -> {
+        (final int j) -> {
           checkSync(caching, j, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
         },
-        (j, as) -> {
+        (final int j, final boolean as) -> {
           assertEquals(j, as, o, caching.One$.idx1_TO_One_CACHED(oldIdx1));
           checkAsync(caching, j, as, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
         });
@@ -263,12 +263,12 @@ public abstract class CachingIdx1Test extends CachingTest {
       assertTrue(ob.idx1_TO_oneBIdx1_ON_ManyManyIdx1_CACHED().containsValue(mm));
 
       DELETE(transaction, mm, i, true,
-        j -> {
+        (final int j) -> {
           assertFalse(caching.ManyManyIdx1$.id_TO_ManyManyIdx1_CACHED().containsValue(mm));
           assertFalse(oa.idx1_TO_oneAIdx1_ON_ManyManyIdx1_CACHED().containsValue(mm));
           assertFalse(ob.idx1_TO_oneBIdx1_ON_ManyManyIdx1_CACHED().containsValue(mm));
         },
-        (j, as) -> {});
+        (final int j, final boolean as) -> {});
     }
   }
 }

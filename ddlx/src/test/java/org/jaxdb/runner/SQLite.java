@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import org.jaxdb.vendor.DbVendor;
 import org.libj.io.FileUtil;
@@ -57,7 +58,7 @@ public class SQLite extends Vendor {
         if (URLs.isJar(resource)) {
           final JarFile jarFile = new JarFile(URLs.getJarURL(resource).getPath());
           final String path = URLs.getJarPath(resource);
-          ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
+          ZipFiles.extract(jarFile, db.getParentFile(), (final ZipEntry f) -> f.getName().startsWith(path));
         }
         else {
           Files.copy(new File(resource.getPath()).toPath(), db.toPath());
