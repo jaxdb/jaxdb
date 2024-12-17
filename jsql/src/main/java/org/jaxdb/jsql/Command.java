@@ -879,7 +879,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             if (statement != null)
               e = Throwables.addSuppressed(e, AuditStatement.close(statement));
 
-            if (connector != null)
+            if (connector != null && connection != null)
               e = Throwables.addSuppressed(e, AuditConnection.close(connection));
 
             throw SQLExceptions.toStrongType(e);

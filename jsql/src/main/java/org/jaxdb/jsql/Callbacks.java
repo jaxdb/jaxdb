@@ -110,8 +110,8 @@ public final class Callbacks implements Closeable {
       }
     }
 
-    boolean await(final long timeout) throws InterruptedException {
-      if (timeout <= 0)
+    boolean await(final long timeoutMs) throws InterruptedException {
+      if (timeoutMs <= 0)
         return false;
 
       if (isEmpty())
@@ -133,8 +133,8 @@ public final class Callbacks implements Closeable {
 
           final long ts = System.currentTimeMillis();
           // if (logger.isTraceEnabled()) { logger.trace(getClass().getSimpleName() + "[" + sessionId + "].await(" + timeout + ")"); }
-          this.count.wait(timeout);
-          return System.currentTimeMillis() - ts < timeout || this.indexOut.get() == this.count.get();
+          this.count.wait(timeoutMs);
+          return System.currentTimeMillis() - ts < timeoutMs || this.indexOut.get() == this.count.get();
         }
         finally {
           clear();

@@ -90,7 +90,7 @@ public class QueryConfig implements Serializable {
     private int maxFieldSize = -1;
     private int maxRows = -1;
     private Boolean poolable;
-    private int queryTimeout = -1;
+    private int queryTimeoutSe = -1;
     private int fetchSize = -1;
 
     private Type type = defaultType;
@@ -108,7 +108,7 @@ public class QueryConfig implements Serializable {
       this.maxFieldSize = config.maxFieldSize;
       this.maxRows = config.maxRows;
       this.poolable = config.poolable;
-      this.queryTimeout = config.queryTimeout;
+      this.queryTimeoutSe = config.queryTimeoutSe;
       this.fetchSize = config.fetchSize;
       this.type = config.type;
       this.concurrency = config.concurrency;
@@ -176,7 +176,7 @@ public class QueryConfig implements Serializable {
       if (seconds <= 0)
         throw new IllegalArgumentException("queryTimeout (" + seconds + ") must be greater than 0");
 
-      this.queryTimeout = seconds;
+      this.queryTimeoutSe = seconds;
       return this;
     }
 
@@ -206,7 +206,7 @@ public class QueryConfig implements Serializable {
     }
 
     public QueryConfig build() {
-      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, cacheSelectEntity, cacheableRowIteratorFullConsume);
+      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeoutSe, type, concurrency, holdability, cacheSelectEntity, cacheableRowIteratorFullConsume);
     }
 
     @Override
@@ -219,7 +219,7 @@ public class QueryConfig implements Serializable {
       hashCode = hashCode * 31 + Integer.hashCode(maxFieldSize);
       hashCode = hashCode * 31 + Integer.hashCode(maxRows);
       hashCode = hashCode * 31 + Objects.hashCode(poolable);
-      hashCode = hashCode * 31 + Integer.hashCode(queryTimeout);
+      hashCode = hashCode * 31 + Integer.hashCode(queryTimeoutSe);
       hashCode = hashCode * 31 + Integer.hashCode(fetchSize);
       hashCode = hashCode * 31 + Objects.hashCode(type);
       hashCode = hashCode * 31 + Objects.hashCode(concurrency);
@@ -260,7 +260,7 @@ public class QueryConfig implements Serializable {
       if (!Objects.equals(poolable, that.poolable))
         return false;
 
-      if (queryTimeout != that.queryTimeout)
+      if (queryTimeoutSe != that.queryTimeoutSe)
         return false;
 
       if (fetchSize != that.fetchSize)
@@ -315,7 +315,7 @@ public class QueryConfig implements Serializable {
   private final int maxFieldSize;
   private final int maxRows;
   private final Boolean poolable;
-  private final int queryTimeout;
+  private final int queryTimeoutSe;
 
   private final Type type;
   private final Concurrency concurrency;
@@ -324,7 +324,7 @@ public class QueryConfig implements Serializable {
   private final boolean cacheSelectEntity;
   private final boolean cacheableRowIteratorFullConsume;
 
-  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final Type type, final Concurrency concurrency, final Holdability holdability, final boolean cacheSelectEntity, final boolean cacheableRowIteratorFullConsume) {
+  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeoutSe, final Type type, final Concurrency concurrency, final Holdability holdability, final boolean cacheSelectEntity, final boolean cacheableRowIteratorFullConsume) {
     this.cursorName = cursorName;
     this.escapeProcessing = escapeProcessing;
     this.fetchDirection = fetchDirection;
@@ -333,7 +333,7 @@ public class QueryConfig implements Serializable {
     this.maxFieldSize = maxFieldSize;
     this.maxRows = maxRows;
     this.poolable = poolable;
-    this.queryTimeout = queryTimeout;
+    this.queryTimeoutSe = queryTimeoutSe;
     this.type = type;
     this.concurrency = concurrency;
     this.holdability = holdability;
@@ -374,7 +374,7 @@ public class QueryConfig implements Serializable {
   }
 
   public int getQueryTimeout() {
-    return queryTimeout;
+    return queryTimeoutSe;
   }
 
   public Type getType() {
@@ -411,7 +411,7 @@ public class QueryConfig implements Serializable {
     hashCode = hashCode * 31 + Integer.hashCode(maxFieldSize);
     hashCode = hashCode * 31 + Integer.hashCode(maxRows);
     hashCode = hashCode * 31 + Objects.hashCode(poolable);
-    hashCode = hashCode * 31 + Integer.hashCode(queryTimeout);
+    hashCode = hashCode * 31 + Integer.hashCode(queryTimeoutSe);
     hashCode = hashCode * 31 + Integer.hashCode(fetchSize);
     hashCode = hashCode * 31 + Objects.hashCode(type);
     hashCode = hashCode * 31 + Objects.hashCode(concurrency);
@@ -452,7 +452,7 @@ public class QueryConfig implements Serializable {
     if (!Objects.equals(poolable, that.poolable))
       return false;
 
-    if (queryTimeout != that.queryTimeout)
+    if (queryTimeoutSe != that.queryTimeoutSe)
       return false;
 
     if (fetchSize != that.fetchSize)
@@ -525,8 +525,8 @@ public class QueryConfig implements Serializable {
     if (queryConfig.poolable != null)
       statement.setPoolable(queryConfig.poolable);
 
-    if (queryConfig.queryTimeout != -1)
-      statement.setQueryTimeout(queryConfig.queryTimeout);
+    if (queryConfig.queryTimeoutSe != -1)
+      statement.setQueryTimeout(queryConfig.queryTimeoutSe);
 
     return isPrepared ? executeQueryPrepared((PreparedStatement)statement, compilation) : statement.executeQuery(sql);
   }
@@ -604,10 +604,10 @@ public class QueryConfig implements Serializable {
     else if (defaultQueryConfig.poolable != null)
       statement.setPoolable(defaultQueryConfig.poolable);
 
-    if (contextQueryConfig.queryTimeout != -1)
-      statement.setQueryTimeout(contextQueryConfig.queryTimeout);
-    else if (defaultQueryConfig.queryTimeout != -1)
-      statement.setQueryTimeout(defaultQueryConfig.queryTimeout);
+    if (contextQueryConfig.queryTimeoutSe != -1)
+      statement.setQueryTimeout(contextQueryConfig.queryTimeoutSe);
+    else if (defaultQueryConfig.queryTimeoutSe != -1)
+      statement.setQueryTimeout(defaultQueryConfig.queryTimeoutSe);
 
     return isPrepared ? executeQueryPrepared((PreparedStatement)statement, compilation) : statement.executeQuery(sql);
   }

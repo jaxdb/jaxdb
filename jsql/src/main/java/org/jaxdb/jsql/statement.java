@@ -240,8 +240,8 @@ public final class statement {
         }
 
         @Override
-        public boolean awaitNotify(final long timeout) throws InterruptedException {
-          return onNotifyCallbackList == null || onNotifyCallbackList.await(timeout);
+        public boolean awaitNotify(final long timeoutMs) throws InterruptedException {
+          return onNotifyCallbackList == null || onNotifyCallbackList.await(timeoutMs);
         }
       } : new Modification.Result(count);
     }
@@ -468,13 +468,13 @@ public final class statement {
       }
 
       @Override
-      public boolean awaitNotify(long timeout) throws InterruptedException {
+      public boolean awaitNotify(long timeoutMs) throws InterruptedException {
         if (onNotifyCallbackLists == null)
           return true;
 
         long ts = System.currentTimeMillis();
-        for (int i = 0, i$ = onNotifyCallbackLists.size(); i < i$; ++i, timeout -= System.currentTimeMillis() - ts) // [RA]
-          if (!onNotifyCallbackLists.get(i).await(timeout))
+        for (int i = 0, i$ = onNotifyCallbackLists.size(); i < i$; ++i, timeoutMs -= System.currentTimeMillis() - ts) // [RA]
+          if (!onNotifyCallbackLists.get(i).await(timeoutMs))
             return false;
 
         return true;

@@ -588,7 +588,7 @@ public final class data {
     }
 
     public final boolean set(final long value) {
-      return set(value, SetBy.USER);
+      return set(value, value, SetBy.USER);
     }
 
     final boolean set(final long value, final Long valueObj, final SetBy setBy) {
@@ -1316,7 +1316,7 @@ public final class data {
     }
 
     public final boolean set(final boolean value) {
-      return set(value, SetBy.USER);
+      return set(value, value, SetBy.USER);
     }
 
     final boolean set(final boolean value, final Boolean valueObj, final SetBy setBy) {
@@ -3101,7 +3101,7 @@ public final class data {
     }
 
     public final boolean set(final double value) {
-      return set(value, SetBy.USER);
+      return set(value, value, SetBy.USER);
     }
 
     final boolean set(final double value, final Double valueObj, final SetBy setBy) {
@@ -3842,11 +3842,11 @@ public final class data {
     }
 
     public final boolean set(final float value) {
-      return set(value, SetBy.USER);
+      return set(value, value, SetBy.USER);
     }
 
-    final boolean set(final float value, final SetBy setBy) {
-      final boolean changed = setValue(value);
+    final boolean set(final float value, final Float valueObj, final SetBy setBy) {
+      final boolean changed = setValue(value, valueObj);
       setByCur = setBy;
       return changed;
     }
@@ -3858,7 +3858,7 @@ public final class data {
 
     @Override
     final boolean set(final Float value, final SetBy setBy) {
-      return value == null ? setNull() : set((float)value, setBy);
+      return value == null ? setNull() : set(value, value, setBy);
     }
 
     @SuppressWarnings("unused")
@@ -4246,7 +4246,7 @@ public final class data {
     }
 
     public final boolean set(final int value) {
-      return set(value, SetBy.USER);
+      return set(value, value, SetBy.USER);
     }
 
     final boolean set(final int value, final Integer valueObj, final SetBy setBy) {
@@ -5310,7 +5310,7 @@ public final class data {
     }
 
     public final boolean set(final short value) {
-      return set(value, SetBy.USER);
+      return set(value, value, SetBy.USER);
     }
 
     final boolean set(final short value, final Short valueObj, final SetBy setBy) {
@@ -6291,7 +6291,7 @@ public final class data {
     }
 
     public final boolean set(final byte value) {
-      return set(value, SetBy.USER);
+      return set(value, value, SetBy.USER);
     }
 
     final boolean set(final byte value, final Byte valueObj, final SetBy setBy) {
