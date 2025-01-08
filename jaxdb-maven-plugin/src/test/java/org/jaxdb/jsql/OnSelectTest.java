@@ -77,7 +77,7 @@ public abstract class OnSelectTest {
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 
     final Connector connector = classicmodels.getConnector();
-    try (final Connection connection = connector.getConnection(null)) {
+    try (final Connection connection = connector.getConnection()) {
       DDLxTest.recreateSchema(connection, "classicmodels");
       SQLxTest.loadData(connection, "classicmodels");
     }

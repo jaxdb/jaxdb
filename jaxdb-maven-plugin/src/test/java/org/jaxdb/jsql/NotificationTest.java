@@ -100,7 +100,7 @@ public abstract class NotificationTest {
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 
     final Connector connector = caching.getConnector();
-    try (final Connection connection = connector.getConnection(null)) {
+    try (final Connection connection = connector.getConnection()) {
       DDLxTest.recreateSchema(connection, "caching");
     }
 

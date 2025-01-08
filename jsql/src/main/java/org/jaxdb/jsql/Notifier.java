@@ -523,7 +523,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (!hasChanges)
       return false;
 
-    try (final Connection connection = connectionFactory.getConnection(null)) {
+    try (final Connection connection = connectionFactory.getConnection()) {
       recreateTrigger(connection, tables, actionSets);
     }
 
@@ -623,7 +623,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
 
     // Create a connection that will close, because Notifier is already running on another connection.
-    try (final Connection connection = connectionFactory.getConnection(null)) {
+    try (final Connection connection = connectionFactory.getConnection()) {
       addListenerForTables(connection, insert, up, delete, notificationListener, queue, tables);
 
       // If `this.connection != connection` it means the onConnect(data.Table) call

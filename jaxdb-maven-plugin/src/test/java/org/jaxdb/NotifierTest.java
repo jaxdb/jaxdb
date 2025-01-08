@@ -120,7 +120,7 @@ public abstract class NotifierTest {
     };
 
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
-    try (final Connection connection = types.getConnector().getConnection(null)) {
+    try (final Connection connection = types.getConnector().getConnection()) {
       DDLxTest.recreateSchema(connection, "types");
     }
   }

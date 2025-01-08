@@ -34,7 +34,7 @@ class Reserve<T> {
   String get(final URL schema, final String name) {
     String value = nameToName.get(name);
     if (value == null)
-      nameToName.put(name, value = name == null ? URLs.getSimpleName(schema) + ".sql" : Strings.searchReplace(StringPaths.getName(schema.toString()), name));
+      nameToName.put(name, value = name == null ? URLs.getNameWithoutExtension(schema) + ".sql" : Strings.searchReplace(StringPaths.getName(schema.toString()), name));
 
     return value;
   }

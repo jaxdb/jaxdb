@@ -4695,7 +4695,7 @@ public final class data {
     }
   }
 
-  static abstract class MutableKey implements type.Key {
+  abstract static class MutableKey implements type.Key {
     private final Column<?>[] columns;
 
     private MutableKey(final Column<?>[] columns) {

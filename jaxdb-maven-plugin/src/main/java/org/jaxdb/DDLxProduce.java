@@ -45,7 +45,7 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration,
       if (schemas.size() > 0) {
         for (final URL schema : schemas) { // [S]
           final Reserve<DDLx> reserve = sqlMojo.getReserve(schema);
-          Generator.generate(reserve.obj, StringPaths.getSimpleName(reserve.get(schema, sqlMojo.rename)), configuration.getDestDir());
+          Generator.generate(reserve.obj, StringPaths.getNameWithoutExtension(reserve.get(schema, sqlMojo.rename)), configuration.getDestDir());
         }
       }
     }
