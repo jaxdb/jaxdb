@@ -106,6 +106,10 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
+    public void reset() {
+    }
+
+    @Override
     public void revert() {
     }
 

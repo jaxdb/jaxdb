@@ -75,9 +75,6 @@ public abstract class Schema {
   }
 
   public Connector getConnector() {
-    if (connector == null)
-      throw new IllegalStateException("Schema \"" + getName() + "\" is not connected");
-
     return connector;
   }
 

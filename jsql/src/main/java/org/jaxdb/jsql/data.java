@@ -16,6 +16,7 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.DML.*;
 import static org.libj.lang.Assertions.*;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +33,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,6 +47,7 @@ import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -246,14 +249,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final ARRAY<T> set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final ARRAY<T> set(final type.ARRAY<T> value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.ARRAY<T> value) {
+      return super.set(value);
     }
 
     @Override
@@ -555,6 +556,16 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      isNullOld = true;
+      isNullCur = true;
+      valueOld = 0;
+      valueCur = 0;
+      valueObjOld = null;
+      valueObjCur = null;
+    };
+
+    @Override
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
@@ -608,14 +619,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final BIGINT set(final NULL value) {
-      setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return setNull();
     }
 
-    public final BIGINT set(final type.BIGINT value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.BIGINT value) {
+      return super.set(value);
     }
 
     public final boolean setIfNotEqual(final long value) {
@@ -834,14 +843,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final BINARY set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final BINARY set(final type.BINARY value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.BINARY value) {
+      return super.set(value);
     }
 
     @Override
@@ -1036,14 +1043,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final BLOB set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final BLOB set(final type.BLOB value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.BLOB value) {
+      return super.set(value);
     }
 
     @Override
@@ -1298,6 +1303,16 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      isNullOld = true;
+      isNullCur = true;
+      valueOld = false;
+      valueCur = false;
+      valueObjOld = null;
+      valueObjCur = null;
+    };
+
+    @Override
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
@@ -1336,14 +1351,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final BOOLEAN set(final NULL value) {
-      setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return setNull();
     }
 
-    public final BOOLEAN set(final type.BOOLEAN value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.BOOLEAN value) {
+      return super.set(value);
     }
 
     public final boolean setIfNotEqual(final boolean value) {
@@ -1566,14 +1579,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final CHAR set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final CHAR set(final type.CHAR value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.CHAR value) {
+      return super.set(value);
     }
 
     @Override
@@ -1755,14 +1766,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final CLOB set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final CLOB set(final type.CLOB value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.CLOB value) {
+      return super.set(value);
     }
 
     @Override
@@ -1889,6 +1898,7 @@ public final class data {
     abstract V parseString(DbVendor vendor, String s);
     abstract void read(Compiler compiler, ResultSet resultSet, int columnIndex) throws SQLException;
     public abstract void revert();
+    public abstract void reset();
     abstract Column<?> scaleTo(Column<?> column);
     protected abstract boolean set(V value);
     abstract boolean set(V value, SetBy setBy);
@@ -1987,9 +1997,9 @@ public final class data {
     }
 
     /**
-     * Returns the name of this {@link Column}.
+     * Returns the name of this {@link data.Column}.
      *
-     * @return The name of this {@link Column}.
+     * @return The name of this {@link data.Column}.
      */
     public final String getName() {
       return name;
@@ -2014,11 +2024,11 @@ public final class data {
     }
 
     /**
-     * Cue {@code this} {@link Column} for its value to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and
+     * Cue {@code this} {@link data.Column} for its value to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and
      * {@code DELETE} statements.
      *
-     * @param to The value to which {@code this} {@link Column}'s cue value is to be set.
-     * @return {@code true} if the execution of this method resulted in a change to the cue state of {@code this} {@link Column},
+     * @param to The value to which {@code this} {@link data.Column}'s cue value is to be set.
+     * @return {@code true} if the execution of this method resulted in a change to the cue state of {@code this} {@link data.Column},
      *         otherwise {@code false}.
      */
     public final boolean cue(final boolean to) {
@@ -2064,12 +2074,14 @@ public final class data {
       return cue(andCue);
     }
 
-    final void set(final type.Column<V> ref) {
+    final boolean set(final type.Column<V> ref) {
       assertMutable();
-      if (this.ref != ref) {
-        this.ref = ref;
-        this.setByCur = null;
-      }
+      if (this.ref == ref)
+        return false;
+
+      this.ref = ref;
+      this.setByCur = null;
+      return true;
     }
 
     final boolean setFromString(final DbVendor vendor, final String value, final SetBy setBy) {
@@ -2093,33 +2105,34 @@ public final class data {
     }
 
     /**
-     * Returns {@code true} if this {@link Column}'s value was cued (by {@link SetBy#USER user}) to be considered in {@code SELECT},
-     * {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * Returns {@code true} if this {@link data.Column}'s value was cued (by {@link SetBy#USER user}) to be considered in
+     * {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
      *
-     * @return {@code true} if this {@link Column}'s value was cued (by {@link SetBy#USER user}) to be considered in {@code SELECT},
-     *         {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * @return {@code true} if this {@link data.Column}'s value was cued (by {@link SetBy#USER user}) to be considered in
+     *         {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
      */
     public final boolean cuedByUser() {
       return setByCur == SetBy.USER;
     }
 
     /**
-     * Returns {@code true} if this {@link Column}'s value was cued (by {@link SetBy#SYSTEM system}) to be considered in {@code SELECT},
-     * {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * Returns {@code true} if this {@link data.Column}'s value was cued (by {@link SetBy#SYSTEM system}) to be considered in
+     * {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
      *
-     * @return {@code true} if this {@link Column}'s value was cued (by {@link SetBy#SYSTEM system}) to be considered in {@code SELECT},
-     *         {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * @return {@code true} if this {@link data.Column}'s value was cued (by {@link SetBy#SYSTEM system}) to be considered in
+     *         {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
      */
     public final boolean cuedBySystem() {
       return setByCur == SetBy.SYSTEM;
     }
 
     /**
-     * Returns {@code true} if this {@link Column}'s value was cued (by the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system})
-     * to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * Returns {@code true} if this {@link data.Column}'s value was cued (by the {@link SetBy#USER user} or the {@link SetBy#SYSTEM
+     * system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise
+     * {@code false}.
      *
-     * @return {@code true} if this {@link Column}'s value was cued (by the {@link SetBy#USER user} or the {@link SetBy#SYSTEM system})
-     *         to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise
+     * @return {@code true} if this {@link data.Column}'s value was cued (by the {@link SetBy#USER user} or the {@link SetBy#SYSTEM
+     *         system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise
      *         {@code false}.
      */
     public final boolean cued() {
@@ -2236,14 +2249,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final DATE set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final DATE set(final type.DATE value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.DATE value) {
+      return super.set(value);
     }
 
     @Override
@@ -2408,14 +2419,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final DATETIME set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final DATETIME set(final type.DATETIME value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.DATETIME value) {
+      return super.set(value);
     }
 
     @Override
@@ -2471,7 +2480,7 @@ public final class data {
     }
 
     public DECIMAL(final BigDecimal value) {
-      super(null, true, value == null ? null : value.precision());
+      super(null, true, value == null ? null : Math.max(value.precision(), value.scale()));
       if (value == null) {
         this.scale = null;
       }
@@ -2715,6 +2724,12 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      valueOld = null;
+      valueCur = null;
+    };
+
+    @Override
     public final void revert() {
       valueCur = valueOld;
       setByCur = setByOld;
@@ -2762,14 +2777,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final DECIMAL set(final NULL value) {
-      setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return setNull();
     }
 
-    public final DECIMAL set(final type.DECIMAL value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.DECIMAL value) {
+      return super.set(value);
     }
 
     @Override
@@ -2810,12 +2823,12 @@ public final class data {
 
     @Override
     final StringBuilder toJson(final StringBuilder b) {
-      return b.append(isNull() ? "null" : valueCur.toString());
+      return b.append(isNull() ? "null" : valueCur.stripTrailingZeros().toPlainString());
     }
 
     @Override
     public final String toString() {
-      return isNull() ? "NULL" : valueCur.toString();
+      return isNull() ? "NULL" : valueCur.stripTrailingZeros().toPlainString();
     }
 
     @Override
@@ -3078,6 +3091,16 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      isNullOld = true;
+      isNullCur = true;
+      valueOld = 0;
+      valueCur = 0;
+      valueObjOld = null;
+      valueObjCur = null;
+    };
+
+    @Override
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
@@ -3121,14 +3144,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final DOUBLE set(final NULL value) {
-      setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return setNull();
     }
 
-    public final DOUBLE set(final type.DOUBLE value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.DOUBLE value) {
+      return super.set(value);
     }
 
     public final boolean setIfNotEqual(final double value) {
@@ -3483,14 +3504,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final ENUM<E> set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final ENUM<E> set(final type.ENUM<E> value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.ENUM<E> value) {
+      return super.set(value);
     }
 
     public final boolean setFromString(final String value) {
@@ -3816,6 +3835,16 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      isNullOld = true;
+      isNullCur = true;
+      valueOld = 0;
+      valueCur = 0;
+      valueObjOld = null;
+      valueObjCur = null;
+    };
+
+    @Override
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
@@ -3862,14 +3891,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final FLOAT set(final NULL value) {
-      setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return setNull();
     }
 
-    public final FLOAT set(final type.FLOAT value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.FLOAT value) {
+      return super.set(value);
     }
 
     public final boolean setIfNotEqual(final float value) {
@@ -4212,6 +4239,16 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      isNullOld = true;
+      isNullCur = true;
+      valueOld = 0;
+      valueCur = 0;
+      valueObjOld = null;
+      valueObjCur = null;
+    };
+
+    @Override
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
@@ -4266,14 +4303,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final INT set(final NULL value) {
-      setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return setNull();
     }
 
-    public final INT set(final type.INT value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.INT value) {
+      return super.set(value);
     }
 
     public final boolean setIfNotEqual(final int value) {
@@ -4912,6 +4947,12 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      valueOld = null;
+      valueCur = null;
+    };
+
+    @Override
     public final void revert() {
       // FIXME: Optimize this to only revert if `changed == true`. But that means it must absolutely be the case that `changed = true`
       // when `valueCur` is modified.
@@ -5267,6 +5308,16 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      isNullOld = true;
+      isNullCur = true;
+      valueOld = 0;
+      valueCur = 0;
+      valueObjOld = null;
+      valueObjCur = null;
+    };
+
+    @Override
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
@@ -5304,9 +5355,8 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final SMALLINT set(final NULL value) {
-      setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return setNull();
     }
 
     public final boolean set(final short value) {
@@ -5329,9 +5379,8 @@ public final class data {
       return value == null ? setNull() : set(value, value, setBy);
     }
 
-    public final SMALLINT set(final type.SMALLINT value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.SMALLINT value) {
+      return super.set(value);
     }
 
     public final boolean setIfNotEqual(final short value) {
@@ -5535,10 +5584,12 @@ public final class data {
     }
 
     /**
-     * Returns the {@link Column} in {@code this} {@link Table} matching the specified {@code name}, or {@code null} there is no match.
+     * Returns the {@link data.Column} in {@code this} {@link data.Table} matching the specified {@code name}, or {@code null} there is
+     * no match.
      *
-     * @param name The name of the {@link Column}.
-     * @return The {@link Column} in {@code this} {@link Table} matching the specified {@code name}, or {@code null} there is no match.
+     * @param name The name of the {@link data.Column}.
+     * @return The {@link data.Column} in {@code this} {@link data.Table} matching the specified {@code name}, or {@code null} there is
+     *         no match.
      * @throws NullPointerException If {@code name} is null.
      */
     public final Column<?> getColumn(final String name) {
@@ -5547,9 +5598,9 @@ public final class data {
     }
 
     /**
-     * Returns the {@link Column}s in {@code this} {@link Table}.
+     * Returns the {@link data.Column}s in {@code this} {@link data.Table}.
      *
-     * @return The {@link Column}s in {@code this} {@link Table}.
+     * @return The {@link data.Column}s in {@code this} {@link data.Table}.
      */
     public final Column<?>[] getColumns() {
       return _column$;
@@ -5589,9 +5640,9 @@ public final class data {
     }
 
     /**
-     * Cue all {@link Column}s in {@code this} {@link Table} to the value of {@code to}.
+     * Cue all {@link data.Column}s in {@code this} {@link data.Table} to the value of {@code to}.
      *
-     * @param to The value to which all {@link Column}s in {@code this} {@link Table} are to be cued.
+     * @param to The value to which all {@link data.Column}s in {@code this} {@link data.Table} are to be cued.
      */
     public final void cue(final boolean to) {
       for (final Column<?> column : _column$) // [A]
@@ -5599,12 +5650,12 @@ public final class data {
     }
 
     /**
-     * Cue all {@link Column}s in {@code this} {@link Table} to the value of {@code to}, except for the {@link Column}s matching the
-     * {@link Except} spec provided by {@code except}.
+     * Cue all {@link data.Column}s in {@code this} {@link data.Table} to the value of {@code to}, except for the {@link data.Column}s
+     * matching the {@link Except} spec provided by {@code except}.
      *
-     * @param to The value to which all {@link Column}s in {@code this} {@link Table} are to be cued, except for the {@link Column}s
-     *          matching the {@link Except} spec provided by {@code except}.
-     * @param except The {@link Except} spec defining which {@link Column}s are to be excepted.
+     * @param to The value to which all {@link data.Column}s in {@code this} {@link data.Table} are to be cued, except for the
+     *          {@link data.Column}s matching the {@link Except} spec provided by {@code except}.
+     * @param except The {@link Except} spec defining which {@link data.Column}s are to be excepted.
      */
     public final void cue(final boolean to, final Except except) {
       if (except == null) {
@@ -5625,6 +5676,82 @@ public final class data {
       }
     }
 
+    private boolean canRefresh() {
+      for (final Column<?> primary : _primary$) // [A]
+        if (primary.isNull())
+          return false;
+
+      // FIXME: Document the fact that refresh uncues all columns
+      cue(false);
+      return true;
+    }
+
+    private static boolean refresh(final RowIterator<?> rows) throws SQLException {
+      try {
+        if (!rows.nextRow())
+          return false;
+
+        rows.nextEntity();
+        return true;
+      }
+      finally {
+        rows.close();
+      }
+    }
+
+    public final boolean refresh(final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(isolation, config));
+    }
+
+    public final boolean refresh(final Connector connector, final QueryConfig config) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(connector, config));
+    }
+
+    public final boolean refresh(final Connector connector, final Transaction.Isolation isolation, final QueryConfig config) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(connector, isolation, config));
+    }
+
+    public final boolean refresh(final Connection connection, final boolean isPrepared, final QueryConfig config) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(connection, isPrepared, config));
+    }
+
+    public final boolean refresh(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(transaction, config));
+    }
+
+    public final boolean refresh(final QueryConfig config) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(config));
+    }
+
+    public final boolean refresh(final Transaction.Isolation isolation) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(isolation));
+    }
+
+    public final boolean refresh(final Connector connector) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(connector));
+    }
+
+    public final boolean refresh(final Connector connector, final Transaction.Isolation isolation) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(connector, isolation));
+    }
+
+    public final boolean refresh(final Connection connection, final boolean isPrepared) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(connection, isPrepared));
+    }
+
+    public final boolean refresh(final Transaction transaction) throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute(transaction));
+    }
+
+    public final boolean refresh() throws IOException, SQLException {
+      return canRefresh() && refresh(SELECT(this).execute());
+    }
+
+    public final void reset() {
+      for (final Column<?> column : getColumns()) // [A]
+        column.reset();
+    }
+
     public final void revert() {
       for (final Column<?> column : getColumns()) // [A]
         column.revert();
@@ -5632,15 +5759,15 @@ public final class data {
 
     /**
      * Set the provided {@link Map map} specifying the values (parsable by the given {@link DbVendor}) for the named columns in this
-     * {@link Table}.
+     * {@link data.Table}.
      *
      * @param vendor The {@link DbVendor}.
-     * @param map The {@link Map Map&lt;String,String&gt;} specifying the values for the named columns in this {@link Table}.
-     * @param setBy The {@link Column.SetBy} value to be used when setting each column.
+     * @param map The {@link Map Map&lt;String,String&gt;} specifying the values for the named columns in this {@link data.Table}.
+     * @param setBy The {@link data.Column.SetBy} value to be used when setting each column.
      * @return A list of column names that were not found (and thus not set) in the table, or {@code null} if all columns were found
      *         (and thus set).
      * @throws NullPointerException If the provided {@link Map map} is null.
-     * @throws IllegalArgumentException If this {@link Table} does not define a named column for a key in the {@link Map map}.
+     * @throws IllegalArgumentException If this {@link data.Table} does not define a named column for a key in the {@link Map map}.
      */
     final String[] setColumns(final DbVendor vendor, final Map<String,String> map, final Column.SetBy setBy) {
       return map.size() == 0 ? null : setColumns(vendor, setBy, map.entrySet().iterator(), 0);
@@ -5665,9 +5792,9 @@ public final class data {
     }
 
     /**
-     * Returns a JSON string representation of <u>all</u> {@link Column}s in this {@link Table}.
+     * Returns a JSON string representation of <u>all</u> {@link data.Column}s in this {@link data.Table}.
      *
-     * @return A JSON string representation of <u>all</u> {@link Column}s in this {@link Table}.
+     * @return A JSON string representation of <u>all</u> {@link data.Column}s in this {@link data.Table}.
      */
     @Override
     public String toString() {
@@ -5675,9 +5802,9 @@ public final class data {
     }
 
     /**
-     * Returns a JSON string representation of <u>only the cued</u> {@link Column}s in this {@link Table}.
+     * Returns a JSON string representation of <u>only the cued</u> {@link data.Column}s in this {@link data.Table}.
      *
-     * @return A JSON string representation of <u>only the cued</u> {@link Column}s in this {@link Table}.
+     * @return A JSON string representation of <u>only the cued</u> {@link data.Column}s in this {@link data.Table}.
      */
     public final String toStringCued() {
       return toString(true);
@@ -5695,11 +5822,61 @@ public final class data {
     }
 
     /**
-     * Returns {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#USER user}) to be
-     * considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * Returns a JSON string representation of the specified {@link data.Column}s in this {@link data.Table}.
      *
-     * @return {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#USER user}) to be
-     *         considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * @param columns The {@link data.Column}s to include in the JSON string. The properties representing the {@link data.Column}s are
+     *          written in the order of the specified columns.
+     * @return A JSON string representation of the specified {@link data.Column}s in this {@link data.Table}.
+     * @throws IllegalArgumentException If any of the {@link data.Column}s in the {@code column} argument do not belong to {@code this}
+     *           {@link data.Table}.
+     * @throws NullPointerException If {@code columns} is null.
+     */
+    public final String toString(final data.Column<?> ... columns) {
+      final StringBuilder s = new StringBuilder();
+      for (final data.Column<?> column : columns) { // [A]
+        if (column.getTable() != this)
+          throw new IllegalArgumentException("Column \"" + column.getName() + "\" does not belong to this table instance");
+
+        column.toJson(s.append(",\"").append(column.getName()).append("\":"));
+      }
+
+      s.setCharAt(0, '{');
+      return s.append('}').toString();
+    }
+
+    /**
+     * Returns a JSON string representation of {@link data.Column}s in this {@link data.Table} the names of which belong to the
+     * specified {@code columnNames} argument.
+     *
+     * @param columnNames The names of {@link data.Column}s to include in the JSON string. The properties representing the
+     *          {@link data.Column}s are written in the order of the specified column names.
+     * @return A JSON string representation of {@link data.Column}s in this {@link data.Table} the names of which belong to the
+     *         specified {@code columnNames} argument.
+     * @throws NoSuchElementException If any of the column names of the {@code columnNames} argument do not exist in {@code this}
+     *           {@link data.Table}.
+     * @throws NullPointerException If {@code columnNames} is null.
+     */
+    public final String toString(final String ... columnNames) {
+      final StringBuilder s = new StringBuilder();
+      for (final String columnName : columnNames) { // [A]
+        final data.Column<?> column = getColumn(columnName);
+        if (column == null)
+          throw new NoSuchElementException("Column \"" + columnName + "\" was not found");
+
+        column.toJson(s.append(",\"").append(columnName).append("\":"));
+      }
+
+      s.setCharAt(0, '{');
+      return s.append('}').toString();
+    }
+
+    /**
+     * Returns {@code true} if any {@link data.Column} in this {@link data.Table} was cued (by the {@link data.Column.SetBy#USER user})
+     * to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     *
+     * @return {@code true} if any {@link data.Column} in this {@link data.Table} was cued (by the {@link data.Column.SetBy#USER user})
+     *         to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise
+     *         {@code false}.
      */
     public final boolean cuedByUser() {
       for (final Column<?> column : _column$) // [A]
@@ -5710,11 +5887,13 @@ public final class data {
     }
 
     /**
-     * Returns {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#SYSTEM system}) to be
-     * considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * Returns {@code true} if any {@link data.Column} in this {@link data.Table} was cued (by the {@link data.Column.SetBy#SYSTEM
+     * system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise
+     * {@code false}.
      *
-     * @return {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#SYSTEM system}) to be
-     *         considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise {@code false}.
+     * @return {@code true} if any {@link data.Column} in this {@link data.Table} was cued (by the {@link data.Column.SetBy#SYSTEM
+     *         system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE} statements; otherwise
+     *         {@code false}.
      */
     public final boolean cuedBySystem() {
       for (final Column<?> column : _column$) // [A]
@@ -5725,12 +5904,12 @@ public final class data {
     }
 
     /**
-     * Returns {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#USER user} or the
-     * {@link Column.SetBy#SYSTEM system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and {@code DELETE}
-     * statements; otherwise {@code false}.
+     * Returns {@code true} if any {@link data.Column} in this {@link data.Table} was cued (by the {@link data.Column.SetBy#USER user}
+     * or the {@link data.Column.SetBy#SYSTEM system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and
+     * {@code DELETE} statements; otherwise {@code false}.
      *
-     * @return {@code true} if any {@link Column} in this {@link Table} was cued (by the {@link Column.SetBy#USER user} or the
-     *         {@link Column.SetBy#SYSTEM system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and
+     * @return {@code true} if any {@link data.Column} in this {@link data.Table} was cued (by the {@link data.Column.SetBy#USER user}
+     *         or the {@link data.Column.SetBy#SYSTEM system}) to be considered in {@code SELECT}, {@code INSERT}, {@code UPDATE}, and
      *         {@code DELETE} statements; otherwise {@code false}.
      */
     public final boolean cued() {
@@ -5952,14 +6131,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final TIME set(final NULL value) {
-      super.setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return super.setNull();
     }
 
-    public final TIME set(final type.TIME value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.TIME value) {
+      return super.set(value);
     }
 
     @Override
@@ -6248,6 +6425,16 @@ public final class data {
     }
 
     @Override
+    public void reset() {
+      isNullOld = true;
+      isNullCur = true;
+      valueOld = 0;
+      valueCur = 0;
+      valueObjOld = null;
+      valueObjCur = null;
+    };
+
+    @Override
     public final void revert() {
       isNullCur = isNullOld;
       valueCur = valueOld;
@@ -6311,14 +6498,12 @@ public final class data {
     }
 
     @SuppressWarnings("unused")
-    public final TINYINT set(final NULL value) {
-      setNull();
-      return this;
+    public final boolean set(final NULL value) {
+      return setNull();
     }
 
-    public final TINYINT set(final type.TINYINT value) {
-      super.set(value);
-      return this;
+    public final boolean set(final type.TINYINT value) {
+      return super.set(value);
     }
 
     public final boolean setIfNotEqual(final byte value) {

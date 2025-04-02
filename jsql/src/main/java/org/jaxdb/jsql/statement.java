@@ -483,19 +483,19 @@ public final class statement {
   }
 
   public interface Query<D extends type.Entity> {
-    RowIterator<D> execute(Transaction.Isolation isolation) throws IOException, SQLException;
-    RowIterator<D> execute(Connector connector) throws IOException, SQLException;
-    RowIterator<D> execute(Connector connector, Transaction.Isolation isolation) throws IOException, SQLException;
-    RowIterator<D> execute(Connection connection, boolean isPrepared) throws IOException, SQLException;
-    RowIterator<D> execute(Transaction transaction) throws IOException, SQLException;
-    RowIterator<D> execute() throws IOException, SQLException;
-
     RowIterator<D> execute(Transaction.Isolation isolation, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector, Transaction.Isolation isolation, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Connection connection, boolean isPrepared, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Transaction transaction, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(QueryConfig config) throws IOException, SQLException;
+
+    RowIterator<D> execute(Transaction.Isolation isolation) throws IOException, SQLException;
+    RowIterator<D> execute(Connector connector) throws IOException, SQLException;
+    RowIterator<D> execute(Connector connector, Transaction.Isolation isolation) throws IOException, SQLException;
+    RowIterator<D> execute(Connection connection, boolean isPrepared) throws IOException, SQLException;
+    RowIterator<D> execute(Transaction transaction) throws IOException, SQLException;
+    RowIterator<D> execute() throws IOException, SQLException;
   }
 
   private statement() {

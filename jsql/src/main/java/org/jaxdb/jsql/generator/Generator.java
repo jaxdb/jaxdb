@@ -95,7 +95,7 @@ public class Generator {
     final String className = containerClassName + "." + classSimpleName;
     final String[] names = Dialect.parseEnum(templateOrColumn.getValues$().text());
     final StringBuilder out = new StringBuilder();
-    final String s = Strings.repeat(' ', spaces);
+    final StringBuilder s = Strings.repeat(' ', spaces);
     out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"");
     Dialect.getTypeName(out, templateOrColumn, null).append("\")");
     out.append('\n').append(s).append("public static class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
@@ -138,6 +138,14 @@ public class Generator {
     out.append('\n').append(s).append("      return null;\n");
     out.append('\n').append(s).append("    for (final ").append(className).append(" value : values) // [A]"); // FIXME: Implement binary search here
     out.append('\n').append(s).append("      if (").append(Strings.class.getName()).append(".equals(string, value.name))");
+    out.append('\n').append(s).append("        return value;\n");
+    out.append('\n').append(s).append("    return null;");
+    out.append('\n').append(s).append("  }\n");
+    out.append('\n').append(s).append("  public static ").append(className).append(" valueOfIgnoreCase(final ").append(CharSequence.class.getName()).append(" string) {");
+    out.append('\n').append(s).append("    if (string == null)");
+    out.append('\n').append(s).append("      return null;\n");
+    out.append('\n').append(s).append("    for (final ").append(className).append(" value : values) // [A]"); // FIXME: Implement binary search here
+    out.append('\n').append(s).append("      if (").append(Strings.class.getName()).append(".equalsIgnoreCase(string, value.name))");
     out.append('\n').append(s).append("        return value;\n");
     out.append('\n').append(s).append("    return null;");
     out.append('\n').append(s).append("  }\n");

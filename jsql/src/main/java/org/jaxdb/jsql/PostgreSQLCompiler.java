@@ -260,10 +260,8 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   private static void toChar(final data.ENUM<?> column, final Compilation compilation) throws IOException, SQLException {
-    final StringBuilder sql = compilation.sql;
-    sql.append("CAST(");
     column.compile(compilation, true);
-    sql.append(" AS CHAR(").append(column.length()).append("))");
+    compilation.sql.append("::TEXT");
   }
 
   @Override

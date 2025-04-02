@@ -209,6 +209,19 @@ public final class Schemas {
     return counts;
   }
 
+  public static int[] truncate(final Connection connection, final String ... tables) throws SQLException {
+    if (tables.length == 0)
+      return ArrayUtil.EMPTY_ARRAY_INT;
+
+    final Compiler compiler = Compiler.getCompiler(DbVendor.valueOf(connection.getMetaData()));
+    try (final java.sql.Statement statement = connection.createStatement()) {
+      for (final String table : tables) // [A]
+        statement.addBatch(compiler.truncate(table).toString());
+
+      return statement.executeBatch();
+    }
+  }
+
   public static int[] truncate(final Connection connection, final $TableCommon ... tables) throws SQLException {
     if (tables.length == 0)
       return ArrayUtil.EMPTY_ARRAY_INT;

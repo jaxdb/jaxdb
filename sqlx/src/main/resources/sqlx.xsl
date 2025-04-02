@@ -118,19 +118,19 @@
 
   <xsl:function name="function:precision-scale">
     <xsl:param name="precision"/>
-    <xsl:param name="max"/>
+    <xsl:param name="default"/>
     <xsl:choose>
-      <xsl:when test="not($precision)">
-        <xsl:value-of select="$max"/>
-      </xsl:when>
       <xsl:when test="$precision = 0">
-        <xsl:value-of select="0"/>
+        <xsl:value-of select="1"/>
       </xsl:when>
-      <xsl:when test="$max = -1 or math:pow(10, $precision) &lt; $max">
+      <xsl:when test="not($precision)">
+        <xsl:value-of select="$default"/>
+      </xsl:when>
+      <xsl:when test="$default = -1 or math:pow(10, $precision) &lt; $default">
         <xsl:value-of select="substring('99999999999999999999', 1, $precision)"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="$max"/>
+        <xsl:value-of select="$default"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
@@ -273,15 +273,15 @@
                   <xsl:if test="$type='float'">
                     <xs:simpleType>
                       <xs:restriction base="dt:float">
-                        <xsl:if test="@max">
-                          <xs:maxInclusive>
-                            <xsl:attribute name="value" select="@max"/>
-                          </xs:maxInclusive>
-                        </xsl:if>
                         <xsl:if test="@min">
                           <xs:minInclusive>
                             <xsl:attribute name="value" select="@min"/>
                           </xs:minInclusive>
+                        </xsl:if>
+                        <xsl:if test="@max">
+                          <xs:maxInclusive>
+                            <xsl:attribute name="value" select="@max"/>
+                          </xs:maxInclusive>
                         </xsl:if>
                       </xs:restriction>
                     </xs:simpleType>
@@ -289,15 +289,15 @@
                   <xsl:if test="$type='double'">
                     <xs:simpleType>
                       <xs:restriction base="dt:double">
-                        <xsl:if test="@max">
-                          <xs:maxInclusive>
-                            <xsl:attribute name="value" select="@max"/>
-                          </xs:maxInclusive>
-                        </xsl:if>
                         <xsl:if test="@min">
                           <xs:minInclusive>
                             <xsl:attribute name="value" select="@min"/>
                           </xs:minInclusive>
+                        </xsl:if>
+                        <xsl:if test="@max">
+                          <xs:maxInclusive>
+                            <xsl:attribute name="value" select="@max"/>
+                          </xs:maxInclusive>
                         </xsl:if>
                       </xs:restriction>
                     </xs:simpleType>
@@ -308,18 +308,6 @@
                         <xs:fractionDigits>
                           <xsl:attribute name="value" select="@scale"/>
                         </xs:fractionDigits>
-                        <xs:maxInclusive>
-                          <xsl:attribute name="value">
-                            <xsl:choose>
-                              <xsl:when test="@max">
-                                <xsl:value-of select="@max"/>
-                              </xsl:when>
-                              <xsl:otherwise>
-                                <xsl:value-of select="function:precision-scale(@precision - @scale, -1)"/>
-                              </xsl:otherwise>
-                            </xsl:choose>
-                          </xsl:attribute>
-                        </xs:maxInclusive>
                         <xs:minInclusive>
                           <xsl:attribute name="value">
                             <xsl:choose>
@@ -332,6 +320,18 @@
                             </xsl:choose>
                           </xsl:attribute>
                         </xs:minInclusive>
+                        <xs:maxInclusive>
+                          <xsl:attribute name="value">
+                            <xsl:choose>
+                              <xsl:when test="@max">
+                                <xsl:value-of select="@max"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="function:precision-scale(@precision - @scale, -1)"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:attribute>
+                        </xs:maxInclusive>
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
@@ -358,18 +358,6 @@
                     <xs:simpleType>
                       <xs:restriction>
                         <xsl:attribute name="base" select="concat('dt:', $type)"/>
-                        <xs:maxInclusive>
-                          <xsl:attribute name="value">
-                            <xsl:choose>
-                              <xsl:when test="@max">
-                                <xsl:value-of select="@max"/>
-                              </xsl:when>
-                              <xsl:otherwise>
-                                <xsl:value-of select="function:precision-scale(@precision, if ($type='tinyint') then 127 else if ($type='smallint') then 32767 else if ($type='int') then 2147483647 else 9223372036854775807)"/>
-                              </xsl:otherwise>
-                            </xsl:choose>
-                          </xsl:attribute>
-                        </xs:maxInclusive>
                         <xs:minInclusive>
                           <xsl:attribute name="value">
                             <xsl:choose>
@@ -382,6 +370,18 @@
                             </xsl:choose>
                           </xsl:attribute>
                         </xs:minInclusive>
+                        <xs:maxInclusive>
+                          <xsl:attribute name="value">
+                            <xsl:choose>
+                              <xsl:when test="@max">
+                                <xsl:value-of select="@max"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="function:precision-scale(@precision, if ($type='tinyint') then 127 else if ($type='smallint') then 32767 else if ($type='int') then 2147483647 else 9223372036854775807)"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:attribute>
+                        </xs:maxInclusive>
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>

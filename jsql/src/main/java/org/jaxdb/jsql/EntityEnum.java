@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// FIXME: Perhaps make this a class, to avoid thrashing toString()?
 public interface EntityEnum extends CharSequence, Comparable<EntityEnum>, Serializable {
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)

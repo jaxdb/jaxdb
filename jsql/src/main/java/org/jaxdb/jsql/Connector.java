@@ -31,8 +31,11 @@ import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.ConcurrentHashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Connector implements ConnectionFactory {
+  private static final Logger logger = LoggerFactory.getLogger(Connector.class);
   private static final ConcurrentHashMap<String,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
 
   private final Schema schema;
@@ -243,7 +246,11 @@ public class Connector implements ConnectionFactory {
             schemas.add(schemaClass);
             final Compiler compiler = Compiler.getCompiler(DbVendor.valueOf(connection.getMetaData()));
             compiler.onConnect(connection);
-            compiler.onRegister(connection);
+
+            if (!connection.isReadOnly())
+              compiler.onRegister(connection);
+            else if (logger.isWarnEnabled()) { logger.warn("Unable to run onRegister(Connection) hooks on read-only connection"); }
+
             if (!connection.getAutoCommit())
               connection.commit();
           }
